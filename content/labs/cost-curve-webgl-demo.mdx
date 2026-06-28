@@ -1,0 +1,42 @@
+---
+title: "Lab Note: A Lightweight Cost-Curve Hero Without WebGL"
+summary: "Why the first Artemis hero composes SVG and CSS artifacts instead of a heavy 3D scene — and how it's structured to upgrade to React Three Fiber later."
+date: "2026-06-22"
+category: "Cinematic"
+tags: ["webgl", "performance", "hero", "r3f"]
+heroImage: "/og/artemis-default.svg"
+seoDescription: "A Labs note on building a fast, accessible cinematic hero with SVG/CSS artifacts that can later upgrade to React Three Fiber."
+author: "Artemis Labs"
+readingTime: "4 min read"
+---
+
+## The constraint
+
+A cinematic homepage that ships a heavy WebGL bundle to every visitor — including
+mobile and reduced-motion users — fails the brief. The site must be fast,
+SEO-friendly, and work without WebGL.
+
+## The approach
+
+The "Artemis Intelligence Atelier" hero is composed from **HTML, SVG, and CSS
+animations** rather than a 3D engine:
+
+- The 5D cost curve is a single inline SVG (a few KB).
+- Floating panels are styled `div`s with CSS `float` keyframes.
+- A light pointer-parallax shifts depth layers — no physics, no GPU scene graph.
+
+<Callout title="Progressive enhancement">
+All hero copy lives in real DOM, server-rendered. The animated layer is lazy-loaded
+and only hydrates for motion-OK, non-mobile clients. Everyone else gets a crisp
+static composition.
+</Callout>
+
+## The upgrade path
+
+The animated scene is isolated behind a single component boundary
+(`ArtemisSceneCanvas`). When polished Draco-compressed GLB assets are ready, a
+React Three Fiber scene can be swapped in **behind the same boundary**, lazy-loaded
+the same way — without touching the page, the copy, or the fallback.
+
+That is the Labs philosophy: prove structure and performance first, add spectacle
+deliberately.

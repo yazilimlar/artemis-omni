@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Artemis Omni design tokens.
+  HSL channels (no hsl() wrapper) so Tailwind's <alpha-value> works on semantic tokens.
+  Brand hue families: navy, lunar black, silver, warm gold, parchment.
+*/
+@layer base {
+  :root {
+    --background: 222 47% 7%;
+    --foreground: 40 30% 92%;
+
+    --muted: 220 25% 16%;
+    --muted-foreground: 215 18% 65%;
+
+    --border: 215 25% 22%;
+    --ring: 41 60% 56%;
+
+    /* Brand scale (raw HSL triplets) */
+    --navy: 222 47% 14%;
+    --navy-deep: 224 52% 9%;
+    --lunar: 230 35% 4%;
+    --silver: 210 18% 78%;
+    --gold: 41 64% 56%;
+    --gold-soft: 41 55% 72%;
+    --parchment: 42 38% 92%;
+
+    --radius: 0.75rem;
+
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Cormorant Garamond", "Georgia", "Cambria", serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: hsl(var(--gold) / 0.3);
+    color: hsl(var(--parchment));
+  }
+}
+
+@layer components {
+  /* Greek meander (key) border accent — pure CSS, scales cleanly. */
+  .meander-divider {
+    height: 14px;
+    width: 100%;
+    background-image: repeating-linear-gradient(
+      90deg,
+      hsl(var(--gold) / 0.55) 0 2px,
+      transparent 2px 8px,
+      hsl(var(--gold) / 0.55) 8px 10px,
+      transparent 10px 22px
+    );
+    mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+    opacity: 0.7;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: hsl(var(--gold-soft));
+  }
+
+  .display-serif {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* Fine technical annotation hairline */
+  .annotation-line {
+    background: linear-gradient(90deg, hsl(var(--silver) / 0.6), transparent);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .bg-grid {
+    background-size: 40px 40px;
+  }
+}
+
+/* Honor user motion preferences globally. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

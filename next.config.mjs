@@ -1,0 +1,37 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import createMDX from "@next/mdx";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Allow MDX pages/content alongside ts/tsx.
+  pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
+  reactStrictMode: true,
+  // Pin tracing to this app so the sibling Remotion lockfile at the parent dir
+  // doesn't get selected as the workspace root.
+  outputFileTracingRoot: __dirname,
+  images: {
+    // Prepare for remote/optimized imagery later. Add remotePatterns when needed.
+    formats: ["image/avif", "image/webp"],
+  },
+  experimental: {
+    // Keep MDX rendering on the modern compiler path.
+    mdxRs: false,
+  },
+};
+
+const withMDX = createMDX({
+  // Add remark/rehype plugins here later (e.g. remark-gfm, rehype-slug).
+  options: {
+    // remarkFrontmatter strips the `---` block so MDX bodies render cleanly
+    // (frontmatter is parsed separately via gray-matter in lib/content).
+    remarkPlugins: [remarkFrontmatter, remarkGfm],
+    rehypePlugins: [],
+  },
+});
+
+export default withMDX(nextConfig);

@@ -1,0 +1,43 @@
+---
+title: "Automating Fuel Price Adjustments on a Regional Haulage Program"
+summary: "A worked example of how automated fuel price adjustment calculation removed manual reconciliation and disputes from monthly billing."
+date: "2026-06-18"
+category: "Automation"
+tags: ["fuel price adjustment", "automation", "billing"]
+heroImage: "/og/artemis-default.svg"
+seoDescription: "Case study: automating contract fuel price adjustments to eliminate manual reconciliation and billing disputes."
+relatedTools: ["fuel-price-adjustment"]
+author: "Artemis Omni"
+readingTime: "3 min read"
+---
+
+<Callout title="Illustrative case study">
+Figures below are representative of the problem class and demonstrate the approach.
+They are not drawn from a specific named client.
+</Callout>
+
+## The problem
+
+A regional haulage program adjusted invoices for fuel price movement every month by
+hand. Each cycle meant pulling an index, applying a deadband, and reconciling against
+the contract — slow, error-prone, and a frequent source of disputes.
+
+## The intervention
+
+Artemis encoded the exact clause — baseline, deadband, fuel-sensitive share, and
+symmetric adjustment — as a deterministic rule, then ran it automatically against the
+monthly index.
+
+You can explore the same model in the
+[Fuel Price Adjustment](/tools/fuel-price-adjustment) tool.
+
+## The outcome
+
+| Before | After |
+| --- | --- |
+| ~2 days of manual reconciliation / month | Minutes, automated |
+| Recurring billing disputes | Auditable, agreed figures |
+| Adjustment logic in someone's head | Encoded, versioned, traceable |
+
+The point is not the calculator — it is that a well-specified clause becomes a
+**governed, repeatable process** instead of monthly firefighting.
