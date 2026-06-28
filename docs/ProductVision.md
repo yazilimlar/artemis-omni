@@ -2,21 +2,26 @@
 
 ## The thesis
 
-Complex engineering and construction programs generate an enormous volume of technical
-artifacts — cost curves, schedules, BIM fragments, maps, dashboards, invoices,
-project-control reports. Most of that value never reaches the people making decisions,
-because turning artifacts into insight is slow, manual, and inconsistent.
+Heavy civil and infrastructure programs generate an enormous volume of technical
+artifacts — drawings, quantities, schedules, BIM/geometry, field production reports,
+invoices, billing, and project-control reports. Most of that value never reaches the
+people making decisions, because connecting those artifacts into a forecast is slow,
+manual, and inconsistent.
 
-**Artemis Omni closes that gap** with an AI-first intelligence layer that composes
-artifacts into executive-grade decisions — with the craft of a classical engineering
-atelier and the speed of modern automation.
+**Artemis Omni is a 5D Construction Intelligence Bridge.** It connects design → geometry
+→ quantities → schedule → field production → actual cost → billing revenue → PM Forecast
+→ system-generated projections → cashflow → risk/opportunity → executive action — so a
+change in the field reaches the cashflow forecast and the boardroom without a manual
+reconciliation. The defining output is a live **5D** comparison: **Bid Estimate vs
+Actuals vs PM Forecast vs System-Generated Projections**.
 
 ## Who it serves
 
-- **Project controls & PMO** — cost/schedule integration, EAC, cash flow
-- **Engineering** — BIM and geotechnical signals tied to the model of record
-- **Operations & finance** — invoice automation, escalation clauses, reporting
-- **Executives** — board-ready dashboards and narratives on demand
+- **Heavy civil contractors** — connect field production and actual cost to cashflow
+- **Infrastructure owners** — defensible forecasts and executive reporting
+- **PMCM teams & project controls managers** — cost/schedule integration, EAC, cashflow
+- **Estimators** — keep the bid alive against actuals and forecasts
+- **Executives** — board-ready forecasts, risk/opportunity, and recommended action
 
 ## Product surfaces
 

@@ -3,22 +3,32 @@
 The single entry point for understanding this repository: what Artemis is, how the
 site is built, and where to find everything.
 
-## 1. What Artemis Omni is
+## 1. What Artemis Omni is (public positioning)
 
-Artemis Omni is an **AI-first software company and intelligence platform** for
-engineering, construction, project controls, business operations, automation,
-educational tools, AI-generated dashboards, infographics, tutorials, and interactive
-decision-support systems.
+Artemis Omni is a **5D Construction Intelligence Bridge** — a Project Intelligence
+Command Center for heavy civil, infrastructure, project controls, ERP/CMiC workflows,
+digital twins, and executive forecasting. Its defining output is a live **5D** cashflow
+comparison: **Bid Estimate vs Actuals vs PM Forecast vs System-Generated Projections**,
+connecting design → geometry → quantities → schedule → field production → actual cost →
+billing revenue → PM Forecast → system projections → cashflow → risk/opportunity →
+executive action.
 
-The website's job is to communicate that with an **executive-grade, luxury-technology
-aesthetic** while remaining fast, accessible, and easy to extend.
+> The broader long-term vision (Artemis Core modules — Flow/Desk/Docs/Connect/Ops — and
+> additional verticals as an SMB AI Business OS) is **internal roadmap only** and must
+> **not** appear on the public homepage yet. See `BrandArchitecture.md` and
+> `ProductRoadmap.md`. Lead with the construction beachhead first.
+
+The website's job is to communicate the construction beachhead with an **executive-grade,
+premium, cinematic** aesthetic while remaining fast, accessible, and easy to extend.
+Disallowed product language: "atelier", "AI Decision Mesh", "ancient intelligence,
+modern automation", mystical claims, and generic "AI platform" framing (`BrandSystem.md`).
 
 ## 2. Phase 1 scope (this repo)
 
 A foundation, deliberately not overbuilt:
 
 - Working Next.js App Router shell (TypeScript + Tailwind)
-- Premium homepage with the cinematic **"Artemis Intelligence Atelier"** hero
+- Premium homepage with the cinematic **5D Construction Intelligence Bridge** hero
 - Responsive navigation + footer
 - All main routes: Solutions, Labs, Academy, Tools, Case Studies, About, Contact
 - MDX content system with sample Academy / Labs / Case Study packages

@@ -10,8 +10,10 @@ and maintainability. Follow `prompts/00-master-site-brief.md`, `docs/BrandSystem
 
 ### Focus
 
-- **UI polish**: spacing, rhythm, typography, the renaissance/atelier aesthetic using
-  existing brand tokens and motifs (meander, blueprint grid, lunar radial, gold sheen).
+- **UI polish**: spacing, rhythm, typography, the premium/cinematic/classical/lunar,
+  executive-grade aesthetic using existing brand tokens and motifs (meander, blueprint
+  grid, lunar radial, gold sheen). Keep copy construction-credible — never reintroduce
+  "atelier", "AI Decision Mesh", or "ancient intelligence" language (see `BrandSystem.md`).
 - **Cinematic craft**: enhance `components/cinematic/*` while keeping it lazy-loaded,
   accessible, and lightweight. The animated scene must remain swappable for a future R3F
   implementation behind the same boundary.

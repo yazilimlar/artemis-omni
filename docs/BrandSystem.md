@@ -1,9 +1,15 @@
 # Artemis Omni — Brand System
 
-Translate the "renaissance-inspired commerce" concept into an Artemis-specific visual
-language: ancient intelligence + modern automation, Artemis/lunar symbolism, a classical
-engineering atelier, Greek/Roman architectural motifs, and Renaissance editorial
-composition.
+The visual system serves one product positioning: **Artemis Omni as a 5D Construction
+Intelligence Bridge** — a Project Intelligence Command Center for heavy civil and
+infrastructure. The aesthetic may be premium, cinematic, classical, lunar, and
+executive-grade, but the *language* must stay construction-credible (see the Voice and
+"Disallowed language" sections below, and `BrandArchitecture.md`).
+
+Visual motifs: lunar symbolism, classical/Greek-Roman architectural lines, blueprint
+grids, fine technical annotations, and project-controls artifacts (cashflow curves,
+schedules, BIM/quantity fragments). These are **visual** devices — they dress the
+5D construction intelligence story; they are not the product story themselves.
 
 ## Palette
 
@@ -53,10 +59,28 @@ shadcn/ui-compatible primitives live in `components/ui` (`Button`, `Card`, `Badg
 
 ## Voice
 
-Executive, precise, confident, lightly classical. "Ancient intelligence, modern
-automation." Avoid generic SaaS hype and over-promising. Evidence over adjectives.
+Executive, precise, confident, lightly classical — and unmistakably about construction.
+Lead with concrete project-controls meaning: *"Connect the field to the forecast to the
+cash."* Speak to heavy civil contractors, infrastructure owners, PMCM teams, estimators,
+project controls managers, and executives. Evidence over adjectives.
 
-## Avoid
+## Disallowed product language
+
+Do **not** describe Artemis with these (they make it sound like an art installation,
+fantasy site, or vague AI SaaS):
+
+- ❌ "atelier"
+- ❌ "AI Decision Mesh"
+- ❌ "ancient intelligence, modern automation"
+- ❌ mystical/fantasy product claims
+- ❌ generic "AI platform" language with no project-controls meaning
+
+Use instead: **5D Construction Intelligence**, **Project Intelligence Command Center**,
+**construction intelligence bridge**, **Cashflow Intelligence Engine**, and the explicit
+comparison **Bid Estimate vs Actuals vs PM Forecast vs System-Generated Projections**.
+Note: "lunar" remains acceptable as a *visual/palette* descriptor only.
+
+## Avoid (visual/build)
 
 Generic SaaS templates, game-like 3D assets, unoptimized heavy GLB files, over-animated
 pages that hurt performance, and exposed secrets.

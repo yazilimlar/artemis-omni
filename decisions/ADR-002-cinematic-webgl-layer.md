@@ -5,9 +5,13 @@
 
 ## Context
 
-The brief calls for a cinematic homepage hero ("The Artemis Intelligence Atelier") with
-floating project-control artifacts, while also demanding a fast, SEO-friendly site that
+The brief calls for a cinematic homepage hero (the **5D Construction Intelligence Bridge**)
+with floating project-control artifacts, while also demanding a fast, SEO-friendly site that
 works without WebGL and respects reduced-motion and mobile constraints.
+
+> Note: this hero was originally drafted under the name "The Artemis Intelligence Atelier".
+> That artistic naming was retired in favor of construction-credible positioning; the
+> decision below is unchanged. See `docs/BrandSystem.md`.
 
 ## Decision
 

@@ -11,14 +11,15 @@ Review the Artemis Omni site against `prompts/00-master-site-brief.md` and
 ## Checklist
 
 ### Visual / brand
-- Does it read as executive luxury-tech, renaissance-inspired, lunar/atelier — not
-  generic SaaS?
+- Does it read as premium, cinematic, classical, lunar, executive-grade — not generic SaaS?
+- Is the *language* construction-credible (5D, Bid vs Actuals vs PM Forecast vs System
+  Projections) and free of "atelier" / "AI Decision Mesh" / "ancient intelligence"?
 - Palette discipline (navy, lunar, silver, gold, parchment) and serif/sans pairing.
 - Motif usage: meander, blueprint grid, fog/bloom, annotations — present but restrained.
 - Hierarchy, spacing rhythm, and balance of the editorial composition.
 
 ### Cinematic hero
-- Is "The Artemis Intelligence Atelier" legible and premium?
+- Is the 5D Construction Intelligence Bridge hero legible and premium?
 - Does the static fallback look intentional (not broken) on mobile/reduced-motion?
 
 ### Google ecosystem / SEO
