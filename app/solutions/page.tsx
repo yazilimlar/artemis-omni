@@ -6,6 +6,7 @@ import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { solutionPillars, ARTEMIS_FULL } from "@/lib/artemis/solutions";
+import { companyPositioning } from "@/lib/artemis/positioning";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -21,11 +22,18 @@ export default function SolutionsPage() {
       <PageHero
         eyebrow="Solutions"
         title="Three ways Artemis is put to work"
-        description={`ARTEMIS — ${ARTEMIS_FULL} — delivers AI implementation across business operations, heavy-civil construction, and engineering visualization. Construction Intelligence is the public beachhead.`}
+        description={`${companyPositioning.whatWeAre} ${companyPositioning.acronymFraming.today}`}
       >
-        <Button href="/contact" size="lg">
-          Request a Pilot
-        </Button>
+        <div className="space-y-5">
+          <p className="max-w-2xl rounded-lg border border-border/60 bg-navy-deep/40 p-4 text-sm text-muted-foreground">
+            {companyPositioning.acronymFraming.intro}{" "}
+            <span className="text-foreground/85">ARTEMIS — {ARTEMIS_FULL}</span>.{" "}
+            {companyPositioning.acronymFraming.ambition}
+          </p>
+          <Button href="/contact" size="lg">
+            Request a Pilot
+          </Button>
+        </div>
       </PageHero>
 
       <section className="py-16 lg:py-20">

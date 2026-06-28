@@ -49,6 +49,23 @@ export default function HomePage() {
               See the Demo Center
             </Button>
           </div>
+
+          {/* Construction Intelligence beachhead — surfaced above the fold */}
+          <Link
+            href="/solutions/construction-intelligence"
+            className="group mt-10 block max-w-3xl rounded-xl border border-gold/30 bg-navy-deep/50 p-5 transition-colors hover:border-gold/60"
+          >
+            <div className="flex items-center gap-3">
+              <Badge>Beachhead</Badge>
+              <span className="display-serif text-base text-parchment">
+                {companyPositioning.beachheadLabel}
+              </span>
+              <ArrowRight className="ml-auto h-4 w-4 text-gold transition-transform group-hover:translate-x-1" />
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {companyPositioning.beachheadProof}
+            </p>
+          </Link>
         </Container>
         <div className="meander-divider" aria-hidden />
       </section>

@@ -44,10 +44,14 @@ Raw files in `/docs/brand/reference/` (private to the repo, **not** under `/publ
 
 ## 4. Risks and cautions
 
-- **Off-strategy acronym.** `A.R.T.E.M.I.S. = "Autonomous Robotics Technology, Engineering,
-  Mechanics & Intelligent Systems"` reframes the company as **robotics**. That contradicts
-  the approved positioning (5D Construction Intelligence / project controls). **Do not** put
-  this acronym or "robotics" framing into product copy.
+- **Acronym must stay an origin, not a category (reconciled policy).** The approved formal
+  expansion is **ARTEMIS = "Autonomous Robotics Technology for Engineering, Modeling &
+  Intelligent Systems"** (note: *Modeling*, not the image's "Mechanics"). It is retained in
+  the data model and may appear publicly as the **formal brand expansion / long-term
+  ambition** — but public copy must **never imply Artemis is primarily a robotics company**
+  unless/until robotics products exist. Lead with AI implementation + the Construction
+  Intelligence beachhead; frame the acronym with care (e.g. "the formal ARTEMIS expansion
+  is…", "the name reflects the long-term ambition…").
 - **Figure nudity / tone.** The archer figures are largely nude classical statues. Striking
   as art, but **not appropriate as-is** for a B2B heavy-civil/infrastructure audience or
   social profiles. Any production use needs draped/abstracted or tightly cropped treatments.
@@ -93,8 +97,10 @@ primary accent unless a deliberate blue-forward rebrand is approved.
 - **`AR+EMIS` (golden-plus) treatment = experimental only.** Do not promote to primary
   wordmark without separate approval; if used at all, reserve for stylized/decorative
   contexts where legibility is not critical.
-- **`A.R.T.E.M.I.S.` acronym = internal/optional only.** Do not surface publicly, and never
-  with the "robotics" expansion (off-strategy).
+- **`ARTEMIS` acronym = formal expansion only (may appear publicly, carefully framed).**
+  Use it as brand origin / long-term ambition, not as the current product category. Never
+  let "robotics" read as what Artemis sells today. (Stylized dotted `A.R.T.E.M.I.S.` and the
+  image's "Mechanics" wording remain off; the approved expansion uses "Modeling".)
 - **Logo mark:** the **crescent + upward Δ/A peak** is the strongest, most scalable idea —
   develop it as a proper vector mark (the current in-app `ArtemisMark` SVG is a compatible
   placeholder). Ensure it works at favicon scale and in monochrome.
@@ -125,7 +131,10 @@ primary accent unless a deliberate blue-forward rebrand is approved.
 
 ## 9. What not to use yet
 
-- ❌ The `A.R.T.E.M.I.S.` "Autonomous Robotics…" acronym / robotics framing.
+- ❌ "Robotics" as the *current* primary product category (the acronym is allowed only as
+  the formal brand expansion / long-term ambition — see §4).
+- ❌ The stylized dotted `A.R.T.E.M.I.S.` treatment and the "Mechanics" wording (use the
+  approved "Modeling" expansion).
 - ❌ `AR+EMIS` as a primary wordmark.
 - ❌ Any nude-figure crop in customer-facing or social contexts.
 - ❌ Any hex value, label, or nav text copied verbatim from the AI sheets.

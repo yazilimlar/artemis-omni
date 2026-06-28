@@ -3,10 +3,11 @@ import { ARTEMIS_ACRONYM, companyPositioning } from "@/lib/artemis/positioning";
 /**
  * Solution pillars — the three top-level ways Artemis is sold.
  *
- * The full ARTEMIS acronym is intentionally surfaced in this data model:
+ * The full ARTEMIS acronym is retained as the *formal brand expansion only*:
  *   ARTEMIS = "Autonomous Robotics Technology for Engineering, Modeling &
  *   Intelligent Systems"
- * Artemis Construct / 5D Construction Intelligence remains the public beachhead.
+ * Public copy leads with AI implementation + the Construction Intelligence
+ * beachhead — never with "robotics" as a current product category.
  */
 export const ARTEMIS_FULL = ARTEMIS_ACRONYM;
 
