@@ -3,6 +3,41 @@
 Temporary strategy: test Artemis under the existing **aGOraXai** ecosystem before
 buying/connecting the independent Artemis domain.
 
+---
+
+## Deployment options & domain status (Phase 0 — forward-looking)
+
+> ⚠️ **Status note:** `artemis.agoraxai.com` is **not configured or confirmed** in DNS.
+> Treat it only as a *possible future* staging domain. Do **not** assume it is live, and
+> do **not** restructure the app to run under a path on the existing site. Artemis stays
+> architecturally separate as its own app/repo.
+
+Three forward-looking options, in order of readiness:
+
+**A. Vercel-generated preview URL** *(default, zero DNS)*
+Importing the repo into Vercel yields a `*.vercel.app` URL immediately. This is the
+canonical way to share and verify the prototype today — no domain work required.
+
+**B. Optional staging subdomain — `artemis.agoraxai.com`** *(only if/when DNS is set up)*
+A `CNAME` (host `artemis` → the value Vercel provides) added **manually by the owner** in
+Squarespace DNS would point this subdomain at the Vercel project. Pursue this only when a
+staging URL is actually wanted; it is not a prerequisite for anything in Phase 0.
+
+**C. Final production domain — `ArtemisOmni.com`** *(future)*
+When purchased, attach it as a domain on the **same** Vercel project and set
+`NEXT_PUBLIC_SITE_URL` accordingly. No code migration, no new repo.
+
+**Not preferred: `agoraxai.com/artemis-omni` (path-based).**
+Because `agoraxai.com` is on Squarespace, a `/artemis-omni` path cannot serve this
+separate Next.js app unless the root domain/app is later migrated to a platform that can
+intentionally **proxy or route** that path to Vercel (e.g. a reverse proxy or rewrites).
+Until such a migration is a deliberate decision, keep Artemis on its own host (A/B/C).
+
+The step-by-step instructions below describe option **B** in full for whenever the owner
+chooses to configure it. None of it should be executed in Phase 0.
+
+---
+
 ## Principles
 
 1. **Keep `agoraxai.com` on Squarespace.** Squarespace remains the existing domain/site
