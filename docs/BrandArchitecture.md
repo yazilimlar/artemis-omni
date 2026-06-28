@@ -35,11 +35,17 @@ businesses:
 
 | Module | Scope |
 | --- | --- |
-| **Artemis Flow** | Finance, banking, cashflow, AI CFO-style analytics |
+| **Artemis Flow** | Finance, banking, cashflow, AI CFO-style analytics — **first module to introduce post-beachhead; defined in [`ArtemisFlow.md`](./ArtemisFlow.md)** |
 | **Artemis Desk** | Customer support, sales assistant, communications automation |
 | **Artemis Docs** | Document intelligence — contracts, bids, unstructured data extraction |
 | **Artemis Connect** | Connectors — Gmail, Drive, QuickBooks, Shopify, ERP, banking |
 | **Artemis Ops** | Operating dashboards, DuckDB-style analytics, business decision systems |
+
+> **Artemis Flow** is the horizontal generalization of the construction **Cashflow
+> Intelligence Engine** (Bid vs Actuals vs PM Forecast vs System Projections → Budget vs
+> Actuals vs Forecast for any SMB). It is the closest adjacency to the beachhead and the
+> first Core module to surface — but only after Artemis Construct is credible, and it is
+> **not** public yet. Full positioning: [`ArtemisFlow.md`](./ArtemisFlow.md).
 
 ## Layer 3 — Industry verticals (NOT public yet, except Construct framing)
 

@@ -37,7 +37,8 @@ modules and additional verticals only as credibility compounds.
 
 - Introduce **Artemis Core** modules gradually, starting with the ones nearest to the
   construction buyer's pain:
-  - **Flow** (cashflow / AI CFO) — closest adjacency to 5D forecasting.
+  - **Flow** (cashflow / AI CFO) — closest adjacency to 5D forecasting; the first module
+    to surface. Positioning defined in [`ArtemisFlow.md`](./ArtemisFlow.md).
   - **Docs** (contracts, bids, unstructured extraction) — closest adjacency to estimating.
   - then **Connect**, **Ops**, **Desk**.
 - Public site evolves from "5D Construction Intelligence Bridge" to "Artemis Omni — AI

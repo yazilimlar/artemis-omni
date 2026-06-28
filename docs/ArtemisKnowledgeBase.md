@@ -63,9 +63,12 @@ A foundation, deliberately not overbuilt:
 ## 5. Related documents
 
 - `ProductVision.md` — what we're building and why
-- `BrandSystem.md` — palette, type, motifs
+- `BrandSystem.md` — palette, type, motifs, disallowed product language
+- `BrandArchitecture.md` — umbrella, beachhead, Core modules + verticals *(internal)*
+- `ProductRoadmap.md` — phased sequencing from beachhead to Business OS *(internal)*
+- `ArtemisFlow.md` — Artemis Flow module positioning *(internal, not public)*
 - `ContentSystem.md` — how to author MDX content packages
 - `AIWorkflow.md` — the multi-tool AI operating model
-- `DeploymentPlan.md` — Vercel + `artemis.agoraxai.com`
+- `DeploymentPlan.md` — deployment options (Vercel preview / staging / production)
 - `SecurityRules.md` — secrets, env vars, do/don't
 - `../decisions/` — Architecture Decision Records
