@@ -11,29 +11,45 @@ import { createMetadata } from "@/lib/seo/metadata";
 export const metadata = createMetadata({
   path: "/",
   description:
-    "Artemis Omni — the AI-first intelligence atelier for engineering, construction, and project controls. 5D cost intelligence, AI decision meshes, and executive dashboards.",
+    "Artemis Omni — a 5D Construction Intelligence Bridge for heavy civil and infrastructure. Link field production and actual cost into live cashflow forecasts: Bid Estimate vs Actuals vs PM Forecast vs system-generated projections.",
 });
+
+// The connected Artemis value chain, rendered as a sequence on the homepage.
+const valueChain = [
+  "Design",
+  "Geometry",
+  "Quantities",
+  "Schedule",
+  "Field Production",
+  "Actual Cost",
+  "Billing Revenue",
+  "PM Forecast",
+  "System-Generated Projections",
+  "Cashflow",
+  "Risk / Opportunity",
+  "Executive Action",
+];
 
 const capabilities = [
   {
     icon: Gauge,
-    title: "5D Project Controls",
-    body: "Cost, schedule, and scope fused into live S-curves, EAC forecasts, and cash-flow intelligence.",
+    title: "5D Cashflow Forecasting",
+    body: "Live cashflow that compares Bid Estimate vs Actuals vs PM Forecast vs system-generated projections — not a static S-curve.",
   },
   {
     icon: Workflow,
-    title: "AI Automation",
-    body: "Invoice extraction, fuel-price adjustments, and reporting handled by an auditable agent mesh.",
+    title: "Project Controls & ERP / CMiC",
+    body: "Cost, billing, and forecast workflows connected to CMiC and ERP, with auditable exception flags instead of black boxes.",
   },
   {
     icon: Boxes,
-    title: "BIM & Field Intelligence",
-    body: "Structural fragments, geotechnical data, and field signals tied back to the model of record.",
+    title: "Digital Twin (3D / 4D / 5D)",
+    body: "Real geometry and quantities tied to schedule sequencing and constructability — the model of record for the forecast.",
   },
   {
     icon: GraduationCap,
-    title: "Academy & Tools",
-    body: "Tutorials, calculators, and decision-support tools that turn methods into reusable craft.",
+    title: "Field Production → Actual Cost",
+    body: "Field progress and production logic tied to actual cost and billing revenue, surfacing variance as it happens.",
   },
 ];
 
@@ -41,14 +57,14 @@ const pillars = [
   {
     href: "/solutions",
     kicker: "Solutions",
-    title: "Systems built for the jobsite and the boardroom",
-    body: "Domain AI for engineering, construction, and operations — engineered for accuracy, not novelty.",
+    title: "Built for the jobsite and the boardroom",
+    body: "5D construction intelligence for heavy civil and infrastructure delivery — engineered for accuracy, not novelty.",
   },
   {
     href: "/labs",
     kicker: "Labs",
-    title: "Cinematic intelligence experiments",
-    body: "Where new visualizations, agents, and interaction models are prototyped before they ship.",
+    title: "Forecasting & digital-twin experiments",
+    body: "Where new project-controls visualizations and forecasting models are prototyped before they ship.",
   },
   {
     href: "/tools",
@@ -68,8 +84,8 @@ export default function HomePage() {
         <Container>
           <SectionHeading
             eyebrow="Capabilities"
-            title="A studio for technical intelligence"
-            description="Artemis composes the artifacts of complex projects into clear, defensible decisions — with the craft of a classical engineering atelier and the speed of modern automation."
+            title="One bridge from design to cashflow"
+            description="Artemis connects the artifacts of heavy civil and infrastructure delivery — geometry, quantities, schedule, field production, actual cost, and billing — into clear, defensible forecasts and executive action."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {capabilities.map((c) => (
@@ -80,6 +96,29 @@ export default function HomePage() {
               </Card>
             ))}
           </div>
+        </Container>
+      </section>
+
+      {/* The connected value chain */}
+      <section className="border-t border-border/60 py-20 lg:py-28">
+        <Container>
+          <SectionHeading
+            eyebrow="The Artemis Bridge"
+            title="From design intent to executive action"
+            description="Every link is connected and traceable — so a change in the field reaches the cashflow forecast and the boardroom without a manual reconciliation."
+          />
+          <ol className="mt-10 flex flex-wrap items-center gap-x-2 gap-y-3">
+            {valueChain.map((step, i) => (
+              <li key={step} className="flex items-center gap-2">
+                <span className="rounded-md border border-border/70 bg-navy-deep/50 px-3 py-1.5 text-sm text-foreground/85">
+                  {step}
+                </span>
+                {i < valueChain.length - 1 ? (
+                  <ArrowRight className="h-4 w-4 shrink-0 text-gold/70" aria-hidden />
+                ) : null}
+              </li>
+            ))}
+          </ol>
         </Container>
       </section>
 

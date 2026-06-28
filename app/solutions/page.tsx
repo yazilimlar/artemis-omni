@@ -16,8 +16,8 @@ export const metadata = createMetadata({
 const solutions = [
   {
     tag: "Project Controls",
-    title: "5D Cost Intelligence",
-    body: "Fuse cost, schedule, and scope into live S-curves, earned-value metrics, and forecast-at-completion. Turn project-control artifacts into a single source of truth.",
+    title: "5D Cashflow Intelligence",
+    body: "Project cashflow and compare Bid Estimate vs Actuals vs PM Forecast vs system-generated projections on one axis. Turn project-control artifacts into a single source of truth.",
   },
   {
     tag: "Automation",
@@ -51,8 +51,8 @@ export default function SolutionsPage() {
     <>
       <PageHero
         eyebrow="Solutions"
-        title="Systems built for the jobsite and the boardroom"
-        description="Artemis delivers domain AI for engineering, construction, and operations — engineered for accuracy and auditability, not novelty."
+        title="Built for the jobsite and the boardroom"
+        description="5D construction intelligence for heavy civil contractors, infrastructure owners, PMCM teams, estimators, and project controls managers — engineered for accuracy and auditability, not novelty."
       >
         <Button href="/contact" size="lg">
           Request a Pilot

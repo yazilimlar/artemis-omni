@@ -16,8 +16,8 @@ export function SiteFooter() {
               <span className="display-serif text-lg text-parchment">{siteConfig.name}</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              {siteConfig.tagline}. Ancient intelligence, modern automation — for
-              engineering, construction, and project controls.
+              {siteConfig.tagline}. Linking field production and actual cost to live
+              cashflow forecasts for heavy civil, infrastructure, and project controls.
             </p>
           </div>
 
@@ -42,9 +42,9 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-border/50 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
           <p>
-            © {year} {siteConfig.name}. Prototype running under the aGOraXai ecosystem.
+            © {year} {siteConfig.name}. Early-stage prototype.
           </p>
-          <p className="font-mono tracking-wide">artemis.agoraxai.com</p>
+          <p className="font-mono tracking-wide">5D Construction Intelligence Bridge</p>
         </div>
       </Container>
     </footer>

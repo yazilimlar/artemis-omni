@@ -9,21 +9,21 @@ export const metadata = createMetadata({
   title: "About",
   path: "/about",
   description:
-    "Artemis Omni is an AI-first intelligence atelier fusing classical engineering craft with modern automation for the built environment.",
+    "Artemis Omni is a 5D Construction Intelligence Bridge for heavy civil and infrastructure — connecting design, field production, and actual cost to live cashflow forecasts and executive action.",
 });
 
 const principles = [
   {
     title: "Accuracy over novelty",
-    body: "Intelligence is only useful if it is trustworthy. Every output is traceable to its source artifacts.",
+    body: "A forecast is only useful if it is trustworthy. Every number is traceable to its source — bid, actuals, schedule, and field production.",
   },
   {
-    title: "Craft over templates",
-    body: "We compose dashboards, models, and narratives like an atelier — deliberate, legible, and elegant.",
+    title: "Connected, not siloed",
+    body: "Design, geometry, quantities, schedule, cost, and billing belong in one bridge — so a field change reaches the cashflow forecast automatically.",
   },
   {
     title: "Augment, don't obscure",
-    body: "Automation should make experts faster and decisions clearer — never a black box.",
+    body: "Automation should make estimators and controls managers faster and decisions clearer — never a black box.",
   },
 ];
 
@@ -32,16 +32,16 @@ export default function AboutPage() {
     <>
       <PageHero
         eyebrow="About"
-        title="An intelligence atelier for the built environment"
-        description="Artemis Omni fuses the discipline of a classical engineering studio with modern AI — turning the raw artifacts of complex projects into executive-grade decisions."
+        title="A 5D Construction Intelligence Bridge"
+        description="Artemis Omni connects the artifacts of heavy civil and infrastructure delivery — geometry, quantities, schedule, field production, and actual cost — into live cashflow forecasts and executive action."
       />
 
       <section className="py-16 lg:py-20">
         <Container>
           <SectionHeading
-            eyebrow="Philosophy"
-            title="Ancient intelligence, modern automation"
-            description="The name Artemis evokes the lunar, the precise, the watchful. Our work pairs that classical sensibility with rigorous, auditable engineering."
+            eyebrow="Method"
+            title="One source of truth, from bid to cash"
+            description="Artemis is built for the people who carry the forecast: estimators, project controls managers, PMCM teams, infrastructure owners, and executives. Rigorous, auditable, and connected end to end."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-3">
             {principles.map((p) => (
@@ -58,8 +58,8 @@ export default function AboutPage() {
         <Container className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
           <SectionHeading
             eyebrow="Phase"
-            title="A prototype, deployed deliberately"
-            description="Artemis is currently piloting inside the aGOraXai ecosystem at artemis.agoraxai.com before its independent launch. We build in public, ship in focused increments, and measure outcomes."
+            title="A prototype, built deliberately"
+            description="Artemis is an early-stage prototype. We build in focused increments, validate on real project data, and measure outcomes before we expand scope."
           />
           <Button href="/contact" size="lg">
             Request a Pilot

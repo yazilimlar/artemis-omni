@@ -19,7 +19,7 @@ const ArtemisSceneCanvas = dynamic(
 );
 
 /**
- * "The Artemis Intelligence Atelier" — the cinematic homepage hero.
+ * The cinematic homepage hero — the 5D Construction Intelligence Bridge.
  *
  * Structure: all copy and CTAs live in real DOM (SEO + a11y), independent of the
  * canvas. The visual is progressive: static fallback by default, upgraded to the
@@ -40,18 +40,20 @@ export function CinematicHero() {
       <Container className="grid gap-12 py-20 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-28">
         {/* Copy — always server-rendered, SEO-accessible */}
         <div className="animate-fade-up">
-          <p className="eyebrow">The Artemis Intelligence Atelier</p>
+          <p className="eyebrow">5D Construction Intelligence Bridge</p>
           <h1 className="display-serif mt-5 text-balance text-4xl leading-[1.05] text-parchment sm:text-5xl lg:text-6xl">
-            Ancient intelligence,
+            Connect the field to the forecast
             <br />
             <span className="bg-gold-sheen bg-clip-text text-transparent">
-              modern automation.
+              to the cash.
             </span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Artemis Omni turns the raw artifacts of engineering and construction —
-            cost curves, schedules, BIM fragments, invoices, dashboards — into
-            executive-grade decisions, composed in an AI-first command room.
+            Artemis Omni links design, geometry, quantities, schedule, field
+            production, and actual cost into one live cashflow forecast — comparing
+            Bid Estimate vs Actuals vs PM Forecast vs system-generated projections.
+            Built for heavy civil contractors, infrastructure owners, and project
+            controls teams.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center gap-4">
@@ -66,9 +68,9 @@ export function CinematicHero() {
           {/* Proof stats */}
           <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-border/50 pt-6">
             {[
-              { v: "5D", l: "Cost intelligence" },
-              { v: "AI-first", l: "Decision mesh" },
-              { v: "Atelier", l: "Engineering craft" },
+              { v: "5D", l: "Cashflow forecast" },
+              { v: "Bid → Actual", l: "vs PM Forecast" },
+              { v: "ERP / CMiC", l: "Connected workflows" },
             ].map((s) => (
               <div key={s.l}>
                 <dt className="display-serif text-2xl text-gold">{s.v}</dt>

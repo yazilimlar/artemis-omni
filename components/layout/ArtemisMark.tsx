@@ -1,8 +1,8 @@
 import * as React from "react";
 
 /**
- * Artemis lunar mark — a crescent moon with a compass/dividers motif,
- * fusing lunar symbolism with the classical engineering atelier.
+ * Artemis mark — a crescent with a compass/dividers motif, pairing the Artemis
+ * identity with the engineering/surveying tradition.
  * Pure inline SVG so it inherits `currentColor` and scales crisply.
  */
 export function ArtemisMark({ className }: { className?: string }) {

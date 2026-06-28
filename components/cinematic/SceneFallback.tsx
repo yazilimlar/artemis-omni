@@ -8,7 +8,7 @@ import {
 } from "@/components/cinematic/FloatingDashboardPanel";
 
 /**
- * Static, animation-free rendering of the Artemis Intelligence Atelier scene.
+ * Static, animation-free rendering of the 5D Construction Intelligence Bridge scene.
  * Used on mobile, when WebGL is unavailable, and as the visual for the
  * reduced-motion fallback. Lightweight SVG/HTML only — no client JS required.
  */
@@ -35,7 +35,7 @@ export function SceneFallback({ className }: { className?: string }) {
 
       {/* Primary artifact: cost-intelligence curve */}
       <div className="absolute inset-x-6 bottom-6 sm:inset-x-10">
-        <FloatingDashboardPanel kicker="5D · COST INTELLIGENCE" title="Project Control Curve">
+        <FloatingDashboardPanel kicker="5D · CASHFLOW FORECAST" title="Cashflow Intelligence Engine">
           <div className="h-28 sm:h-32">
             <CostCurveArtifact />
           </div>
@@ -49,7 +49,7 @@ export function SceneFallback({ className }: { className?: string }) {
         </FloatingDashboardPanel>
       </div>
       <div className="absolute right-6 top-32 hidden w-36 sm:block">
-        <FloatingDashboardPanel kicker="AGENTS" title="AI Decision Mesh">
+        <FloatingDashboardPanel kicker="FORECAST" title="System Projections">
           <AiNodesFragment />
         </FloatingDashboardPanel>
       </div>

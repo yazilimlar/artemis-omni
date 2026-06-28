@@ -12,7 +12,7 @@ type TechnicalAnnotationProps = {
 /**
  * A fine technical drawing annotation: a node dot, a hairline leader, and a
  * monospace label/value. Used to label floating artifacts in the hero like a
- * classical engineering atelier blueprint.
+ * project-controls / engineering blueprint annotation.
  */
 export function TechnicalAnnotation({
   label,

@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils/cn";
 
 /**
- * The primary floating artifact: a 5D project-control / cost-intelligence curve.
+ * The primary floating artifact: a 5D cashflow forecast curve.
  * Rendered as a lightweight, crisp SVG (no WebGL) so it works everywhere and
  * costs almost nothing to paint. An S-curve (planned vs actual) with a forecast
  * band — the canonical project-controls cash-flow visual.
@@ -13,7 +13,7 @@ export function CostCurveArtifact({ className }: { className?: string }) {
       viewBox="0 0 320 200"
       className={cn("h-full w-full", className)}
       role="img"
-      aria-label="5D cost intelligence S-curve: planned versus actual spend with forecast band"
+      aria-label="5D cashflow forecast curve: Bid Estimate versus Actuals with PM Forecast and system-generated projection band"
     >
       <defs>
         <linearGradient id="cc-fill" x1="0" y1="0" x2="0" y2="1">

@@ -13,10 +13,11 @@ import { Button } from "@/components/ui/button";
  * an email service or Supabase — keep all keys in environment variables.
  */
 const focusAreas = [
-  "5D Cost Intelligence",
-  "AI Invoice Automation",
+  "5D Cashflow Intelligence",
+  "ERP / CMiC Cost & Billing",
+  "PM Forecast & Projections",
+  "Digital Twin (3D/4D/5D)",
   "Executive Reporting",
-  "BIM / Field Signals",
   "Other",
 ];
 

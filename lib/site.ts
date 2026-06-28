@@ -5,10 +5,12 @@
 export const siteConfig = {
   name: "Artemis Omni",
   shortName: "Artemis",
-  tagline: "The Artemis Intelligence Atelier",
+  tagline: "5D Construction Intelligence Bridge",
   description:
-    "Artemis Omni is an AI-first intelligence platform for engineering, construction, project controls, and business operations — turning technical artifacts into executive-grade decisions.",
-  // Production canonical. Temporary test host: artemis.agoraxai.com (see docs/DeploymentPlan.md).
+    "Artemis Omni is a 5D Construction Intelligence Bridge for heavy civil and infrastructure delivery — linking design, geometry, quantities, schedule, field production, and actual cost into live cashflow forecasts that compare Bid Estimate vs Actuals vs PM Forecast vs system-generated projections.",
+  // Canonical site URL. Override per environment with NEXT_PUBLIC_SITE_URL.
+  // NOTE: artemis.agoraxai.com is only a POSSIBLE FUTURE staging domain — it is NOT
+  // assumed live or configured. See docs/DeploymentPlan.md (deployment options A/B/C).
   url:
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
     "https://artemis.agoraxai.com",
@@ -30,12 +32,12 @@ export const mainNav: NavItem[] = [
   {
     title: "Solutions",
     href: "/solutions",
-    description: "AI systems for engineering, construction, and project controls.",
+    description: "5D construction intelligence for heavy civil, infrastructure, and project controls.",
   },
   {
     title: "Labs",
     href: "/labs",
-    description: "Experimental cinematic intelligence demos and prototypes.",
+    description: "Experimental forecasting, digital-twin, and project-controls prototypes.",
   },
   {
     title: "Academy",
@@ -50,12 +52,12 @@ export const mainNav: NavItem[] = [
   {
     title: "Case Studies",
     href: "/case-studies",
-    description: "Outcomes from AI-driven project intelligence.",
+    description: "Outcomes from 5D construction intelligence on real programs.",
   },
   {
     title: "About",
     href: "/about",
-    description: "The studio, the philosophy, the people.",
+    description: "The team, the method, the mission.",
   },
 ];
 

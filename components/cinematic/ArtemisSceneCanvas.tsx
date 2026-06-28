@@ -12,7 +12,7 @@ import {
 } from "@/components/cinematic/FloatingDashboardPanel";
 
 /**
- * The animated cinematic layer for "The Artemis Intelligence Atelier".
+ * The animated cinematic layer for the 5D Construction Intelligence Bridge hero.
  *
  * Deliberately NOT WebGL in this first pass: it's a composed set of floating
  * HTML/SVG artifacts with CSS float animations and a light pointer-parallax.
@@ -81,18 +81,18 @@ export function ArtemisSceneCanvas({ className }: { className?: string }) {
           className="mt-2"
           side="left"
           label="ARTEMIS"
-          value="LUNAR CORE"
+          value="EXECUTIVE VIEW"
         />
       </div>
 
-      {/* Primary artifact: 5D cost-intelligence curve */}
+      {/* Primary artifact: 5D cashflow forecast curve */}
       <div
         className="absolute inset-x-6 bottom-6 transition-transform duration-300 sm:inset-x-10"
         style={shift(14)}
       >
         <FloatingDashboardPanel
-          kicker="5D · COST INTELLIGENCE"
-          title="Project Control Curve"
+          kicker="5D · CASHFLOW FORECAST"
+          title="Cashflow Intelligence Engine"
           floatClass="animate-float"
         >
           <div className="h-28 sm:h-36">
@@ -130,7 +130,7 @@ export function ArtemisSceneCanvas({ className }: { className?: string }) {
         className="absolute right-7 top-40 hidden w-36 transition-transform duration-300 sm:block"
         style={shift(34)}
       >
-        <FloatingDashboardPanel kicker="AGENTS" title="AI Decision Mesh" floatClass="animate-float-slow">
+        <FloatingDashboardPanel kicker="FORECAST" title="System Projections" floatClass="animate-float-slow">
           <AiNodesFragment />
         </FloatingDashboardPanel>
       </div>
