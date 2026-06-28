@@ -4,7 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { mainNav, siteConfig } from "@/lib/site";
+import { siteConfig } from "@/lib/site";
+import { primaryNav, ctaNav } from "@/lib/artemis/navigation";
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { ArtemisMark } from "@/components/layout/ArtemisMark";
@@ -41,8 +42,8 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
-          {mainNav.map((item) => {
+        <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
+          {primaryNav.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
@@ -60,8 +61,8 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden md:block">
-          <Button href="/contact" size="sm">
-            Request a Pilot
+          <Button href={ctaNav.href} size="sm">
+            {ctaNav.title}
           </Button>
         </div>
 
@@ -79,7 +80,7 @@ export function SiteHeader() {
       {open ? (
         <div className="border-t border-border/70 bg-background/95 backdrop-blur-md md:hidden">
           <nav className="flex flex-col px-6 py-4" aria-label="Mobile">
-            {mainNav.map((item) => (
+            {primaryNav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -88,8 +89,8 @@ export function SiteHeader() {
                 {item.title}
               </Link>
             ))}
-            <Button href="/contact" className="mt-4 w-full">
-              Request a Pilot
+            <Button href={ctaNav.href} className="mt-4 w-full">
+              {ctaNav.title}
             </Button>
           </nav>
         </div>

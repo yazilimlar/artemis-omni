@@ -1,78 +1,48 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/ui/container";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { solutionPillars, ARTEMIS_FULL } from "@/lib/artemis/solutions";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
   title: "Solutions",
   path: "/solutions",
   description:
-    "AI systems for engineering, construction, project controls, business operations, and automation — built for accuracy and auditability.",
+    "Three Artemis solution pillars: AI Business Systems, Construction Intelligence (the 5D beachhead), and Engineering Visualization.",
 });
-
-const solutions = [
-  {
-    tag: "Project Controls",
-    title: "5D Cashflow Intelligence",
-    body: "Project cashflow and compare Bid Estimate vs Actuals vs PM Forecast vs system-generated projections on one axis. Turn project-control artifacts into a single source of truth.",
-  },
-  {
-    tag: "Automation",
-    title: "AI Invoice & Document Processing",
-    body: "Extract, validate, and reconcile invoices, fuel-price adjustments, and contracts with an auditable agent pipeline that flags exceptions instead of hiding them.",
-  },
-  {
-    tag: "Engineering",
-    title: "BIM & Geotechnical Signals",
-    body: "Connect structural fragments, geotechnical data, and field reports back to the model of record for grounded, explainable engineering decisions.",
-  },
-  {
-    tag: "Operations",
-    title: "Executive Reporting",
-    body: "Generate board-ready dashboards and narratives from project data — consistent, defensible, and on demand.",
-  },
-  {
-    tag: "Decision Support",
-    title: "Interactive Tools & Calculators",
-    body: "Embed decision-support tools directly into the workflow, from fuel price adjustment to cash-flow modeling.",
-  },
-  {
-    tag: "Knowledge",
-    title: "AI-Generated Academy Content",
-    body: "Tutorials, glossaries, and frameworks generated and maintained as modular, governed content packages.",
-  },
-];
 
 export default function SolutionsPage() {
   return (
     <>
       <PageHero
         eyebrow="Solutions"
-        title="Built for the jobsite and the boardroom"
-        description="5D construction intelligence for heavy civil contractors, infrastructure owners, PMCM teams, estimators, and project controls managers — engineered for accuracy and auditability, not novelty."
+        title="Three ways Artemis is put to work"
+        description={`ARTEMIS — ${ARTEMIS_FULL} — delivers AI implementation across business operations, heavy-civil construction, and engineering visualization. Construction Intelligence is the public beachhead.`}
       >
         <Button href="/contact" size="lg">
           Request a Pilot
         </Button>
       </PageHero>
 
-      <section className="py-20 lg:py-24">
+      <section className="py-16 lg:py-20">
         <Container>
-          <SectionHeading
-            eyebrow="Capabilities"
-            title="What Artemis can run today and pilot tomorrow"
-            description="Each solution is composed from the same intelligence core — shared artifacts, shared governance, shared visual language."
-          />
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {solutions.map((s) => (
-              <Card key={s.title} className="h-full">
-                <Badge>{s.tag}</Badge>
-                <CardTitle className="mt-4">{s.title}</CardTitle>
-                <CardDescription>{s.body}</CardDescription>
-              </Card>
+          <div className="grid gap-5 lg:grid-cols-3">
+            {solutionPillars.map((p) => (
+              <Link key={p.slug} href={p.href} className="group">
+                <Card className="flex h-full flex-col">
+                  {p.beachhead ? <Badge>Beachhead</Badge> : <Badge>Solution</Badge>}
+                  <CardTitle className="mt-4">{p.title}</CardTitle>
+                  <CardDescription className="flex-1">{p.summary}</CardDescription>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm text-gold">
+                    Explore
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Card>
+              </Link>
             ))}
           </div>
         </Container>

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { footerNav, siteConfig } from "@/lib/site";
+import { siteConfig } from "@/lib/site";
+import { footerNav } from "@/lib/artemis/navigation";
 import { Container } from "@/components/ui/container";
 import { ArtemisMark } from "@/components/layout/ArtemisMark";
 
@@ -9,7 +10,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border/70 bg-navy-deep/40">
       <div className="meander-divider" aria-hidden />
       <Container className="py-14">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div>
             <Link href="/" className="flex items-center gap-3">
               <ArtemisMark className="h-8 w-8 text-gold" />
@@ -25,7 +26,7 @@ export function SiteFooter() {
             <div key={group.heading}>
               <p className="eyebrow">{group.heading}</p>
               <ul className="mt-4 space-y-3">
-                {group.items.map((item) => (
+                {group.links.map((item) => (
                   <li key={`${group.heading}-${item.href}-${item.title}`}>
                     <Link
                       href={item.href}
