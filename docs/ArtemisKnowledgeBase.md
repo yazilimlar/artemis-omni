@@ -64,10 +64,15 @@ A foundation, deliberately not overbuilt:
 
 - `ProductVision.md` — what we're building and why
 - `BrandSystem.md` — palette, type, motifs, disallowed product language
-- `brand/BrandAssetNotes.md` — intake analysis of reference imagery in `/public/brand/reference/` *(reference only)*
+- `brand/BrandAssetNotes.md` — intake analysis of reference imagery in `/docs/brand/reference/` *(reference only)*
 - `BrandArchitecture.md` — umbrella, beachhead, Core modules + verticals *(internal)*
 - `ProductRoadmap.md` — phased sequencing from beachhead to Business OS *(internal)*
 - `ArtemisFlow.md` — Artemis Flow module positioning *(internal, not public)*
+- `ArtemisImplementationDoctrine.md` — the implementation philosophy *(internal)*
+- `ArtemisTransitionMethod.md` — Phase 0–6 current-state → AI-enabled operations *(internal)*
+- `showcases/ExecutiveDemoLibrary.md` — demo asset inventory + classifications *(internal)*
+- `showcases/SystemGraphicsStrategy.md` — visual language for system graphics *(internal)*
+- `showcases/PromptLibrary.md` — macro/micro prompts for future work *(internal)*
 - `ContentSystem.md` — how to author MDX content packages
 - `AIWorkflow.md` — the multi-tool AI operating model
 - `DeploymentPlan.md` — deployment options (Vercel preview / staging / production)
