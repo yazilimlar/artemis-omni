@@ -24,7 +24,7 @@
 
 | # | Asset | Demonstrates | Class | Future route (proposed) | Page type | Integration | Priority |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | **Artemis Construction Intelligence Workbench — LinkedIn RC2** | Flagship 5D construction-intelligence workbench; field→forecast→cash | Public-safe / Production candidate | `/labs/construction-intelligence-workbench` | Labs flagship demo | Medium | **P1** |
+| 1 | **Artemis Construction Intelligence Workbench — LinkedIn RC2** | Geometry-driven 5D project-controls workbench (real-project reference) | **PRIVATE_REFERENCE** (re-classified — see §1) | *none — do not migrate as-is* | Private reference | n/a | **P3** |
 | 2 | **Artemis App Shell Template v0.3** | Reusable Artemis app chrome (nav, panels, theming) | Public-safe / Production candidate | (component layer, not a page) | Shell → React component extraction | Medium | **P1** |
 | 3 | **ESCR Forecast Matrix & Exposure Range Dashboard** | Forecast exposure control; range/confidence on cost exposure | Needs sanitization → Public-safe | `/case-studies/forecast-exposure-control` | Sanitized case study + Labs demo | Medium–High | **P2** |
 | 4 | **DEP Sewer Construction Intelligence Workbench** | 3D/4D/5D heavy-civil workbench on a real program | Needs sanitization → Private demo | `/labs/sewer-construction-workbench` | Private demo first | High | **P2** |
@@ -38,14 +38,19 @@
 
 ## Per-asset notes
 
-### 1 — Artemis Construction Intelligence Workbench (LinkedIn RC2) — **P1**
-- **Business value:** the single best public proof of the 5D construction-intelligence story
-  — connects field production, schedule, cost, and cashflow in one executive surface.
-- **Technical value:** demonstrates the workbench layout that the React app should converge on.
-- **Risk:** "LinkedIn RC2" implies it was prepared for social — confirm it is genuinely free
-  of client data before treating as Public-safe.
-- **Recommendation:** the **first public showcase** (Labs flagship). Optimize, verify no
-  confidential data, then plan a React migration of its layout.
+### 1 — Artemis Construction Intelligence Workbench (LinkedIn RC2) — **PRIVATE_REFERENCE (re-classified)**
+> **The LinkedIn RC2 Construction Intelligence Workbench is not public-migration-ready in its
+> current form. It is deeply entangled with real project data, CMiC-style structures, map/3D
+> logic, and WebGL dependencies. It must be treated as a private reference only. Public demos
+> must use synthetic data and rebuilt UI patterns.**
+- **Why re-classified:** on inspection the asset is a DEP Sewer demonstration (default project
+  name "Artemis DEP Sewer Demonstration", a DEP Sewer tutorial, ~93 DEP references in the
+  engineering logic, plus ESCR/DDC), and it depends on Three.js/WebGL + Leaflet/Mapbox tiles.
+  See `ConstructionIntelligenceWorkbenchInventory.md` for the full Option-C report.
+- **Technical value (private only):** useful internal reference for workbench layout concepts.
+- **Status:** **do not migrate or copy.** Keep in the private demo track.
+- **Public replacement:** a net-new **synthetic** workbench was built at
+  `/labs/construction-intelligence-workbench` (synthetic data, no 3D/maps, no RC2 code/data).
 
 ### 2 — Artemis App Shell Template v0.3 — **P1**
 - **Business value:** consistency — one shell for every future demo/app.
@@ -83,10 +88,12 @@
 - Visual building blocks. #9 (system graphics) can yield **Public-safe** figures for Academy
   and Labs once curated. Renders and brand refs remain **reference only**.
 
-## Recommended sequence (no work performed yet)
+## Recommended sequence
 
-1. **First public showcase:** #1 Construction Intelligence Workbench (LinkedIn RC2) → Labs.
-2. **First private demo:** #4 DEP Sewer Workbench (sanitize later for public).
+1. **First public showcase: DONE** — a net-new **synthetic** Construction Intelligence
+   Workbench was built at `/labs/construction-intelligence-workbench` (synthetic data, no
+   3D/maps, no RC2 code). RC2 itself is **PRIVATE_REFERENCE** (see §1) and was not migrated.
+2. **First private demo:** #4 Utility/Sewer Workbench (sanitize + rebuild later for public).
 3. **First React migration:** #2 App Shell Template v0.3 → reusable `components/` shell.
 
 ## Hard guardrails (this pass)
