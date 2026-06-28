@@ -20,7 +20,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    // suppressHydrationWarning on <html>/<body>: browser extensions (theme / reading /
+    // "text mode" tools) mutate these top-level attributes before React hydrates, which
+    // would otherwise log a benign hydration mismatch. It does NOT hide real mismatches
+    // in our own components — only attribute noise on <html>/<body>.
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         {/*
           Fonts are loaded via Google Fonts links (not next/font) so the build
@@ -39,7 +43,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
         />
       </head>
-      <body className="min-h-dvh">
+      <body className="min-h-dvh" suppressHydrationWarning>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-gold focus:px-4 focus:py-2 focus:text-lunar"
