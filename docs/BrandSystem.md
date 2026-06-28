@@ -11,6 +11,12 @@ grids, fine technical annotations, and project-controls artifacts (cashflow curv
 schedules, BIM/quantity fragments). These are **visual** devices — they dress the
 5D construction intelligence story; they are not the product story themselves.
 
+> **Reference assets:** AI-generated moodboard imagery (Artemis archer, mechanical bow,
+> meander/blueprint motifs, palette direction) lives in `/public/brand/reference/`. Its
+> intake analysis — strengths, risks, and the approved palette direction — is in
+> [`brand/BrandAssetNotes.md`](./brand/BrandAssetNotes.md). Those are *reference only*,
+> not production standards.
+
 ## Palette
 
 Defined as HSL design tokens in `app/globals.css` and surfaced through

@@ -64,6 +64,7 @@ A foundation, deliberately not overbuilt:
 
 - `ProductVision.md` — what we're building and why
 - `BrandSystem.md` — palette, type, motifs, disallowed product language
+- `brand/BrandAssetNotes.md` — intake analysis of reference imagery in `/public/brand/reference/` *(reference only)*
 - `BrandArchitecture.md` — umbrella, beachhead, Core modules + verticals *(internal)*
 - `ProductRoadmap.md` — phased sequencing from beachhead to Business OS *(internal)*
 - `ArtemisFlow.md` — Artemis Flow module positioning *(internal, not public)*
