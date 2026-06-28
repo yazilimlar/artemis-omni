@@ -1,36 +1,33 @@
-# Artemis Brand Assets
+# Artemis Brand Assets (`/public/brand/`)
 
-This folder holds Artemis brand imagery served from `/public`.
+**`/public/brand/` is reserved for approved, optimized, production-ready public website
+assets only** (e.g. an SVG wordmark, transparent logo mark, Open Graph image, favicons,
+optimized `.webp`). Anything in `/public` is served on the public web once deployed, so
+only vetted production assets belong here.
 
-## `/public/brand/reference/` — raw reference assets only
+## Where raw references live
 
-The files in `reference/` are **AI-generated moodboard / reference assets**, not final
-production brand standards. They capture color direction, motifs, and cinematic tone for
-the Artemis identity. See `docs/brand/BrandAssetNotes.md` for the full intake analysis.
+Raw, AI-generated reference / moodboard assets do **NOT** live here. They live privately
+inside the repo at:
 
-Current reference files:
+```
+/docs/brand/reference/
+```
 
-| File | What it is |
-| --- | --- |
-| `artemis-logo-commercial-standard.png` | Brand & system "blueprint" sheet (logo specs, `AR+EMIS` treatment, dashboard mockup) |
-| `artemis-blue-white-hero-reference.png` | Blue wireframe Artemis-archer cinematic poster |
-| `artemis-linkedin-cover-reference.png` | Wide social/cover composition (gold + platinum archer) |
-| `artemis-gold-platinum-reference.jpg` | Gold/platinum archer treatment *(note: file is actually TIFF data — re-encode on optimization)* |
-| `artemis-min-logo-reference.png` | Minimal / single-figure archer reference |
+with the intake analysis in [`/docs/brand/BrandAssetNotes.md`](../../docs/brand/BrandAssetNotes.md).
 
 ## Rules
 
-- ✅ `/public/brand/reference/` contains **raw reference assets only**.
-- ✅ **Production-ready, optimized** assets (SVG wordmark, transparent mark, OG image,
-  favicons, optimized `.webp`) should later live **directly under `/public/brand/`** —
-  not in `reference/`.
-- ⚠️ These references are **not final production logos**. Treat them as a moodboard.
-- ⚠️ **Do not** use reference images as final website hero assets without optimization
+- ✅ `/public/brand/` → approved, optimized, production-ready public assets only.
+- ✅ Raw reference / moodboard images → `/docs/brand/reference/` (not web-served).
+- 🚫 **Do not** put raw AI reference images under `/public` unless explicitly approved for
+  public serving.
+- 🚫 **Do not** use reference images as final website hero/OG assets without optimization
   and explicit approval.
-- 🚫 **Do not delete the originals** in `reference/` without approval.
+- 🚫 **Do not delete** the raw originals in `/docs/brand/reference/` without approval.
 
 ## Status
 
-Intake only. No production assets have been generated yet, and none of these images are
-wired into any page. The public site continues to lead with **5D Construction
-Intelligence** (text-and-SVG hero), unchanged by this intake.
+No production assets exist yet, and none of the reference images are wired into any page.
+The public site continues to lead with **5D Construction Intelligence** (text-and-SVG
+hero), unchanged by the brand intake.

@@ -1,10 +1,10 @@
 # Artemis — Brand Asset Notes (Intake v1)
 
 > **Internal working document.** Analysis of the AI-generated reference assets stored in
-> `/public/brand/reference/`. These are **moodboard / reference** material, **not** final
-> production brand standards. Nothing here changes the public site, which continues to
-> lead with **5D Construction Intelligence** (see `docs/BrandSystem.md`,
-> `docs/BrandArchitecture.md`).
+> `/docs/brand/reference/` (kept **out** of `/public` so they are never web-served). These
+> are **moodboard / reference** material, **not** final production brand standards. Nothing
+> here changes the public site, which continues to lead with **5D Construction
+> Intelligence** (see `docs/BrandSystem.md`, `docs/BrandArchitecture.md`).
 
 ## 1. Purpose
 
@@ -16,7 +16,7 @@ nudity, inconsistent hex) as if they were standards.
 
 ## 2. Asset inventory
 
-Raw files in `/public/brand/reference/`:
+Raw files in `/docs/brand/reference/` (private to the repo, **not** under `/public`):
 
 | Reference file | Source (Desktop) | Depicts |
 | --- | --- | --- |
@@ -155,3 +155,17 @@ When production design begins (separate, approved task):
 - Add an approved, optimized OG image to replace `public/og/artemis-default.svg`.
 - Cross-link finalized standards back into `docs/BrandSystem.md`.
 - Keep this file as the audit trail of what was reference vs. what became standard.
+
+## 12. Repository & maintenance notes
+
+- **Location policy:** raw references live in `/docs/brand/reference/` (private, not
+  web-served). `/public/brand/` is reserved for approved, optimized, production-ready
+  public assets only.
+- **Current size:** the raw reference set is ~17 MB total. This is **acceptable for the
+  private repo at this stage.**
+- **Git LFS:** **do not set up Git LFS yet.** If the brand/media library grows
+  significantly, evaluate **Git LFS, Google Drive, Figma, or another dedicated asset
+  repository** before adding large media files to Git history.
+- **Format flag:** `artemis-gold-platinum-reference.jpg` appears to contain **TIFF data**
+  despite the `.jpg` extension — flag for **re-encoding to true JPEG/WebP** during
+  production optimization (also listed in §10).
