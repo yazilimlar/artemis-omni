@@ -36,6 +36,9 @@ export default function LabsPage() {
           <StatusBadge tone="test">Test mode</StatusBadge>
           <StatusBadge tone="synthetic">Synthetic where live</StatusBadge>
           <StatusBadge tone="private">Private demos protected</StatusBadge>
+          <Button href="/library/programs" variant="outline">
+            Program Index
+          </Button>
         </div>
       </PageHero>
 

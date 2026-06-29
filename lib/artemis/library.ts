@@ -9,6 +9,7 @@ export type LibraryKind =
   | "Strategy"
   | "Brand"
   | "Showcase"
+  | "Program"
   | "Tool";
 
 export type LibraryItem = {
@@ -45,6 +46,15 @@ export const libraryItems: LibraryItem[] = [
     summary: "Triage of workbenches, dashboards, and render references with public/private classification.",
     href: "/demo",
     classification: "Reference only",
+  },
+  {
+    slug: "programs-and-tutorials-catalog",
+    title: "Programs & Tutorials Catalog",
+    kind: "Program",
+    summary:
+      "A public-safe lookup page for attached programs, tutorials, HTML demos, solution cockpits, and exemplary files.",
+    href: "/library/programs",
+    classification: "Public-safe",
   },
   {
     slug: "system-graphics",

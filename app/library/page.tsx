@@ -3,6 +3,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/ui/container";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { libraryItems } from "@/lib/artemis/library";
 import { createMetadata } from "@/lib/seo/metadata";
 
@@ -20,7 +21,14 @@ export default function LibraryPage() {
         eyebrow="Library"
         title="Doctrine, methods, and showcases"
         description="The knowledge behind Artemis — the implementation doctrine, the transition method, tools, and public-safe showcases."
-      />
+      >
+        <div className="flex flex-wrap gap-4">
+          <Button href="/library/programs">Programs & Tutorials</Button>
+          <Button href="/labs" variant="outline">
+            Labs Proof Library
+          </Button>
+        </div>
+      </PageHero>
       <section className="py-16 lg:py-20">
         <Container>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

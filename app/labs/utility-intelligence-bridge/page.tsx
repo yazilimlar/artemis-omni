@@ -36,6 +36,9 @@ export default function UtilityIntelligenceBridgePage() {
         <div className="flex flex-wrap items-center gap-3">
           <StatusBadge tone="public">Public narrative</StatusBadge>
           <StatusBadge tone="private">Private demo protected</StatusBadge>
+          <Button href="/library/programs" variant="outline">
+            Program Index
+          </Button>
           <Button href="/contact" variant="outline">
             Request a Pilot
           </Button>
