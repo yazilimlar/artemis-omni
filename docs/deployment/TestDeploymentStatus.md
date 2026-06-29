@@ -1,8 +1,51 @@
 # Artemis — Test Deployment Status
 
-> **Status: BLOCKED at authentication** (not a code problem). The app is verified and
-> deploy-ready locally, but no GitHub or Vercel credentials are available on this machine to
-> push or deploy autonomously. One credential from the owner unblocks a live URL in minutes.
+> **Status: ✅ LIVE (test) — 2026-06-29.** Deployed to Vercel via a provided Vercel token.
+> **Live URL: https://artemis-omni.vercel.app** (publicly accessible). Custom subdomain
+> `artemis.agoraxai.com` is attached + ownership-verified, pending one owner DNS record.
+> (History of the earlier auth-blocked state is retained below for the record.)
+
+## ✅ Live deployment (2026-06-29)
+
+| Field | Value |
+| --- | --- |
+| Live URL | **https://artemis-omni.vercel.app** |
+| Vercel project | `artemis-omni` (`prj_qHFkwHePIlDCuHEDIbKIv0Sk9RN5`) |
+| Team | `gokmen1313-3041s-projects` (`team_JzrJAUuKZ7Y31aU1d0VYdZTB`) |
+| Deployment ID | `dpl_C8csPdZqNu8W7c4J7Eg4fW8J3tdC` |
+| Target | production · readyState READY · build 42s |
+| Commit deployed | `5343b6b` (local; not yet on a git remote) |
+| Public access | Yes — all routes HTTP 200, not behind deployment protection |
+| Env vars | None required (app default `NEXT_PUBLIC_SITE_URL=https://artemis.agoraxai.com`) |
+
+**Live QA (all HTTP 200):** `/`, `/solutions`, `/products`, `/labs`,
+`/labs/construction-intelligence-workbench`, `/demo`, `/portfolio`, `/contact`,
+`/robots.txt`, `/sitemap.xml`. Workbench renders disclaimer + Project Alpha + KPIs +
+forecast SVG + risk matrix + change register + pilot CTA; **0** sensitive identifiers.
+
+### Custom test subdomain — owner DNS action required
+`artemis.agoraxai.com` is attached to the project and ownership-verified. `agoraxai.com`
+uses **Google nameservers** (`ns-cloud-*.googledomains.com`) — add this record where that
+domain's DNS is managed (Google Cloud DNS / Google Domains):
+
+```
+Type: CNAME
+Name/Host: artemis
+Value: 1f6c6cecc5e2c917.vercel-dns-017.com.
+```
+Alternatives: `CNAME artemis → cname.vercel-dns.com`, or `A artemis → 76.76.21.21`.
+Vercel auto-issues SSL once the record resolves. Until then, use the `*.vercel.app` URL.
+
+### Secret handling
+The provided Vercel token was used **only** in the shell environment for the deploy and was
+**not** written to any file, commit, `.env`, or remote. Rotate it in Vercel when convenient.
+
+---
+
+## (Historical) Status: BLOCKED at authentication — before the token was provided
+
+> The app was verified and deploy-ready locally, but no GitHub or Vercel credentials were
+> available to push or deploy autonomously. Resolved 2026-06-29 by a provided Vercel token.
 
 ## Snapshot
 
