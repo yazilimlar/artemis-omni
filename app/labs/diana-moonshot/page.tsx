@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
 import { ArtemisEmblem } from "@/components/showcase/ArtemisEmblem";
+import { BrandVisualLibrary } from "@/components/showcase/BrandVisualLibrary";
 import { BlueprintFluxDiagram } from "@/components/showcase/BlueprintFluxDiagram";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
@@ -101,6 +102,19 @@ export default function DianaMoonshotPage() {
               subtitle="The logo, dashboard, and architecture language should help a client's leadership team see how their own organization could be mapped without publishing private systems or project artifacts."
               organizationName="Client Company / Organization"
             />
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-b border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Logo Library"
+            title="Curated visual assets for Artemis brand narration"
+            description="The attached Artemis/Diana graphics are now represented as optimized public assets and displayed as a labeled concept library. They support cinematic storytelling, logo direction, and material palette without changing current product-scope boundaries."
+          />
+          <div className="mt-10">
+            <BrandVisualLibrary />
           </div>
         </Container>
       </section>

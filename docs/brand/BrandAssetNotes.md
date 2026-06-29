@@ -109,8 +109,9 @@ primary accent unless a deliberate blue-forward rebrand is approved.
 
 ## 7. Website usage recommendations
 
-- **No change to the public homepage in this pass.** The text-and-SVG **5D Construction
-  Intelligence** hero stays; references are not wired into any page.
+- **Public Labs usage is now approved for optimized concept derivatives.** The text-and-SVG
+  implementation homepage stays focused on Artemis as an execution bridge; the heavier
+  Diana/archer material belongs in Labs brand-experience contexts.
 - The **archer motif** may later appear as a **restrained, cinematic accent** (e.g. a
   faint background relief on About or a Labs cover) — **not** dominating every page, and
   not on the homepage hero.
@@ -119,6 +120,21 @@ primary accent unless a deliberate blue-forward rebrand is approved.
 - The **mechanical bow** is acceptable as an occasional engineering/autonomy accent.
 - Any reference image used on the site must first be **optimized + cropped + approved**
   (see checklist). Never ship a 7 MB PNG as a hero.
+
+### 7.1 Public optimized derivatives
+
+The following optimized concept derivatives are approved for the public Labs brand library
+and live under `/public/brand/`:
+
+| Public asset | Source reference | Public use |
+| --- | --- | --- |
+| `artemis-diana-blue-white-poster.jpg` | Blue/white Diana systems poster | Labs brand-experience feature visual |
+| `artemis-diana-blue-white-logo-study.jpg` | 2026-06-07 logo/poster study | Logo-library reference |
+| `artemis-conceptual-architecture-plaque.jpg` | Minimal graphite plaque | Secondary industrial brand reference |
+| `artemis-gold-platinum-brand-wall.jpg` | Gold/platinum wall concept | Wide material-palette and environment reference |
+
+These files remain **concept assets**, not final logo standards, not homepage hero assets,
+and not robotics-product claims.
 
 ## 8. Social / media usage recommendations
 
@@ -168,8 +184,7 @@ When production design begins (separate, approved task):
 ## 12. Repository & maintenance notes
 
 - **Location policy:** raw references live in `/docs/brand/reference/` (private, not
-  web-served). `/public/brand/` is reserved for approved, optimized, production-ready
-  public assets only.
+  web-served). `/public/brand/` is reserved for approved, optimized public assets only.
 - **Current size:** the raw reference set is ~17 MB total. This is **acceptable for the
   private repo at this stage.**
 - **Git LFS:** **do not set up Git LFS yet.** If the brand/media library grows

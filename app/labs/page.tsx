@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
+import { BrandVisualLibrary } from "@/components/showcase/BrandVisualLibrary";
 import { BlueprintFluxDiagram } from "@/components/showcase/BlueprintFluxDiagram";
 import { CinematicStoryPanel } from "@/components/showcase/CinematicStoryPanel";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
@@ -97,6 +98,9 @@ export default function LabsPage() {
               subtitle="Labs proof gets more credible when every module can be placed inside a client operating system: inputs, governance, workflow, evidence, review, output, and action."
               organizationName="Public-Safe Client Blueprint"
             />
+          </div>
+          <div className="mt-12">
+            <BrandVisualLibrary variant="preview" />
           </div>
         </Container>
       </section>
