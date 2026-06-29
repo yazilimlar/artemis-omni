@@ -29,6 +29,11 @@ const fastLinks = [
     description: "Public brand-experience destination for the Diana demonstrator and visual system.",
   },
   {
+    title: "Insights Engine",
+    href: "/insights",
+    description: "Public-safe article, visual, and tutorial production system inspired by the Atelier format.",
+  },
+  {
     title: "Workbench Shell",
     href: "/labs/construction-intelligence-workbench",
     description: "Synthetic live workbench pattern for future public-safe rebuilds.",

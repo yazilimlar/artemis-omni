@@ -194,6 +194,81 @@ export const programCatalogItems: ProgramCatalogItem[] = [
     boundary:
       "Do not publish the raw package, source HTML, corridor data, actuals, claims logic, agency identifiers, or test-report internals.",
   },
+  {
+    slug: "multimodel-atelier-5d-masterclass",
+    title: "Multimodel Atelier 5D Masterclass",
+    kind: "Tutorial",
+    statusLabel: "Method source",
+    statusTone: "sanitize",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Masterclass reference for modular lessons, live sandbox thinking, multi-AI prompt vaults, QA harnesses, scripted narration, and visual prompt discipline.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Use as the format model for future Artemis education: module promise, build steps, prompt roles, QA checklist, visual idea, and public caveat.",
+    solutionFit:
+      "Supports an AI-assisted publication system where field knowledge becomes reviewed articles, graphics, and implementation playbooks.",
+    migrationPath: [
+      "Extract the module structure without publishing raw HTML.",
+      "Replace private case-study labels with synthetic construction and business scenarios.",
+      "Use /insights as the public operating model for article and visual production.",
+    ],
+    boundary:
+      "Do not publish source HTML, private case-study labels, embedded project specifics, or unreviewed AI prompts.",
+  },
+  {
+    slug: "multimodel-atelier-tutorial-series",
+    title: "Multimodel Atelier Tutorial Series",
+    kind: "Tutorial",
+    statusLabel: "Bilingual source",
+    statusTone: "sanitize",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Bilingual tutorial-series reference for explaining multi-AI synthesis, 5D model semantics, scripted storyboards, and public lesson flow.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Useful for future EN/TR article and lesson formats that teach AI-assisted implementation without exposing private examples.",
+    solutionFit:
+      "Shows how Artemis can teach CEOs, CFOs, project teams, engineers, builders, and operators through role-aware content.",
+    migrationPath: [
+      "Inventory reusable lesson structure and bilingual UX patterns.",
+      "Remove private project references and replace them with synthetic examples.",
+      "Promote the public-safe teaching pattern into Academy and Insights.",
+    ],
+    boundary:
+      "Do not publish raw tutorial HTML, private case-study context, project names, coordinates, or unreviewed bilingual translations.",
+  },
+  {
+    slug: "multimodel-atelier-changelog",
+    title: "Multimodel Atelier Changelog",
+    kind: "Program",
+    statusLabel: "Reference discipline",
+    statusTone: "reference",
+    sourceType: "Attached markdown reference",
+    summary:
+      "Changelog reference for documenting live sandbox improvements, QA hardening, prompt vault changes, visual prompt additions, and release-readiness evidence.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Useful as a model for explaining how Artemis articles, tutorials, and visual systems improve over time.",
+    solutionFit:
+      "Supports disciplined publication operations: every release should have version notes, caveats, test evidence, and public boundary language.",
+    migrationPath: [
+      "Convert changelog structure into public feature notes.",
+      "Keep internal development notes and source filenames private.",
+      "Attach release evidence to future public article and visual updates.",
+    ],
+    boundary:
+      "Do not publish internal source filenames, raw changelog notes, or implementation details that reveal private source material.",
+  },
 ];
 
 export const programCatalogSummary = {
@@ -202,6 +277,7 @@ export const programCatalogSummary = {
     "/labs/utility-intelligence-bridge",
     "/labs/diana-moonshot",
     "/labs/construction-intelligence-workbench",
+    "/insights",
     "/tools",
   ],
 } as const;

@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/portfolio",
     "/library",
     "/library/programs",
+    "/insights",
     "/departments",
     "/about",
     "/contact",

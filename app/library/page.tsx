@@ -24,6 +24,9 @@ export default function LibraryPage() {
       >
         <div className="flex flex-wrap gap-4">
           <Button href="/library/programs">Programs & Tutorials</Button>
+          <Button href="/insights" variant="outline">
+            Insights Engine
+          </Button>
           <Button href="/labs" variant="outline">
             Labs Proof Library
           </Button>

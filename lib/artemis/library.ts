@@ -6,6 +6,7 @@
 export type LibraryKind =
   | "Doctrine"
   | "Method"
+  | "Publishing"
   | "Strategy"
   | "Brand"
   | "Showcase"
@@ -54,6 +55,15 @@ export const libraryItems: LibraryItem[] = [
     summary:
       "A public-safe lookup page for attached programs, tutorials, HTML demos, solution cockpits, and exemplary files.",
     href: "/library/programs",
+    classification: "Public-safe",
+  },
+  {
+    slug: "ai-insight-publication-engine",
+    title: "AI Insight & Publication Engine",
+    kind: "Publishing",
+    summary:
+      "A public-safe editorial system for turning field knowledge, caveats, controls data, and AI review into articles, visuals, and implementation lessons.",
+    href: "/insights",
     classification: "Public-safe",
   },
   {
