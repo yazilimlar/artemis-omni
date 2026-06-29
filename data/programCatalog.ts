@@ -220,6 +220,131 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Do not publish source HTML, delay records, claim names, project identifiers, dates, dollar values, document paths, correspondence, dispute narratives, or legal advice.",
   },
   {
+    slug: "utility-parametric-5d-workbench",
+    title: "Utility Parametric 5D Workbench",
+    kind: "Program",
+    statusLabel: "Private demo reference",
+    statusTone: "private",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Pseudo-named presentation reference for utility modeling: 3D controls, standards library, 4D planning, 5D earned-value logic, and cost-code governance.",
+    bestPublicLink: {
+      href: "/labs/utility-intelligence-bridge",
+      label: "Utility Intelligence Bridge",
+    },
+    tutorialUse:
+      "Use as a demonstration path for model-to-schedule-to-cost reasoning with generic utility construction examples.",
+    solutionFit:
+      "Supports the Utility Intelligence Bridge by showing how standards, geometry, schedule, quantities, and cost coding can become one controlled workbench.",
+    migrationPath: [
+      "Keep the raw utility workbench private.",
+      "Rename the concept for public presentation as Utility Parametric 5D Workbench.",
+      "Extract only sanitized diagrams, workflow copy, and synthetic control examples.",
+    ],
+    boundary:
+      "Do not publish source HTML, agency labels, utility standards, private model logic, cost-code mappings, project parameters, or raw 3D assets.",
+  },
+  {
+    slug: "control-budget-audit-studio",
+    title: "Control Budget Audit Studio",
+    kind: "Solution",
+    statusLabel: "Private demo reference",
+    statusTone: "private",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Pseudo-named presentation reference for budget governance: audit trail, budget split, component breakdown, bid-item ranking, and commercial-control views.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Use as a public-safe storyline for explaining budget traceability, source-of-truth controls, and executive audit readiness.",
+    solutionFit:
+      "Supports model-to-money and executive finance narratives without exposing raw budget records.",
+    migrationPath: [
+      "Keep raw budget data and audit records private.",
+      "Rename the concept for presentation as Control Budget Audit Studio.",
+      "Create synthetic budget examples before any public article or demo.",
+    ],
+    boundary:
+      "Do not publish source HTML, raw budget data, person names, project identifiers, bid items, audit records, or dollar values.",
+  },
+  {
+    slug: "field-production-story-theater",
+    title: "Field Production Story Theater",
+    kind: "Showcase",
+    statusLabel: "Private visual reference",
+    statusTone: "private",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Pseudo-named visual reference for an interactive field narrative: mission framing, infrastructure context, stakeholder education, and engineering ecosystem visuals.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Use as a format model for cinematic field education and public knowledge articles.",
+    solutionFit:
+      "Supports the Artemis public storytelling layer by turning technical field context into a narrated, role-aware experience.",
+    migrationPath: [
+      "Keep the raw field story private.",
+      "Extract presentation structure, narrative cadence, and visual treatment only.",
+      "Rebuild future public versions with synthetic or approved public context.",
+    ],
+    boundary:
+      "Do not publish source HTML, project names, organization names, site history, visit details, embedded private narrative content, or raw media.",
+  },
+  {
+    slug: "forecast-exposure-matrix",
+    title: "Forecast Exposure Matrix",
+    kind: "Solution",
+    statusLabel: "Private demo reference",
+    statusTone: "private",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Pseudo-named presentation reference for forecast exposure: executive rules, exposure ranges, design logic, and PM forecast-to-budget comparison patterns.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Use as a source pattern for articles and visuals about forecast ranges, cash timing, assumptions, and escalation thresholds.",
+    solutionFit:
+      "Supports the Forecast Exposure Control Center narrative and future public-safe finance/control tutorials.",
+    migrationPath: [
+      "Keep the raw forecast dashboard private.",
+      "Rename the concept for presentation as Forecast Exposure Matrix.",
+      "Rebuild charts with synthetic figures and explicit caveats.",
+    ],
+    boundary:
+      "Do not publish source HTML, raw forecast data, project identifiers, budget labels, exposure values, or source formulas.",
+  },
+  {
+    slug: "category-risk-ownership-lens",
+    title: "Category Risk Ownership Lens",
+    kind: "Solution",
+    statusLabel: "Private demo reference",
+    statusTone: "private",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Pseudo-named presentation reference for category-level exposure: winners, losers, ownership lens, delta audit, and risk classification.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Use as an advanced article format for explaining who owns risk, which category moved, and what executive decision is required.",
+    solutionFit:
+      "Extends forecast exposure storytelling into ownership, accountability, and decision routing.",
+    migrationPath: [
+      "Keep the raw category-risk dashboard private.",
+      "Rename the concept for presentation as Category Risk Ownership Lens.",
+      "Extract sanitized category logic and rebuild with synthetic exposure values.",
+    ],
+    boundary:
+      "Do not publish source HTML, raw category data, real-party ownership labels, project identifiers, exposure values, or source formulas.",
+  },
+  {
     slug: "multimodel-atelier-5d-masterclass",
     title: "Multimodel Atelier 5D Masterclass",
     kind: "Tutorial",

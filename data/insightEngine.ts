@@ -316,6 +316,66 @@ export const presentationAssignments: PresentationAssignment[] = [
     publicRule:
       "Do not publish raw records, source HTML, claim names, project identifiers, dates, dollar values, document paths, or dispute narratives.",
   },
+  {
+    title: "Private utility parametric workbench reference",
+    pseudoName: "Utility Parametric 5D Workbench",
+    status: "Private demo reference",
+    tone: "private",
+    sourcePattern:
+      "Parametric utility model with 3D model controls, standards library, 4D planning controls, 5D earned-value logic, and cost-code mapping.",
+    presentationUse:
+      "Use as a visual demonstration of how design, geometry, standards, schedule, quantities, cost codes, and PM controls can be narrated as one implementation system.",
+    publicRule:
+      "Do not publish raw source HTML, agency labels, utility standards, private model logic, cost-code mappings, or project-specific parameters.",
+  },
+  {
+    title: "Private control-budget audit reference",
+    pseudoName: "Control Budget Audit Studio",
+    status: "Private demo reference",
+    tone: "private",
+    sourcePattern:
+      "Budget intelligence interface with audit trail, budget split, component breakdown, bid-item ranking, and commercial-control views.",
+    presentationUse:
+      "Use as a presentation story for executive budget governance: source of truth, component traceability, auditability, and model-to-money review.",
+    publicRule:
+      "Do not publish raw budget data, person names, project identifiers, bid items, audit records, dollar values, or source HTML.",
+  },
+  {
+    title: "Private field-story ecosystem reference",
+    pseudoName: "Field Production Story Theater",
+    status: "Private visual reference",
+    tone: "private",
+    sourcePattern:
+      "Interactive field narrative with mission framing, infrastructure context, stakeholder education, and blue engineering ecosystem visuals.",
+    presentationUse:
+      "Use as a format model for cinematic public education: field story, stakeholder map, engineering logic, and implementation lessons without revealing source records.",
+    publicRule:
+      "Do not publish raw field-story HTML, project names, organization names, site history, visit details, or embedded private narrative content.",
+  },
+  {
+    title: "Private forecast matrix reference",
+    pseudoName: "Forecast Exposure Matrix",
+    status: "Private demo reference",
+    tone: "private",
+    sourcePattern:
+      "Forecast matrix dashboard with executive rules, exposure ranges, design logic, and PM forecast-to-budget comparison patterns.",
+    presentationUse:
+      "Use as the public-safe backbone for explaining forecast exposure, confidence ranges, cash timing, and executive escalation rules.",
+    publicRule:
+      "Do not publish raw forecast data, project identifiers, budget labels, exposure values, source formulas, or source HTML.",
+  },
+  {
+    title: "Private category-risk lens reference",
+    pseudoName: "Category Risk Ownership Lens",
+    status: "Private demo reference",
+    tone: "private",
+    sourcePattern:
+      "Risk lens extension for winners, losers, category ownership, delta audit, and exposure classification across commercial categories.",
+    presentationUse:
+      "Use as a sharper executive narrative for who owns the risk, which category moved, why it moved, and what decision is required next.",
+    publicRule:
+      "Do not publish raw category data, risk ownership labels tied to real parties, project identifiers, exposure values, or source HTML.",
+  },
 ];
 
 export const atelierSources: AtelierSource[] = [
