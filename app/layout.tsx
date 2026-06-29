@@ -1,9 +1,31 @@
 import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { createMetadata, organizationJsonLd } from "@/lib/seo/metadata";
 import { siteConfig } from "@/lib/site";
+
+const sans = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-artemis-sans",
+  display: "swap",
+});
+
+const serif = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-artemis-serif",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-artemis-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -24,19 +46,8 @@ export default function RootLayout({
     // "text mode" tools) mutate these top-level attributes before React hydrates, which
     // would otherwise log a benign hydration mismatch. It does NOT hide real mismatches
     // in our own components — only attribute noise on <html>/<body>.
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable} dark`} suppressHydrationWarning>
       <head>
-        {/*
-          Fonts are loaded via Google Fonts links (not next/font) so the build
-          never depends on network font fetching. If offline, the CSS variable
-          fallbacks (Georgia / system sans / system mono) apply gracefully.
-        */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
