@@ -42,6 +42,10 @@ const config: Config = {
         },
         lunar: "hsl(var(--lunar))",
         silver: "hsl(var(--silver))",
+        blueprint: {
+          DEFAULT: "hsl(var(--blueprint))",
+          soft: "hsl(var(--blueprint-soft))",
+        },
         gold: {
           DEFAULT: "hsl(var(--gold))",
           soft: "hsl(var(--gold-soft))",

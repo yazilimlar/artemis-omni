@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { products } from "@/lib/artemis/products";
 
 /**
  * Pilot intake form — STATIC UI ONLY in this phase.
@@ -10,48 +9,46 @@ import { products } from "@/lib/artemis/products";
  * explains the form is not yet active. When wired later, POST via a server action
  * with keys in env vars (see docs/SecurityRules.md).
  */
-const industries = [
-  "Heavy civil / infrastructure",
-  "General contractor",
+const projectTypes = [
+  "Heavy civil contractor",
+  "Infrastructure owner",
+  "PMCM team",
   "Engineering / design",
-  "Owner / developer",
   "Other",
 ];
 
-const timelines = ["Exploring", "This quarter", "Next quarter", "Specific deadline"];
+const cadences = ["Daily", "Weekly", "Monthly", "Ad-hoc / on demand"];
 
 export function PilotIntakeForm() {
   return (
-    <form
-      className="space-y-5"
-      onSubmit={(e) => e.preventDefault()}
-      aria-describedby="pilot-form-notice"
-    >
+    <form className="space-y-5" onSubmit={(e) => e.preventDefault()} aria-describedby="pilot-form-notice">
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Name" name="name" autoComplete="name" />
         <Field label="Company" name="company" autoComplete="organization" />
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Email" name="email" type="email" autoComplete="email" />
-        <Select label="Industry" name="industry" options={industries} />
+        <Field label="Work email" name="email" type="email" autoComplete="email" />
+        <Select label="Project / company type" name="projectType" options={projectTypes} />
       </div>
-      <Field label="Current systems (ERP, P6, Excel, etc.)" name="currentSystems" />
-      <Field label="Main pain point" name="painPoint" />
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Select
-          label="Preferred module"
-          name="module"
-          options={products.map((p) => p.name)}
-        />
-        <Select label="Timeline" name="timeline" options={timelines} />
-      </div>
+      <Field label="Current systems (ERP / CMiC, P6, Excel, accounting, file shares…)" name="currentSystems" />
+      <Field label="Primary data sources (schedule, cost, field, billing…)" name="dataSources" />
+      <Select label="Reporting cadence" name="reportingCadence" options={cadences} />
       <label className="block">
-        <span className="mb-1.5 block text-sm text-foreground/80">Message</span>
+        <span className="mb-1.5 block text-sm text-foreground/80">Current pain points</span>
         <textarea
-          name="message"
-          rows={5}
+          name="painPoints"
+          rows={4}
           className="w-full rounded-md border border-border bg-navy-deep/60 px-3 py-2.5 text-sm text-parchment outline-none focus:border-gold/60"
-          placeholder="Tell us about the project, the data you have, and where the pain is."
+          placeholder="Where do cost, schedule, and cash visibility break down today?"
+        />
+      </label>
+      <label className="block">
+        <span className="mb-1.5 block text-sm text-foreground/80">Desired pilot outcome</span>
+        <textarea
+          name="pilotOutcome"
+          rows={4}
+          className="w-full rounded-md border border-border bg-navy-deep/60 px-3 py-2.5 text-sm text-parchment outline-none focus:border-gold/60"
+          placeholder="What decision or report should be faster, clearer, or more defensible after the pilot?"
         />
       </label>
 

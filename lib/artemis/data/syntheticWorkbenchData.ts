@@ -159,4 +159,61 @@ export const assumptions: Assumption[] = [
 export const framing = {
   isA: "A synthetic demonstration of Artemis construction-intelligence patterns — KPI tracking, a four-way forecast comparison, risk/opportunity, change exposure, and an audit-aware data path.",
   isNot: "Synthetic and illustrative only. It is not connected to any ERP, CMiC, or other live system, and the figures do not represent any actual project, owner, or contractor.",
+  isList: [
+    "A four-way forecast comparison (Bid vs Actuals vs PM Forecast vs System Projection)",
+    "An audit-aware data path with source-labeled assumptions and confidence",
+    "A reusable executive workbench pattern on synthetic Project Alpha data",
+  ],
+  isNotList: [
+    "Real project, owner, contractor, employer, or client data",
+    "Connected to any CMiC, ERP, or other live system",
+    "A guarantee of accuracy — figures are illustrative",
+  ],
 };
+
+/** Executive thesis + the decision the workbench improves. */
+export const thesis = {
+  statement:
+    "A forecast is only useful if it is trustworthy. This workbench shows cost and cash exposure as four comparable views, each traceable to its source — so the number in the boardroom matches the number in the field.",
+  decisionImproved:
+    "Where is cost and cash exposure building, how confident are we, and what is the next action — contingency, resequencing, or escalation?",
+};
+
+/** Formula traceability — every computed value exposes its inputs and sources. */
+export type FormulaRow = {
+  output: string;
+  formula: string;
+  inputs: string;
+  source: string;
+};
+
+export const formulaTrace: FormulaRow[] = [
+  {
+    output: "CPI (cost performance index)",
+    formula: "earned value ÷ actual cost",
+    inputs: "earned value, actual cost",
+    source: "ERP-style cost workflow (synthetic)",
+  },
+  {
+    output: "SPI (schedule performance index)",
+    formula: "earned value ÷ planned value",
+    inputs: "earned value, planned value",
+    source: "synthetic schedule",
+  },
+  {
+    output: "System Projection (cost at completion)",
+    formula: "actuals + (remaining work ÷ CPI), trend-adjusted",
+    inputs: "actuals, remaining work, CPI, production trend",
+    source: "actuals + production trend (synthetic)",
+  },
+  {
+    output: "Cash exposure",
+    formula: "System Projection − Bid Estimate, net of retention/terms",
+    inputs: "system projection, bid estimate, payment terms",
+    source: "forecast + contract terms (synthetic)",
+  },
+];
+
+/** Plain-language reading of the synthetic risk/opportunity picture. */
+export const riskInterpretation =
+  "At Forecast Period 04, actuals run modestly above bid (CPI ≈ 0.98) while schedule is slightly ahead (SPI ≈ 1.02). The system projection sits above the PM forecast, signaling cost/cash exposure concentrated in Package A productivity (R-001). The early-access opportunity (O-001) is the most credible offset. Recommended next action: hold contingency against R-001 and pull-plan O-001 before committing it to the forecast.";

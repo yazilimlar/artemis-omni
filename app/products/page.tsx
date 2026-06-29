@@ -24,6 +24,29 @@ export default function ProductsPage() {
       />
       <section className="py-16 lg:py-20">
         <Container>
+          <div className="mb-10 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-gold/30 bg-gold/5 p-4">
+              <p className="eyebrow">Current public lead</p>
+              <p className="mt-1 text-sm text-foreground/85">
+                <span className="text-parchment">Artemis Construct</span> — 5D Construction
+                Intelligence is the public beachhead.
+              </p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-navy-deep/40 p-4">
+              <p className="eyebrow">Module-level</p>
+              <p className="mt-1 text-sm text-foreground/85">
+                <span className="text-parchment">Artemis Flow</span> is a finance/cashflow
+                module — not the company name.
+              </p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-navy-deep/40 p-4">
+              <p className="eyebrow">Future / internal</p>
+              <p className="mt-1 text-sm text-foreground/85">
+                The broader Business OS (Docs, Connect, Ops, Twin/Atlas) is a roadmap,
+                introduced as credibility compounds.
+              </p>
+            </div>
+          </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((p) => {
               const linked = Boolean(p.route);
