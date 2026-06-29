@@ -47,6 +47,11 @@ const config: Config = {
           soft: "hsl(var(--gold-soft))",
         },
         parchment: "hsl(var(--parchment))",
+        signal: {
+          DEFAULT: "hsl(var(--signal-blue))",
+          soft: "hsl(var(--crescent-blue))",
+        },
+        platinum: "hsl(var(--platinum))",
       },
       fontFamily: {
         serif: ["var(--font-serif)", "Georgia", "Cambria", "serif"],

@@ -6,6 +6,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
+import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
@@ -23,6 +24,16 @@ const nodeDetails = [
   "Human review point",
   "Decision output",
 ] as const;
+
+function getDashboardVariant(slug: string): "cashflow" | "flux" | "field" {
+  if (["contractors", "project-managers", "technicians", "crews", "engineers"].includes(slug)) {
+    return "field";
+  }
+  if (["cfos", "executives", "board-teams", "holdings"].includes(slug)) {
+    return "cashflow";
+  }
+  return "flux";
+}
 
 export const dynamicParams = false;
 
@@ -50,6 +61,7 @@ export default async function AudienceLandingPage({ params }: PageProps) {
   if (!audience) notFound();
 
   const proofModules = getProofModules(audience.proofModuleSlugs);
+  const dashboardVariant = getDashboardVariant(audience.slug);
   const diagramNodes = audience.connects.slice(0, 4).map((label, index) => ({
     label,
     detail: nodeDetails[index] ?? "Operating signal",
@@ -106,6 +118,13 @@ export default async function AudienceLandingPage({ params }: PageProps) {
             not include client facts, private project data, financial account data, backend
             integrations, analytics, or form wiring.
           </ConfidenceNote>
+        </Container>
+        <Container className="mt-5">
+          <LiveDashboardCard
+            title={`${audience.label} operating pulse`}
+            subtitle="A lightweight animated view of connected signals, confidence, exposure, and next action."
+            variant={dashboardVariant}
+          />
         </Container>
       </section>
 

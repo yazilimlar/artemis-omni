@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
+import { GeodesicRenderCard } from "@/components/showcase/GeodesicRenderCard";
 import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
@@ -72,6 +73,22 @@ export default function GeodesicIntelligencePage() {
       </section>
 
       <section className="border-y border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="3D Render Direction"
+            title="Spatial intelligence needs a credible geometry signal"
+            description="The public render suggests geodesic depth, fabrication logic, and spatial review without shipping raw Three.js demos, GLB assets, maps, coordinates, or private models."
+          />
+          <div className="mt-10">
+            <GeodesicRenderCard
+              title="Public-safe geodesic shell"
+              caption="A lightweight SVG/CSS spatial render for the Labs narrative. It carries the geometry mood without exposing source workbench internals."
+            />
+          </div>
+        </Container>
+      </section>
+
+      <section className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Implementation Pathway"

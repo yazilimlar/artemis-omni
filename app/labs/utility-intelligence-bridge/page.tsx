@@ -4,6 +4,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
+import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
@@ -73,6 +74,23 @@ export default function UtilityIntelligenceBridgePage() {
       </section>
 
       <section className="border-y border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Live Dashboard Treatment"
+            title="Utility intelligence should feel like a field-to-finance control room"
+            description="The animated dashboard is a public-safe visual translation of the private-demo ambition: production pulse, commercial exposure, and review confidence without releasing raw workbench code."
+          />
+          <div className="mt-10">
+            <LiveDashboardCard
+              title="Utility production pulse"
+              subtitle="Work package status, blocker pressure, installed quantities, exposure, and next action."
+              variant="field"
+            />
+          </div>
+        </Container>
+      </section>
+
+      <section className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="What Artemis Connects"

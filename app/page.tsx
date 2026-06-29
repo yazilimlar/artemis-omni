@@ -1,10 +1,14 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { BlueprintFluxDiagram } from "@/components/showcase/BlueprintFluxDiagram";
 import { AudienceCard } from "@/components/showcase/AudienceCard";
+import { CinematicStoryPanel } from "@/components/showcase/CinematicStoryPanel";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
+import { GeodesicRenderCard } from "@/components/showcase/GeodesicRenderCard";
 import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
+import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
@@ -85,17 +89,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          <SystemDiagramCard
-            title="The Artemis execution bridge"
-            description="A lightweight executive model for connecting operating fundamentals to reviewable AI-enabled outputs."
-            decision="Which project or workflow signal requires action before it becomes margin, cashflow, or delivery risk?"
-            nodes={[
-              { label: "Sources", detail: "Design, documents, models, systems", tone: "source" },
-              { label: "Logic", detail: "Quantities, formulas, forecast rules", tone: "logic" },
-              { label: "Review", detail: "Human gates, assumptions, exceptions", tone: "review" },
-              { label: "Action", detail: "Executive decision and next owner", tone: "output" },
-            ]}
-            outcome="A trusted operating picture with clear confidence, limits, and next action."
+          <LiveDashboardCard
+            title="A living execution dashboard"
+            subtitle="Animated proof of the operating story: forecast corridor, data flux, confidence, exposure, and action."
+            variant="cashflow"
           />
         </Container>
         <div className="meander-divider" aria-hidden />
@@ -111,10 +108,50 @@ export default function HomePage() {
           <div className="mt-10">
             <ValueChainStrip />
           </div>
+          <div className="mt-8">
+            <BlueprintFluxDiagram />
+          </div>
         </Container>
       </section>
 
       <section className="py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Cinematic Operating Story"
+            title="The site now shows motion with purpose"
+            description="The visual layer is not decoration. It narrates the movement from disconnected field signals into reviewed forecasts, system projections, and executive action."
+          />
+          <div className="mt-10 grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+            <CinematicStoryPanel
+              title="From signal to decision"
+              summary="A pilot story should unfold like an executive review: what changed, what it affects, who reviews it, and what action follows."
+              scenes={[
+                {
+                  label: "Scene 01",
+                  title: "Field reality moves first",
+                  body: "Production, blockers, quantities, and change signals update before the monthly report can explain them.",
+                },
+                {
+                  label: "Scene 02",
+                  title: "Artemis connects the evidence",
+                  body: "Design, schedule, actual cost, billing, and PM judgment become one reviewed operating chain.",
+                },
+                {
+                  label: "Scene 03",
+                  title: "Executives get action, not noise",
+                  body: "The output is a forecast range, confidence note, risk/opportunity flag, and named owner for next action.",
+                },
+              ]}
+            />
+            <GeodesicRenderCard
+              title="3D geometry without publishing private models"
+              caption="The geodesic render suggests depth, fabrication logic, and spatial intelligence while staying SVG/CSS-only and public-safe."
+            />
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-t border-border/60 py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Proof Library Preview"

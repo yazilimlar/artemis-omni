@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
+import { ArtemisEmblem } from "@/components/showcase/ArtemisEmblem";
+import { BlueprintFluxDiagram } from "@/components/showcase/BlueprintFluxDiagram";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
@@ -73,6 +75,29 @@ export default function DianaMoonshotPage() {
       </section>
 
       <section className="border-y border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Brand Operationalization"
+            title="Logo, dashboard, and system diagram become one operating language"
+            description="The attached blueprint direction is translated into a clean public pattern: full-color emblem, animated architecture diagram, and executive dashboard surfaces without copying artifact text or raw source files."
+          />
+          <div className="mt-10 grid items-center gap-5 lg:grid-cols-[0.38fr_1fr]">
+            <div className="cinematic-breathe rounded-2xl border border-gold/25 bg-navy-deep/55 p-8 text-center shadow-panel">
+              <ArtemisEmblem className="mx-auto h-44 w-44" label="Artemis operational emblem" />
+              <p className="mt-6 font-mono text-[0.68rem] uppercase tracking-wider text-signal-soft">
+                Operational mark study
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Crescent, Delta-A, gold, platinum, and cyan are treated as a cinematic accent
+                system. The primary public wordmark remains readable Artemis.
+              </p>
+            </div>
+            <BlueprintFluxDiagram />
+          </div>
+        </Container>
+      </section>
+
+      <section className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Experience System"

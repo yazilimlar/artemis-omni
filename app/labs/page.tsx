@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
+import { BlueprintFluxDiagram } from "@/components/showcase/BlueprintFluxDiagram";
+import { CinematicStoryPanel } from "@/components/showcase/CinematicStoryPanel";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
+import { GeodesicRenderCard } from "@/components/showcase/GeodesicRenderCard";
+import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
@@ -51,6 +55,44 @@ export default function LabsPage() {
       </section>
 
       <section className="py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Visual Proof Engine"
+            title="Cinematic proof without raw demo embedding"
+            description="The new visual layer borrows the safe direction from the attached references: living dashboards, flux diagrams, geodesic renders, and story scenes rebuilt as public-safe SVG/CSS components."
+          />
+          <div className="mt-10 grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+            <LiveDashboardCard variant="flux" />
+            <GeodesicRenderCard />
+          </div>
+          <div className="mt-5 grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+            <CinematicStoryPanel
+              title="The proof library should move like an executive demo"
+              summary="The motion system points to the decision chain, not to spectacle. Every animated surface is tied to source, logic, review, output, and limitation."
+              scenes={[
+                {
+                  label: "Frame 01",
+                  title: "Signal enters",
+                  body: "A field, model, finance, or governance signal enters the operating chain.",
+                },
+                {
+                  label: "Frame 02",
+                  title: "Logic applies",
+                  body: "Quantities, schedule rules, forecast assumptions, and cashflow logic turn it into a reviewable issue.",
+                },
+                {
+                  label: "Frame 03",
+                  title: "Action exits",
+                  body: "The executive view shows confidence, limitation, owner, and next step.",
+                },
+              ]}
+            />
+            <BlueprintFluxDiagram />
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-t border-border/60 py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Proof Cards"
