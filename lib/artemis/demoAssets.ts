@@ -6,8 +6,8 @@
  *
  * NOTE: this data model is rendered on PUBLIC routes (/demo, /portfolio, home), so
  * asset names/notes here use generic descriptors only — real client/agency/project
- * identifiers (e.g. ESCR, DEP, "Reach K") are kept out of public copy and live only
- * in the internal strategy doc docs/showcases/ExecutiveDemoLibrary.md.
+ * identifiers are kept out of public copy and live only in the internal strategy
+ * doc docs/showcases/ExecutiveDemoLibrary.md.
  */
 export type DemoClassification =
   | "Public-safe"

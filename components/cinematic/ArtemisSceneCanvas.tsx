@@ -16,7 +16,7 @@ import {
  *
  * Deliberately NOT WebGL in this first pass: it's a composed set of floating
  * HTML/SVG artifacts with CSS float animations and a light pointer-parallax.
- * This keeps first load tiny and guarantees it works without WebGL, while
+ * This keeps first load tiny and independent from WebGL, while
  * establishing the structure/visual direction for a future React Three Fiber
  * scene (which would be swapped in behind this same component boundary and
  * lazy-loaded the same way).

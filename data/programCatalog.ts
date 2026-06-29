@@ -71,13 +71,13 @@ export const programCatalogItems: ProgramCatalogItem[] = [
   },
   {
     slug: "diana-moonshot-demonstrator",
-    title: "Diana Animated Intelligence Demonstrator",
+    title: "Diana Moonshot Demonstrator",
     kind: "Brand demo",
     statusLabel: "Public narrative live",
     statusTone: "test",
     sourceType: "Attached local HTML reference",
     summary:
-      "Cinematic brand demonstrator with 2D-to-3D transition logic, scan beams, engineering overlays, and the Diana/Artemis visual system.",
+      "Cinematic brand demonstrator with 2D-to-3D transition logic, scan beams, engineering overlays, moonshot sequencing, and the Diana/Artemis visual system.",
     bestPublicLink: {
       href: "/labs/diana-moonshot",
       label: "Diana Moonshot",
@@ -92,7 +92,32 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Use the Diana Moonshot page as the public-safe destination.",
     ],
     boundary:
-      "This is a brand-experience reference, not evidence that robotics products exist today.",
+      "This is a brand-experience reference, not a current product-capability claim.",
+  },
+  {
+    slug: "diana-threejs-standalone-viewer",
+    title: "Diana Three.js Standalone Viewer",
+    kind: "Brand demo",
+    statusLabel: "Private 3D reference",
+    statusTone: "private",
+    sourceType: "Attached standalone HTML reference",
+    summary:
+      "Standalone embedded 3D viewer reference for the Diana visual system, including model presentation, camera treatment, lighting, and viewer-state behavior.",
+    bestPublicLink: {
+      href: "/labs/diana-moonshot",
+      label: "Diana Moonshot",
+    },
+    tutorialUse:
+      "Useful as a private reference for future brand-experience build notes, camera choreography, and optimized 3D presentation guidance.",
+    solutionFit:
+      "Supports the Diana Moonshot showcase as the visual source direction for a future rebuilt public viewer or rendered asset sequence.",
+    migrationPath: [
+      "Keep the embedded 3D payload and raw viewer private.",
+      "Extract only presentation decisions, still renders, and public-safe motion language.",
+      "Rebuild any public 3D viewer with reviewed assets, licensing notes, and performance budgets.",
+    ],
+    boundary:
+      "Do not publish the standalone viewer, embedded model payload, or source code until the viewer is rebuilt and reviewed for licensing, performance, and public messaging.",
   },
   {
     slug: "utility-bridge-cockpit-v1",
@@ -127,7 +152,7 @@ export const programCatalogItems: ProgramCatalogItem[] = [
     statusTone: "private",
     sourceType: "Attached local HTML reference",
     summary:
-      "Advanced dual-story cockpit concept for field status, actuals, claim posture, public-demo GIS treatment, and executive controls.",
+      "Advanced dual-story cockpit concept for field status, actuals, claim posture, GIS-style presentation, and executive controls.",
     bestPublicLink: {
       href: "/labs/utility-intelligence-bridge",
       label: "Utility Intelligence Bridge",
@@ -143,6 +168,31 @@ export const programCatalogItems: ProgramCatalogItem[] = [
     ],
     boundary:
       "Do not publish raw GIS, actuals, claims logic, project naming, or source HTML. Use only public-safe narrative and synthetic examples.",
+  },
+  {
+    slug: "utility-gis-actuals-deliverables-package",
+    title: "Utility GIS + Actuals Deliverables Package",
+    kind: "Showcase",
+    statusLabel: "Deliverables package",
+    statusTone: "private",
+    sourceType: "Attached ZIP reference",
+    summary:
+      "Protected deliverables bundle for the utility cockpit lineage, including clean public-demo treatment, GIS-style corridor data, and verification notes.",
+    bestPublicLink: {
+      href: "/labs/utility-intelligence-bridge",
+      label: "Utility Intelligence Bridge",
+    },
+    tutorialUse:
+      "Useful as a private implementation checklist for how public demo files, map treatment, and test evidence should be packaged together.",
+    solutionFit:
+      "Strengthens the Utility Intelligence Bridge proof story by showing the future private-pilot handoff pattern: demo, spatial reference, and validation report.",
+    migrationPath: [
+      "Keep the ZIP and contained source files out of public routes.",
+      "Extract only sanitized verification patterns and generic map/corridor concepts.",
+      "Rebuild future public examples with synthetic corridor data and approved screenshots.",
+    ],
+    boundary:
+      "Do not publish the raw package, source HTML, corridor data, actuals, claims logic, agency identifiers, or test-report internals.",
   },
 ];
 

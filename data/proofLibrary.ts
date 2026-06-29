@@ -221,7 +221,7 @@ export const proofModules: ProofModule[] = [
       "A clear boundary between ambition and current product scope",
     ],
     boundary:
-      "This is a brand and experience layer, not a claim that robotics products exist today.",
+      "This is a brand and experience layer, not a current product-capability claim.",
   },
   {
     slug: "system-graphics-library",

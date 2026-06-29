@@ -66,7 +66,7 @@ export default function ProgramsCatalogPage() {
             items={[
               "Not a public folder of raw local HTML files.",
               "Not an iframe wrapper around private demos.",
-              "Not a claim that every attached reference is production-ready.",
+              "Not a claim that every attached reference is ready for public release.",
             ]}
           />
         </Container>

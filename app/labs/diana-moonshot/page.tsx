@@ -68,7 +68,7 @@ export default function DianaMoonshotPage() {
             <WhatItIsNotBox
               items={[
                 "Not a separate product line.",
-                "Not evidence that robotics products exist today.",
+                "Not current product-capability evidence.",
                 "Not decorative visual work that avoids the operating-system argument.",
               ]}
             />

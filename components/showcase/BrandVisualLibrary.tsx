@@ -60,7 +60,7 @@ export function BrandVisualLibrary({ variant = "full" }: BrandVisualLibraryProps
           </div>
           <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
             Public boundary: these are optimized concept assets, not final product claims,
-            not raw source files, and not evidence that robotics products exist today.
+            not raw source files, and not current product-capability evidence.
           </p>
           {isPreview ? (
             <div className="mt-6">
