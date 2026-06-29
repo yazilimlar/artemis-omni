@@ -90,3 +90,32 @@ default. Any future test keys go in Vercel env (Preview/Test scope) only.
 1. Owner provides a Vercel token (fastest) or a GitHub auth path.
 2. Re-run the unblock commands above → obtain `*.vercel.app` URL → attach test subdomain.
 3. Run live QA (Milestone 6) and update this file with the URLs and results.
+
+---
+
+## Update — 2026-06-29 (Vercel MCP available; auth still required to upload)
+
+A **Vercel MCP integration is connected and authenticated** (team
+`gokmen1313-3041's projects`, `team_JzrJAUuKZ7Y31aU1d0VYdZTB`). However, the MCP tools are
+**read/advisory** — `deploy_to_vercel` only returns guidance ("run `vercel deploy`" / "push
+to git"); there is no MCP tool that uploads local build artifacts. So a live deploy still
+needs one of: a **Vercel CLI token**, an interactive `vercel login`, or a GitHub repo wired
+to Vercel's git integration.
+
+Findings:
+- Existing Vercel project `project-kmdyz` (`prj_wGLpsmxXO3AHSnTx3XlTwrAq8bmm`) is **empty**
+  (no framework, no deployments, no domains, not live).
+- **GitHub App device flow is DISABLED** for the provided app
+  (`device_flow_disabled`) — Client ID `Iv23liSZ3gsaq51Ox8fu`, App ID `4171060`. A Client ID
+  alone (no secret/private key) cannot push without device flow enabled.
+- Domain `agorax.ai` is **not available for purchase** → fallback domains #3/#4 are out.
+  Viable test hosts: **`artemis.agoraxai.com`** or **`test.agoraxai.com`** (CNAME on the
+  owner's Squarespace DNS), or the Vercel preview URL.
+
+### One-action unblocks (pick one)
+- **A — Vercel token (fastest, no GitHub):** Vercel → Account Settings → Tokens → Create →
+  share it. Then: `cd artemis-omni && vercel deploy --prod --yes --token "$T" --name artemis-omni`
+  → live `*.vercel.app` URL; then `vercel domains add artemis.agoraxai.com --token "$T"`.
+- **B — Enable Device Flow** on the GitHub App (App settings → "Enable Device Flow" → Save),
+  then I re-run device auth → create private repo → push → connect Vercel.
+- **C — GitHub PAT or the App's private key (.pem)** → create repo + push → import to Vercel.
