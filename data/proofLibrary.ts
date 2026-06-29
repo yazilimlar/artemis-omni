@@ -38,6 +38,33 @@ export const artemisBridgeValueChain = [
 
 export const proofModules: ProofModule[] = [
   {
+    slug: "artemisix19-autonomous-generator",
+    title: "ArtemisIX19 Autonomous Generator",
+    eyebrow: "Media generation",
+    href: "/labs/artemisix19",
+    statusLabel: "Autonomous live",
+    statusTone: "test",
+    summary:
+      "A public-safe generator studio for turning protected Artemis reference work into prompts, image briefs, render plans, video storyboards, plots, movie beats, and sound cues.",
+    decision:
+      "Which artifact should be generated, and what source boundary governs its use?",
+    signals: [
+      "Protected reference family",
+      "Asset output mode",
+      "Audience intent",
+      "Visibility mode",
+      "Review boundary",
+      "Export manifest",
+    ],
+    outcomes: [
+      "Reusable prompt and media packages",
+      "Clear public/private boundaries",
+      "A safe path toward future AI-backed generation",
+    ],
+    boundary:
+      "The live route uses deterministic in-browser generation only. Raw local HTML references, private assets, exact coordinates, and unverified fabrication values remain protected.",
+  },
+  {
     slug: "utility-intelligence-bridge",
     title: "Utility Intelligence Bridge",
     eyebrow: "Infrastructure proof",

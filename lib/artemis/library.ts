@@ -58,6 +58,15 @@ export const libraryItems: LibraryItem[] = [
     classification: "Public-safe",
   },
   {
+    slug: "artemisix19-autonomous-generator",
+    title: "ArtemisIX19 Autonomous Generator",
+    kind: "Showcase",
+    summary:
+      "A public-safe generator studio for prompts, images, renders, videos, plots, movie beats, and sound cues derived from protected Artemis reference work.",
+    href: "/labs/artemisix19",
+    classification: "Public-safe",
+  },
+  {
     slug: "ai-insight-publication-engine",
     title: "AI Insight & Publication Engine",
     kind: "Publishing",

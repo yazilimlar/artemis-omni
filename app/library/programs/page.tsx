@@ -19,6 +19,11 @@ export const metadata = createMetadata({
 
 const fastLinks = [
   {
+    title: "ArtemisIX19",
+    href: "/labs/artemisix19",
+    description: "Autonomous prompt/media generator for the protected Artemis reference set.",
+  },
+  {
     title: "Utility Intelligence Bridge",
     href: "/labs/utility-intelligence-bridge",
     description: "Public narrative for the sewer/utility cockpit and field-to-finance bridge.",
@@ -31,7 +36,8 @@ const fastLinks = [
   {
     title: "Insights Engine",
     href: "/insights",
-    description: "Public-safe article, visual, and tutorial production system inspired by the Atelier format.",
+    description:
+      "Public-safe article, visual, and tutorial production system inspired by the masterclass reference format.",
   },
   {
     title: "Workbench Shell",
@@ -84,7 +90,7 @@ export default function ProgramsCatalogPage() {
             title="Where the attached files belong on the website"
             description="The catalog routes each file to one of the existing public-safe destinations first. New live tools should be rebuilt later, not published as raw HTML."
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {fastLinks.map((link) => (
               <Link
                 key={link.href}

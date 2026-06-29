@@ -15,13 +15,13 @@ import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import {
-  atelierSources,
   claimControlGates,
   contractReasoningModes,
   insightAudiences,
   insightFormats,
   insightPipeline,
   insightTopics,
+  learningSources,
   presentationAssignments,
 } from "@/data/insightEngine";
 import { createMetadata } from "@/lib/seo/metadata";
@@ -435,7 +435,7 @@ export default function InsightsPage() {
                 </p>
               </article>
             ))}
-            {atelierSources.map((source) => (
+            {learningSources.map((source) => (
               <article
                 key={source.title}
                 className="rounded-2xl border border-border/70 bg-background/35 p-5"

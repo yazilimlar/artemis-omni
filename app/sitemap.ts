@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/solutions",
     "/products",
     "/labs",
+    "/labs/artemisix19",
     "/labs/construction-intelligence-workbench",
     "/labs/utility-intelligence-bridge",
     "/labs/geodesic-intelligence",

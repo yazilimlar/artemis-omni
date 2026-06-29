@@ -26,7 +26,7 @@ export type InsightFormat = {
   checks: string[];
 };
 
-export type AtelierSource = {
+export type LearningSource = {
   title: string;
   status: string;
   tone: StatusTone;
@@ -231,7 +231,7 @@ export const insightFormats: InsightFormat[] = [
     title: "Cinematic Systems Story",
     cadence: "Campaign",
     description:
-      "A narrated, visual article with diagrams, dashboard motifs, and storyboard beats inspired by the Atelier format.",
+      "A narrated, visual article with diagrams, dashboard motifs, and storyboard beats inspired by the masterclass reference format.",
     checks: ["No raw HTML embeds", "Visuals explain system logic", "Boundary language remains visible"],
   },
   {
@@ -378,9 +378,9 @@ export const presentationAssignments: PresentationAssignment[] = [
   },
 ];
 
-export const atelierSources: AtelierSource[] = [
+export const learningSources: LearningSource[] = [
   {
-    title: "Multimodel Atelier 5D Masterclass",
+    title: "Multimodel 5D Masterclass",
     status: "Private source reference",
     tone: "private",
     pattern:
@@ -389,7 +389,7 @@ export const atelierSources: AtelierSource[] = [
       "Use as method inspiration only; do not publish raw case-study labels, source HTML, or project-specific examples.",
   },
   {
-    title: "Multimodel Atelier Tutorial Series",
+    title: "Multimodel 5D Tutorial Series",
     status: "Sanitize before extraction",
     tone: "sanitize",
     pattern:
@@ -398,7 +398,7 @@ export const atelierSources: AtelierSource[] = [
       "Extract public-safe lesson formats and replace project-specific references with generic teaching scenarios.",
   },
   {
-    title: "Multimodel Atelier Changelog",
+    title: "Multimodel 5D Changelog",
     status: "Reference discipline",
     tone: "reference",
     pattern:

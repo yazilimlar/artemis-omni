@@ -20,6 +20,31 @@ export type ProgramCatalogItem = {
 
 export const programCatalogItems: ProgramCatalogItem[] = [
   {
+    slug: "artemisix19-generator-studio",
+    title: "ArtemisIX19 Autonomous Generator Studio",
+    kind: "Showcase",
+    statusLabel: "Generator live",
+    statusTone: "test",
+    sourceType: "Attached Artemis HTML reference set",
+    summary:
+      "A new generator route that converts the geodesic, table, atlas, fabrication, and 3D brand-mark references into public-safe prompt, image, render, video, plot, movie, and sound packages.",
+    bestPublicLink: {
+      href: "/labs/artemisix19",
+      label: "ArtemisIX19",
+    },
+    tutorialUse:
+      "Use as the central prompt and media-production surface for future content, library entries, render briefs, storyboards, sound cues, and AI-model handoffs.",
+    solutionFit:
+      "Creates a safe bridge between protected experimental HTML workbenches and public-facing Artemis content development.",
+    migrationPath: [
+      "Keep raw HTML references protected and summarize them as source families.",
+      "Generate public-safe media packages through the ArtemisIX19 rules engine.",
+      "Upgrade later with approved AI/image/video/audio services behind the same boundary model.",
+    ],
+    boundary:
+      "Do not publish source HTML, embedded assets, exact Desktop paths, unverified fabrication values, private coordinates, or raw generated code from old prototypes.",
+  },
+  {
     slug: "sewer-simulator-formula-icons",
     title: "Sewer Construction Formula Tutorial",
     kind: "Tutorial",
@@ -345,8 +370,8 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Do not publish source HTML, raw category data, real-party ownership labels, project identifiers, exposure values, or source formulas.",
   },
   {
-    slug: "multimodel-atelier-5d-masterclass",
-    title: "Multimodel Atelier 5D Masterclass",
+    slug: "multimodel-5d-masterclass",
+    title: "Multimodel 5D Masterclass",
     kind: "Tutorial",
     statusLabel: "Method source",
     statusTone: "sanitize",
@@ -370,8 +395,8 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Do not publish source HTML, private case-study labels, embedded project specifics, or unreviewed AI prompts.",
   },
   {
-    slug: "multimodel-atelier-tutorial-series",
-    title: "Multimodel Atelier Tutorial Series",
+    slug: "multimodel-5d-tutorial-series",
+    title: "Multimodel 5D Tutorial Series",
     kind: "Tutorial",
     statusLabel: "Bilingual source",
     statusTone: "sanitize",
@@ -395,8 +420,8 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Do not publish raw tutorial HTML, private case-study context, project names, coordinates, or unreviewed bilingual translations.",
   },
   {
-    slug: "multimodel-atelier-changelog",
-    title: "Multimodel Atelier Changelog",
+    slug: "multimodel-5d-changelog",
+    title: "Multimodel 5D Changelog",
     kind: "Program",
     statusLabel: "Reference discipline",
     statusTone: "reference",
