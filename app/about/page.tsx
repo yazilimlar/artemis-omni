@@ -1,8 +1,12 @@
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getFeatureAsset } from "@/lib/artemis/brandAssets";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -28,6 +32,7 @@ const principles = [
 ];
 
 export default function AboutPage() {
+  const brandFeature = getFeatureAsset();
   return (
     <>
       <PageHero
@@ -50,6 +55,36 @@ export default function AboutPage() {
                 <CardDescription>{p.body}</CardDescription>
               </Card>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Brand identity accent */}
+      <section className="border-t border-border/60 py-16 lg:py-20">
+        <Container className="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr]">
+          <Link
+            href="/brand"
+            className="group block overflow-hidden rounded-2xl border border-border/60 bg-navy-deep/30"
+          >
+            <Image
+              src={brandFeature.src}
+              alt={brandFeature.alt}
+              width={brandFeature.width}
+              height={brandFeature.height}
+              sizes="(min-width: 1024px) 38vw, 88vw"
+              className="h-auto w-full transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+          </Link>
+          <div>
+            <SectionHeading
+              eyebrow="Identity"
+              title="Precision, made visible"
+              description="The Artemis figure signals intent and accuracy; the system graphics, palette, and Greek-meander motifs carry the engineering and project-controls story. Explore the brand identity, palette, and concept art."
+            />
+            <Button href="/brand" variant="outline" className="mt-6">
+              View the brand
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
         </Container>
       </section>
