@@ -8,7 +8,7 @@ import { siteConfig } from "@/lib/site";
 import { primaryNav, ctaNav } from "@/lib/artemis/navigation";
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
-import { ArtemisMark } from "@/components/layout/ArtemisMark";
+import { ArtemisLogo } from "@/components/layout/ArtemisLogo";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -36,10 +36,7 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3" aria-label={`${siteConfig.name} home`}>
-          <ArtemisMark className="h-8 w-8 text-gold" />
-          <span className="display-serif text-lg tracking-wide text-parchment">
-            {siteConfig.name}
-          </span>
+          <ArtemisLogo />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">

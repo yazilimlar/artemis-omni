@@ -4,6 +4,9 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/ui/container";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
+import { GeodesicRenderCard } from "@/components/showcase/GeodesicRenderCard";
+import { OrganizationArchitectureDiagram } from "@/components/showcase/OrganizationArchitectureDiagram";
 import { products } from "@/lib/artemis/products";
 import { createMetadata } from "@/lib/seo/metadata";
 
@@ -22,6 +25,29 @@ export default function ProductsPage() {
         title="Artemis modules"
         description="Artemis Construct (5D Construction Intelligence) leads as the public beachhead. The other modules extend the same disciplined, audit-aware approach across the business."
       />
+
+      <section className="border-b border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Product System"
+            title="Product modules share one operating layer"
+            description="Products become stronger when they use the same reviewed implementation standard: source-labeled inputs, applied logic, confidence notes, human review, and named executive action."
+          />
+          <div className="mt-10 grid gap-5 xl:grid-cols-[1.08fr_0.92fr]">
+            <OrganizationArchitectureDiagram
+              mode="product"
+              title="Product operating layer"
+              subtitle="The module portfolio is presented as a connected implementation system rather than a collection of disconnected demos."
+              organizationName="Artemis Product Portfolio"
+            />
+            <GeodesicRenderCard
+              title="Spatial proof surface"
+              caption="Geometry, fabrication logic, and project visualization stay public-safe here while signaling the direction of deeper private workbench systems."
+            />
+          </div>
+        </Container>
+      </section>
+
       <section className="py-16 lg:py-20">
         <Container>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

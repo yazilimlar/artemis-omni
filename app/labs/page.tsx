@@ -7,6 +7,7 @@ import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { GeodesicRenderCard } from "@/components/showcase/GeodesicRenderCard";
 import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
+import { OrganizationArchitectureDiagram } from "@/components/showcase/OrganizationArchitectureDiagram";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
@@ -88,6 +89,14 @@ export default function LabsPage() {
               ]}
             />
             <BlueprintFluxDiagram />
+          </div>
+          <div className="mt-5">
+            <OrganizationArchitectureDiagram
+              mode="labs"
+              title="Client organization architecture"
+              subtitle="Labs proof gets more credible when every module can be placed inside a client operating system: inputs, governance, workflow, evidence, review, output, and action."
+              organizationName="Public-Safe Client Blueprint"
+            />
           </div>
         </Container>
       </section>

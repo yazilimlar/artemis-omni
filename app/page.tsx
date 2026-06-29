@@ -9,6 +9,7 @@ import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHe
 import { GeodesicRenderCard } from "@/components/showcase/GeodesicRenderCard";
 import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
 import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
+import { OrganizationArchitectureDiagram } from "@/components/showcase/OrganizationArchitectureDiagram";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
@@ -110,6 +111,13 @@ export default function HomePage() {
           </div>
           <div className="mt-8">
             <BlueprintFluxDiagram />
+          </div>
+          <div className="mt-8">
+            <OrganizationArchitectureDiagram
+              title="Client organization blueprint"
+              subtitle="A boardroom-safe visual model for how Artemis would map a client company: operating inputs, governance, workflow evidence, review gates, executive dashboards, reports, action logs, and pilot roadmaps."
+              organizationName="Client Company / Organization"
+            />
           </div>
         </Container>
       </section>

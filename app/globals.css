@@ -126,6 +126,10 @@
   .signal-pulse {
     animation: signalPulse 3.4s ease-in-out infinite;
   }
+
+  .scan-sweep {
+    animation: scanSweep 8.5s ease-in-out infinite;
+  }
 }
 
 @layer utilities {
@@ -215,6 +219,25 @@
   50% {
     opacity: 1;
     transform: scale(1.08);
+  }
+}
+
+@keyframes scanSweep {
+  0%,
+  12% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  28% {
+    opacity: 0.75;
+  }
+  54% {
+    transform: translateX(960px);
+    opacity: 0.18;
+  }
+  100% {
+    transform: translateX(960px);
+    opacity: 0;
   }
 }
 

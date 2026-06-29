@@ -6,6 +6,7 @@ import { BlueprintFluxDiagram } from "@/components/showcase/BlueprintFluxDiagram
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
+import { OrganizationArchitectureDiagram } from "@/components/showcase/OrganizationArchitectureDiagram";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
@@ -93,6 +94,13 @@ export default function DianaMoonshotPage() {
               </p>
             </div>
             <BlueprintFluxDiagram />
+          </div>
+          <div className="mt-5">
+            <OrganizationArchitectureDiagram
+              title="Brand system to client operating system"
+              subtitle="The logo, dashboard, and architecture language should help a client's leadership team see how their own organization could be mapped without publishing private systems or project artifacts."
+              organizationName="Client Company / Organization"
+            />
           </div>
         </Container>
       </section>
