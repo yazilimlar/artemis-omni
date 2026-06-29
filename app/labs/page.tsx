@@ -1,69 +1,117 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { PageHero } from "@/components/layout/PageHero";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { ContentCard } from "@/components/content/ContentCard";
-import { Card, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { getAllMeta } from "@/lib/content";
+import { PageHero } from "@/components/layout/PageHero";
+import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
+import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
+import { ProofCard } from "@/components/showcase/ProofCard";
+import { StatusBadge } from "@/components/showcase/StatusBadge";
+import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
+import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
+import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
+import { proofModules } from "@/data/proofLibrary";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
-  title: "Labs",
+  title: "Labs Proof Library",
   path: "/labs",
   description:
-    "Experimental cinematic intelligence demos and prototypes from Artemis Omni — new visualizations, agents, and interaction models.",
+    "Artemis Labs is an executive proof library for public-safe narratives, synthetic showcases, system diagrams, and private-demo boundaries.",
 });
 
 export default function LabsPage() {
-  const experiments = getAllMeta("labs");
-
   return (
     <>
       <PageHero
-        eyebrow="Labs"
-        title="Cinematic intelligence, in prototype"
-        description="Where Artemis prototypes new visualizations, agents, and interaction models before they ship into solutions. Expect rough edges and bold ideas."
+        eyebrow="Labs · Executive Proof Library"
+        title="Proof that Artemis is an implementation system, not a chatbot wrapper."
+        description="Labs organizes the strongest Artemis proof paths into public-safe narrative pages, status-labeled cards, diagram systems, and clear private-demo boundaries."
       >
-        <Badge>Experimental</Badge>
+        <div className="flex flex-wrap items-center gap-3">
+          <StatusBadge tone="test">Test mode</StatusBadge>
+          <StatusBadge tone="synthetic">Synthetic where live</StatusBadge>
+          <StatusBadge tone="private">Private demos protected</StatusBadge>
+        </div>
       </PageHero>
-      {/* Featured public showcase (synthetic) */}
-      <section className="pt-16">
-        <Container>
-          <Link href="/labs/construction-intelligence-workbench" className="group">
-            <Card className="flex flex-col gap-2">
-              <div className="flex items-center gap-3">
-                <Badge>Public Showcase</Badge>
-                <span className="font-mono text-[0.6rem] uppercase tracking-wider text-muted-foreground">
-                  Synthetic data
-                </span>
-              </div>
-              <CardTitle className="mt-2">Construction Intelligence Workbench</CardTitle>
-              <CardDescription>
-                A synthetic public showcase: KPIs, a Bid vs Actuals vs PM Forecast vs System
-                Projection comparison, risk/opportunity, change exposure, and an audit-aware
-                data path. No real project data.
-              </CardDescription>
-              <span className="mt-3 inline-flex items-center gap-2 text-sm text-gold">
-                Open workbench
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Card>
-          </Link>
+
+      <section className="border-b border-border/60 py-12 lg:py-16">
+        <Container className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+          <ConfidenceNote title="Public-safe publishing rule">
+            These pages do not embed raw HTML workbenches, private project files, maps,
+            coordinates, client identifiers, or unreviewed demos. Public pages use executive
+            narrative, generic proof structure, synthetic examples, and explicit limitations.
+          </ConfidenceNote>
+          <WhatItIsNotBox
+            items={[
+              "Not a public archive of private demo assets.",
+              "Not a claim that every reference is migration-ready.",
+              "Not a replacement for human review, project controls judgment, or engineering approval.",
+            ]}
+          />
         </Container>
       </section>
 
       <section className="py-16 lg:py-20">
         <Container>
-          {experiments.length === 0 ? (
-            <p className="text-muted-foreground">No experiments published yet.</p>
-          ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {experiments.map((item) => (
-                <ContentCard key={item.slug} item={item} basePath="/labs" />
-              ))}
+          <ExecutiveSectionHeader
+            eyebrow="Proof Cards"
+            title="The first public proof library"
+            description="Each card names the executive decision, the connected signals, the expected outcomes, and the publishing boundary."
+          />
+          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {proofModules.map((module) => (
+              <ProofCard key={module.slug} module={module} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-y border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Bridge Logic"
+            title="Every proof path resolves into the same executive chain"
+            description="The proof library is useful because it keeps returning to the operating chain: what connects, what logic applies, who reviews it, and what action follows."
+          />
+          <div className="mt-10">
+            <ValueChainStrip />
+          </div>
+          <div className="mt-10">
+            <SystemDiagramCard
+              title="Six-question proof standard"
+              description="A Labs proof is not finished until it answers the questions an executive or reviewer will ask."
+              decision="What decision improves, and who owns the next action?"
+              nodes={[
+                { label: "Connected data", detail: "Sources and systems of record", tone: "source" },
+                { label: "Applied logic", detail: "Formula, mapping, model, or rule", tone: "logic" },
+                { label: "Human review", detail: "Gate, exception, or approval point", tone: "review" },
+                { label: "Trusted output", detail: "Forecast, register, score, or action", tone: "output" },
+              ]}
+              outcome="A proof card with confidence level, limitation language, and a pilot path."
+            />
+          </div>
+        </Container>
+      </section>
+
+      <section className="py-16 lg:py-24">
+        <Container>
+          <div className="rounded-2xl border border-gold/25 bg-navy-deep/60 p-8 text-center lg:p-12">
+            <p className="eyebrow">Pilot Program</p>
+            <h2 className="display-serif mx-auto mt-3 max-w-2xl text-balance text-3xl text-parchment sm:text-4xl">
+              Convert one proof path into a controlled pilot
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              Select a decision loop, connect the evidence, define review gates, and test the
+              Artemis operating model on synthetic or approved data first.
+            </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-4">
+              <Button href="/contact" size="lg">
+                Request a Pilot
+              </Button>
+              <Button href="/labs/utility-intelligence-bridge" variant="outline" size="lg">
+                Start with Utility Intelligence
+              </Button>
             </div>
-          )}
+          </div>
         </Container>
       </section>
     </>

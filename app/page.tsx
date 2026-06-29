@@ -1,265 +1,207 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { SceneFallback } from "@/components/cinematic/SceneFallback";
-import { solutionPillars } from "@/lib/artemis/solutions";
-import { products } from "@/lib/artemis/products";
-import { demoAssets } from "@/lib/artemis/demoAssets";
-import { companyPositioning } from "@/lib/artemis/positioning";
+import { Container } from "@/components/ui/container";
+import { AudienceCard } from "@/components/showcase/AudienceCard";
+import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
+import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
+import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPhaseCard";
+import { ProofCard } from "@/components/showcase/ProofCard";
+import { StatusBadge } from "@/components/showcase/StatusBadge";
+import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
+import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
+import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
 import { createMetadata } from "@/lib/seo/metadata";
+import { companyPositioning } from "@/lib/artemis/positioning";
+import { getFeaturedAudiences } from "@/data/audiences";
+import { getProofModules, homepageProofSlugs } from "@/data/proofLibrary";
 
 export const metadata = createMetadata({
   path: "/",
   description:
-    "ARTEMIS turns scattered business data, documents, financial workflows, and engineering models into reliable AI-powered operating systems — with human oversight and audit-ready controls. 5D Construction Intelligence is the beachhead.",
+    "Artemis turns project fundamentals into AI-enabled execution with an executive-grade bridge across design, geometry, quantities, schedule, field production, cost, revenue, forecast, cashflow, risk, and action.",
 });
 
-export default function HomePage() {
-  const featuredDemos = demoAssets.filter((a) => a.priority === "P1" || a.priority === "P2");
+const proofPreview = getProofModules(homepageProofSlugs);
+const audiencePreview = getFeaturedAudiences();
 
+const implementationPhases = [
+  {
+    phase: "Phase 01",
+    title: "Find the decision loop",
+    description:
+      "Start with the operating decision that changes cost, schedule, cash, quality, or risk.",
+    bullets: ["Executive sponsor", "Workflow owner", "Decision cadence"],
+  },
+  {
+    phase: "Phase 02",
+    title: "Connect the evidence",
+    description:
+      "Map the sources, formulas, documents, models, and human review points that make the decision trustworthy.",
+    bullets: ["Systems of record", "Assumptions", "Review gates"],
+  },
+  {
+    phase: "Phase 03",
+    title: "Build the controlled proof",
+    description:
+      "Prototype with synthetic or approved data, then prove the operating value before deeper integration.",
+    bullets: ["Public-safe demo", "Private pilot", "Adoption metrics"],
+  },
+];
+
+export default function HomePage() {
   return (
     <>
-      {/* 1 — Hero */}
       <section className="relative overflow-hidden border-b border-border/60">
         <div className="absolute inset-0 -z-10 bg-lunar-radial" aria-hidden />
         <div className="absolute inset-0 -z-10 bg-blueprint-grid bg-grid opacity-[0.16]" aria-hidden />
-        <Container className="py-20 lg:py-28">
-          <p className="eyebrow">Artemis · AI Implementation & Automation</p>
-          <h1 className="display-serif mt-5 max-w-4xl text-balance text-4xl leading-[1.05] text-parchment sm:text-5xl lg:text-6xl">
-            AI systems for companies that need{" "}
-            <span className="bg-gold-sheen bg-clip-text text-transparent">more than chatbots.</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            ARTEMIS turns scattered business data, documents, financial workflows, and
-            engineering models into reliable AI-powered operating systems — with human
-            oversight and audit-ready controls.
-          </p>
-          <div className="mt-9 flex flex-wrap gap-4">
-            <Button href="/contact" size="lg">
-              Request a Pilot
-            </Button>
-            <Button href="/solutions" variant="outline" size="lg">
-              Explore Solutions
-            </Button>
-            <Button href="/demo" variant="ghost" size="lg">
-              See the Demo Center
-            </Button>
+        <Container className="grid gap-12 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <StatusBadge tone="test">Executive test mode</StatusBadge>
+              <span className="eyebrow">Artemis · AI Implementation</span>
+            </div>
+            <h1 className="display-serif mt-5 max-w-4xl text-balance text-4xl leading-[1.05] text-parchment sm:text-5xl lg:text-6xl">
+              Turn project fundamentals into AI-enabled execution.
+            </h1>
+            <p className="mt-6 max-w-2xl text-xl leading-relaxed text-gold-soft">
+              AI is not the strategy. Implementation is the strategy.
+            </p>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+              Artemis builds the bridge from design and field reality to executive action:
+              source-labeled, human-reviewed, cash-aware operating systems for teams that
+              need more than disconnected AI tools.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-4">
+              <Button href="/contact" size="lg">
+                Request a Pilot
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button href="/labs" variant="outline" size="lg">
+                Explore Proof Library
+              </Button>
+              <Button href="/for/executives" variant="ghost" size="lg">
+                Audience Pathways
+              </Button>
+            </div>
           </div>
 
-          {/* Construction Intelligence beachhead — surfaced above the fold */}
-          <Link
-            href="/solutions/construction-intelligence"
-            className="group mt-10 block max-w-3xl rounded-xl border border-gold/30 bg-navy-deep/50 p-5 transition-colors hover:border-gold/60"
-          >
-            <div className="flex items-center gap-3">
-              <Badge>Beachhead</Badge>
-              <span className="display-serif text-base text-parchment">
-                {companyPositioning.beachheadLabel}
-              </span>
-              <ArrowRight className="ml-auto h-4 w-4 text-gold transition-transform group-hover:translate-x-1" />
-            </div>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {companyPositioning.beachheadProof}
-            </p>
-          </Link>
+          <SystemDiagramCard
+            title="The Artemis execution bridge"
+            description="A lightweight executive model for connecting operating fundamentals to reviewable AI-enabled outputs."
+            decision="Which project or workflow signal requires action before it becomes margin, cashflow, or delivery risk?"
+            nodes={[
+              { label: "Sources", detail: "Design, documents, models, systems", tone: "source" },
+              { label: "Logic", detail: "Quantities, formulas, forecast rules", tone: "logic" },
+              { label: "Review", detail: "Human gates, assumptions, exceptions", tone: "review" },
+              { label: "Action", detail: "Executive decision and next owner", tone: "output" },
+            ]}
+            outcome="A trusted operating picture with clear confidence, limits, and next action."
+          />
         </Container>
         <div className="meander-divider" aria-hidden />
       </section>
 
-      {/* 2 — Three solution pillars */}
-      <section className="py-20 lg:py-24">
+      <section className="border-b border-border/60 py-16 lg:py-20">
         <Container>
-          <SectionHeading
-            eyebrow="Solutions"
-            title="Three ways Artemis is put to work"
-            description="One disciplined approach across business operations, heavy-civil construction, and engineering visualization."
+          <ExecutiveSectionHeader
+            eyebrow="Artemis Bridge"
+            title="From project fundamentals to executive action"
+            description={`${companyPositioning.beachheadOneLiner} The value chain is deliberately explicit because each handoff is where forecasts, cashflow, and trust usually break.`}
           />
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
-            {solutionPillars.map((p) => (
-              <Link key={p.slug} href={p.href} className="group">
-                <Card className="flex h-full flex-col">
-                  {p.beachhead ? <Badge>Beachhead</Badge> : <Badge>Solution</Badge>}
-                  <CardTitle className="mt-4">{p.title}</CardTitle>
-                  <CardDescription className="flex-1">{p.summary}</CardDescription>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm text-gold">
-                    Explore <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Card>
-              </Link>
-            ))}
+          <div className="mt-10">
+            <ValueChainStrip />
           </div>
         </Container>
       </section>
 
-      {/* 3 — Product module grid */}
-      <section className="border-t border-border/60 py-20 lg:py-24">
+      <section className="py-16 lg:py-20">
         <Container>
-          <SectionHeading
-            eyebrow="Products"
-            title="Artemis modules"
-            description="Construct leads as the public beachhead; the other modules extend the same audit-aware approach across the business."
-          />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((p) => {
-              const inner = (
-                <Card className="h-full">
-                  <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-base">{p.name}</CardTitle>
-                    <Badge>{p.status === "beachhead" ? "Beachhead" : p.status}</Badge>
-                  </div>
-                  <CardDescription>{p.summary}</CardDescription>
-                </Card>
-              );
-              return p.route ? (
-                <Link key={p.slug} href={p.route} className="group">
-                  {inner}
-                </Link>
-              ) : (
-                <div key={p.slug}>{inner}</div>
-              );
-            })}
-          </div>
-          <div className="mt-8">
-            <Button href="/products" variant="outline">
-              All products
-            </Button>
-          </div>
-        </Container>
-      </section>
-
-      {/* 4 — Demo center preview */}
-      <section className="py-20 lg:py-24">
-        <Container>
-          <SectionHeading
-            eyebrow="Demo Center"
-            title="Workbenches and showcases, catalogued by readiness"
-            description="A library of Artemis demos. Some are catalogued as future integration candidates and require sanitation, review, and migration before public release."
-          />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredDemos.slice(0, 4).map((d) => (
-              <Card key={d.name} className="h-full">
-                <Badge>{d.priority}</Badge>
-                <CardTitle className="mt-3 text-sm">{d.name}</CardTitle>
-                <CardDescription>{d.demonstrates}</CardDescription>
-              </Card>
-            ))}
-          </div>
-          <div className="mt-8">
-            <Button href="/demo" variant="outline">
-              Open the Demo Center
-            </Button>
-          </div>
-        </Container>
-      </section>
-
-      {/* 5 — Construction Intelligence beachhead */}
-      <section className="border-y border-border/60 py-20 lg:py-24">
-        <Container className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
-          <div>
-            <Badge>Beachhead · Artemis Construct</Badge>
-            <h2 className="display-serif mt-4 text-balance text-3xl text-parchment sm:text-4xl">
-              {companyPositioning.beachheadOneLiner}
-            </h2>
-            <p className="mt-4 max-w-xl text-muted-foreground">
-              5D Construction Intelligence links design, geometry, quantities, schedule,
-              field production, and actual cost into a live cashflow forecast — comparing
-              Bid Estimate vs Actuals vs PM Forecast vs system-generated projections for
-              heavy civil contractors, infrastructure owners, and project controls teams.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-4">
-              <Button href="/solutions/construction-intelligence">Construction Intelligence</Button>
-              <Button href="/products/construct" variant="outline">
-                Artemis Construct
+          <ExecutiveSectionHeader
+            eyebrow="Proof Library Preview"
+            title="Executive proof, without publishing raw demos"
+            description="Labs now works as a public-safe proof library: narrative pages, status badges, system diagrams, and boundary language first; raw private HTML demos stay out of public routes."
+            actions={
+              <Button href="/labs" variant="outline">
+                Open Labs
               </Button>
-            </div>
-          </div>
-          <div>
-            <SceneFallback />
-          </div>
-        </Container>
-      </section>
-
-      {/* 6 — Implementation doctrine / transition method */}
-      <section className="py-20 lg:py-24">
-        <Container>
-          <SectionHeading
-            eyebrow="Implementation"
-            title="AI is not the strategy. Implementation is the strategy."
-            description="Most companies already use AI tools but can't operationalize them. The gap is process, training, data structure, semantics, governance, and adoption — not model capability. Artemis closes that gap."
+            }
           />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { t: "Disciplined fundamentals", b: "AI does not replace fundamentals — it amplifies disciplined ones." },
-              { t: "Phase 0–6 transition", b: "Diagnostic → semantic modeling → prototype → training → implementation → optimization → operating system." },
-              { t: "Audit-aware by design", b: "Human-reviewed outputs, source-labeled assumptions, formula traceability, transparent confidence levels." },
-            ].map((x) => (
-              <Card key={x.t}>
-                <CardTitle className="text-lg">{x.t}</CardTitle>
-                <CardDescription>{x.b}</CardDescription>
-              </Card>
+          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {proofPreview.map((module) => (
+              <ProofCard key={module.slug} module={module} compact />
             ))}
           </div>
         </Container>
       </section>
 
-      {/* 7 — Portfolio / Library preview */}
-      <section className="border-t border-border/60 py-20 lg:py-24">
-        <Container className="grid gap-5 lg:grid-cols-2">
-          <Link href="/portfolio" className="group">
-            <Card className="h-full">
-              <Badge>Portfolio</Badge>
-              <CardTitle className="mt-4">Selected work, in preview</CardTitle>
-              <CardDescription>
-                The strongest Artemis workbenches and dashboards — sanitized, public-safe
-                versions appear after review.
-              </CardDescription>
-              <span className="mt-5 inline-flex items-center gap-2 text-sm text-gold">
-                View portfolio <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Card>
-          </Link>
-          <Link href="/library" className="group">
-            <Card className="h-full">
-              <Badge>Library</Badge>
-              <CardTitle className="mt-4">Doctrine, methods, and showcases</CardTitle>
-              <CardDescription>
-                The implementation doctrine, the transition method, tools, and public-safe
-                content behind Artemis.
-              </CardDescription>
-              <span className="mt-5 inline-flex items-center gap-2 text-sm text-gold">
-                Open library <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Card>
-          </Link>
+      <section className="border-y border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Audience Pathways"
+            title="Generated landing pages for the people who have to implement"
+            description="Each pathway reframes the same Artemis operating logic for a different buyer, operator, reviewer, or learner."
+          />
+          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {audiencePreview.map((audience) => (
+              <AudienceCard key={audience.slug} audience={audience} />
+            ))}
+          </div>
         </Container>
       </section>
 
-      {/* 8 — Request pilot CTA */}
-      <section className="py-20 lg:py-28">
+      <section className="py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Implementation"
+            title="The first sprint makes the operating argument visible"
+            description="Artemis is positioned as a disciplined implementation system: decide what improves, connect the evidence, prove it safely, then pilot with governance."
+          />
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            {implementationPhases.map((phase) => (
+              <ImplementationPhaseCard key={phase.phase} {...phase} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-y border-border/60 py-16 lg:py-20">
+        <Container className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+          <WhatItIsNotBox
+            items={[
+              "Not a claim that raw private demos, client workbenches, or project-specific HTML are published.",
+              "Not an unmanaged AI chatbot layer placed on top of broken workflows.",
+              "Not an autonomous replacement for PMs, engineers, finance leaders, field teams, or reviewers.",
+            ]}
+          />
+          <ConfidenceNote title="Public boundary">
+            This sprint keeps public pages in test mode. Showcase pages use executive narrative,
+            generic proof structure, diagrams, and clear limitations. Private workbench material
+            remains private until it is rebuilt with synthetic or approved data.
+          </ConfidenceNote>
+        </Container>
+      </section>
+
+      <section className="py-16 lg:py-24">
         <Container>
           <div className="relative overflow-hidden rounded-2xl border border-gold/25 bg-navy-deep/60 p-10 text-center lg:p-16">
             <div
               className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,_hsl(41_64%_56%/0.14),transparent_60%)]"
               aria-hidden
             />
-            <p className="eyebrow">Pilot Program</p>
+            <p className="eyebrow">Pilot CTA</p>
             <h2 className="display-serif mx-auto mt-4 max-w-2xl text-balance text-3xl text-parchment sm:text-4xl">
-              Bring Artemis into your next project
+              Bring one high-value workflow into Artemis test mode
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Pilot-ready implementation engagements on real data — human-reviewed and
-              audit-aware. Tell us where the pain is.
+              Start with one decision loop, one evidence chain, and one controlled proof.
+              Artemis turns that into a pilot-ready implementation path.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Button href="/contact" size="lg">
                 Request a Pilot
               </Button>
-              <Button href="/demo" variant="outline" size="lg">
-                See the Demo Center
+              <Button href="/labs/utility-intelligence-bridge" variant="outline" size="lg">
+                View Utility Proof
               </Button>
             </div>
           </div>
