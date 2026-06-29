@@ -34,6 +34,29 @@ export type AtelierSource = {
   publishRule: string;
 };
 
+export type ContractReasoningMode = {
+  title: string;
+  method: string;
+  contractUse: string;
+  aiRole: string;
+};
+
+export type ClaimControlGate = {
+  title: string;
+  checks: string;
+  output: string;
+};
+
+export type PresentationAssignment = {
+  title: string;
+  pseudoName: string;
+  status: string;
+  tone: StatusTone;
+  sourcePattern: string;
+  presentationUse: string;
+  publicRule: string;
+};
+
 export const insightPipeline: InsightPipelineStage[] = [
   {
     title: "Capture",
@@ -217,6 +240,81 @@ export const insightFormats: InsightFormat[] = [
     description:
       "A reusable guide that turns one operating problem into process, data model, review gate, and improvement loop.",
     checks: ["Audience is named", "Workflow is reproducible", "Expected outcomes avoid overclaiming"],
+  },
+];
+
+export const contractReasoningModes: ContractReasoningMode[] = [
+  {
+    title: "Deductive",
+    method: "Start from the agreement, specifications, procedures, notice clauses, and stated responsibilities.",
+    contractUse:
+      "Extract requirements, deadlines, approval paths, notice triggers, entitlement tests, and responsible parties.",
+    aiRole:
+      "Multiple models check clause interpretation, missing prerequisites, and whether the proposed action follows the contract logic.",
+  },
+  {
+    title: "Inductive",
+    method: "Read the pattern across RFIs, submittals, changes, diaries, payment logs, delays, and correspondence.",
+    contractUse:
+      "Detect repeated review bottlenecks, evidence clusters, aging issues, productivity impacts, and recurring commercial exposure.",
+    aiRole:
+      "Models compare records, rank signals, and surface patterns that a project team may not see from one document at a time.",
+  },
+  {
+    title: "Abductive",
+    method: "When the facts are incomplete, generate the most plausible explanations and the evidence needed to test them.",
+    contractUse:
+      "Frame claim hypotheses, causation questions, missing records, alternative explanations, and next required actions.",
+    aiRole:
+      "Models propose competing hypotheses, challenge weak evidence, and keep uncertainty visible until humans verify the record.",
+  },
+];
+
+export const claimControlGates: ClaimControlGate[] = [
+  {
+    title: "Agreement Basis",
+    checks: "Which article, specification, drawing, procedure, or direction creates the requirement?",
+    output: "Contract basis note",
+  },
+  {
+    title: "Responsibility Map",
+    checks: "Who must act, approve, respond, document, pay, notify, mitigate, or preserve rights?",
+    output: "Responsibility matrix",
+  },
+  {
+    title: "Rights Trigger",
+    checks: "What notice, reservation, change, delay, T&M, or payment right must be initiated timely?",
+    output: "Action trigger",
+  },
+  {
+    title: "Evidence Linkage",
+    checks: "Which RFIs, submittals, diaries, letters, photos, payment logs, and records support or contradict the issue?",
+    output: "Evidence bundle",
+  },
+  {
+    title: "Impact Test",
+    checks: "Does the issue affect time, cost, productivity, cash, billing, procurement, safety, or access?",
+    output: "Impact memo",
+  },
+  {
+    title: "Human Authorization",
+    checks: "Who signs the action, what caveats remain, and what cannot be represented as final advice?",
+    output: "Reviewed instruction",
+  },
+];
+
+export const presentationAssignments: PresentationAssignment[] = [
+  {
+    title: "Private delay/claim dashboard reference",
+    pseudoName: "Contract Evidence Control Center",
+    status: "Private demo reference",
+    tone: "private",
+    sourcePattern:
+      "Dashboard-style linkage of delay events, potential damages, RFIs, document evidence, confidence labels, and narrative support.",
+    presentationUse:
+      "Use as a presentation story for contract-reasoning controls: agreement requirements, timely rights, responsibility mapping, evidence linkage, and multi-model review.",
+    publicRule:
+      "Do not publish raw records, source HTML, claim names, project identifiers, dates, dollar values, document paths, or dispute narratives.",
   },
 ];
 

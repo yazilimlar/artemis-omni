@@ -16,10 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import {
   atelierSources,
+  claimControlGates,
+  contractReasoningModes,
   insightAudiences,
   insightFormats,
   insightPipeline,
   insightTopics,
+  presentationAssignments,
 } from "@/data/insightEngine";
 import { createMetadata } from "@/lib/seo/metadata";
 
@@ -217,6 +220,84 @@ export default function InsightsPage() {
       <section className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
+            eyebrow="Contract Reasoning"
+            title="Deductive, inductive, and abductive controls for contractual action"
+            description="Artemis can present the delay and claim workflow as a contract evidence system: the agreement defines the duties, the records reveal patterns, and AI-supported hypotheses are tested before any action is authorized."
+          />
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            {contractReasoningModes.map((mode) => (
+              <article
+                key={mode.title}
+                className="rounded-2xl border border-border/70 bg-navy-deep/45 p-6 shadow-panel"
+              >
+                <div className="flex items-center gap-3">
+                  <PenLine className="h-5 w-5 text-gold-soft" />
+                  <h3 className="display-serif text-xl text-parchment">{mode.title}</h3>
+                </div>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  {mode.method}
+                </p>
+                <div className="mt-5 grid gap-3">
+                  <div className="rounded-xl border border-border/60 bg-background/30 p-4">
+                    <p className="font-mono text-[0.6rem] uppercase tracking-wider text-signal-soft">
+                      Contract Use
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {mode.contractUse}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-border/60 bg-background/30 p-4">
+                    <p className="font-mono text-[0.6rem] uppercase tracking-wider text-gold-soft">
+                      Multi-Model Role
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {mode.aiRole}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 rounded-2xl border border-gold/25 bg-navy-deep/55 p-6 shadow-panel">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="eyebrow">Control Valve</p>
+                <h3 className="display-serif mt-2 text-2xl text-parchment">
+                  Timely rights, responsibilities, and evidence checks
+                </h3>
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                  The presentation story should show Artemis as a disciplined control valve:
+                  no claim action, notice, payment position, or public article moves forward
+                  until contract basis, responsibility, evidence, impact, and human review
+                  have been checked.
+                </p>
+              </div>
+              <StatusBadge tone="sanitize">Reviewed before action</StatusBadge>
+            </div>
+            <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {claimControlGates.map((gate) => (
+                <article
+                  key={gate.title}
+                  className="rounded-xl border border-border/60 bg-background/30 p-4"
+                >
+                  <p className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+                    {gate.output}
+                  </p>
+                  <h4 className="mt-2 font-semibold text-parchment">{gate.title}</h4>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {gate.checks}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
             eyebrow="Source Topics"
             title="What Artemis can turn into public insight"
             description="These domains produce the raw material: the facts, caveats, decisions, and implementation lessons that become articles and visuals after sanitization."
@@ -318,18 +399,42 @@ export default function InsightsPage() {
       <section className="border-y border-border/60 py-16 lg:py-20">
         <Container className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
-            <p className="eyebrow">Atelier Translation</p>
+            <p className="eyebrow">Presentation Assignments</p>
             <h2 className="display-serif mt-3 text-balance text-3xl leading-tight text-parchment sm:text-4xl">
-              Use the attached masterclass as method, not raw public content
+              Assign attached systems under revised public-safe names
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              The Multimodel Atelier material is valuable because of the structure:
-              bilingual lessons, scripts, prompt vaults, QA checklists, visual prompts,
-              and changelog discipline. Artemis can adapt that format for construction,
-              finance, safety, claims, and implementation topics after sanitization.
+              Attached dashboards and tutorials can become presentation material when they
+              are renamed, sanitized, and used for method explanation instead of raw record
+              publication. The public site should show the operating logic, not the private file.
             </p>
           </div>
           <div className="grid gap-4">
+            {presentationAssignments.map((assignment) => (
+              <article
+                key={assignment.title}
+                className="rounded-2xl border border-border/70 bg-background/35 p-5"
+              >
+                <div className="flex flex-wrap items-center gap-3">
+                  <StatusBadge tone={assignment.tone}>{assignment.status}</StatusBadge>
+                  <span className="font-mono text-[0.62rem] uppercase tracking-wider text-muted-foreground">
+                    Source: {assignment.title}
+                  </span>
+                </div>
+                <h3 className="display-serif mt-4 text-xl text-parchment">
+                  {assignment.pseudoName}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  {assignment.sourcePattern}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-gold-soft">
+                  {assignment.presentationUse}
+                </p>
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                  {assignment.publicRule}
+                </p>
+              </article>
+            ))}
             {atelierSources.map((source) => (
               <article
                 key={source.title}

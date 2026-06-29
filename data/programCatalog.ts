@@ -195,6 +195,31 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Do not publish the raw package, source HTML, corridor data, actuals, claims logic, agency identifiers, or test-report internals.",
   },
   {
+    slug: "contract-evidence-control-center",
+    title: "Contract Evidence Control Center",
+    kind: "Solution",
+    statusLabel: "Private demo reference",
+    statusTone: "private",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Pseudo-named presentation reference for delay and claim controls: contract requirements, responsibilities, rights triggers, evidence linkage, confidence labels, and narrative support.",
+    bestPublicLink: {
+      href: "/insights",
+      label: "Insights Engine",
+    },
+    tutorialUse:
+      "Use as a demonstration storyline for deductive contract review, inductive pattern detection, abductive issue framing, and multi-model AI check-and-balance review.",
+    solutionFit:
+      "Supports the Artemis claim and contract reasoning narrative: identify requirements, exercise responsibilities, initiate rights timely, and keep evidence gates visible.",
+    migrationPath: [
+      "Keep the raw dashboard and source records private.",
+      "Rename the concept for public presentation as Contract Evidence Control Center.",
+      "Extract only sanitized workflow diagrams, reasoning modes, and control-gate language.",
+    ],
+    boundary:
+      "Do not publish source HTML, delay records, claim names, project identifiers, dates, dollar values, document paths, correspondence, dispute narratives, or legal advice.",
+  },
+  {
     slug: "multimodel-atelier-5d-masterclass",
     title: "Multimodel Atelier 5D Masterclass",
     kind: "Tutorial",
