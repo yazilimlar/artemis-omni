@@ -1,6 +1,6 @@
 # Codex / Claude Code Handoff
 
-Updated: 2026-06-30 17:58 America/New_York
+Updated: 2026-06-30 18:01 America/New_York
 Workspace: /Users/theoppositeofturtle/Documents/artemis-for-codex/artemis-omni-codex-local
 Current owner: Human / next agent
 Branch: feature/publish-standalone-labs
@@ -14,10 +14,10 @@ Publish two reviewed standalone HTML prototypes into Artemis Labs, document the 
 - Production domain verified with `curl -I -L --max-time 20 https://artemis.agoraxai.com`: `HTTP/2 200`, `server: Vercel`.
 - Root domain remains out of scope. Do not change DNS, nameservers, or apex/root records.
 - Standalone source files were copied from the Desktop into `public/standalone/`.
-- Commit created: `27d18ee feat: publish standalone Artemis labs`.
+- Commits created: `27d18ee feat: publish standalone Artemis labs`, `68910de fix: keep atlas external graph fallback quiet`.
 - Branch pushed: `origin/feature/publish-standalone-labs`.
 - Preview deployment built successfully but its `*.vercel.app` URL is protected by Vercel SSO.
-- Production deployment is live and aliased to `https://artemis.agoraxai.com`.
+- Production deployment `dpl_BW4GNZrcx2a9XF1fV2yFKq3TUeLL` is live and aliased to `https://artemis.agoraxai.com`.
 
 ## Files Changed
 
@@ -46,6 +46,7 @@ npm run build
 npx vercel@latest --yes
 npx vercel@latest --prod --yes
 git push -u origin feature/publish-standalone-labs
+npx vercel@latest --prod --yes
 ```
 
 ## Verification
@@ -72,6 +73,7 @@ The simple grep produced expected false positives from CSS/text such as `mask-im
 
 - Mapbox public `pk.*` token exists in the Atlas artifact. This is expected for a browser app, but it should be URL-restricted before aggressive public promotion.
 - The GitHub default branch is still `feature/artemisix19-autonomous-generator`; branch policy should be cleaned up before relying on Git-triggered production deploys.
+- The final docs-only handoff update was pushed after the production app deployment; runtime code is deployed from `68910de`.
 
 ## Next Commands
 

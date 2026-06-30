@@ -5,8 +5,8 @@ Status: Custom subdomain verified live
 Production domain: https://artemis.agoraxai.com
 Vercel project: artemis-omni
 Local workspace: /Users/theoppositeofturtle/Documents/artemis-for-codex/artemis-omni-codex-local
-Milestone commit: 27d18ee feat: publish standalone Artemis labs
-Production deployment: dpl_BBPwpff8gWmTb7cvbnaexD5UDteK
+Milestone commits: 27d18ee feat: publish standalone Artemis labs; 68910de fix: keep atlas external graph fallback quiet
+Production deployment: dpl_BW4GNZrcx2a9XF1fV2yFKq3TUeLL
 Preview deployment: dpl_2AFr4uizoMREp7145BKDs26wWWAK
 
 ## Executive Record
@@ -65,7 +65,7 @@ npx vercel@latest --prod --yes
 Vercel reported:
 
 ```text
-Deployment: dpl_BBPwpff8gWmTb7cvbnaexD5UDteK
+Deployment: dpl_BW4GNZrcx2a9XF1fV2yFKq3TUeLL
 Target: production
 Ready state: READY
 Alias: https://artemis.agoraxai.com
