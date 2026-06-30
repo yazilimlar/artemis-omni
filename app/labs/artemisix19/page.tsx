@@ -23,7 +23,7 @@ export const metadata = createMetadata({
   title: "ArtemisIX19 Autonomous Generator",
   path: "/labs/artemisix19",
   description:
-    "ArtemisIX19 is a public-safe autonomous generator studio with a two-click client solution path, triangle convergence, daily content stream, and media package outputs.",
+    "ArtemisIX19 is a public-safe autonomous generator studio with a two-click client solution path, triangle convergence, local package vault, Markdown export, and media package outputs.",
 });
 
 const relatedProofs = getProofModules([
@@ -38,7 +38,7 @@ export default function ArtemisIX19Page() {
       <PageHero
         eyebrow="Labs · ArtemisIX19"
         title="Autonomous client solution and media generator for the Artemis reference library."
-        description="A public-safe branch of the Artemis proof system: two clicks identify a client purpose and operating terrain, the third click locks the triangle, and the page generates prompts, image briefs, render plans, video storyboards, plots, movie beats, sound cues, and a daily learning stream."
+        description="A public-safe branch of the Artemis proof system: two clicks identify a client purpose and operating terrain, the third click locks the triangle, and the page generates prompts, image briefs, render plans, video storyboards, plots, movie beats, sound cues, daily learning streams, and exportable local packages."
       >
         <div className="flex flex-wrap items-center gap-3">
           <StatusBadge tone="test">ArtemisIX19</StatusBadge>
@@ -171,7 +171,7 @@ export default function ArtemisIX19Page() {
           <ExecutiveSectionHeader
             eyebrow="Generator"
             title="Produce a solution and media package without leaving the browser"
-            description="Select purpose, terrain, source family, output type, visibility mode, and intensity. The generated package can be copied or exported as JSON."
+            description="Select purpose, terrain, source family, output type, visibility mode, and intensity. The generated package can be copied, saved locally, exported as Markdown, or exported as JSON."
           />
           <div className="mt-10">
             <ArtemisIX19Generator />

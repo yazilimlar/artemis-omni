@@ -1,13 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   CalendarDays,
+  Check,
   Clipboard,
+  Copy,
   Download,
+  FileText,
   Film,
   Image,
+  Library as LibraryIcon,
   LineChart,
   MousePointer2,
   RefreshCw,
@@ -15,6 +19,7 @@ import {
   Sparkles,
   Target,
   Triangle,
+  Trash2,
   Video,
   Volume2,
   Wand2,
@@ -27,8 +32,10 @@ import {
   artemisIX19Sources,
   buildArtemisIX19DailyStream,
   buildArtemisIX19Package,
+  formatArtemisIX19Markdown,
   type ArtemisIX19AssetType,
   type ArtemisIX19Audience,
+  type ArtemisIX19DailyStream,
   type ArtemisIX19GeneratedPackage,
   type ArtemisIX19Privacy,
   type ArtemisIX19SolutionIntentId,
@@ -52,6 +59,19 @@ const privacyModes: { id: ArtemisIX19Privacy; label: string }[] = [
   { id: "private-pilot", label: "Private pilot" },
 ];
 
+const savedPackagesStorageKey = "artemisix19.savedPackages.v2";
+
+type SavedArtemisIX19Package = {
+  id: string;
+  savedAt: string;
+  label: string;
+  sourceTitle: string;
+  assetLabel: string;
+  markdown: string;
+  generated: ArtemisIX19GeneratedPackage;
+  dailyStream: ArtemisIX19DailyStream;
+};
+
 export function ArtemisIX19Generator() {
   const [sourceId, setSourceId] = useState(artemisIX19Sources[0].id);
   const [assetType, setAssetType] = useState<ArtemisIX19AssetType>("prompt");
@@ -66,6 +86,10 @@ export function ArtemisIX19Generator() {
   const [triangleLocked, setTriangleLocked] = useState(false);
   const [intensity, setIntensity] = useState(3);
   const [copied, setCopied] = useState(false);
+  const [markdownCopied, setMarkdownCopied] = useState(false);
+  const [savedPackages, setSavedPackages] = useState<SavedArtemisIX19Package[]>([]);
+  const [storageReady, setStorageReady] = useState(false);
+  const [savedNotice, setSavedNotice] = useState(false);
   const dailyKey = useMemo(() => new Date().toISOString().slice(0, 10), []);
 
   const generated = useMemo(
@@ -94,7 +118,38 @@ export function ArtemisIX19Generator() {
     () => buildArtemisIX19DailyStream({ dateKey: dailyKey, sourceId, intentId, terrainId }),
     [dailyKey, sourceId, intentId, terrainId],
   );
+  const markdown = useMemo(
+    () => formatArtemisIX19Markdown(generated, dailyStream),
+    [generated, dailyStream],
+  );
   const maxPlot = Math.max(...generated.plotPoints.map((point) => point.value));
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(savedPackagesStorageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored) as SavedArtemisIX19Package[];
+        if (Array.isArray(parsed)) {
+          setSavedPackages(parsed.slice(0, 8));
+        }
+      }
+    } catch {
+      setSavedPackages([]);
+    } finally {
+      setStorageReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!storageReady) {
+      return;
+    }
+
+    window.localStorage.setItem(
+      savedPackagesStorageKey,
+      JSON.stringify(savedPackages.slice(0, 8)),
+    );
+  }, [savedPackages, storageReady]);
 
   function reset() {
     setSourceId(artemisIX19Sources[0].id);
@@ -106,6 +161,8 @@ export function ArtemisIX19Generator() {
     setTriangleLocked(false);
     setIntensity(3);
     setCopied(false);
+    setMarkdownCopied(false);
+    setSavedNotice(false);
   }
 
   async function copyPrompt() {
@@ -114,16 +171,77 @@ export function ArtemisIX19Generator() {
     window.setTimeout(() => setCopied(false), 1800);
   }
 
-  function downloadJson() {
-    const blob = new Blob([JSON.stringify(generated, null, 2)], {
-      type: "application/json",
-    });
+  async function copyMarkdown() {
+    await navigator.clipboard.writeText(markdown);
+    setMarkdownCopied(true);
+    window.setTimeout(() => setMarkdownCopied(false), 1800);
+  }
+
+  function downloadTextFile({
+    content,
+    filename,
+    type,
+  }: {
+    content: string;
+    filename: string;
+    type: string;
+  }) {
+    const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `artemisix19-${source.id}-${assetType}.json`;
+    link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
+  }
+
+  function downloadJson() {
+    downloadTextFile({
+      content: JSON.stringify(generated, null, 2),
+      filename: `artemisix19-${source.id}-${assetType}.json`,
+      type: "application/json",
+    });
+  }
+
+  function downloadMarkdown() {
+    downloadTextFile({
+      content: markdown,
+      filename: `artemisix19-${source.id}-${assetType}.md`,
+      type: "text/markdown",
+    });
+  }
+
+  function savePackage() {
+    const savedAt = new Date().toISOString();
+    const record: SavedArtemisIX19Package = {
+      id: `${savedAt}-${source.id}-${assetType}`,
+      savedAt,
+      label: `${source.title} · ${generated.assetLabel}`,
+      sourceTitle: source.title,
+      assetLabel: generated.assetLabel,
+      markdown,
+      generated,
+      dailyStream,
+    };
+
+    setSavedPackages((current) => [
+      record,
+      ...current.filter((item) => item.id !== record.id),
+    ].slice(0, 8));
+    setSavedNotice(true);
+    window.setTimeout(() => setSavedNotice(false), 1800);
+  }
+
+  function removeSavedPackage(id: string) {
+    setSavedPackages((current) => current.filter((item) => item.id !== id));
+  }
+
+  function downloadSavedPackage(record: SavedArtemisIX19Package) {
+    downloadTextFile({
+      content: record.markdown,
+      filename: `${record.id}.md`,
+      type: "text/markdown",
+    });
   }
 
   return (
@@ -354,11 +472,43 @@ export function ArtemisIX19Generator() {
             </button>
             <button
               type="button"
+              onClick={copyMarkdown}
+              className="inline-flex items-center gap-2 rounded-md border border-gold/35 bg-gold/10 px-4 py-2 text-sm text-gold-soft transition-colors hover:bg-gold/15"
+            >
+              {markdownCopied ? (
+                <Check className="h-4 w-4" aria-hidden />
+              ) : (
+                <Copy className="h-4 w-4" aria-hidden />
+              )}
+              {markdownCopied ? "Markdown Copied" : "Copy Markdown"}
+            </button>
+            <button
+              type="button"
+              onClick={savePackage}
+              className="inline-flex items-center gap-2 rounded-md border border-emerald-300/35 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition-colors hover:bg-emerald-400/15"
+            >
+              {savedNotice ? (
+                <Check className="h-4 w-4" aria-hidden />
+              ) : (
+                <LibraryIcon className="h-4 w-4" aria-hidden />
+              )}
+              {savedNotice ? "Saved" : "Save Package"}
+            </button>
+            <button
+              type="button"
               onClick={downloadJson}
               className="inline-flex items-center gap-2 rounded-md border border-signal-soft/35 bg-signal-soft/10 px-4 py-2 text-sm text-signal-soft transition-colors hover:bg-signal-soft/15"
             >
               <Download className="h-4 w-4" aria-hidden />
               Export JSON
+            </button>
+            <button
+              type="button"
+              onClick={downloadMarkdown}
+              className="inline-flex items-center gap-2 rounded-md border border-signal-soft/35 bg-signal-soft/10 px-4 py-2 text-sm text-signal-soft transition-colors hover:bg-signal-soft/15"
+            >
+              <FileText className="h-4 w-4" aria-hidden />
+              Export MD
             </button>
             <button
               type="button"
@@ -402,6 +552,7 @@ export function ArtemisIX19Generator() {
         <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_0.86fr]">
           <div className="space-y-5">
             <ConvergenceCard generated={generated} />
+            <ArtifactPreview generated={generated} maxPlot={maxPlot} />
 
             <OutputBlock title="Master Prompt">
               <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-foreground/84">
@@ -441,6 +592,12 @@ export function ArtemisIX19Generator() {
                 ))}
               </dl>
             </OutputBlock>
+
+            <PackageVault
+              savedPackages={savedPackages}
+              onDownload={downloadSavedPackage}
+              onRemove={removeSavedPackage}
+            />
 
             <OutputBlock title="Signal Plot">
               <div className="space-y-3">
@@ -535,7 +692,7 @@ export function ArtemisIX19Generator() {
 function ConvergenceCard({ generated }: { generated: ArtemisIX19GeneratedPackage }) {
   return (
     <OutputBlock title="Triangle Convergence">
-      <div className="grid gap-4 md:grid-cols-[0.72fr_1fr]">
+      <div className="grid items-start gap-4 md:grid-cols-[0.72fr_1fr]">
         <div className="relative min-h-56 overflow-hidden rounded-md border border-signal-soft/25 bg-navy-deep/55 p-4">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(0,207,255,0.16),transparent_38%)]" />
           <svg
@@ -604,6 +761,173 @@ function ConvergenceCard({ generated }: { generated: ArtemisIX19GeneratedPackage
       </div>
     </OutputBlock>
   );
+}
+
+function ArtifactPreview({
+  generated,
+  maxPlot,
+}: {
+  generated: ArtemisIX19GeneratedPackage;
+  maxPlot: number;
+}) {
+  const waveform = generated.plotPoints.map((point, index) => ({
+    x: 18 + index * 34,
+    height: 18 + ((point.value + index * 11) % 44),
+  }));
+
+  return (
+    <OutputBlock title="Generated Artifact Preview">
+      <div className="grid gap-4 xl:grid-cols-[1fr_0.82fr]">
+        <div className="overflow-hidden rounded-md border border-signal-soft/25 bg-background/25">
+          <svg
+            viewBox="0 0 420 250"
+            role="img"
+            aria-label="Deterministic preview for the selected ArtemisIX19 artifact"
+            className="aspect-[16/9] w-full"
+          >
+            <defs>
+              <linearGradient id="artifactPreviewGlow" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stopColor="#00CFFF" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#F2D06B" stopOpacity="0.75" />
+              </linearGradient>
+            </defs>
+            <rect width="420" height="250" fill="#07111D" />
+            <rect x="18" y="18" width="384" height="214" rx="8" fill="#0B1726" stroke="#25455C" />
+            <path
+              d="M58 176 210 46 360 176Z"
+              fill="rgba(0,207,255,0.06)"
+              stroke="url(#artifactPreviewGlow)"
+              strokeWidth="2"
+            />
+            <path
+              d="M76 184 C132 108 186 142 226 88 S310 80 356 58"
+              fill="none"
+              stroke="#00CFFF"
+              strokeLinecap="round"
+              strokeWidth="3"
+            />
+            {generated.plotPoints.slice(0, 5).map((point, index) => {
+              const height = 82 * (point.value / maxPlot);
+              return (
+                <rect
+                  key={point.label}
+                  x={56 + index * 58}
+                  y={194 - height}
+                  width="22"
+                  height={height}
+                  rx="4"
+                  fill={index % 2 === 0 ? "#F2D06B" : "#00CFFF"}
+                  opacity="0.78"
+                />
+              );
+            })}
+            {waveform.map((bar, index) => (
+              <rect
+                key={`${bar.x}-${bar.height}`}
+                x={bar.x}
+                y={224 - bar.height}
+                width="12"
+                height={bar.height}
+                rx="6"
+                fill="#D8D8D8"
+                opacity={0.28 + index * 0.08}
+              />
+            ))}
+            <circle cx="210" cy="104" r="9" fill="#F2D06B" />
+            <text x="28" y="42" fill="#D8D8D8" fontSize="12" fontFamily="monospace">
+              {generated.assetLabel.toUpperCase()} / {generated.categories.renderType.toUpperCase()}
+            </text>
+            <text x="28" y="216" fill="#8EA4B7" fontSize="10" fontFamily="monospace">
+              PREVIEW IS SYNTHETIC · SOURCE-SAFE · EXPORT READY
+            </text>
+          </svg>
+        </div>
+
+        <div className="grid gap-3">
+          {generated.storyboard.slice(0, 3).map((frame, index) => (
+            <div key={frame} className="rounded-md border border-border/50 bg-background/25 p-3">
+              <p className="font-mono text-[0.58rem] uppercase tracking-wider text-gold-soft">
+                Frame {index + 1}
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-foreground/84">{frame}</p>
+            </div>
+          ))}
+          <div className="rounded-md border border-border/50 bg-background/25 p-3">
+            <p className="font-mono text-[0.58rem] uppercase tracking-wider text-signal-soft">
+              Sound Wave
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-foreground/84">
+              {generated.soundCue}
+            </p>
+          </div>
+        </div>
+      </div>
+    </OutputBlock>
+  );
+}
+
+function PackageVault({
+  savedPackages,
+  onDownload,
+  onRemove,
+}: {
+  savedPackages: SavedArtemisIX19Package[];
+  onDownload: (record: SavedArtemisIX19Package) => void;
+  onRemove: (id: string) => void;
+}) {
+  return (
+    <OutputBlock title="Local Package Vault">
+      {savedPackages.length === 0 ? (
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Save packages here to keep the last eight generated Markdown briefs in this browser.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {savedPackages.map((record) => (
+            <div key={record.id} className="rounded-md border border-border/50 bg-background/25 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-parchment">{record.label}</p>
+                  <p className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-muted-foreground">
+                    {record.assetLabel} · {formatSavedAt(record.savedAt)}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    title="Download saved Markdown"
+                    aria-label={`Download ${record.label}`}
+                    onClick={() => onDownload(record)}
+                    className="grid h-8 w-8 place-items-center rounded-md border border-signal-soft/35 bg-signal-soft/10 text-signal-soft transition-colors hover:bg-signal-soft/15"
+                  >
+                    <Download className="h-4 w-4" aria-hidden />
+                  </button>
+                  <button
+                    type="button"
+                    title="Remove saved package"
+                    aria-label={`Remove ${record.label}`}
+                    onClick={() => onRemove(record.id)}
+                    className="grid h-8 w-8 place-items-center rounded-md border border-border/70 bg-background/25 text-muted-foreground transition-colors hover:border-rose-300/45 hover:text-rose-100"
+                  >
+                    <Trash2 className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </OutputBlock>
+  );
+}
+
+function formatSavedAt(savedAt: string) {
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(savedAt));
 }
 
 function DailyLine({ label, value }: { label: string; value: string }) {

@@ -11,7 +11,7 @@ The route now also includes a client solution path:
 2. Click 2 selects the operating terrain.
 3. Click 3 locks the triangle and settles the project into one point, purpose, and meaning.
 
-The system then updates the package categories, video prompt, convergence visual, daily teaching stream, and alternative solution matrix.
+The system then updates the package categories, video prompt, convergence visual, generated artifact preview, daily teaching stream, alternative solution matrix, and export package.
 
 ## Source Families
 
@@ -39,7 +39,11 @@ Each generated package must include:
 - acceptance checks
 - daily essay, update, quote, cartoon prompt, question, irony, observation, public revenue idea, and 4 x 4 alternatives
 - copyable prompt text
+- copyable Markdown brief
+- deterministic artifact preview with plot, storyboard, and sound-wave cues
 - exportable JSON manifest
+- exportable Markdown package
+- browser-local saved package vault for the last eight generated briefs
 
 ## Client Solution Path
 
@@ -55,16 +59,27 @@ The reasoning language is explicit: deductive contract requirements, inductive f
 
 The daily stream is deterministic and synthetic. It is not live news scraping, automatic public publishing, or an external AI call. It creates publishable drafts and prompts that still require human review before release.
 
+## Phase 2 Library Workbench
+
+The next-best implementation phase turns the generator into a reusable workbench rather than a single-output demo:
+
+- Markdown export creates a portable prompt/storyboard/render/sound package for other agents or repositories.
+- Copy Markdown supports direct handoff into GitHub issues, docs, Claude Code, Codex, or a publishing queue.
+- Local package vault stores the last eight generated briefs in browser storage without sending data to an external service.
+- Artifact preview renders a synthetic SVG/plot/storyboard/sound cue so the image, render, video, plot, movie, and sound modes feel tangible even before approved API workers exist.
+
+The workbench remains source-safe: saved records store generated sanitized output, not raw Desktop HTML references.
+
 ## Current Implementation
 
-- `data/artemisIX19.ts` defines source families, asset profiles, and the deterministic package builder.
-- `components/labs/ArtemisIX19Generator.tsx` provides the client-side console, two-click path, triangle convergence, daily stream, copy action, and JSON export.
+- `data/artemisIX19.ts` defines source families, asset profiles, the deterministic package builder, daily stream builder, and Markdown formatter.
+- `components/labs/ArtemisIX19Generator.tsx` provides the client-side console, two-click path, triangle convergence, generated artifact preview, daily stream, copy actions, local saved package vault, JSON export, and Markdown export.
 - `app/labs/artemisix19/page.tsx` publishes the new Labs route.
 - `data/proofLibrary.ts`, `lib/artemis/library.ts`, `data/programCatalog.ts`, and sitemap/index pages register the route.
 
 ## Future Upgrade Path
 
 1. Add approved API-backed image/video/audio workers behind the same source-boundary model.
-2. Add persistent package history only after deciding storage and privacy policy.
+2. Add server-side package persistence only after deciding storage and privacy policy.
 3. Add raw reference migration only after file-by-file sanitization and publication review.
 4. Add a reviewed editorial queue before any automated website publishing.
