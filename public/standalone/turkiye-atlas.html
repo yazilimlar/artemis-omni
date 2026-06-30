@@ -5559,7 +5559,7 @@
       external graph: ${esc(PERF_RUNTIME.externalGraphStatus)}`;
   }
   async function loadDataGraph(){
-    const canFetch=/^https?:$/i.test(location.protocol) || window.ARTEMIS_ENABLE_EXTERNAL_GRAPH===true;
+    const canFetch=window.ARTEMIS_ENABLE_EXTERNAL_GRAPH===true;
     if(!canFetch){ PERF_RUNTIME.externalGraphStatus="embedded static fallback"; state.externalGraphStatus=PERF_RUNTIME.externalGraphStatus; return null; }
     try{
       const res=await fetch("artemis_geo_graph_v1.json",{cache:"no-store"});
