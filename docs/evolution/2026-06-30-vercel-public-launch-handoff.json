@@ -23,6 +23,35 @@
     "nodeVersion": "24.x",
     "localProjectFileIgnored": true
   },
+  "postHandoffDeployment": {
+    "pushedMainToGithub": true,
+    "latestProductionDeploymentUrl": "https://artemis-omni-gqnr2irbq-gokmen1313-3041s-projects.vercel.app",
+    "latestProductionDeploymentId": "dpl_6yCHW7GQz7nXz331MtQCwYZpKxmF",
+    "latestProductionDeploymentStatus": "Ready",
+    "publicWorkingUrl": "https://artemis-omni.vercel.app",
+    "smokeTestedPublicRoutes": [
+      "/",
+      "/labs/artemisix19",
+      "/library/programs",
+      "/insights",
+      "/sitemap.xml"
+    ],
+    "customDomains": [
+      {
+        "domain": "agoraxai.com",
+        "vercelAttached": true,
+        "dnsStatus": "resolves_to_squarespace",
+        "recommendedRecord": "A agoraxai.com 76.76.21.21"
+      },
+      {
+        "domain": "artemis.agoraxai.com",
+        "vercelAttached": true,
+        "dnsStatus": "does_not_resolve",
+        "recommendedRecord": "A artemis.agoraxai.com 76.76.21.21"
+      }
+    ],
+    "note": "Do not present the custom domains as live Artemis URLs until DNS is corrected and public checks return 200."
+  },
   "verifiedCommands": [
     {
       "command": "npm run typecheck",

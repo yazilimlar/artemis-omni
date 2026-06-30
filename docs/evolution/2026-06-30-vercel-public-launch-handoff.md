@@ -71,6 +71,53 @@ to:
 yazilimlar/artemis-omni
 ```
 
+## Post-Handoff Deployment Update
+
+After this handoff was recreated in the repo, `main` was pushed to the canonical GitHub repository over HTTPS and Vercel created a new production deployment:
+
+```text
+https://artemis-omni-gqnr2irbq-gokmen1313-3041s-projects.vercel.app
+```
+
+Deployment status:
+
+```text
+Ready
+```
+
+Vercel deployment ID:
+
+```text
+dpl_6yCHW7GQz7nXz331MtQCwYZpKxmF
+```
+
+The public working URL verified by curl is:
+
+```text
+https://artemis-omni.vercel.app
+```
+
+Smoke-tested public routes on `https://artemis-omni.vercel.app`:
+
+- `/`
+- `/labs/artemisix19`
+- `/library/programs`
+- `/insights`
+- `/sitemap.xml`
+
+All returned `200`.
+
+The raw deployment URLs and branch/team Vercel aliases returned Vercel SSO redirects. Use the public project alias above unless deployment protection is intentionally disabled for those aliases.
+
+Custom domain status:
+
+- `agoraxai.com` is attached in Vercel but currently resolves to Squarespace.
+- `artemis.agoraxai.com` is attached in Vercel but does not currently resolve in DNS.
+- Vercel recommends adding `A agoraxai.com 76.76.21.21` for the apex domain.
+- Vercel recommends adding `A artemis.agoraxai.com 76.76.21.21` for the subdomain.
+
+Do not tell users the custom domain is live until DNS is corrected and curl/browser checks return `200` on the intended domain.
+
 ## GitHub Launch Gate
 
 Two GitHub issues must be handled before relying on Git-based production deployment:
@@ -357,4 +404,3 @@ The first release should not add auth, payments, external APIs, database require
 - Vercel Git connection was corrected in the transcript, but production branch policy still needs dashboard confirmation.
 - Direct social posting requires platform app setup, permissions, OAuth, and policy review.
 - Public content generation must not expose protected HTML, private artifacts, raw source data, private coordinates, or secret values.
-
