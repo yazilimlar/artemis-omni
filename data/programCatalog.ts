@@ -45,6 +45,56 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Do not publish source HTML, embedded assets, exact Desktop paths, unverified fabrication values, private coordinates, or raw generated code from old prototypes.",
   },
   {
+    slug: "tax-architecture-2026",
+    title: "1040 Finance Architecture 2026",
+    kind: "Showcase",
+    statusLabel: "Standalone live",
+    statusTone: "test",
+    sourceType: "Reviewed standalone HTML prototype",
+    summary:
+      "A True 3D finance-architecture model that turns the individual tax flow into a spatial executive learning surface with scenarios, deduction logic, credits, payments, audit table, CSV export, and print review.",
+    bestPublicLink: {
+      href: "/labs/tax-architecture-2026",
+      label: "1040 Finance Architecture",
+    },
+    tutorialUse:
+      "Use as a finance-education and executive-literacy route for explaining how source income, deductions, taxable income, credits, payments, and scenario choices change the final review picture.",
+    solutionFit:
+      "Broadens Artemis beyond construction controls into financial architecture storytelling, advisory intake, educational products, and premium scenario workshops.",
+    migrationPath: [
+      "Keep the standalone route live as a reviewed prototype.",
+      "Extract reusable scenario, export, and print patterns into future native Artemis components.",
+      "Add professional review disclaimers and product packaging before offering paid finance sessions.",
+    ],
+    boundary:
+      "Educational prototype only. It is not tax, legal, accounting, filing, or investment advice and should not be presented as production tax software.",
+  },
+  {
+    slug: "turkiye-atlas-public-lab",
+    title: "ARTEMIS Turkiye Atlas",
+    kind: "Showcase",
+    statusLabel: "Standalone live",
+    statusTone: "test",
+    sourceType: "Reviewed standalone HTML prototype",
+    summary:
+      "An interactive cultural-route and destination-intelligence atlas with Mapbox, MapLibre, Leaflet fallback, route planning, storytelling, partner CRM concepts, commercial layers, and dataset diagnostics.",
+    bestPublicLink: {
+      href: "/labs/turkiye-atlas",
+      label: "Turkiye Atlas",
+    },
+    tutorialUse:
+      "Use as the foundation for destination storytelling, bilingual cultural-route education, tourism campaign planning, and map-engine reliability notes.",
+    solutionFit:
+      "Creates a revenue path for destination pilots, local partner discovery, itinerary products, sponsorship packages, and public-sector cultural/economic development proposals.",
+    migrationPath: [
+      "Keep the standalone route live as a reviewed prototype.",
+      "URL-restrict or rotate the public Mapbox pk token before stronger promotion.",
+      "Move reusable route, partner, and diagnostics models into native Artemis data modules over time.",
+    ],
+    boundary:
+      "Contains a public browser Mapbox pk token. Public pk tokens are not secrets, but they must be URL-restricted to approved domains and never replaced with an sk secret token.",
+  },
+  {
     slug: "sewer-simulator-formula-icons",
     title: "Sewer Construction Formula Tutorial",
     kind: "Tutorial",
@@ -452,6 +502,8 @@ export const programCatalogSummary = {
     "/labs/utility-intelligence-bridge",
     "/labs/diana-moonshot",
     "/labs/construction-intelligence-workbench",
+    "/labs/tax-architecture-2026",
+    "/labs/turkiye-atlas",
     "/insights",
     "/tools",
   ],

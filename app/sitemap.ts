@@ -18,6 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/utility-intelligence-bridge",
     "/labs/geodesic-intelligence",
     "/labs/diana-moonshot",
+    "/labs/tax-architecture-2026",
+    "/labs/turkiye-atlas",
     "/academy",
     "/tools",
     "/case-studies",

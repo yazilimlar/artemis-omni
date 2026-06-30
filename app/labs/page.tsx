@@ -1,3 +1,11 @@
+import {
+  ArrowRight,
+  Calculator,
+  Globe2,
+  Landmark,
+  Map as MapIcon,
+  ShieldCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
@@ -16,6 +24,41 @@ import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
 import { proofModules } from "@/data/proofLibrary";
 import { createMetadata } from "@/lib/seo/metadata";
+
+const standaloneLabModules = [
+  {
+    title: "1040 Finance Architecture",
+    eyebrow: "Finance Architecture",
+    href: "/labs/tax-architecture-2026",
+    statusLabel: "Standalone prototype",
+    statusTone: "test" as const,
+    Icon: Calculator,
+    accentIcon: Landmark,
+    description:
+      "A WebGL 3D model for teaching the 2026 individual tax structure as a finance architecture: income foundation, deductions, taxable core, credits, payments, scenarios, export, and print review.",
+    signals: ["Three.js", "Scenario controls", "CSV export", "Print review"],
+    commercialPath:
+      "Best pilot path: executive education, scenario workshops, creator-led finance storytelling, and advisory intake.",
+    boundary:
+      "Educational prototype only. It is not tax advice, filing software, or a replacement for professional review.",
+  },
+  {
+    title: "ARTEMIS Turkiye Atlas",
+    eyebrow: "Atlas / Cultural Routes",
+    href: "/labs/turkiye-atlas",
+    statusLabel: "Standalone prototype",
+    statusTone: "test" as const,
+    Icon: MapIcon,
+    accentIcon: Globe2,
+    description:
+      "An interactive atlas for regional storytelling, route planning, cultural discovery, commercial layers, partner CRM concepts, dataset diagnostics, and map-engine fallback testing.",
+    signals: ["Mapbox", "MapLibre", "Leaflet fallback", "Growth studio"],
+    commercialPath:
+      "Best pilot path: tourism campaigns, local partner discovery, itinerary products, sponsorship packages, and destination intelligence.",
+    boundary:
+      "Contains a public Mapbox pk token that must remain URL-restricted before stronger public promotion.",
+  },
+];
 
 export const metadata = createMetadata({
   title: "Labs Proof Library",
@@ -45,9 +88,10 @@ export default function LabsPage() {
       <section className="border-b border-border/60 py-12 lg:py-16">
         <Container className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
           <ConfidenceNote title="Public-safe publishing rule">
-            These pages do not embed raw HTML workbenches, private project files, maps,
-            coordinates, client identifiers, or unreviewed demos. Public pages use executive
-            narrative, generic proof structure, synthetic examples, and explicit limitations.
+            Most Labs pages do not embed raw workbenches, private project files, client
+            identifiers, or unreviewed demos. The standalone module section below is the reviewed
+            exception path: self-contained public prototypes are wrapped as isolated lab modules
+            with explicit limitations, security notes, and commercial next steps.
           </ConfidenceNote>
           <WhatItIsNotBox
             items={[
@@ -56,6 +100,98 @@ export default function LabsPage() {
               "Not a replacement for human review, project controls judgment, or engineering approval.",
             ]}
           />
+        </Container>
+      </section>
+
+      <section className="border-b border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Standalone Modules"
+            title="Two reviewed prototypes now become public Artemis Labs"
+            description="These modules preserve the original standalone HTML engines for speed and visibility, while the surrounding Artemis site provides route discipline, catalog context, commercial direction, and review boundaries."
+          />
+          <div className="mt-10 grid gap-5 lg:grid-cols-2">
+            {standaloneLabModules.map((module) => {
+              const Icon = module.Icon;
+              const AccentIcon = module.accentIcon;
+              return (
+                <article
+                  key={module.href}
+                  className="group relative min-w-0 overflow-hidden rounded-lg border border-border/70 bg-navy-deep/50 p-6 shadow-panel transition-colors hover:border-gold/45"
+                >
+                  <div
+                    className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent opacity-70"
+                    aria-hidden
+                  />
+                  <div className="flex flex-wrap items-start justify-between gap-5">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <StatusBadge tone={module.statusTone}>{module.statusLabel}</StatusBadge>
+                        <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+                          {module.eyebrow}
+                        </span>
+                      </div>
+                      <h2 className="display-serif mt-4 text-balance text-2xl text-parchment sm:text-3xl">
+                        {module.title}
+                      </h2>
+                    </div>
+                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-md border border-gold/25 bg-gold/10 text-gold-soft">
+                      <Icon className="h-6 w-6" aria-hidden />
+                    </span>
+                  </div>
+
+                  <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                    {module.description}
+                  </p>
+
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {module.signals.map((signal) => (
+                      <span
+                        key={signal}
+                        className="rounded-full border border-border/60 bg-background/35 px-2.5 py-1 text-xs text-muted-foreground"
+                      >
+                        {signal}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    <div className="rounded-md border border-gold/20 bg-gold/5 p-4">
+                      <div className="flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-wider text-gold-soft">
+                        <AccentIcon className="h-4 w-4" aria-hidden />
+                        Revenue Path
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        {module.commercialPath}
+                      </p>
+                    </div>
+                    <div className="rounded-md border border-border/60 bg-background/30 p-4">
+                      <div className="flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+                        <ShieldCheck className="h-4 w-4" aria-hidden />
+                        Review Boundary
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        {module.boundary}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-7 flex flex-wrap gap-3">
+                    <Button href={module.href}>
+                      Open Lab
+                      <ArrowRight
+                        className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                        aria-hidden
+                      />
+                    </Button>
+                    <Button href="/library/programs" variant="outline">
+                      Catalog Context
+                    </Button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </Container>
       </section>
 

@@ -24,6 +24,16 @@ const fastLinks = [
     description: "Autonomous prompt/media generator for the protected Artemis reference set.",
   },
   {
+    title: "1040 Finance Architecture",
+    href: "/labs/tax-architecture-2026",
+    description: "Standalone 3D finance education prototype for tax-scenario storytelling.",
+  },
+  {
+    title: "Turkiye Atlas",
+    href: "/labs/turkiye-atlas",
+    description: "Interactive cultural-route atlas with map fallbacks and commercial discovery layers.",
+  },
+  {
     title: "Utility Intelligence Bridge",
     href: "/labs/utility-intelligence-bridge",
     description: "Public narrative for the sewer/utility cockpit and field-to-finance bridge.",
@@ -90,7 +100,7 @@ export default function ProgramsCatalogPage() {
             title="Where the attached files belong on the website"
             description="The catalog routes each file to one of the existing public-safe destinations first. New live tools should be rebuilt later, not published as raw HTML."
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {fastLinks.map((link) => (
               <Link
                 key={link.href}

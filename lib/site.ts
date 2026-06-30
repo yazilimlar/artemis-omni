@@ -9,8 +9,8 @@ export const siteConfig = {
   description:
     "Artemis turns project fundamentals into AI-enabled execution by connecting design, geometry, quantities, schedule, field production, actual cost, billing revenue, PM forecast, system-generated projections, cashflow, risk, and executive action.",
   // Canonical site URL. Override per environment with NEXT_PUBLIC_SITE_URL.
-  // NOTE: artemis.agoraxai.com is only a POSSIBLE FUTURE staging domain — it is NOT
-  // assumed live or configured. See docs/DeploymentPlan.md (deployment options A/B/C).
+  // artemis.agoraxai.com is the verified Vercel production subdomain as of 2026-06-30.
+  // Keep the apex/root agoraxai.com domain on Squarespace unless ownership explicitly changes.
   url:
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
     "https://artemis.agoraxai.com",

@@ -2,6 +2,12 @@
 
 Date: 2026-06-30
 
+Current status note: a later 2026-06-30 verification confirmed
+`https://artemis.agoraxai.com` returns `HTTP/2 200` from Vercel. Treat the custom
+domain warning in this file as historical state, and use
+`docs/history/ARTEMIS_VERCEL_MILESTONE_2026-06-30.md` for the current domain and
+standalone Labs milestone record.
+
 This handoff captures the verified state for making Artemis Omni publicly available on Vercel and evolving the website into a public-safe article, infographic, and social publishing system.
 
 ## Verified Local State
