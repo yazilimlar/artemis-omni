@@ -5,6 +5,9 @@ Status: Custom subdomain verified live
 Production domain: https://artemis.agoraxai.com
 Vercel project: artemis-omni
 Local workspace: /Users/theoppositeofturtle/Documents/artemis-for-codex/artemis-omni-codex-local
+Milestone commit: 27d18ee feat: publish standalone Artemis labs
+Production deployment: dpl_BBPwpff8gWmTb7cvbnaexD5UDteK
+Preview deployment: dpl_2AFr4uizoMREp7145BKDs26wWWAK
 
 ## Executive Record
 
@@ -52,6 +55,25 @@ Expected current result:
 HTTP/2 200
 server: Vercel
 ```
+
+The standalone lab production deployment was completed with:
+
+```bash
+npx vercel@latest --prod --yes
+```
+
+Vercel reported:
+
+```text
+Deployment: dpl_BBPwpff8gWmTb7cvbnaexD5UDteK
+Target: production
+Ready state: READY
+Alias: https://artemis.agoraxai.com
+```
+
+The preview deployment `dpl_2AFr4uizoMREp7145BKDs26wWWAK` built successfully, but the
+preview URL was protected by Vercel SSO. Production custom-domain checks were used
+for final public verification after local and preview builds passed.
 
 ## System Architecture
 
