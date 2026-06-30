@@ -6,9 +6,11 @@
 export type LibraryKind =
   | "Doctrine"
   | "Method"
+  | "Publishing"
   | "Strategy"
   | "Brand"
   | "Showcase"
+  | "Program"
   | "Tool";
 
 export type LibraryItem = {
@@ -45,6 +47,33 @@ export const libraryItems: LibraryItem[] = [
     summary: "Triage of workbenches, dashboards, and render references with public/private classification.",
     href: "/demo",
     classification: "Reference only",
+  },
+  {
+    slug: "programs-and-tutorials-catalog",
+    title: "Programs & Tutorials Catalog",
+    kind: "Program",
+    summary:
+      "A public-safe lookup page for attached programs, tutorials, HTML demos, solution cockpits, and exemplary files.",
+    href: "/library/programs",
+    classification: "Public-safe",
+  },
+  {
+    slug: "artemisix19-autonomous-generator",
+    title: "ArtemisIX19 Autonomous Generator",
+    kind: "Showcase",
+    summary:
+      "A public-safe generator studio for prompts, images, renders, videos, plots, movie beats, and sound cues derived from protected Artemis reference work.",
+    href: "/labs/artemisix19",
+    classification: "Public-safe",
+  },
+  {
+    slug: "ai-insight-publication-engine",
+    title: "AI Insight & Publication Engine",
+    kind: "Publishing",
+    summary:
+      "A public-safe editorial system for turning field knowledge, caveats, controls data, and AI review into articles, visuals, and implementation lessons.",
+    href: "/insights",
+    classification: "Public-safe",
   },
   {
     slug: "system-graphics",

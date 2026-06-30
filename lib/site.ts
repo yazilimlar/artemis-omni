@@ -5,9 +5,9 @@
 export const siteConfig = {
   name: "Artemis Omni",
   shortName: "Artemis",
-  tagline: "5D Construction Intelligence Bridge",
+  tagline: "AI-Enabled Execution Bridge",
   description:
-    "Artemis Omni is a 5D Construction Intelligence Bridge for heavy civil and infrastructure delivery — linking design, geometry, quantities, schedule, field production, and actual cost into live cashflow forecasts that compare Bid Estimate vs Actuals vs PM Forecast vs system-generated projections.",
+    "Artemis turns project fundamentals into AI-enabled execution by connecting design, geometry, quantities, schedule, field production, actual cost, billing revenue, PM forecast, system-generated projections, cashflow, risk, and executive action.",
   // Canonical site URL. Override per environment with NEXT_PUBLIC_SITE_URL.
   // NOTE: artemis.agoraxai.com is only a POSSIBLE FUTURE staging domain — it is NOT
   // assumed live or configured. See docs/DeploymentPlan.md (deployment options A/B/C).

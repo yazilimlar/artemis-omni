@@ -36,6 +36,11 @@ export function createMetadata(input: SeoInput = {}): Metadata {
     description,
     keywords,
     alternates: { canonical: url },
+    icons: {
+      icon: [{ url: siteConfig.ogImage, type: "image/svg+xml" }],
+      shortcut: siteConfig.ogImage,
+      apple: siteConfig.ogImage,
+    },
     robots: noIndex
       ? { index: false, follow: false }
       : { index: true, follow: true },

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { siteConfig } from "@/lib/site";
 import { footerNav } from "@/lib/artemis/navigation";
 import { Container } from "@/components/ui/container";
-import { ArtemisMark } from "@/components/layout/ArtemisMark";
+import { ArtemisLogo } from "@/components/layout/ArtemisLogo";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -13,8 +13,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <ArtemisMark className="h-8 w-8 text-gold" />
-              <span className="display-serif text-lg text-parchment">{siteConfig.name}</span>
+              <ArtemisLogo />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               {siteConfig.tagline}. Linking field production and actual cost to live

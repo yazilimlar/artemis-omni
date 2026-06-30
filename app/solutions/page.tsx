@@ -5,6 +5,9 @@ import { Container } from "@/components/ui/container";
 import { Card, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
+import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
+import { OrganizationArchitectureDiagram } from "@/components/showcase/OrganizationArchitectureDiagram";
 import { solutionPillars, ARTEMIS_FULL } from "@/lib/artemis/solutions";
 import { companyPositioning } from "@/lib/artemis/positioning";
 import { createMetadata } from "@/lib/seo/metadata";
@@ -35,6 +38,28 @@ export default function SolutionsPage() {
           </Button>
         </div>
       </PageHero>
+
+      <section className="border-b border-border/60 py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Operating Architecture"
+            title="Client company operating blueprint"
+            description="Each solution starts by mapping the organization, not by adding isolated AI features. Artemis connects business goals, operating teams, systems, documents, review gates, and executive action."
+          />
+          <div className="mt-10 grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+            <OrganizationArchitectureDiagram
+              title="Solution implementation map"
+              subtitle="A public-safe version of the architecture Artemis would build for a client: operating inputs on the left, reviewed implementation logic at the center, and executive outputs on the right."
+              organizationName="Client Company / Organization"
+            />
+            <LiveDashboardCard
+              title="Solution cockpit"
+              subtitle="A breathing executive view for status, source health, exception velocity, and next operating action."
+              variant="flux"
+            />
+          </div>
+        </Container>
+      </section>
 
       <section className="py-16 lg:py-20">
         <Container>

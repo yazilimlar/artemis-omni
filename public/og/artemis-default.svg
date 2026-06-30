@@ -24,6 +24,6 @@
   <rect x="90" y="470" width="520" height="6" fill="url(#gold)" opacity="0.5" />
   <!-- text -->
   <text x="90" y="250" font-family="Georgia, serif" font-size="40" letter-spacing="6" fill="#cda24f">ARTEMIS OMNI</text>
-  <text x="90" y="350" font-family="Georgia, serif" font-size="74" fill="#f0e6cf">The Intelligence Atelier</text>
-  <text x="90" y="430" font-family="ui-monospace, monospace" font-size="26" fill="#9aa6b8">Ancient intelligence — modern automation</text>
+  <text x="90" y="350" font-family="Georgia, serif" font-size="68" fill="#f0e6cf">AI-Enabled Execution Bridge</text>
+  <text x="90" y="430" font-family="ui-monospace, monospace" font-size="25" fill="#9aa6b8">Project fundamentals to executive action</text>
 </svg>
