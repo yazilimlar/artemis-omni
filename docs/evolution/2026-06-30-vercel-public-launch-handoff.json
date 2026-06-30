@@ -1,0 +1,152 @@
+{
+  "id": "artemis-omni-public-launch-handoff-2026-06-30",
+  "createdAt": "2026-06-30",
+  "project": {
+    "name": "Artemis Omni",
+    "localCheckout": "/Users/theoppositeofturtle/Documents/artemis-for-codex/artemis-omni-codex-local",
+    "githubRepository": "yazilimlar/artemis-omni",
+    "githubUrl": "https://github.com/yazilimlar/artemis-omni",
+    "githubVisibility": "PRIVATE",
+    "localBranch": "main",
+    "githubDefaultBranchObserved": "feature/artemisix19-autonomous-generator",
+    "remoteAtHandoff": "git@github.com:yazilimlar/artemis-omni.git",
+    "localHeadBeforeHandoffDocs": "a43c7be chore: ignore local Vercel environment files"
+  },
+  "vercel": {
+    "projectName": "artemis-omni",
+    "teamSlug": "gokmen1313-3041s-projects",
+    "projectPath": "gokmen1313-3041s-projects/artemis-omni",
+    "projectId": "prj_qHFkwHePIlDCuHEDIbKIv0Sk9RN5",
+    "orgId": "team_JzrJAUuKZ7Y31aU1d0VYdZTB",
+    "frameworkPreset": "Next.js",
+    "rootDirectory": ".",
+    "nodeVersion": "24.x",
+    "localProjectFileIgnored": true
+  },
+  "verifiedCommands": [
+    {
+      "command": "npm run typecheck",
+      "status": "passed"
+    },
+    {
+      "command": "npm run lint",
+      "status": "passed"
+    },
+    {
+      "command": "npm run build",
+      "status": "passed",
+      "observedStaticPages": "54/54"
+    },
+    {
+      "command": "vercel project inspect",
+      "status": "passed"
+    },
+    {
+      "command": "gh repo view yazilimlar/artemis-omni --json nameWithOwner,visibility,url,defaultBranchRef",
+      "status": "passed"
+    }
+  ],
+  "launchGates": [
+    {
+      "gate": "Resolve GitHub production branch policy",
+      "details": "GitHub default branch was observed as feature/artemisix19-autonomous-generator while local launch work is on main."
+    },
+    {
+      "gate": "Repair Git push path",
+      "details": "Transcript shows SSH push failed with Permission denied (publickey). Use SSH key setup or HTTPS with gh auth setup-git."
+    },
+    {
+      "gate": "Preview deploy before production",
+      "details": "Run vercel deploy --yes, smoke-test preview routes, then promote/deploy production."
+    },
+    {
+      "gate": "Protect local secrets",
+      "details": ".env.local, .vercel, node_modules, .next, PEM/private keys, and raw protected HTML must not be tracked."
+    }
+  ],
+  "publicLaunchSequence": [
+    "Confirm GitHub default branch and Vercel production branch.",
+    "Fix Git push authentication.",
+    "Push reviewed launch commits to the canonical repository.",
+    "Run vercel deploy --yes for preview.",
+    "Smoke-test homepage, sitemap, Labs, ArtemisIX19, Library, Programs, Insights, Academy, Tools, and audience routes.",
+    "Run desktop and mobile browser checks, console check, and horizontal overflow check.",
+    "Promote a validated preview or run vercel deploy --prod --yes.",
+    "Attach production/custom domain after production QA passes."
+  ],
+  "publishingSystem": {
+    "goal": "Generate public-safe Artemis articles, infographics, and social post packages for website publication and later social distribution.",
+    "firstImplementation": "Static or client-safe generation with structured TypeScript data and MDX output. No database, auth, payments, external API keys, or social tokens in the first release.",
+    "packageOutputs": [
+      "article",
+      "infographicSpec",
+      "linkedInDraft",
+      "instagramDraft",
+      "facebookDraft",
+      "youtubeShortScript",
+      "youtubeLongOutline",
+      "reviewChecklist",
+      "sourceAndSafetyNotes"
+    ],
+    "recommendedRoutes": [
+      "/insights/daily",
+      "/library/apps",
+      "/training",
+      "/membership"
+    ],
+    "futureTables": [
+      "content_sources",
+      "publication_packages",
+      "article_drafts",
+      "infographic_assets",
+      "social_post_drafts",
+      "review_events",
+      "distribution_targets",
+      "publish_events",
+      "subscriber_assets"
+    ],
+    "platformApiPhase": [
+      "LinkedIn Posts API",
+      "Meta Graph API for Facebook Pages",
+      "Instagram Content Publishing API",
+      "YouTube Data API"
+    ]
+  },
+  "dailyEditorialLanes": [
+    {
+      "day": "Monday",
+      "theme": "Mechanical systems, drones, jet planes, automation, manufacturing"
+    },
+    {
+      "day": "Tuesday",
+      "theme": "CEO software reviews, business systems, TurboTax/QuickBooks-style comparisons"
+    },
+    {
+      "day": "Wednesday",
+      "theme": "Superintendents, fast delivery, procurement, shipping, field operations"
+    },
+    {
+      "day": "Thursday",
+      "theme": "Project managers, AI advancements, project controls, implementation updates"
+    },
+    {
+      "day": "Friday",
+      "theme": "3D renders, architectural design, visual systems"
+    },
+    {
+      "day": "Saturday",
+      "theme": "Archaeology and cutting-edge technology"
+    },
+    {
+      "day": "Sunday",
+      "theme": "Artemis weekly recap, free asset, subscriber teaser, training preview"
+    }
+  ],
+  "safetyRules": [
+    "Do not publish raw protected HTML.",
+    "Do not publish private client/project data.",
+    "Do not publish private coordinates, source paths, Vercel tokens, OAuth tokens, API keys, PEM/private keys, or .env.local content.",
+    "Do not imply external AI execution, server-side agents, or social auto-posting until those systems exist.",
+    "Date-check and source-check current software, AI, shipping, archaeology, and market-comparison claims before publication."
+  ]
+}
