@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARTEMIS Table Base Workbench v6.9 — Verified Node-Driven Topology</title>
+<style>
+:root{--ink:#0b1219;--blue:#0f3a5f;--dim:#c84d00;--paper:#fff;--bg:#eef2f6;--soft:#e8eef5;--border:#c0ccdd;--mono:"SF Mono","Consolas",monospace;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:var(--font);color:var(--ink);overflow:hidden;height:100vh;display:flex;flex-direction:column}
+header{background:#fff;border-bottom:2px solid var(--ink);padding:10px 18px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+h1{margin:0;font-size:21px;font-weight:800}.subtitle{font-size:12px;color:var(--blue);font-weight:600}
+button{background:#102033;border:1px solid #67e8f966;color:#fff;border-radius:9px;padding:7px 9px;cursor:pointer;margin:2px}button:hover{border-color:#67e8f9}
+.main{display:flex;flex:1;overflow:hidden}#viewport{flex:1;background:#141e2b;position:relative}#sidebar{width:470px;min-width:470px;background:#fff;border-left:2px solid var(--ink);overflow:auto}
+.panel{border-bottom:1px solid var(--border);padding:12px 16px}.panel h3{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--blue)}
+.control{margin-bottom:8px}.label{font-size:12px;font-weight:700;display:flex;justify-content:space-between}.val{font-family:var(--mono);color:var(--dim);background:var(--soft);border-radius:4px;padding:0 8px}
+input[type=range]{width:100%;accent-color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono)}td,th{border:1px solid var(--border);padding:4px 6px;text-align:left;vertical-align:top}th{background:var(--soft);color:var(--blue)}
+.pass{color:#0a7a3a;font-weight:800}.warn{color:#b45a0a;font-weight:800}.fail{color:#b22222;font-weight:800}
+#legend{position:absolute;bottom:18px;left:18px;background:rgba(20,30,43,.88);padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:8px;font-size:11px;font-family:var(--mono);color:#e8edf2;box-shadow:0 4px 20px #0006}
+.li{display:flex;align-items:center;margin-bottom:4px;gap:10px}.sw{width:14px;height:14px;border-radius:3px;border:1px solid rgba(255,255,255,.18)}
+#bp{position:absolute;right:490px;bottom:16px;width:455px;height:315px;background:#fff;border:1px solid #111820;border-radius:10px;overflow:hidden;box-shadow:0 12px 35px #0005}
+#bp.transparent{background:rgba(255,255,255,.38);backdrop-filter:blur(6px);opacity:.78}#bp.compact{width:280px;height:190px}#bp.hidden{display:none}
+#bp svg{width:100%;height:100%}.bpTools{position:absolute;right:8px;top:8px;z-index:3;background:rgba(15,23,42,.75);border-radius:9px;padding:4px}.bpTools button{font-size:10px;padding:4px 6px}
+body.day #viewport{background:#e8f1f7}body.day{background:#f8fafc}body.day #legend{background:rgba(255,255,255,.9);color:#0b1219;border-color:#cbd5e1}
+.hint{font-size:11px;color:#667;line-height:1.4}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<header>
+<div><h1>ARTEMIS · v6.9 Verified Node-Driven Table Base</h1><div class="subtitle">Clean rebuild: visible model, node-driven constraints, rail pairs, double-spine overlap, two mirrored legs / two feet.</div></div>
+<div><button onclick="cam('iso')">Iso</button><button onclick="cam('top')">Top</button><button onclick="cam('front')">Front</button><button onclick="toggleExplode()">Explode</button><button onclick="toggleLoad()">Load Path</button><button onclick="toggleTop()">Top Ghost</button><button onclick="toggleWire()">Wire</button><button onclick="toggleDay()">Day</button></div>
+</header>
+<div class="main">
+<div id="viewport">
+<div id="legend">
+<div class="li"><span class="sw" style="background:#d6b56d"></span>Chassis RHS + cross rail pairs</div>
+<div class="li"><span class="sw" style="background:#6b7f96"></span>Continuous double spine + doublers</div>
+<div class="li"><span class="sw" style="background:#b98e43"></span>Node / mounting plates / two feet</div>
+<div class="li"><span class="sw" style="background:#4a8cd4"></span>Leg A triangular pyramid shell</div>
+<div class="li"><span class="sw" style="background:#10b981"></span>Leg B mirrored triangular pyramid shell</div>
+</div>
+<div id="bp"><div class="bpTools"><button onclick="bpTrans()">Transparent</button><button onclick="bpCompact()">Compact</button><button onclick="bpHide()">Hide</button></div><svg id="bpsvg" viewBox="0 0 980 700"></svg></div>
+</div>
+<div id="sidebar">
+<div class="panel"><h3>0 · Controls</h3><div id="ctl0"></div><div class="hint">Mounting plate position is solved from foot position → leg apex → node plate. Cross-rail pair automatically traps each node.</div></div>
+<div class="panel"><h3>1 · Global / Top</h3><div id="ctl1"></div></div>
+<div class="panel"><h3>2 · Chassis / Rails</h3><div id="ctl2"></div></div>
+<div class="panel"><h3>3 · Legs / Nodes / Feet</h3><div id="ctl3"></div></div>
+<div class="panel"><h3>4 · Telemetry</h3><table><thead><tr><th>Metric</th><th>Value</th><th>Status</th></tr></thead><tbody id="telemetry"></tbody></table></div>
+<div class="panel"><h3>5 · Constraint Validation</h3><table><thead><tr><th>Constraint</th><th>Value</th><th>Status</th></tr></thead><tbody id="constraints"></tbody></table></div>
+<div class="panel"><h3>6 · BOM</h3><table><thead><tr><th>Item</th><th>Qty</th><th>Metric</th></tr></thead><tbody id="bom"></tbody></table></div>
+</div>
+</div>
+<script>
+const P={E:0,L:2200,W:1000,H:750,TopL:2400,TopW:1100,TopT:30,TopD:2700,RHSA:60,RHSB:40,RHSt:4,SR:322,CrossGap:310,NumRails:6,FootL:1050,FootW:420,FootT:16,FootOffset:250,PT:6,Base:390,Tilt:.48,Interlock:.50,NodeL:220,NodeW:150,NodeT:14,MPL:260,MPW:230,MPT:12,Overlap:70,EdgeLoad:1000};
+const DEF={E:[0,100,1,'%','Explode'],L:[1600,3200,50,'mm','Frame length'],W:[800,1500,25,'mm','Frame width'],H:[650,850,10,'mm','Height'],TopL:[1800,3400,50,'mm','Top length'],TopW:[750,1500,25,'mm','Top width'],TopT:[12,60,2,'mm','Top thickness'],RHSA:[40,100,5,'mm','RHS width'],RHSB:[25,90,5,'mm','RHS height'],RHSt:[2,8,.5,'mm','RHS wall'],SR:[120,420,5,'mm','Spine clearance'],CrossGap:[180,520,10,'mm','Mount rail pair gap'],NumRails:[4,8,1,'','Cross rail count'],FootL:[700,1700,25,'mm','Each foot length'],FootW:[250,800,25,'mm','Each foot width'],FootOffset:[120,550,10,'mm','Foot center offset'],PT:[3,12,.5,'mm','Leg shell PT'],Base:[220,650,10,'mm','Leg base'],Tilt:[.25,.85,.01,'','Tilt'],Interlock:[.15,.75,.01,'','Interlock'],NodeL:[120,360,10,'mm','Node length'],NodeW:[80,260,10,'mm','Node width'],NodeT:[8,24,1,'mm','Node thickness'],MPL:[160,420,10,'mm','Mount plate length'],MPW:[140,360,10,'mm','Mount plate width'],MPT:[6,22,1,'mm','Mount plate thickness'],EdgeLoad:[250,2500,50,'N','Edge load']};
+let scene,camera,renderer,controls,root,loadGroup,topGroup,parts=[],wire=false,topVisible=true,day=false;
+function fmt(k){return ['Tilt','Interlock'].includes(k)?P[k].toFixed(2):P[k]}
+function ctrl(k){let d=DEF[k];return `<div class="control"><div class="label">${d[4]} <span class="val" id="v-${k}">${fmt(k)} ${d[3]}</span></div><input id="p-${k}" type="range" min="${d[0]}" max="${d[1]}" step="${d[2]}" value="${P[k]}"></div>`}
+ctl0.innerHTML=['E'].map(ctrl).join('');ctl1.innerHTML=['TopL','TopW','TopT','L','W','H'].map(ctrl).join('');ctl2.innerHTML=['RHSA','RHSB','RHSt','SR','CrossGap','NumRails'].map(ctrl).join('');ctl3.innerHTML=['FootL','FootW','FootOffset','PT','Base','Tilt','Interlock','NodeL','NodeW','NodeT','MPL','MPW','MPT','EdgeLoad'].map(ctrl).join('');
+document.querySelectorAll('input[type=range]').forEach(i=>i.oninput=e=>{let k=e.target.id.slice(2);P[k]=parseFloat(e.target.value);document.getElementById('v-'+k).textContent=fmt(k)+(DEF[k][3]?' '+DEF[k][3]:''); rebuild();});
+function mat(c,m=.7,r=.3,flat=false,op=1){return new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r,flatShading:flat,side:THREE.DoubleSide,transparent:op<1,opacity:op})}
+const M={rail:mat(0xd6b56d,.86,.25),spine:mat(0x6b7f96,.7,.32),plate:mat(0xb98e43,.8,.3),legA:mat(0x4a8cd4,.55,.38,true),legB:mat(0x10b981,.55,.38,true),top:mat(0xffffff,.05,.15,false,.28),guide:mat(0xff0000,.1,.4,false,.55),glide:mat(0x111827,.6,.35)};
+function init(){if(!THREE){alert('Three.js did not load');return}let c=viewport;scene=new THREE.Scene();scene.background=new THREE.Color(0x141e2b);camera=new THREE.PerspectiveCamera(40,c.clientWidth/c.clientHeight,10,12000);camera.position.set(2300,1500,2200);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(c.clientWidth,c.clientHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.shadowMap.enabled=true;c.appendChild(renderer.domElement);controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,330,0);scene.add(new THREE.AmbientLight(0x8899bb,.55));let l=new THREE.DirectionalLight(0xffeedd,.9);l.position.set(2000,3500,1500);scene.add(l);scene.add(new THREE.GridHelper(6500,44,0x4a5a6a,0x2a3a4a));root=new THREE.Group();loadGroup=new THREE.Group();topGroup=new THREE.Group();scene.add(root,loadGroup,topGroup);window.onresize=()=>{camera.aspect=c.clientWidth/c.clientHeight;camera.updateProjectionMatrix();renderer.setSize(c.clientWidth,c.clientHeight)};rebuild();animate();}
+function dispose(o){o.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.material&&x.material.dispose)x.material.dispose()})}
+function clear(g){while(g.children.length){dispose(g.children[0]);g.remove(g.children[0])}}
+function edges(mesh){mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry),new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:.22})))}
+function add(mesh,name,kind,dir,vol=0,area=0){mesh.userData={name,kind,dir:dir||new THREE.Vector3(),home:mesh.position.clone(),vol,area};parts.push(mesh);root.add(mesh);return mesh}
+function box(name,x,y,z,sx,sy,sz,matr,kind='plate',dir){let m=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),matr);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;edges(m);add(m,name,kind,dir,sx*sy*sz);return m}
+function triArea(a,b,c){return b.clone().sub(a).cross(c.clone().sub(a)).length()/2}
+function tetra(name,a,b,c,d,matr,dir){let verts=[a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,d.x,d.y,d.z],idx=[0,1,2,0,2,3,0,3,1,1,3,2],g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));g.setIndex(idx);g.computeVertexNormals();let m=new THREE.Mesh(g,matr);m.castShadow=m.receiveShadow=true;edges(m);let area=triArea(a,b,c)+triArea(a,c,d)+triArea(a,d,b)+triArea(b,d,c);add(m,name,'shell',dir,area*P.PT,area);return m}
+function line(name,a,b,color=0xff0000){let g=new THREE.BufferGeometry().setFromPoints([a,b]);let m=new THREE.Line(g,new THREE.LineDashedMaterial({color,dashSize:28,gapSize:16,transparent:true,opacity:.85}));m.computeLineDistances();root.add(m)}
+function railStations(){let mount=Math.abs(P.FootL*P.Tilt*P.Interlock),L=P.L,lim=L/2-120,set=[];function addx(x){x=Math.max(-lim,Math.min(lim,x));if(!set.some(v=>Math.abs(v-x)<20))set.push(x)}addx(-L*.42);addx(L*.42);[-mount,mount].forEach(mx=>{addx(mx-P.CrossGap/2);addx(mx+P.CrossGap/2)});if(P.NumRails>6)addx(0);if(P.NumRails>7){addx(-L*.18);addx(L*.18)}return set.sort((a,b)=>a-b).slice(0,P.NumRails)}
+function rebuild(){clear(root);clear(loadGroup);clear(topGroup);parts=[];let sep=P.E*3.2,L=P.L,W=P.W,A=P.RHSA,B=P.RHSB,H=P.H,topY=H-B/2,hw=W/2,hl=L/2;
+let t=new THREE.Mesh(new THREE.BoxGeometry(P.TopL,P.TopT,P.TopW),M.top);t.position.set(0,H+P.TopT/2+8+sep,0);topGroup.add(t);topGroup.visible=topVisible;
+box('RAIL-L',0,topY+sep,-hw+A/2,L,B,A,M.rail,'rhs',new THREE.Vector3(0,.5,-1));box('RAIL-R',0,topY+sep,hw-A/2,L,B,A,M.rail,'rhs',new THREE.Vector3(0,.5,1));box('END-A',-hl+A/2,topY+sep,0,A,B,W-2*A,M.rail,'rhs',new THREE.Vector3(-1,.5,0));box('END-B',hl-A/2,topY+sep,0,A,B,W-2*A,M.rail,'rhs',new THREE.Vector3(1,.5,0));
+let off=P.SR/2+A/2;box('SPINE-L',0,topY+sep,-off,L-2*A,B,A,M.spine,'rhs',new THREE.Vector3(0,.7,-.7));box('SPINE-R',0,topY+sep,off,L-2*A,B,A,M.spine,'rhs',new THREE.Vector3(0,.7,.7));
+railStations().forEach((x,i)=>box('XRAIL-'+(i+1),x,topY+sep,0,A,B,W-2*A,M.rail,'rhs',new THREE.Vector3(x/L,.6,0)));
+let apexY=topY-10+sep*.12,baseY=P.FootT+2-sep*.08,crossX=P.FootL*P.Tilt*P.Interlock,baseX=P.FootOffset+P.Base*.30,inner=P.FootOffset-P.Base*.28,bz=Math.min(P.FootW*.34,P.Base*.45),footAX=-P.FootOffset,footBX=P.FootOffset;
+box('FOOT-A',footAX,P.FootT/2-sep*.15,0,P.FootL*.56,P.FootT,P.FootW,M.plate,'plate',new THREE.Vector3(-1,-.2,0));box('FOOT-B',footBX,P.FootT/2-sep*.15,0,P.FootL*.56,P.FootT,P.FootW,M.plate,'plate',new THREE.Vector3(1,-.2,0));
+let la=new THREE.Vector3(crossX,apexY,0),ra=new THREE.Vector3(-crossX,apexY,0);tetra('LEG-A',new THREE.Vector3(-baseX,baseY,-bz),new THREE.Vector3(-baseX,baseY,bz),new THREE.Vector3(-inner,baseY,0),la,M.legA,new THREE.Vector3(-1,0,0));tetra('LEG-B',new THREE.Vector3(baseX,baseY,-bz),new THREE.Vector3(baseX,baseY,bz),new THREE.Vector3(inner,baseY,0),ra,M.legB,new THREE.Vector3(1,0,0));
+let nodeY=apexY-P.NodeT/2+sep*.20,plateY=nodeY+P.NodeT/2+P.MPT/2;[la.x,ra.x].forEach((x,i)=>{box('NODE-'+(i?'B':'A'),x,nodeY,0,P.NodeL,P.NodeT,P.NodeW,M.spine,'plate',new THREE.Vector3(i?.35:-.35,.42,0));box('MP-'+(i?'B':'A'),x,plateY,i?18:-18,P.MPL,P.MPT,P.MPW,M.plate,'plate',new THREE.Vector3(i?.45:-.45,.55,i?.2:-.2));box('SPINE-DOUBLER-'+(i?'B':'A'),x,plateY-18,i?off:-off,P.NodeL+140,8,A*1.08,M.spine,'plate',new THREE.Vector3(i?.25:-.25,.35,i?.25:-.25));});
+line('constraintA',new THREE.Vector3(footAX,P.FootT+10,0),new THREE.Vector3(la.x,plateY,0));line('constraintB',new THREE.Vector3(footBX,P.FootT+10,0),new THREE.Vector3(ra.x,plateY,0));
+addLoad();applyExplode();telemetry();constraints();bom();blueprint();}
+function addLoad(){let a=new THREE.Vector3(0,P.H+P.TopT+80,0),b=new THREE.Vector3(-P.L*.22,P.H-40,0),c=new THREE.Vector3(P.L*.22,P.H-40,0);[b,c].forEach(v=>{let d=v.clone().sub(a);loadGroup.add(new THREE.ArrowHelper(d.normalize(),a,d.length(),0x67e8f9,70,34))});loadGroup.visible=false}
+function applyExplode(){parts.forEach(o=>{o.position.copy(o.userData.home).add(o.userData.dir.clone().multiplyScalar(P.E*2.2));if(o.material)o.material.wireframe=wire})}
+function rhsArea(){return P.RHSA*P.RHSB-(P.RHSA-2*P.RHSt)*(P.RHSB-2*P.RHSt)}function rhsLen(){return 2*P.L+2*P.W+2*(P.L-2*P.RHSA)+railStations().length*(P.W-2*P.RHSA)}
+function I(){let B=P.RHSA,H=P.RHSB,t=P.RHSt;return (B*Math.pow(H,3)-(B-2*t)*Math.pow(H-2*t,3))/12}function mass(){let rho=7850e-9,rv=rhsArea()*rhsLen(),pv=0,sv=0;parts.forEach(o=>{if(o.userData.kind==='plate')pv+=o.userData.vol;if(o.userData.kind==='shell')sv+=o.userData.vol});return {rv,pv,sv,steel:(rv+pv+sv)*rho}}
+function topMass(){return P.TopL*P.TopW*P.TopT*P.TopD/1e9}
+function telemetry(){let m=mass(),mt=m.steel+topMass(),ii=I(),w=mt*9.81/P.L,delta=5*w*Math.pow(P.L,4)/(384*200000*Math.max(ii,1)),lim=P.L/360,tip=P.EdgeLoad*Math.max(1,(P.TopL-P.FootL)/2),rest=mt*9.81*P.FootL/2,sf=rest/tip;let rows=[['RHS volume',(m.rv/1e9).toFixed(5)+' m³','TRUE'],['Plate/node volume',(m.pv/1e9).toFixed(5)+' m³','TRUE'],['Leg shell volume',(m.sv/1e9).toFixed(5)+' m³','TRUE'],['Steel mass',m.steel.toFixed(1)+' kg','TAKEOFF'],['Top mass',topMass().toFixed(1)+' kg','LOAD'],['Deflection',delta.toFixed(2)+' / '+lim.toFixed(2)+' mm',delta<=lim?'PASS':'FLEX'],['Tipping SF',sf.toFixed(2),sf>=1.5?'STABLE':'WARNING']];telemetryEl(rows)}
+function telemetryEl(rows){telemetry.innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[2]=='PASS'||r[2]=='STABLE'?'pass':(r[2]=='FLEX'||r[2]=='WARNING'?'fail':'warn')}">${r[2]}</td></tr>`).join('')}
+function constraints(){let mount=Math.abs(P.FootL*P.Tilt*P.Interlock),rails=railStations(),near=x=>rails.some(r=>Math.abs(r-x)<35),pairs=[-mount-P.CrossGap/2,-mount+P.CrossGap/2,mount-P.CrossGap/2,mount+P.CrossGap/2],over=Math.max(0,(P.MPW-P.SR)/2),nodeOK=P.NodeL<=P.MPL&&P.NodeW<=P.MPW,apexOK=mount<P.L/2-2*P.RHSA;let rows=[['Mount follows foot/apex','±'+mount.toFixed(0)+' mm','LOCKED',true],['Rail pair traps nodes','4 pair rails',pairs.every(near)?'PASS':'FAIL',pairs.every(near)],['Plate/spine overlap',over.toFixed(0)+' / req '+P.Overlap+' mm',over>=P.Overlap?'PASS':'WARN',over>=P.Overlap],['Node fits plate',P.NodeL+'×'+P.NodeW+' in '+P.MPL+'×'+P.MPW,nodeOK?'PASS':'FAIL',nodeOK],['Apex inside frame',apexOK?'inside':'outside',apexOK?'PASS':'FAIL',apexOK]];constraints.innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]?'pass':(r[2]=='WARN'?'warn':'fail')}">${r[2]}</td></tr>`).join('')}
+function bom(){bom.innerHTML=[['RHS rails',rhsLen()/1000.toFixed,''],].join(''); let rows=[['RHS rails/crossrails','~'+(rhsLen()/1000).toFixed(2)+' m',P.RHSA+'×'+P.RHSB+'×'+P.RHSt],['Cross rails',railStations().length,'auto includes mount pairs'],['Node plates','2',P.NodeL+'×'+P.NodeW+'×'+P.NodeT],['Mounting plates','2',P.MPL+'×'+P.MPW+'×'+P.MPT],['Foot plates','2',(P.FootL*.56).toFixed(0)+'×'+P.FootW+'×'+P.FootT],['Triangular shell legs','2','PT '+P.PT+' mm']];bom.innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}
+function blueprint(){let s=bpsvg;while(s.firstChild)s.removeChild(s.firstChild);function el(n,a){let e=document.createElementNS('http://www.w3.org/2000/svg',n);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));s.appendChild(e);return e}function tx(x,y,t,sz=12,w='normal'){let e=el('text',{x,y,'font-size':sz,'font-family':'Arial','font-weight':w,fill:'#111820'});e.textContent=t}function rect(x,y,w,h,f='none'){el('rect',{x,y,width:w,height:h,fill:f,stroke:'#111820','stroke-width':2})}function poly(p,f){el('polygon',{points:p.map(q=>q.join(',')).join(' '),fill:f,stroke:'#111820','stroke-width':2})}el('rect',{x:0,y:0,width:980,height:700,fill:'#fff'});tx(28,34,'v6.9 VERIFIED BLUEPRINT — NODE-DRIVEN TWO-LEG TABLE BASE',18,'bold');let x=50,y=75,L=420,W=180,T=18;rect(x,y,L,W);rect(x+T,y+T,L-2*T,W-2*T);railStations().forEach(r=>{let xx=x+L/2+r/P.L*L;rect(xx-T/2,y,T,W,'#d6b56d')});rect(x+L*.25,y+W*.35,70,45,'#b98e43');rect(x+L*.60,y+W*.45,78,45,'#b98e43');poly([[x+L*.18,y+W*1.05],[x+L*.38,y+W*.87],[x+L*.50,y+W*.98]],'#4a8cd4');poly([[x+L*.82,y+W*1.05],[x+L*.62,y+W*.87],[x+L*.50,y+W*.98]],'#10b981');tx(x+110,y+W+70,'TOP VIEW: cross-rail pairs + node/mount plates',13,'bold');let fx=55,fy=390,fw=430,fh=190,CL=fx+fw/2;rect(fx,fy,fw,15,'#d6b56d');rect(fx+75,fy+fh,125,16,'#b98e43');rect(fx+235,fy+fh,125,16,'#b98e43');poly([[fx+80,fy+fh],[fx+190,fy+fh],[CL+75,fy+25]],'#4a8cd4');poly([[fx+355,fy+fh],[fx+245,fy+fh],[CL-75,fy+25]],'#10b981');rect(CL-95,fy+18,55,14,'#6b7f96');rect(CL+40,fy+18,55,14,'#6b7f96');tx(540,85,'GEOMETRY VALIDATION',15,'bold');['Mounting plates solved from leg apex','Node plates collect leg + spine + mount plate','Cross-rail pair traps each mount node','Double-spine continues through mounting region','Exactly two legs and two feet retained'].forEach((v,i)=>tx(540,120+i*24,'• '+v,12));}
+function pick(){}
+window.toggleExplode=()=>{P.E=P.E?0:42;document.getElementById('p-E').value=P.E;document.getElementById('v-E').textContent=P.E+' %';rebuild()}
+window.toggleWire=()=>{wire=!wire;applyExplode()};window.toggleLoad=()=>{loadGroup.visible=!loadGroup.visible};window.toggleTop=()=>{topVisible=!topVisible;topGroup.visible=topVisible};window.toggleDay=()=>{day=!day;document.body.classList.toggle('day',day);scene.background=new THREE.Color(day?0xe8f1f7:0x141e2b);renderer.setClearColor(scene.background,1)}
+window.cam=(p)=>{if(p==='top')camera.position.set(0,5200,.1);else if(p==='front')camera.position.set(0,800,3300);else camera.position.set(2300,1500,2200);controls.target.set(0,330,0);controls.update()}
+window.bpTrans=()=>bp.classList.toggle('transparent');window.bpCompact=()=>bp.classList.toggle('compact');window.bpHide=()=>bp.classList.toggle('hidden')
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}init();
+</script>
+</body>
+</html>

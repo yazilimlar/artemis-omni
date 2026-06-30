@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelişmiş 3D Beton Masa Tasarımı & Animasyon</title>
+    <!-- Tailwind CSS for Modern Cinematic UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for pristine LaTeX mathematical rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        /* Design Tokens & CSS Variables for Dynamic GUI Themes */
+        :root {
+            --bg-app: #121315;
+            --panel-bg: rgba(20, 22, 26, 0.75);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --btn-border: rgba(255, 255, 255, 0.08);
+            --btn-hover: rgba(255, 255, 255, 0.1);
+            --text-accent: #38bdf8; /* sky-400 */
+        }
+
+        .light-theme {
+            --bg-app: #f3f4f6;
+            --panel-bg: rgba(255, 255, 255, 0.8);
+            --panel-border: rgba(0, 0, 0, 0.1);
+            --text-main: #111827; /* gray-900 */
+            --text-muted: #4b5563; /* gray-600 */
+            --btn-bg: rgba(0, 0, 0, 0.04);
+            --btn-border: rgba(0, 0, 0, 0.08);
+            --btn-hover: rgba(0, 0, 0, 0.08);
+            --text-accent: #0284c7; /* sky-600 */
+        }
+
+        body { 
+            margin: 0; 
+            padding: 0;
+            overflow: hidden; 
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            transition: background-color 0.3s ease;
+        }
+
+        canvas { 
+            display: block; 
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Dynamic Glassmorphism utilizing custom properties */
+        .glass {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            color: var(--text-main);
+            transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+        }
+
+        .text-theme-main { color: var(--text-main); }
+        .text-theme-muted { color: var(--text-muted); }
+        .btn-theme {
+            background-color: var(--btn-bg);
+            border: 1px solid var(--btn-border);
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+        .btn-theme:hover {
+            background-color: var(--btn-hover);
+        }
+
+        /* Custom scrollbars */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Tooltip styling logic to guarantee visibility inside viewport boundary */
+        .tooltip-box {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            transform: translateY(6px);
+        }
+        .tooltip-trigger:hover .tooltip-box {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="dark-theme">
+
+    <!-- HUD overlay -->
+    <div class="absolute inset-0 pointer-events-none z-10 flex flex-col justify-between p-6">
+        
+        <!-- TOP ROW: Header Profile & Active Mode Indicator / Documentation Button -->
+        <header class="flex justify-between items-start w-full pointer-events-auto">
+            <div class="glass px-5 py-4 rounded-xl flex flex-col gap-1">
+                <span class="text-xs text-amber-500 uppercase tracking-widest font-bold">Studio Serisi</span>
+                <h1 class="text-xl font-bold tracking-tight text-theme-main">Monolit Beton Masa</h1>
+                <p class="text-xs text-theme-muted">80x80cm Brüt Beton Modüler Tasarım</p>
+            </div>
+            
+            <div class="flex gap-3">
+                <!-- Theme Day/Night Toggle Button -->
+                <button id="theme-toggle-btn" class="glass px-4 py-2.5 rounded-lg text-xs font-semibold hover:bg-white/10 border transition-all flex items-center gap-2" title="Arayüz Temasını Değiştir">
+                    <span id="theme-icon" class="text-amber-500">
+                        <!-- Sun Icon (Initially Dark theme, toggles to Moon for Light theme) -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
+                    </span>
+                    <span id="theme-text">Gündüz Modu</span>
+                </button>
+
+                <!-- Dedicated Technical Documentation Button -->
+                <button id="open-docs-btn" class="glass px-4 py-2.5 rounded-lg text-xs font-semibold text-sky-400 hover:text-white hover:bg-sky-500/10 border border-sky-500/20 hover:border-sky-500/40 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    Teknik Dokümantasyon
+                </button>
+
+                <div id="mode-badge" class="glass px-4 py-2 rounded-lg flex items-center gap-2 text-xs font-semibold">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" id="badge-pulse"></span>
+                    <span id="badge-text" class="text-theme-main">Serbest Gezinti</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MIDDLE ROW: Left Customization Dock & Center Dynamic Widgets -->
+        <div class="flex justify-between items-center w-full h-full my-4">
+            
+            <!-- Floating Customizer Panel (Left Hand) -->
+            <div class="glass p-5 rounded-2xl w-[260px] flex flex-col gap-5 pointer-events-auto shadow-2xl transition-all duration-300">
+                <!-- Background Mode Toggle (Space vs Studio) -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-theme-muted">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                            Uzay / Stüdyo Modu
+                        </h3>
+                        <div class="tooltip-trigger relative">
+                            <span class="cursor-help text-gray-500 hover:text-white transition-colors text-xs bg-white/5 w-5 h-5 rounded-full flex items-center justify-center">i</span>
+                            <div class="tooltip-box absolute left-6 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl glass text-[11px] leading-relaxed z-50 pointer-events-none shadow-2xl">
+                                <div class="font-bold text-indigo-400 mb-1">Çevresel Uzay Modu</div>
+                                <div><strong>Tanım:</strong> Modelin standart stüdyo ortamından çıkarılarak yerçekimsiz kozmik derinliklere taşınması.</div>
+                                <div class="mt-1"><strong>Değişiklikler:</strong> Zemin kaldırılır, sis sıfırlanır ve 2.000 yıldızlı dinamik bir gökada simülasyonu başlatılır.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="space-mode-toggle" class="w-full text-xs font-semibold px-4 py-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        <span>Sonsuz Uzay Boşluğu</span>
+                    </button>
+                </div>
+
+                <div class="h-px bg-white/10"></div>
+
+                <!-- Concrete Color Swatches with Info Tooltip -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-theme-muted">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                            Beton Rengi
+                        </h3>
+                        <div class="tooltip-trigger relative">
+                            <span class="cursor-help text-gray-500 hover:text-white transition-colors text-xs bg-white/5 w-5 h-5 rounded-full flex items-center justify-center">i</span>
+                            <div class="tooltip-box absolute left-6 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl glass text-[11px] leading-relaxed z-50 pointer-events-none shadow-2xl">
+                                <div class="font-bold text-amber-400 mb-1">Beton Pigmentasyonu</div>
+                                <div><strong>Tanım:</strong> Beton matrisine eklenen mineral pigmentlerin yansıma katsayısı.</div>
+                                <div class="mt-1"><strong>Standart:</strong> ASTM C979 pigmentasyonu temel alınmıştır.</div>
+                                <div class="mt-1"><strong>Yöntem:</strong> Üç boyutlu gölgelendirici üzerinde diffüz yansıma katsayısı ($K_d$) renk vektörü interpolasyonuyla çarpılır.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2.5" id="color-picker-container">
+                        <button data-color="GREY" class="color-btn w-8 h-8 rounded-full border-2 border-transparent hover:scale-110 transition-all shadow-lg relative flex items-center justify-center bg-[#9c9c9c] ring-2 ring-white/20 active-color" title="Doğal Gri"></button>
+                        <button data-color="CHARCOAL" class="color-btn w-8 h-8 rounded-full border-2 border-transparent hover:scale-110 transition-all shadow-lg relative flex items-center justify-center bg-[#3a3d40]" title="Antrasit"></button>
+                        <button data-color="SAND" class="color-btn w-8 h-8 rounded-full border-2 border-transparent hover:scale-110 transition-all shadow-lg relative flex items-center justify-center bg-[#d2be9b]" title="Kum Beji"></button>
+                        <button data-color="WHITE" class="color-btn w-8 h-8 rounded-full border-2 border-transparent hover:scale-110 transition-all shadow-lg relative flex items-center justify-center bg-[#eeeeee]" title="Beyaz Beton"></button>
+                        <button data-color="TERRACOTTA" class="color-btn w-8 h-8 rounded-full border-2 border-transparent hover:scale-110 transition-all shadow-lg relative flex items-center justify-center bg-[#b06d58]" title="Kiremit"></button>
+                    </div>
+                    <p id="active-color-name" class="text-[10px] font-mono mt-2 uppercase tracking-wide text-theme-muted">Doğal Gri</p>
+                </div>
+
+                <div class="h-px bg-white/10"></div>
+
+                <!-- Environment & Lighting Atmosphere Selector with Info Tooltip -->
+                <div id="env-selection-panel">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-theme-muted">
+                            <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+                            Stüdyo Atmosferi
+                        </h3>
+                        <div class="tooltip-trigger relative">
+                            <span class="cursor-help text-gray-500 hover:text-white transition-colors text-xs bg-white/5 w-5 h-5 rounded-full flex items-center justify-center">i</span>
+                            <div class="tooltip-box absolute left-6 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl glass text-[11px] leading-relaxed z-50 pointer-events-none shadow-2xl">
+                                <div class="font-bold text-sky-400 mb-1">Çevresel Aydınlatma</div>
+                                <div><strong>Tanım:</strong> Sahnedeki direct ve indirect ışık kaynaklarının spektral enerji matrisi.</div>
+                                <div class="mt-1"><strong>Yöntem:</strong> HemisphereLight (gök/yer saçılımı) ve ACES Filmic ton eşleme (tone mapping) parametreleri gerçek zamanlı interpolasyona (lerp) tabi tutulur.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2" id="env-picker-container">
+                        <button data-env="STUDIO" class="env-btn w-full text-left text-xs font-medium px-3.5 py-2.5 rounded-xl border border-sky-500/30 bg-sky-500/10 text-theme-main transition-all hover:bg-white/5 flex items-center justify-between">
+                            <span>Minimalist Stüdyo</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+                        </button>
+                        <button data-env="WARM" class="env-btn w-full text-left text-xs font-medium px-3.5 py-2.5 rounded-xl border border-white/5 bg-white/5 text-theme-muted transition-all hover:text-theme-main hover:bg-white/10 flex items-center justify-between">
+                            <span>Sıcak Akşam Güneşi</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-transparent"></span>
+                        </button>
+                        <button data-env="BRUTALIST" class="env-btn w-full text-left text-xs font-medium px-3.5 py-2.5 rounded-xl border border-white/5 bg-white/5 text-theme-muted transition-all hover:text-theme-main hover:bg-white/10 flex items-center justify-between">
+                            <span>Endüstriyel Depo</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-transparent"></span>
+                        </button>
+                        <button data-env="CYBER" class="env-btn w-full text-left text-xs font-medium px-3.5 py-2.5 rounded-xl border border-white/5 bg-white/5 text-theme-muted transition-all hover:text-theme-main hover:bg-white/10 flex items-center justify-between">
+                            <span>Siber Neon Sergi</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-transparent"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Context Overlays (e.g. Timelapse Clock, Tour Progress) -->
+            <div class="flex flex-col items-center justify-center flex-1 h-full relative">
+                <!-- Timelapse Widget -->
+                <div id="timelapse-widget" class="glass px-5 py-3 rounded-full flex items-center gap-4 pointer-events-auto opacity-0 transform translate-y-4 transition-all duration-500">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
+                        <span class="text-xs font-mono font-bold uppercase tracking-wider">Simüle Gün Zamanı:</span>
+                        <span id="timelapse-time" class="text-xs font-mono bg-black/40 px-3 py-1 rounded-full text-amber-400">12:00</span>
+                    </div>
+                    <div class="h-4 w-px bg-white/10"></div>
+                    <div class="text-[10px] font-mono flex items-center gap-1 text-theme-muted">
+                        <span>Gölge Açısı:</span>
+                        <span id="sun-angle" class="text-theme-main">0°</span>
+                    </div>
+                </div>
+
+                <!-- Tour Progress Widget -->
+                <div id="tour-widget" class="glass px-5 py-3 rounded-full flex items-center gap-3 pointer-events-auto opacity-0 transform translate-y-4 transition-all duration-500 hidden">
+                    <span class="text-xs font-bold text-sky-400 tracking-wide">Sinematik Tur</span>
+                    <div class="flex gap-1.5" id="tour-steps-dots"></div>
+                    <button id="skip-tour-btn" class="text-[10px] text-theme-muted hover:text-theme-main uppercase font-bold tracking-wider ml-2 px-2 py-0.5 border border-white/20 rounded hover:border-white/40 transition-colors">
+                        Durdur
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM ROW: Controllers & Info Dashboards -->
+        <footer class="w-full flex flex-col md:flex-row gap-4 justify-between items-end pointer-events-auto">
+            
+            <!-- Cinematic Suite Controller (Bottom Left) -->
+            <div class="glass p-4 rounded-2xl w-full md:w-[380px] flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path></svg>
+                        <h2 class="text-sm font-bold tracking-wide flex items-center gap-1 text-theme-main">
+                            Sinematik Animasyon Paneli
+                        </h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <!-- Animation Tooltip Trigger -->
+                        <div class="tooltip-trigger relative">
+                            <span class="cursor-help text-gray-500 hover:text-white transition-colors text-xs bg-white/5 w-5 h-5 rounded-full flex items-center justify-center">i</span>
+                            <div class="tooltip-box absolute bottom-6 right-0 w-64 p-3.5 rounded-xl glass text-[11px] leading-relaxed z-50 pointer-events-none shadow-2xl">
+                                <div class="font-bold text-amber-400 mb-1">Animasyon & Orbit Motoru</div>
+                                <div><strong>Turntable:</strong> Sabit açısal hız ($\omega = 2.0\text{ rad/s}$) ile Y ekseni etrafında matris rotasyonu.</div>
+                                <div class="mt-1"><strong>Timelapse:</strong> Işık kaynağının dairesel bir yörüngede ($\theta_s(t)$) hareket ettirilerek gölge analizi yapılması.</div>
+                            </div>
+                        </div>
+
+                        <button id="reset-cam-btn" title="Başlangıç Açısına Dön" class="text-[10px] bg-white/5 hover:bg-white/10 px-2 py-1 rounded border border-white/10 transition-all flex items-center gap-1 text-theme-muted">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.213 6h-2.122"></path></svg>
+                            Sıfırla
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Animation Engine Toggles -->
+                <div class="grid grid-cols-3 gap-2">
+                    <!-- Turntable (360) -->
+                    <button id="btn-360" class="flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all group text-theme-muted">
+                        <div class="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition-all text-amber-500" id="icon-360-container">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.213 6h-2.122"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-theme-main">360° Döneç</span>
+                    </button>
+
+                    <!-- Cinematic Tour -->
+                    <button id="btn-tour" class="flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all group text-theme-muted">
+                        <div class="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition-all text-sky-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-theme-main">Sinematik Tur</span>
+                    </button>
+
+                    <!-- Shadow Timelapse -->
+                    <button id="btn-timelapse" class="flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all group text-theme-muted">
+                        <div class="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition-all text-emerald-400" id="icon-timelapse-container">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </div>
+                        <span class="text-[11px] font-medium text-theme-main">Gölge Zamanı</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Focus Hotspots Dashboard (Bottom Right) -->
+            <div class="glass p-4 rounded-2xl w-full md:w-[320px] flex flex-col gap-3">
+                <div class="border-b border-white/5 pb-2 flex items-center justify-between">
+                    <h2 class="text-sm font-bold tracking-wide flex items-center gap-2 text-theme-main">
+                        <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        Detay Odak Noktaları
+                    </h2>
+                    
+                    <!-- Hotspots Tooltip Trigger -->
+                    <div class="tooltip-trigger relative">
+                        <span class="cursor-help text-gray-500 hover:text-white transition-colors text-xs bg-white/5 w-5 h-5 rounded-full flex items-center justify-center">i</span>
+                        <div class="tooltip-box absolute bottom-6 right-0 w-64 p-3.5 rounded-xl glass text-[11px] leading-relaxed z-50 pointer-events-none shadow-2xl">
+                            <div class="font-bold text-sky-400 mb-1">Odak Noktaları & SLERP</div>
+                            <div><strong>Yöntem:</strong> Kameranın konumu ($\vec{P}_c$) ve bakış vektörü ($\vec{T}_c$) kuaterniyon tabanlı küresel doğrusal interpolasyon (Slerp) ile pürüzsüzce taşınır.</div>
+                            <div class="mt-1"><strong>Süre:</strong> $\Delta t = 1.8\text{ saniye}$ sönümlemeli kübik eğri amortismanı kullanılır.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col gap-1.5">
+                    <!-- Hotspot: Tabletop & Bevel -->
+                    <button id="hotspot-top" class="w-full flex items-center justify-between text-left px-3.5 py-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all group text-theme-muted hover:text-theme-main">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-white/5 text-sky-400 flex items-center justify-center font-mono text-xs font-bold border border-white/5 group-hover:bg-sky-500/20 group-hover:text-sky-300">1</span>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-semibold text-theme-main">Tabla & Pah Kenar</span>
+                                <span class="text-[10px] leading-none mt-0.5 text-theme-muted">80x80cm Extrude Üst Kısım</span>
+                            </div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+
+                    <!-- Hotspot: Joint Socket -->
+                    <button id="hotspot-joint" class="w-full flex items-center justify-between text-left px-3.5 py-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all group text-theme-muted hover:text-theme-main">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-white/5 text-sky-400 flex items-center justify-center font-mono text-xs font-bold border border-white/5 group-hover:bg-sky-500/20 group-hover:text-sky-300">2</span>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-semibold text-theme-main">Konik Kilit Yuvası</span>
+                                <span class="text-[10px] leading-none mt-0.5 text-theme-muted">Sütun & Tabla Mekanik Kilidi</span>
+                            </div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+
+                    <!-- Hotspot: Heavy Column Base -->
+                    <button id="hotspot-base" class="w-full flex items-center justify-between text-left px-3.5 py-2.5 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all group text-theme-muted hover:text-theme-main">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-white/5 text-sky-400 flex items-center justify-center font-mono text-xs font-bold border border-white/5 group-hover:bg-sky-500/20 group-hover:text-sky-300">3</span>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-semibold text-theme-main">Kaide Tabanı</span>
+                                <span class="text-[10px] leading-none mt-0.5 text-theme-muted">70cm Çapında Ağır Beton Blok</span>
+                            </div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- TECHNICAL DOCUMENTATION PANEL (MODAL) -->
+    <div id="docs-modal" class="absolute inset-0 bg-black/70 backdrop-blur-md z-40 hidden flex items-center justify-center p-4 md:p-8 pointer-events-auto">
+        <div class="glass w-full max-w-5xl h-[85vh] rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-white/10 flex items-center justify-between bg-black/30">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-theme-main leading-none">Mühendislik & Metodoloji Portalı</h2>
+                        <p class="text-xs text-theme-muted mt-1">Monolit Beton Masa Simülatörü Matematiksel Altyapı ve Veri Akışı</p>
+                    </div>
+                </div>
+                <button id="close-docs-btn" class="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-xl transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Content (Two Column Layout) -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Sidebar Nav -->
+                <div class="w-[220px] border-r border-white/5 bg-black/10 flex flex-col justify-between p-4 hidden md:flex">
+                    <nav class="flex flex-col gap-1" id="docs-nav">
+                        <button data-tab="overview" class="doc-tab-btn active text-left text-xs font-semibold px-3 py-2.5 rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-300 transition-all">1. Genel Bakış</button>
+                        <button data-tab="formulas" class="doc-tab-btn text-left text-xs font-semibold px-3 py-2.5 rounded-lg border border-transparent text-gray-400 hover:text-white hover:bg-white/5 transition-all">2. Yönetici Formüller</button>
+                        <button data-tab="glossary" class="doc-tab-btn text-left text-xs font-semibold px-3 py-2.5 rounded-lg border border-transparent text-gray-400 hover:text-white hover:bg-white/5 transition-all">3. Sözlük & Veriler</button>
+                        <button data-tab="dataflow" class="doc-tab-btn text-left text-xs font-semibold px-3 py-2.5 rounded-lg border border-transparent text-gray-400 hover:text-white hover:bg-white/5 transition-all">4. Veri Akışı & Bağlantılar</button>
+                        <button data-tab="assumptions" class="doc-tab-btn text-left text-xs font-semibold px-3 py-2.5 rounded-lg border border-transparent text-gray-400 hover:text-white hover:bg-white/5 transition-all">5. Varsayımlar & Sınırlar</button>
+                        <button data-tab="devnotes" class="doc-tab-btn text-left text-xs font-semibold px-3 py-2.5 rounded-lg border border-transparent text-gray-400 hover:text-white hover:bg-white/5 transition-all">6. Geliştirici Notları</button>
+                    </nav>
+                    <div class="text-[10px] text-gray-500 text-center border-t border-white/5 pt-4">
+                        Seri: Monolit Studio v2.6
+                    </div>
+                </div>
+
+                <!-- Active Documentation Pane -->
+                <div class="flex-1 p-6 overflow-y-auto custom-scroll text-sm text-gray-300 space-y-6" id="docs-viewport">
+                    <!-- Dynamic Content gets loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="canvas-container" class="absolute inset-0"></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        let scene, camera, renderer, controls;
+        let tableGroup, floor, concreteMaterial;
+        let starField; // Procedural stellar point cloud
+        let clock = new THREE.Clock();
+
+        // Environment Toggle Properties
+        let isSpaceMode = false;
+
+        // Lighting References for Dynamic Shifts
+        let dirLight, hemiLight, fillLight;
+        const initialSunPos = new THREE.Vector3(80, 150, 60);
+
+        // Core Animation Engine States
+        const ANIM_MODES = {
+            MANUAL: 'manual',
+            TURNTABLE: 'turntable',
+            TOUR: 'tour',
+            TIMELAPSE: 'timelapse',
+            HOTSPOT_FLY: 'hotspot'
+        };
+        let currentMode = ANIM_MODES.MANUAL;
+
+        // Timelapse Cycle Properties
+        let timelapseTime = 0; 
+        const timelapseSpeed = 0.5; // Radians per sec
+
+        // Hotspot Camera Presets
+        const HOTSPOTS = {
+            INITIAL: {
+                pos: new THREE.Vector3(130, 140, 160),
+                look: new THREE.Vector3(0, 40, 0)
+            },
+            TOP: {
+                pos: new THREE.Vector3(5, 110, 65),
+                look: new THREE.Vector3(0, 77, 0)
+            },
+            JOINT: {
+                pos: new THREE.Vector3(35, 84, 35),
+                look: new THREE.Vector3(0, 75, 0)
+            },
+            BASE: {
+                pos: new THREE.Vector3(85, 25, 45),
+                look: new THREE.Vector3(0, 8, 0)
+            }
+        };
+
+        // Glide/Fly-To Tweener Variables
+        let flyState = {
+            active: false,
+            startPos: new THREE.Vector3(),
+            endPos: new THREE.Vector3(),
+            startLook: new THREE.Vector3(),
+            endLook: new THREE.Vector3(),
+            progress: 0,
+            duration: 1.8, // Smooth speed
+            onComplete: null
+        };
+
+        // Tour Sequence Configuration
+        const tourSequence = [
+            { hotspot: HOTSPOTS.INITIAL, duration: 4.0, label: "Giriş" },
+            { hotspot: HOTSPOTS.TOP, duration: 4.5, label: "Pahlı Üst Tabla" },
+            { hotspot: HOTSPOTS.JOINT, duration: 4.5, label: "Hassas Kenet Yuvası" },
+            { hotspot: HOTSPOTS.BASE, duration: 4.5, label: "Stabil Taban" }
+        ];
+        let tourIndex = 0;
+        let tourTimer = 0;
+
+        // --- PRESET DATASETS (INTERPOLATED IN FRAME LOOP) ---
+
+        const CONCRETE_COLORS = {
+            GREY: { hex: 0x9c9c9c, label: "Doğal Gri" },
+            CHARCOAL: { hex: 0x3a3d40, label: "Antrasit" },
+            SAND: { hex: 0xd2be9b, label: "Kum Beji" },
+            WHITE: { hex: 0xeeeeee, label: "Beyaz Beton" },
+            TERRACOTTA: { hex: 0xb06d58, label: "Kiremit" }
+        };
+
+        const ENVIRONMENTS = {
+            STUDIO: {
+                bg: 0x121315,
+                keyLight: 0xfff5e6,
+                keyIntensity: 1.3,
+                fillLight: 0x8bc2ff,
+                fillIntensity: 0.45,
+                hemiSky: 0xffffff,
+                hemiGround: 0x444444,
+                hemiIntensity: 0.85,
+                floorColor: 0x141517
+            },
+            WARM: {
+                bg: 0x221712,
+                keyLight: 0xffaa44,
+                keyIntensity: 1.8,
+                fillLight: 0x884422,
+                fillIntensity: 0.35,
+                hemiSky: 0xffd0aa,
+                hemiGround: 0x2a150c,
+                hemiIntensity: 0.65,
+                floorColor: 0x18110e
+            },
+            BRUTALIST: {
+                bg: 0x13181c,
+                keyLight: 0x99ccff,
+                keyIntensity: 1.6,
+                fillLight: 0x2d3a4c,
+                fillIntensity: 0.6,
+                hemiSky: 0xb3d1ff,
+                hemiGround: 0x0f1418,
+                hemiIntensity: 0.8,
+                floorColor: 0x0e1114
+            },
+            CYBER: {
+                bg: 0x0a0512,
+                keyLight: 0xff00aa,
+                keyIntensity: 2.2,
+                fillLight: 0x00f0ff,
+                fillIntensity: 1.3,
+                hemiSky: 0x4d0080,
+                hemiGround: 0x05000d,
+                hemiIntensity: 0.9,
+                floorColor: 0x0d0718
+            }
+        };
+
+        // Active target settings (the renderer will lerp towards these)
+        let targetConcreteColor = new THREE.Color(CONCRETE_COLORS.GREY.hex);
+        let targetBgColor = new THREE.Color(ENVIRONMENTS.STUDIO.bg);
+        let targetKeyColor = new THREE.Color(ENVIRONMENTS.STUDIO.keyLight);
+        let targetKeyIntensity = ENVIRONMENTS.STUDIO.keyIntensity;
+        let targetFillColor = new THREE.Color(ENVIRONMENTS.STUDIO.fillLight);
+        let targetFillIntensity = ENVIRONMENTS.STUDIO.fillIntensity;
+        let targetHemiSkyColor = new THREE.Color(ENVIRONMENTS.STUDIO.hemiSky);
+        let targetHemiGroundColor = new THREE.Color(ENVIRONMENTS.STUDIO.hemiGround);
+        let targetHemiIntensity = ENVIRONMENTS.STUDIO.hemiIntensity;
+        let targetFloorColor = new THREE.Color(ENVIRONMENTS.STUDIO.floorColor);
+
+        // Procedural High-Fidelity Concrete Texture Generator
+        function createConcreteTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            // Natural porous/weathered concrete cloud formations
+            for (let i = 0; i < 600; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 1024;
+                const radius = Math.random() * 150 + 40;
+                const opacity = Math.random() * 0.18;
+                
+                const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+                const shade = Math.random() > 0.45 ? 245 : 120; 
+                grad.addColorStop(0, `rgba(${shade},${shade},${shade},${opacity})`);
+                grad.addColorStop(1, 'rgba(255,255,255,0)');
+                
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // High density micro pores
+            for (let i = 0; i < 35000; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 1024;
+                const size = Math.random() * 1.8 + 0.4;
+                const darkness = Math.random() * 0.35;
+                ctx.fillStyle = `rgba(30,30,30,${darkness})`;
+                ctx.fillRect(x, y, size, size);
+            }
+
+            // Micro dry cracks / scratches
+            ctx.strokeStyle = 'rgba(100,100,100,0.12)';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < 15; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * 1024, Math.random() * 1024);
+                ctx.lineTo(Math.random() * 1024, Math.random() * 1024);
+                ctx.stroke();
+            }
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(1.5, 1.5);
+            return texture;
+        }
+
+        // Procedural Starfield Generator
+        function createStarField() {
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsCount = 2000;
+            const positions = new Float32Array(starsCount * 3);
+            const colors = new Float32Array(starsCount * 3);
+
+            for (let i = 0; i < starsCount * 3; i += 3) {
+                // Sphere distribution
+                const u = Math.random();
+                const v = Math.random();
+                const theta = u * 2.0 * Math.PI;
+                const phi = Math.acos(2.0 * v - 1.0);
+                const r = 250 + Math.random() * 150; // Distance away from model center
+
+                positions[i] = r * Math.sin(phi) * Math.cos(theta);
+                positions[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+                positions[i + 2] = r * Math.cos(phi);
+
+                // Cosmic hues (some white, some light blue, some warm yellow stars)
+                const rand = Math.random();
+                if (rand > 0.8) {
+                    colors[i] = 0.8; colors[i+1] = 0.9; colors[i+2] = 1.0; // Cool star
+                } else if (rand > 0.6) {
+                    colors[i] = 1.0; colors[i+1] = 0.9; colors[i+2] = 0.7; // Warm star
+                } else {
+                    colors[i] = 1.0; colors[i+1] = 1.0; colors[i+2] = 1.0; // Standard white
+                }
+            }
+
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const starsMaterial = new THREE.PointsMaterial({
+                size: 1.5,
+                sizeAttenuation: true,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.95
+            });
+
+            return new THREE.Points(starsGeometry, starsMaterial);
+        }
+
+        function init() {
+            // Scene Setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(ENVIRONMENTS.STUDIO.bg);
+            scene.fog = new THREE.FogExp2(ENVIRONMENTS.STUDIO.bg, 0.002);
+
+            // Camera Setup
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.copy(HOTSPOTS.INITIAL.pos);
+
+            // Studio Ground Floor
+            const floorGeo = new THREE.PlaneGeometry(1000, 1000);
+            const floorMat = new THREE.MeshStandardMaterial({ 
+                color: ENVIRONMENTS.STUDIO.floorColor, 
+                roughness: 0.65, 
+                metalness: 0.25 
+            });
+            floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            // Procedural Starfield setup
+            starField = createStarField();
+
+            // Advanced Three-Point Lighting Setup
+            hemiLight = new THREE.HemisphereLight(ENVIRONMENTS.STUDIO.hemiSky, ENVIRONMENTS.STUDIO.hemiGround, ENVIRONMENTS.STUDIO.hemiIntensity);
+            hemiLight.position.set(0, 200, 0);
+            scene.add(hemiLight);
+
+            // Key Light
+            dirLight = new THREE.DirectionalLight(ENVIRONMENTS.STUDIO.keyLight, ENVIRONMENTS.STUDIO.keyIntensity);
+            dirLight.position.copy(initialSunPos);
+            dirLight.castShadow = true;
+            
+            // Soft Shadow Map parameters
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.camera.near = 0.5;
+            dirLight.shadow.camera.far = 450;
+            const d = 110;
+            dirLight.shadow.camera.left = -d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = -d;
+            dirLight.shadow.bias = -0.0003;
+            scene.add(dirLight);
+
+            // Cool Fill Light (Opposing shadows)
+            fillLight = new THREE.DirectionalLight(ENVIRONMENTS.STUDIO.fillLight, ENVIRONMENTS.STUDIO.fillIntensity);
+            fillLight.position.set(-90, 60, -80);
+            scene.add(fillLight);
+
+            // Generate concrete texture
+            const concreteTex = createConcreteTexture();
+            concreteMaterial = new THREE.MeshStandardMaterial({
+                map: concreteTex,
+                roughnessMap: concreteTex,
+                roughness: 0.76,
+                metalness: 0.04,
+                envMapIntensity: 0.6,
+                color: targetConcreteColor
+            });
+
+            // WebGL Renderer Initializer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            
+            const container = document.getElementById('canvas-container');
+            container.innerHTML = ''; // Safely clear out former elements if any
+            container.appendChild(renderer.domElement);
+
+            // Orbit Controls setup
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.target.copy(HOTSPOTS.INITIAL.look);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.04;
+            controls.maxPolarAngle = Math.PI / 2 - 0.04; 
+            controls.minDistance = 45;
+            controls.maxDistance = 450;
+
+            // Handle manual overrides on click / drag
+            controls.addEventListener('start', () => {
+                if (currentMode !== ANIM_MODES.MANUAL) {
+                    setNavigationMode(ANIM_MODES.MANUAL);
+                }
+            });
+
+            // Populate Table Assets
+            createTable();
+
+            // Dynamic User Interface & Actions Setup
+            setupUIDashboard();
+
+            // Handle Resizes
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function createTable() {
+            tableGroup = new THREE.Group();
+            scene.add(tableGroup);
+
+            // 1. BASE ANCHOR (KAİDE)
+            const baseGeometry = new THREE.CylinderGeometry(35, 35, 12, 64);
+            const baseMesh = new THREE.Mesh(baseGeometry, concreteMaterial);
+            baseMesh.position.y = 6;
+            baseMesh.castShadow = true;
+            baseMesh.receiveShadow = true;
+            tableGroup.add(baseMesh);
+
+            // 2. SUPPORT COLUMN (SÜTUN)
+            const columnGroup = new THREE.Group();
+            
+            // Core column body
+            const shaftGeometry = new THREE.CylinderGeometry(7.5, 7.5, 60, 48);
+            const shaftMesh = new THREE.Mesh(shaftGeometry, concreteMaterial);
+            shaftMesh.position.y = 12 + 30;
+            shaftMesh.castShadow = true;
+            shaftMesh.receiveShadow = true;
+            columnGroup.add(shaftMesh);
+
+            // Tapered Collar/Shoulder Support
+            const shoulderGeometry = new THREE.CylinderGeometry(12.5, 7.5, 5, 48);
+            const shoulderMesh = new THREE.Mesh(shoulderGeometry, concreteMaterial);
+            shoulderMesh.position.y = 72 + 2.5;
+            shoulderMesh.castShadow = true;
+            shoulderMesh.receiveShadow = true;
+            columnGroup.add(shoulderMesh);
+
+            tableGroup.add(columnGroup);
+
+            // 3. MAIN TABLE TOP WITH CUSTOM BEVELS AND CUTOUT (TEPSİ TABLA)
+            const tableShape = new THREE.Shape();
+            const w = 40; 
+            
+            // Square profile path
+            tableShape.moveTo(-w, -w);
+            tableShape.lineTo(w, -w);
+            tableShape.lineTo(w, w);
+            tableShape.lineTo(-w, w);
+            tableShape.lineTo(-w, -w);
+
+            // Cutout collar matching
+            const holePath = new THREE.Path();
+            holePath.absarc(0, 0, 12.5, 0, Math.PI * 2, true);
+            tableShape.holes.push(holePath);
+
+            // Beveled edges
+            const extrudeSettings = {
+                depth: 3.6,
+                bevelEnabled: true,
+                bevelThickness: 0.2,
+                bevelSize: 0.2,
+                bevelOffset: 0,
+                bevelSegments: 5,
+                curveSegments: 64
+            };
+            
+            const topGeometry = new THREE.ExtrudeGeometry(tableShape, extrudeSettings);
+            const topMesh = new THREE.Mesh(topGeometry, concreteMaterial);
+            
+            topMesh.rotateX(Math.PI / 2);
+            topGeometry.center(); 
+            topMesh.position.set(0, 79, 0);
+
+            topMesh.castShadow = true;
+            topMesh.receiveShadow = true;
+            tableGroup.add(topMesh);
+        }
+
+        // --- GLIDE / TRANSITION LOGIC ---
+        function glideCameraTo(destination, duration = 1.8, callback = null) {
+            flyState.startPos.copy(camera.position);
+            flyState.endPos.copy(destination.pos);
+            flyState.startLook.copy(controls.target);
+            flyState.endLook.copy(destination.look);
+            flyState.progress = 0;
+            flyState.duration = duration;
+            flyState.onComplete = callback;
+            flyState.active = true;
+
+            controls.enabled = false; 
+            setNavigationMode(ANIM_MODES.HOTSPOT_FLY);
+        }
+
+        // Cubic easing helper
+        function easeInOutCubic(t) {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        }
+
+        // --- CORE NAVIGATION MODE CONTROLLER ---
+        function setNavigationMode(mode) {
+            if (currentMode === mode && mode !== ANIM_MODES.HOTSPOT_FLY) return;
+            currentMode = mode;
+
+            const badgeText = document.getElementById('badge-text');
+            const badgePulse = document.getElementById('badge-pulse');
+            const timelapseWidget = document.getElementById('timelapse-widget');
+            const tourWidget = document.getElementById('tour-widget');
+
+            timelapseWidget.classList.add('opacity-0', 'translate-y-4');
+            tourWidget.classList.add('opacity-0', 'translate-y-4');
+            setTimeout(() => {
+                if (currentMode !== ANIM_MODES.TIMELAPSE) timelapseWidget.classList.add('hidden');
+                if (currentMode !== ANIM_MODES.TOUR) tourWidget.classList.add('hidden');
+            }, 500);
+
+            resetButtonActiveStates();
+            controls.autoRotate = false;
+
+            switch(mode) {
+                case ANIM_MODES.MANUAL:
+                    badgeText.textContent = "Serbest Gezinti";
+                    badgePulse.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping";
+                    controls.enabled = true;
+                    break;
+
+                case ANIM_MODES.TURNTABLE:
+                    badgeText.textContent = "360° Döneç Modu";
+                    badgePulse.className = "w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse";
+                    controls.enabled = true;
+                    controls.autoRotate = true;
+                    controls.autoRotateSpeed = 2.0;
+                    document.getElementById('btn-360').classList.add('bg-amber-500/10', 'border-amber-500/30', 'text-white');
+                    document.getElementById('icon-360-container').classList.add('bg-amber-500/20');
+                    break;
+
+                case ANIM_MODES.TIMELAPSE:
+                    badgeText.textContent = "Gölge Timelapse";
+                    badgePulse.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                    controls.enabled = true;
+                    document.getElementById('btn-timelapse').classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-white');
+                    document.getElementById('icon-timelapse-container').classList.remove('bg-emerald-500/20');
+                    
+                    timelapseWidget.classList.remove('hidden');
+                    setTimeout(() => {
+                        timelapseWidget.classList.remove('opacity-0', 'translate-y-4');
+                    }, 50);
+                    break;
+
+                case ANIM_MODES.TOUR:
+                    badgeText.textContent = "Sinematik Tur";
+                    badgePulse.className = "w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse";
+                    document.getElementById('btn-tour').classList.add('bg-sky-500/10', 'border-sky-500/30', 'text-white');
+                    
+                    tourWidget.classList.remove('hidden');
+                    setTimeout(() => {
+                        tourWidget.classList.remove('opacity-0', 'translate-y-4');
+                    }, 50);
+
+                    tourIndex = 0;
+                    tourTimer = 0;
+                    updateTourDots();
+                    glideToTourStep();
+                    break;
+
+                case ANIM_MODES.HOTSPOT_FLY:
+                    badgeText.textContent = "Kamera Odaklanıyor";
+                    badgePulse.className = "w-2.5 h-2.5 rounded-full bg-sky-500 animate-ping";
+                    break;
+            }
+        }
+
+        function resetButtonActiveStates() {
+            const ids = ['btn-360', 'btn-tour', 'btn-timelapse'];
+            ids.forEach(id => {
+                document.getElementById(id).classList.remove('bg-amber-500/10', 'border-amber-500/30', 'bg-sky-500/10', 'border-sky-500/30', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-white');
+            });
+            document.getElementById('icon-360-container').classList.remove('bg-amber-500/20');
+            document.getElementById('icon-timelapse-container').classList.remove('bg-emerald-500/20');
+        }
+
+        function glideToTourStep() {
+            const step = tourSequence[tourIndex];
+            updateTourDots();
+            glideCameraTo(step.hotspot, 2.0, () => {
+                controls.enabled = false;
+                currentMode = ANIM_MODES.TOUR;
+                tourTimer = 0; 
+            });
+        }
+
+        function updateTourDots() {
+            const container = document.getElementById('tour-steps-dots');
+            container.innerHTML = '';
+            tourSequence.forEach((step, i) => {
+                const dot = document.createElement('div');
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${i === tourIndex ? 'bg-sky-400 w-4' : 'bg-white/20'}`;
+                container.appendChild(dot);
+            });
+        }
+
+        // --- MOCK AND DYNAMIC DOCUMENTATION GENERATION ENGINE ---
+        const DOCS_CONTENT = {
+            overview: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-sky-400">1. Genel Bakış & Proje Mimarisi</h3>
+                    <p class="leading-relaxed text-gray-200">
+                        Bu simülasyon, endüstriyel standartlara uygun brüt beton monolit mobilyaların estetik, yapısal ve fotometrik analizlerini gerçekleştiren interaktif bir dijital ikiz uygulamasıdır. Altyapı, pürüzsüz vektörel kamera animasyonları, üç noktalı aydınlatma modelleri ve tamamen tarayıcı içinde (GPU tabanlı) oluşturulan prosedürel dokulardan oluşmaktadır.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="p-4 rounded-xl border border-white/5 bg-white/5">
+                            <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">Mekanik Stabilite</h4>
+                            <p class="text-xs text-gray-400">Geniş taban alanı ve döküm beton ağırlığı sayesinde yerçekimi merkezi ($G_z$) yere yaklaştırılarak devrilme direnci maksimize edilmiştir.</p>
+                        </div>
+                        <div class="p-4 rounded-xl border border-white/5 bg-white/5">
+                            <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">Fotometrik Analiz</h4>
+                            <p class="text-xs text-gray-400">Işığın beton yüzeydeki pürüzleri (porları) gölgelendirmesi, gerçek zamanlı yumuşak gölge algoritmaları (PCFSoftShadowMap) ile analiz edilir.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            formulas: `
+                <div class="space-y-6">
+                    <h3 class="text-base font-bold text-sky-400">2. Matematiksel Yönetici Formülleri</h3>
+                    
+                    <!-- Formula 1 -->
+                    <div class="p-4 rounded-xl border border-white/5 bg-white/5 space-y-3">
+                        <div class="text-xs text-amber-400 uppercase tracking-widest font-mono font-bold">Denklem 01: Toplam Kütle ve Hacim Analizi</div>
+                        <div class="text-lg bg-black/40 p-3 rounded-lg font-mono text-center overflow-x-auto select-all text-white">
+                            V_{\\text{tabla}} = \\left( W^2 - \\pi \\cdot R_{\\text{delik}}^2 \\right) \\cdot H
+                        </div>
+                        <div class="text-lg bg-black/40 p-3 rounded-lg font-mono text-center overflow-x-auto select-all text-white">
+                            M_{\\text{tabla}} = V_{\\text{tabla}} \\cdot \\rho_{\\text{beton}}
+                        </div>
+                        <div class="text-xs text-gray-300">
+                            <strong>Açıklama:</strong> Tablanın ortasındaki konik delik çıkarıldıktan sonra kalan alanın kalınlıkla çarpımı net hacmi, bu hacmin beton özgül ağırlığı ile çarpımı ise toplam kütleyi verir.
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-xs text-gray-400 pt-2 border-t border-white/5">
+                            <div><strong>Girdiler:</strong> $W = 0.8\\text{ m}$, $R_{\\text{delik}} = 0.125\\text{ m}$, $H = 0.04\\text{ m}$</div>
+                            <div><strong>Birimler:</strong> $V\\text{ [m}^3\\text{]}$, $M\\text{ [kg]}$, $\\rho\\text{ [kg/m}^3\\text{]}$</div>
+                        </div>
+                        <div class="p-3 bg-sky-500/5 rounded-lg border border-sky-500/10 text-xs text-sky-300">
+                            <strong>Sayısal Örnek:</strong> Özgül kütle $\\rho = 2400\\text{ kg/m}^3$ olsun.<br>
+                            $A = 0.8^2 - \\pi \\cdot 0.125^2 = 0.64 - 0.049 = 0.591\\text{ m}^2$<br>
+                            $V = 0.591 \\cdot 0.04 = 0.02364\\text{ m}^3$<br>
+                            $M = 0.02364 \\cdot 2400 \\approx \\mathbf{56.736\\text{ kg}}$ tabla ağırlığı.
+                        </div>
+                    </div>
+
+                    <!-- Formula 2 -->
+                    <div class="p-4 rounded-xl border border-white/5 bg-white/5 space-y-3">
+                        <div class="text-xs text-amber-400 uppercase tracking-widest font-mono font-bold">Denklem 02: Kübik Yumuşatma Geçiş Fonksiyonu (Easing)</div>
+                        <div class="text-lg bg-black/40 p-3 rounded-lg font-mono text-center overflow-x-auto select-all text-white">
+                            f(t) = 3t^2 - 2t^3 \\quad t \\in [0, 1]
+                        </div>
+                        <div class="text-xs text-gray-300">
+                            <strong>Açıklama:</strong> Kamera uçuşlarında ivmelenme ve yavaşlama hissinin pürüzsüz olması için kullanılan Hermite kübik yumuşatma interpolasyon fonksiyonudur.
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-xs text-gray-400 pt-2 border-t border-white/5">
+                            <div><strong>Girdiler:</strong> $t$ (Kanal zaman yüzdesi)</div>
+                            <div><strong>Çıktılar:</strong> $f(t)$ (İnterpolasyon katsayısı)</div>
+                        </div>
+                        <div class="p-3 bg-sky-500/5 rounded-lg border border-sky-500/10 text-xs text-sky-300">
+                            <strong>Sayısal Örnek:</strong> Geçişin tam yarısında ($t = 0.5$):<br>
+                            $f(0.5) = 3(0.5)^2 - 2(0.5)^3 = 0.75 - 0.25 = \\mathbf{0.50}$ (Simetrik orta nokta).
+                        </div>
+                    </div>
+
+                    <!-- Formula 3 -->
+                    <div class="p-4 rounded-xl border border-white/5 bg-white/5 space-y-3">
+                        <div class="text-xs text-amber-400 uppercase tracking-widest font-mono font-bold">Denklem 03: Işık Yörüngesi ve Astronomik Simülasyon</div>
+                        <div class="text-lg bg-black/40 p-3 rounded-lg font-mono text-center overflow-x-auto select-all text-white">
+                            \\vec{P}_{\\text{sun}}(\\theta) = \\begin{bmatrix} R_s \\cdot \\cos(\\theta) \\\\ \\max(y_{\\text{min}}, R_s \\cdot \\sin(\\theta) \\cdot 0.85 + y_{\\text{off}}) \\\\ R_s \\cdot \\sin(\\theta) \\end{bmatrix}
+                        </div>
+                        <div class="text-xs text-gray-300">
+                            <strong>Açıklama:</strong> Gün zamanı (timelapse) modunda gölgelerin yön değiştirmesi için, birincil güneş ışığını ($\vec{P}_{\text{sun}}$) eliptik yörüngede döndüren konum denklemi.
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-xs text-gray-400 pt-2 border-t border-white/5">
+                            <div><strong>Girdiler:</strong> $\\theta$ (Açısal saat parametresi)</div>
+                            <div><strong>Parametreler:</strong> $R_s = 180\\text{ cm}$ (Yörünge yarıçapı)</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            glossary: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-sky-400">3. Mühendislik Sözlüğü & Veri Kaynakları</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left text-gray-300 border border-white/5 rounded-lg overflow-hidden">
+                            <thead class="bg-white/5 text-gray-400 font-bold uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-3 border-b border-white/5">Terim</th>
+                                    <th class="p-3 border-b border-white/5">Açıklama / Tanım</th>
+                                    <th class="p-3 border-b border-white/5">Veri Kaynağı / Standart</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5 bg-black/20 text-gray-200">
+                                <tr>
+                                    <td class="p-3 font-semibold text-amber-400">Pah Kırma (Bevel)</td>
+                                    <td class="p-3">Keskin 90 derecelik köşelerin fiziksel gerilmeleri ve kırılmaları önlemek adına 45 derece eğik hale getirilmesi.</td>
+                                    <td class="p-3">DIN EN 1992 Beton Tasarım İlkeleri</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-amber-400">ACES Filmic Tone</td>
+                                    <td class="p-3">Geniş dinamik aralıklı (HDR) aydınlatma verilerini standart ekran gamutuna (sRGB) gerçekçi kontrastla eşleyen sinematik renk algoritması.</td>
+                                    <td class="p-3">Academy Color Encoding System</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-amber-400">Procedural Noise</td>
+                                    <td class="p-3">Herhangi bir harici görsel bağımlılığı olmaksızın, matematiksel algoritmalar ile GPU üzerinde dinamik mikroskobik gözenek oluşturma yöntemi.</td>
+                                    <td class="p-3">Perlin & Simplex Gürültü Teorisi</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-amber-400">SLERP</td>
+                                    <td class="p-3">Küresel doğrusal interpolasyon. Kamera açısı geçişlerinde yönelim bozulmalarını sıfırlayan kuaterniyon interpolasyonu.</td>
+                                    <td class="p-3">Quaternion Calculus Standartları</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `,
+            dataflow: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-sky-400">4. Veri Akış Modeli & Sistem Bağlantıları</h3>
+                    <p class="leading-relaxed text-gray-200">
+                        Aşağıdaki şematik akış, kullanıcının arayüzde yaptığı değişikliklerin Three.js motoruna ve WebGL gölgelendiricilerine nasıl aktarıldığını açıklar:
+                    </p>
+                    <div class="p-5 rounded-2xl border border-white/5 bg-black/40 font-mono text-xs text-gray-400 space-y-2">
+                        <div class="flex items-center gap-2"><span class="text-amber-500">[Kullanıcı Girdisi]</span> ➔ Renk Değişimi, Atmosfer veya Uzay Modu Seçimi</div>
+                        <div class="pl-6 border-l-2 border-white/10">➔ DOM Event Listener tetiklenir</div>
+                        <div class="pl-6 border-l-2 border-white/10">➔ Hedef renk vektörü ($T_{\\text{rgb}}$) ve ışık şiddetleri güncellenir</div>
+                        <div class="pl-6 border-l-2 border-white/10 text-sky-400">➔ [Animate Tick Loop] her karede LERP interpolasyonunu çalıştırır:</div>
+                        <div class="pl-12 border-l-2 border-white/10">$$\\vec{C}_{\\text{aktif}} = \\vec{C}_{\\text{aktif}} + (\\vec{C}_{\\text{hedef}} - \\vec{C}_{\\text{aktif}}) \\cdot 0.05$$</div>
+                        <div class="pl-6 border-l-2 border-white/10">➔ Güncellenen parametreler WebGL uniform matrisine gönderilir</div>
+                        <div class="flex items-center gap-2 text-emerald-400"><span class="text-emerald-500">[Renderer Out]</span> ➔ GPU piksel gölgelendirmesi yenilenir</div>
+                    </div>
+                </div>
+            `,
+            assumptions: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-sky-400">5. Mühendislik Varsayımları & Limitleri</h3>
+                    <ul class="list-disc list-inside space-y-2.5 leading-relaxed text-gray-300">
+                        <li><strong>Homojen Yoğunluk:</strong> Beton tablanın, sütunun ve tabanın tamamen homojen bir yoğunluğa (sabit $\\rho = 2400\\text{ kg/m}^3$) sahip olduğu kabul edilmiştir.</li>
+                        <li><strong>Mükemmel Sertlik:</strong> Beton elemanlar arasındaki sürtünme katsayısı ve konik kilit toleransları sonsuz rijit kabul edilmiş; gerilme analizi altında bükülmeler yok sayılmıştır.</li>
+                        <li><strong>Işık Saçılım Sınırları:</strong> Atmosferik aydınlatma, sadece üç noktalı direct ışık modeliyle simüle edilmiş; pencerelerden veya çevreden gelebilecek sekincil (indirect) ışık yansımaları hesaplama yükünü azaltmak amacıyla sınırlandırılmıştır.</li>
+                    </ul>
+                </div>
+            `,
+            devnotes: `
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-sky-400">6. Geliştirici & Entegrasyon Notları</h3>
+                    <p class="leading-relaxed text-gray-200">
+                        Bu simülasyon, sıfır harici görsel (zero-texture file) mimarisiyle tasarlanmıştır. Bu sayede sunucu ağ yükü olmadan, milisaniyeler içinde yüklenir.
+                    </p>
+                    <div class="p-4 rounded-xl border border-amber-500/10 bg-amber-500/5 text-xs text-amber-300">
+                        <strong>Performans İpucu:</strong> Mobil cihazlarda kare hızını (FPS) stabil tutmak amacıyla <code>renderer.setPixelRatio</code> değeri en fazla 2 ile sınırlandırılmıştır. Ayrıca shadow map derinlik matrisi (bias) gölge pürüzlerini (shadow acne) önleyecek hassaslıkta ayarlanmıştır.
+                    </div>
+                </div>
+            `
+        };
+
+        function renderDocsSection(sectionKey) {
+            const viewport = document.getElementById('docs-viewport');
+            viewport.innerHTML = DOCS_CONTENT[sectionKey] || '';
+            
+            if (window.renderMathInElement) {
+                window.renderMathInElement(viewport, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // --- DASHBOARD INTERACTIVE LISTENERS ---
+        function setupUIDashboard() {
+            // Hotspot buttons
+            document.getElementById('hotspot-top').addEventListener('click', () => { glideCameraTo(HOTSPOTS.TOP); });
+            document.getElementById('hotspot-joint').addEventListener('click', () => { glideCameraTo(HOTSPOTS.JOINT); });
+            document.getElementById('hotspot-base').addEventListener('click', () => { glideCameraTo(HOTSPOTS.BASE); });
+
+            // Action modes
+            document.getElementById('btn-360').addEventListener('click', () => {
+                setNavigationMode(currentMode === ANIM_MODES.TURNTABLE ? ANIM_MODES.MANUAL : ANIM_MODES.TURNTABLE);
+            });
+            document.getElementById('btn-timelapse').addEventListener('click', () => {
+                setNavigationMode(currentMode === ANIM_MODES.TIMELAPSE ? ANIM_MODES.MANUAL : ANIM_MODES.TIMELAPSE);
+            });
+            document.getElementById('btn-tour').addEventListener('click', () => {
+                setNavigationMode(currentMode === ANIM_MODES.TOUR ? ANIM_MODES.MANUAL : ANIM_MODES.TOUR);
+            });
+
+            document.getElementById('skip-tour-btn').addEventListener('click', () => {
+                setNavigationMode(ANIM_MODES.MANUAL);
+                glideCameraTo(HOTSPOTS.INITIAL);
+            });
+
+            document.getElementById('reset-cam-btn').addEventListener('click', () => {
+                glideCameraTo(HOTSPOTS.INITIAL);
+            });
+
+            // Concrete Color Button Event Listeners
+            const colorButtons = document.querySelectorAll('.color-btn');
+            colorButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const presetName = e.target.getAttribute('data-color');
+                    const preset = CONCRETE_COLORS[presetName];
+                    if (!preset) return;
+
+                    // Update target color
+                    targetConcreteColor.setHex(preset.hex);
+
+                    // Update UI State
+                    colorButtons.forEach(b => b.classList.remove('ring-2', 'ring-white/80', 'scale-110'));
+                    e.target.classList.add('ring-2', 'ring-white/80', 'scale-110');
+                    document.getElementById('active-color-name').textContent = preset.label;
+                });
+            });
+
+            // Environment Button Event Listeners
+            const envButtons = document.querySelectorAll('.env-btn');
+            envButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const btnElement = e.currentTarget;
+                    const presetName = btnElement.getAttribute('data-env');
+                    const preset = ENVIRONMENTS[presetName];
+                    if (!preset) return;
+
+                    // Update target configurations
+                    targetBgColor.setHex(preset.bg);
+                    targetKeyColor.setHex(preset.keyLight);
+                    targetKeyIntensity = preset.keyIntensity;
+                    targetFillColor.setHex(preset.fillLight);
+                    targetFillIntensity = preset.fillIntensity;
+                    targetHemiSkyColor.setHex(preset.hemiSky);
+                    targetHemiGroundColor.setHex(preset.hemiGround);
+                    targetHemiIntensity = preset.hemiIntensity;
+                    targetFloorColor.setHex(preset.floorColor);
+
+                    // Update UI selection classes
+                    envButtons.forEach(b => {
+                        b.classList.remove('border-sky-500/30', 'bg-sky-500/10', 'text-theme-main');
+                        b.classList.add('border-white/5', 'bg-white/5', 'text-theme-muted');
+                        b.querySelector('span:last-child').classList.remove('bg-sky-400');
+                        b.querySelector('span:last-child').classList.add('bg-transparent');
+                    });
+                    
+                    btnElement.classList.add('border-sky-500/30', 'bg-sky-500/10', 'text-theme-main');
+                    btnElement.classList.remove('border-white/5', 'bg-white/5', 'text-theme-muted');
+                    btnElement.querySelector('span:last-child').classList.add('bg-sky-400');
+                    btnElement.querySelector('span:last-child').classList.remove('bg-transparent');
+                });
+            });
+
+            // --- REVOLUTIONARY SPACE ENVIRONMENT SWITCHER ---
+            const spaceToggleBtn = document.getElementById('space-mode-toggle');
+            spaceToggleBtn.addEventListener('click', () => {
+                isSpaceMode = !isSpaceMode;
+                if (isSpaceMode) {
+                    // Turn on space mode
+                    scene.add(starField);
+                    scene.remove(floor);
+                    scene.fog.density = 0; // Disable studio fog
+
+                    // Setup infinite dark cosmic lighting parameters
+                    targetBgColor.setHex(0x020205);
+                    targetKeyIntensity = 1.8;
+                    targetHemiIntensity = 0.3;
+
+                    spaceToggleBtn.innerHTML = `
+                        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <span>Stüdyo Ortamına Dön</span>
+                    `;
+                    spaceToggleBtn.classList.replace('border-indigo-500/30', 'border-amber-500/30');
+                    spaceToggleBtn.classList.replace('bg-indigo-500/10', 'bg-amber-500/10');
+                    spaceToggleBtn.classList.replace('text-indigo-400', 'text-amber-400');
+
+                    // Hide environment selections
+                    document.getElementById('env-selection-panel').classList.add('opacity-30', 'pointer-events-none');
+                } else {
+                    // Revert to Studio Mode
+                    scene.remove(starField);
+                    scene.add(floor);
+                    scene.fog.density = 0.002;
+
+                    // Restore minimalist studio colors
+                    const studioPreset = ENVIRONMENTS.STUDIO;
+                    targetBgColor.setHex(studioPreset.bg);
+                    targetKeyIntensity = studioPreset.keyIntensity;
+                    targetHemiIntensity = studioPreset.hemiIntensity;
+
+                    spaceToggleBtn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        <span>Sonsuz Uzay Boşluğu</span>
+                    `;
+                    spaceToggleBtn.classList.replace('border-amber-500/30', 'border-indigo-500/30');
+                    spaceToggleBtn.classList.replace('bg-amber-500/10', 'bg-indigo-500/10');
+                    spaceToggleBtn.classList.replace('text-amber-400', 'text-indigo-400');
+
+                    // Restore environment selections
+                    document.getElementById('env-selection-panel').classList.remove('opacity-30', 'pointer-events-none');
+                }
+            });
+
+            // --- UNIVERSAL DAY/NIGHT GUI THEME TOGGLER ---
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            themeToggleBtn.addEventListener('click', () => {
+                const isLight = document.body.classList.contains('light-theme');
+                const iconContainer = document.getElementById('theme-icon');
+                const textContainer = document.getElementById('theme-text');
+
+                if (isLight) {
+                    // Switch back to Dark theme
+                    document.body.classList.replace('light-theme', 'dark-theme');
+                    iconContainer.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>`;
+                    textContainer.textContent = "Gündüz Modu";
+                } else {
+                    // Switch to Light theme
+                    document.body.classList.replace('dark-theme', 'light-theme');
+                    iconContainer.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`;
+                    textContainer.textContent = "Gece Modu";
+                }
+            });
+
+            // --- DOCUMENTATION EVENT LISTENERS ---
+            const docsModal = document.getElementById('docs-modal');
+            const openDocsBtn = document.getElementById('open-docs-btn');
+            const closeDocsBtn = document.getElementById('close-docs-btn');
+
+            openDocsBtn.addEventListener('click', () => {
+                docsModal.classList.remove('hidden');
+                renderDocsSection('overview'); 
+            });
+
+            closeDocsBtn.addEventListener('click', () => {
+                docsModal.classList.add('hidden');
+            });
+
+            // Tab toggling inside docs modal
+            const tabButtons = document.querySelectorAll('.doc-tab-btn');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tabKey = e.target.getAttribute('data-tab');
+                    
+                    // Reset styling
+                    tabButtons.forEach(b => {
+                        b.classList.remove('active', 'border-sky-500/20', 'bg-sky-500/10', 'text-sky-300');
+                        b.classList.add('border-transparent', 'text-gray-400');
+                    });
+
+                    // Set active
+                    e.target.classList.add('active', 'border-sky-500/20', 'bg-sky-500/10', 'text-sky-300');
+                    e.target.classList.remove('border-transparent', 'text-gray-400');
+
+                    renderDocsSection(tabKey);
+                });
+            });
+        }
+
+        // Core tick loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const lerpFactor = 0.05; 
+
+            // --- SMOOTH INTERPOLATIONS FOR MATS & ENVS (LERP) ---
+            concreteMaterial.color.lerp(targetConcreteColor, lerpFactor);
+            scene.background.lerp(targetBgColor, lerpFactor);
+            if (scene.fog) scene.fog.color.lerp(targetBgColor, lerpFactor);
+            floor.material.color.lerp(targetFloorColor, lerpFactor);
+
+            // Rotate starfield slowly to show depth of space
+            if (isSpaceMode && starField) {
+                starField.rotation.y += 0.0008;
+                starField.rotation.x += 0.0003;
+            }
+
+            // 1. PROCESS CAMERA FLY TRANSITIONS
+            if (flyState.active) {
+                flyState.progress += delta / flyState.duration;
+                if (flyState.progress >= 1) {
+                    flyState.progress = 1;
+                    flyState.active = false;
+                    
+                    camera.position.copy(flyState.endPos);
+                    controls.target.copy(flyState.endLook);
+                    controls.update();
+                    controls.enabled = true; 
+
+                    if (flyState.onComplete) {
+                        flyState.onComplete();
+                    } else {
+                        setNavigationMode(ANIM_MODES.MANUAL);
+                    }
+                } else {
+                    const eased = easeInOutCubic(flyState.progress);
+                    camera.position.lerpVectors(flyState.startPos, flyState.endPos, eased);
+                    controls.target.lerpVectors(flyState.startLook, flyState.endLook, eased);
+                    controls.update();
+                }
+            }
+
+            // 2. PROCESS TURNTABLE auto-rotation update
+            if (currentMode === ANIM_MODES.TURNTABLE) {
+                controls.update();
+            }
+
+            // 3. TIMELAPSE LIGHT ORBIT ANIMATION
+            if (currentMode === ANIM_MODES.TIMELAPSE) {
+                timelapseTime += delta * timelapseSpeed;
+                
+                const radius = 180;
+                const angle = timelapseTime; 
+                
+                dirLight.position.set(
+                    Math.cos(angle) * radius,
+                    Math.max(10, Math.sin(angle) * radius * 0.85 + 45), 
+                    Math.sin(angle) * radius
+                );
+
+                const rawAngleDegrees = Math.round((angle * (180 / Math.PI)) % 360);
+                document.getElementById('sun-angle').textContent = `${rawAngleDegrees}°`;
+
+                // Sync the UI clock
+                const normalisedDay = ((angle % (Math.PI * 2)) / (Math.PI * 2));
+                const totalMinutes = Math.floor(normalisedDay * 1440);
+                const hrs = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
+                const mins = (totalMinutes % 60).toString().padStart(2, '0');
+                document.getElementById('timelapse-time').textContent = `${hrs}:${mins}`;
+
+                // Process lighting transitions based on solar altitude
+                const solarAltitude = Math.sin(angle); 
+                if (solarAltitude > 0) {
+                    dirLight.intensity = solarAltitude * targetKeyIntensity;
+                    dirLight.color.lerpColors(
+                        new THREE.Color(0xffaa44), 
+                        targetKeyColor, 
+                        Math.min(solarAltitude * 1.5, 1.0)
+                    );
+                    hemiLight.intensity = 0.2 + solarAltitude * targetHemiIntensity;
+                } else {
+                    const moonStrength = Math.abs(solarAltitude);
+                    dirLight.intensity = moonStrength * 0.15;
+                    dirLight.color.setHex(0x5577aa); 
+                    hemiLight.intensity = 0.15;
+                }
+
+                // Slow rotation to show shadows playing across concrete
+                camera.position.x = camera.position.x * Math.cos(0.0025) - camera.position.z * Math.sin(0.0025);
+                camera.position.z = camera.position.x * Math.sin(0.0025) + camera.position.z * Math.cos(0.0025);
+                controls.update();
+
+                // Lerp static light parameters that aren't dynamic
+                fillLight.color.lerp(targetFillColor, lerpFactor);
+                fillLight.intensity = THREE.MathUtils.lerp(fillLight.intensity, targetFillIntensity, lerpFactor);
+                hemiLight.color.lerp(targetHemiSkyColor, lerpFactor);
+                hemiLight.groundColor.lerp(targetHemiGroundColor, lerpFactor);
+            } else {
+                dirLight.position.lerp(initialSunPos, lerpFactor);
+                dirLight.color.lerp(targetKeyColor, lerpFactor);
+                dirLight.intensity = THREE.MathUtils.lerp(dirLight.intensity, targetKeyIntensity, lerpFactor);
+
+                fillLight.color.lerp(targetFillColor, lerpFactor);
+                fillLight.intensity = THREE.MathUtils.lerp(fillLight.intensity, targetFillIntensity, lerpFactor);
+
+                hemiLight.color.lerp(targetHemiSkyColor, lerpFactor);
+                hemiLight.groundColor.lerp(targetHemiGroundColor, lerpFactor);
+                hemiLight.intensity = THREE.MathUtils.lerp(hemiLight.intensity, targetHemiIntensity, lerpFactor);
+            }
+
+            // 4. SEQUENTIAL CINEMATIC TOUR SEQUENCE
+            if (currentMode === ANIM_MODES.TOUR && !flyState.active) {
+                tourTimer += delta;
+                const activeStep = tourSequence[tourIndex];
+
+                camera.position.x = camera.position.x * Math.cos(0.003) - camera.position.z * Math.sin(0.003);
+                camera.position.z = camera.position.x * Math.sin(0.003) + camera.position.z * Math.cos(0.003);
+                controls.update();
+
+                if (tourTimer >= activeStep.duration) {
+                    tourIndex = (tourIndex + 1) % tourSequence.length;
+                    glideToTourStep();
+                }
+            }
+
+            if (currentMode === ANIM_MODES.MANUAL) {
+                controls.update();
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- ASYNCHRONOUS BOOTSTRAPPING TO ELIMINATE EMPTY IFRAME LOADING ISSUES ---
+        function runSafeInit() {
+            try {
+                init();
+            } catch(e) {
+                console.error("Renderer initialization failed, retrying...", e);
+                setTimeout(runSafeInit, 100);
+            }
+        }
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            runSafeInit();
+        } else {
+            document.addEventListener('DOMContentLoaded', runSafeInit);
+        }
+    </script>
+</body>
+</html>

@@ -40,6 +40,7 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
     heading: "Explore",
     links: [
       { title: "ArtemisIX", href: "/artemisix" },
+      { title: "IX Modules", href: "/artemisix/modules" },
       { title: "Studio", href: "/studio" },
       { title: "Labs", href: "/labs" },
       { title: "Tools", href: "/tools" },

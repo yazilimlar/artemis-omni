@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ARTEMIS Fabrication Solid Shell Dome Workbench v1.6 Visual Shop Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: #050b12;
+            color: #eef4ff;
+            overflow: hidden;
+        }
+
+        .app {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .controls-panel {
+            width: 280px;
+            background: rgba(10, 20, 32, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            padding: 18px 14px;
+            background: linear-gradient(180deg, #0a1420, #050b12);
+            border-bottom: 2px solid #f5b63f;
+        }
+        
+        .header h2 {
+            font-size: 16px;
+            color: #f5b63f;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 11px;
+            color: #8fa6c2;
+        }
+
+        .section {
+            padding: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9bb8da;
+            margin-bottom: 14px;
+        }
+
+        .control-group {
+            margin-bottom: 16px;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 6px;
+            color: #ccdeff;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            background: #1e2f3e;
+            height: 4px;
+            border-radius: 3px;
+            accent-color: #f5b63f;
+            outline: none;
+        }
+
+        input[type="number"], select {
+            background: #0d1a24;
+            border: 1px solid #2a4a62;
+            color: #f0f6ff;
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 12px;
+            width: 100%;
+            outline: none;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .row > * {
+            flex: 1;
+        }
+
+        button {
+            background: linear-gradient(180deg, #f6be52, #d68e22);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #1a1f2a;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        button:hover {
+            filter: brightness(1.1);
+        }
+
+        button.secondary {
+            background: linear-gradient(180deg, #1e3a4d, #102531);
+            color: #ddf4ff;
+            border: 1px solid #2e6a8a;
+        }
+
+        button.small {
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .kpi {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .kpi .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f5bd42;
+            margin-bottom: 4px;
+        }
+
+        .kpi .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #9bb5d4;
+            letter-spacing: 0.5px;
+        }
+
+        .inspector-panel {
+            width: 300px;
+            background: rgba(10, 20, 32, 0.95);
+            backdrop-filter: blur(12px);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: -2px 0 15px rgba(0,0,0,0.5);
+        }
+
+        .formula-card {
+            background: #07131e;
+            border-left: 3px solid #f5b63f;
+            margin: 16px;
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .formula-card h4 {
+            color: #f5b63f;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .formula-card .eq {
+            font-family: monospace;
+            background: #00000066;
+            padding: 8px;
+            border-radius: 6px;
+            margin: 6px 0;
+            color: #a3c2e0;
+        }
+
+        .property-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .validation-warning {
+            background: #2a1a15;
+            border-left: 3px solid #ff8c42;
+            margin: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .schedule-table {
+            margin: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 11px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px 6px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        th:first-child, td:first-child {
+            text-align: center;
+        }
+
+        th {
+            background: #0a1420;
+            color: #f5b63f;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(255,255,255,0.02);
+        }
+
+        #canvas-container {
+            flex: 1 1 auto;
+            min-width: 0;
+            position: relative;
+            background: radial-gradient(circle at center, #0f1c2b 0%, #03080f 100%);
+            cursor: crosshair;
+        }
+
+        .toggle-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+
+
+        .viewport-title {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            background: rgba(2, 8, 14, 0.72);
+            border: 1px solid rgba(245, 182, 63, 0.28);
+            border-radius: 10px;
+            padding: 10px 16px;
+            text-align: center;
+            pointer-events: none;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        }
+
+        .viewport-title strong {
+            display: block;
+            color: #f5b63f;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .viewport-title span {
+            display: block;
+            color: #9bb8da;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .tech-note {
+            font-size: 11px;
+            line-height: 1.45;
+            color: #b8cce4;
+        }
+
+        .tech-note b {
+            color: #f5b63f;
+        }
+
+        @media (max-width: 980px) {
+            .controls-panel { width: 240px; }
+            .inspector-panel { width: 260px; }
+            .viewport-title { left: 12px; transform: none; text-align: left; max-width: 300px; }
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 6px 14px;
+            border-radius: 6px;
+            border-left: 3px solid #4caf50;
+            font-size: 11px;
+            pointer-events: none;
+            z-index: 20;
+            letter-spacing: 0.5px;
+            color: #a3c2e0;
+        }
+
+        .definition-card, .shop-card {
+            background: rgba(5, 13, 22, 0.72);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-left: 3px solid #4aa8ff;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 11px;
+            line-height: 1.45;
+            color: #c8d9ee;
+        }
+
+        .definition-card b, .shop-card b {
+            color: #f5b63f;
+        }
+
+        .component-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .component-id {
+            color: #f5b63f;
+            font-weight: 800;
+            letter-spacing: 0.7px;
+        }
+
+        .mini-table {
+            width: 100%;
+            margin-top: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .mini-table td, .mini-table th {
+            font-size: 10px;
+            padding: 6px;
+        }
+
+        .dim-note {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            background: rgba(245, 182, 63, 0.08);
+            border: 1px solid rgba(245, 182, 63, 0.20);
+            color: #ffe3a3;
+            font-size: 10.5px;
+            line-height: 1.35;
+        }
+
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="controls-panel">
+        <div class="header">
+            <h2>ARTEMIS</h2>
+            <p>Fabrication Solid Shell Dome Workbench · v1.5.1</p>
+        </div>
+        <div class="section">
+            <h3>📐 Dome Parameters</h3>
+            <div class="control-group">
+                <label>Base side (cm) <span id="side_val">70</span></label>
+                <input type="range" id="base_side" min="20" max="160" step="1" value="70">
+            </div>
+            <div class="control-group">
+                <label>Levels <span id="levels_val">7</span></label>
+                <input type="range" id="levels" min="3" max="12" step="1" value="7">
+            </div>
+            <div class="control-group">
+                <label>Scale factor per level <span id="scale_val">0.85</span></label>
+                <input type="range" id="scale" min="0.6" max="0.95" step="0.01" value="0.85">
+            </div>
+            <div class="control-group">
+                <label>Base segments (even) <span id="segments_val">18</span></label>
+                <input type="range" id="segments" min="8" max="36" step="2" value="18">
+            </div>
+            <div class="control-group">
+                <label>Profile curve</label>
+                <select id="profile">
+                    <option value="conical">Conical</option>
+                    <option value="linear">Linear</option>
+                    <option value="parabolic" selected>Parabolic</option>
+                    <option value="catenary">Catenary</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Curve intensity <span id="intensity_val">0.55</span></label>
+                <input type="range" id="curve_intensity" min="0" max="0.85" step="0.01" value="0.55">
+            </div>
+            <div class="control-group">
+                <label>Closure mode</label>
+                <select id="closure">
+                    <option value="apex" selected>Fully closed apex</option>
+                    <option value="oculus">Small oculus</option>
+                    <option value="natural">Natural taper</option>
+                </select>
+            </div>
+        </div>
+        <div class="section">
+            <h3>🧱 Solid Shell Boolean Logic</h3>
+            <div class="control-group">
+                <label>Render mode</label>
+                <select id="render_mode">
+                    <option value="surface">Original triangulated surface</option>
+                    <option value="shell" selected>Outer solid − inner solid shell</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Outer scale <span id="shell_scale_val">1.50×</span></label>
+                <input type="range" id="shell_scale" min="1.05" max="2.00" step="0.01" value="1.50">
+            </div>
+            <div class="control-group">
+                <label>Explode distance <span id="explode_val">18 cm</span></label>
+                <input type="range" id="explode" min="0" max="120" step="1" value="18">
+            </div>
+            <div class="control-group">
+                <label>Show inner void</label>
+                <select id="void_mode">
+                    <option value="open" selected>Visible cutaway/void edges</option>
+                    <option value="closed">Closed block faces only</option>
+                </select>
+            </div>
+        </div>
+        <div class="section">
+            <h3>🧭 Fabrication View</h3>
+            <div class="control-group">
+                <label>Component display mode</label>
+                <select id="view_mode">
+                    <option value="all" selected>All blocks / assembled context</option>
+                    <option value="ghost">Selected solid + ghost context</option>
+                    <option value="isolate">Isolate selected component</option>
+                </select>
+            </div>
+            <div class="definition-card">
+                <b>Level schedule:</b> each level is one horizontal ring band of the dome. A level records lower radius, upper radius, elevation, rise, radial run, slope angle, segment count, and the panel/block count generated around that ring.
+            </div>
+        </div>
+        <div class="section">
+            <h3>🎮 Display</h3>
+            <div class="toggle-buttons">
+                <button id="toggle_vectors" class="secondary small">🔘 Vectors: ON</button>
+                <button id="reset_view" class="secondary small">Reset Camera</button>
+                <button id="export_png" class="secondary small">📸 Export PNG</button>
+                <button id="export_json" class="secondary small">📄 Export JSON</button>
+            </div>
+        </div>
+        <div class="section">
+            <div class="kpi-grid" id="kpi_container"></div>
+        </div>
+        <div class="section" id="validation_panel" style="padding: 0; border: none;"></div>
+    </div>
+
+    <div id="canvas-container">
+        <div class="viewport-title">
+            <strong>Live 3D Fabrication Shell Model</strong>
+            <span>Orbit: drag · Zoom: wheel · Inspect: click/tap a solid block or edge · Isolate from inspector</span>
+        </div>
+    </div>
+
+    <div class="inspector-panel">
+        <div class="formula-card" id="formula_card">
+            <h4>📐 Live Geometry Formula</h4>
+            <div id="formula_content">Select a panel to inspect equations</div>
+        </div>
+        <div class="section" style="padding-top:0">
+            <h3>🔍 Selected Solid Component</h3>
+            <div id="selected_info">None selected</div>
+            <div class="component-actions">
+                <button id="isolate_selected" class="secondary small">Isolate Selected</button>
+                <button id="show_all_blocks" class="secondary small">Show All</button>
+                <button id="print_component" class="secondary small">Print Shop Card</button>
+                <button id="copy_component_json" class="secondary small">Copy JSON</button>
+            </div>
+        </div>
+        <div class="section">
+            <h3>📘 Level Schedule Definition</h3>
+            <div class="definition-card">
+                <p><b>Level</b> = one circumferential ring band from elevation Z₁ to Z₂.</p>
+                <p><b>θ slope angle</b> = panel altitude tilt used to convert triangular altitude into vertical rise and radial run.</p>
+                <p><b>Ø lower / Ø upper</b> = inside dome diameters at the bottom and top of that level.</p>
+                <p><b>Blocks</b> = solid shell components generated from the triangular pattern on that level.</p>
+                <p><b>Fabrication warning:</b> dimensions are computational geometry values. Final CNC/shop drawings should apply material thickness, kerf, tolerance, connection details, and verified bevel conventions.</p>
+            </div>
+        </div>
+        <div class="section">
+            <h3>⚙️ Technology Inside</h3>
+            <div class="tech-note">
+                <p><b>Three.js/WebGL:</b> renders the live 3D dome mesh in the browser using GPU acceleration.</p>
+                <p><b>ES modules + import map:</b> loads Three.js and OrbitControls directly without a build step.</p>
+                <p><b>Parametric engine:</b> sliders recompute ring radius, rise, run, panel facets, normals, areas, shell blocks, and schedule data.</p>
+                <p><b>Solid shell method:</b> the larger dome is generated as a concentric 1.50× copy. Instead of expensive Boolean CSG, corresponding inner/outer triangular facets are connected into closed wedge blocks: this is the exact subtraction shell for matching topology.</p>
+                <p><b>Exploded blocks:</b> each triangular panel becomes an individual 6-vertex solid component with side walls, then moves outward along its radial/normal direction.</p>
+                <p><b>Raycasting:</b> clicking a panel or shell block reads its geometric properties and displays vectors.</p>
+                <p><b>Exports:</b> PNG captures the viewport; JSON exports the computed dome schedule.</p>
+            </div>
+        </div>
+        <div class="section">
+            <h3>📋 Level Schedule</h3>
+            <div class="schedule-table" id="schedule_table"></div>
+        </div>
+    </div>
+</div>
+<div class="status-badge" id="status_msg">Click a solid block to inspect fabrication data · v1.5.1</div>
+
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const container = document.getElementById('canvas-container');
+    const sideSlider = document.getElementById('base_side');
+    const levelsSlider = document.getElementById('levels');
+    const scaleSlider = document.getElementById('scale');
+    const segmentsSlider = document.getElementById('segments');
+    const profileSelect = document.getElementById('profile');
+    const intensitySlider = document.getElementById('curve_intensity');
+    const closureSelect = document.getElementById('closure');
+    const renderModeSelect = document.getElementById('render_mode');
+    const shellScaleSlider = document.getElementById('shell_scale');
+    const explodeSlider = document.getElementById('explode');
+    const voidModeSelect = document.getElementById('void_mode');
+    const viewModeSelect = document.getElementById('view_mode');
+
+    const scene = new THREE.Scene();
+    
+    // Safety check for initialization dimensions
+    const initWidth = container.clientWidth || 800;
+    const initHeight = container.clientHeight || 600;
+    
+    const camera = new THREE.PerspectiveCamera(45, initWidth / initHeight, 0.5, 3000);
+    camera.position.set(250, 180, 300);
+    camera.lookAt(0, 60, 0);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(initWidth, initHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.autoRotate = false;
+    controls.enableZoom = true;
+    controls.zoomSpeed = 1.2;
+    controls.target.set(0, 60, 0);
+
+    const ambientLight = new THREE.AmbientLight(0x2a3040, 1.2);
+    scene.add(ambientLight);
+    
+    const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    mainLight.position.set(100, 250, 100);
+    mainLight.castShadow = true;
+    scene.add(mainLight);
+    
+    const fillLight = new THREE.PointLight(0x4466cc, 0.6);
+    fillLight.position.set(-100, 80, 150);
+    scene.add(fillLight);
+    
+    const backLight = new THREE.PointLight(0xffaa66, 0.5);
+    backLight.position.set(0, 100, -200);
+    scene.add(backLight);
+
+    const polarGridHelper = new THREE.PolarGridHelper(300, 24, 8, 64, 0x2e4a62, 0x1e2f3e);
+    polarGridHelper.position.y = -0.1;
+    scene.add(polarGridHelper);
+
+    const axesHelper = new THREE.AxesHelper(150);
+    axesHelper.material.transparent = true;
+    axesHelper.material.opacity = 0.4;
+    scene.add(axesHelper);
+
+    let vectorGroup = new THREE.Group();
+    scene.add(vectorGroup);
+    let selectedMesh = null;
+    let currentMeshes = [];
+    let showVectors = true;
+
+    function profileDecay(profile, t) {
+        if (profile === 'conical') return 0;
+        if (profile === 'linear') return t;
+        if (profile === 'parabolic') return Math.pow(t, 1.5);
+        if (profile === 'catenary') return 1 - Math.cosh((1 - t) * 1.15) / Math.cosh(1.15);
+        return t;
+    }
+
+    function computeDomeGeometry() {
+        const baseSide = parseFloat(sideSlider.value);
+        const levels = parseInt(levelsSlider.value);
+        const scaleFactor = parseFloat(scaleSlider.value);
+        const segments = parseInt(segmentsSlider.value);
+        const profile = profileSelect.value;
+        const curveIntensity = parseFloat(intensitySlider.value);
+        const closure = closureSelect.value;
+
+        const sides = [];
+        const alts = [];
+        for (let i = 0; i < levels; i++) {
+            const side = baseSide * Math.pow(scaleFactor, i);
+            sides.push(side);
+            alts.push(side * Math.sqrt(3) / 2);
+        }
+
+        const baseRadius = baseSide / (2 * Math.sin(Math.PI / segments));
+        let targetTopRadius = 0;
+        if (closure === 'apex') targetTopRadius = 0;
+        else if (closure === 'oculus') targetTopRadius = Math.max(baseSide * Math.pow(scaleFactor, levels-1) * 0.28, baseRadius * 0.05);
+        else targetTopRadius = baseRadius * 0.12;
+        const targetRun = Math.max(0, baseRadius - targetTopRadius);
+
+        const computeTotalRun = (theta0) => {
+            let total = 0;
+            for (let i = 0; i < levels; i++) {
+                const t = levels === 1 ? 0 : i / (levels - 1);
+                const decay = profileDecay(profile, t);
+                let theta = theta0 * (1 - curveIntensity * decay);
+                theta = Math.min(Math.PI/2 - 0.01, Math.max(0.01, theta));
+                total += alts[i] * Math.cos(theta);
+            }
+            return total;
+        };
+        
+        let lo = 0.005, hi = Math.PI/2 - 0.005;
+        for (let iter = 0; iter < 60; iter++) {
+            const mid = (lo+hi)/2;
+            const run = computeTotalRun(mid);
+            if (run > targetRun) lo = mid;
+            else hi = mid;
+        }
+        const theta0 = (lo+hi)/2;
+        
+        const levelsData = [];
+        let cumRun = 0, cumRise = 0;
+        for (let i = 0; i < levels; i++) {
+            const t = levels === 1 ? 0 : i / (levels - 1);
+            const decay = profileDecay(profile, t);
+            let theta = theta0 * (1 - curveIntensity * decay);
+            theta = Math.min(Math.PI/2 - 0.005, Math.max(0.01, theta));
+            const rise = alts[i] * Math.sin(theta);
+            const run = alts[i] * Math.cos(theta);
+            const radius = Math.max(0, baseRadius - cumRun);
+            let nextRadius = Math.max(0, baseRadius - cumRun - run);
+            if (i === levels-1 && closure === 'apex') nextRadius = 0;
+            if (i === levels-1 && closure === 'oculus') nextRadius = targetTopRadius;
+            levelsData.push({
+                level: i+1,
+                side: sides[i],
+                altitude: alts[i],
+                thetaDeg: theta * 180/Math.PI,
+                rise, run,
+                radius, nextRadius,
+                cumHeight: cumRise,
+                nextElev: cumRise + rise
+            });
+            cumRun += run;
+            cumRise += rise;
+        }
+        const totalHeight = cumRise;
+        return { baseSide, levels, scaleFactor, segments, profile, curveIntensity, closure,
+                 baseRadius, targetTopRadius, theta0Deg: theta0*180/Math.PI, totalHeight, levelsData };
+    }
+
+    function generateTriangles(geomState) {
+        const { levelsData, segments, closure } = geomState;
+        const trianglesList = [];
+        const angleStep = (Math.PI * 2) / segments;
+        const EPS = 0.001;
+
+        // Ring-to-ring triangulation: each level is treated as a tapered frustum strip.
+        // This fixes the earlier visual error where "inverted" panels were generated
+        // entirely on the upper ring, creating flat/degenerate triangles near the apex.
+        for (let lvl = 0; lvl < levelsData.length; lvl++) {
+            const d = levelsData[lvl];
+            const r1 = Math.max(0, d.radius);
+            const r2 = Math.max(0, d.nextRadius);
+            const z1 = d.cumHeight;
+            const z2 = d.nextElev;
+            const sideLen = d.side;
+
+            for (let seg = 0; seg < segments; seg++) {
+                const a1 = seg * angleStep;
+                const a2 = (seg + 1) * angleStep;
+                const midAngle = (a1 + a2) / 2;
+
+                const b1 = new THREE.Vector3(r1 * Math.cos(a1), z1, r1 * Math.sin(a1));
+                const b2 = new THREE.Vector3(r1 * Math.cos(a2), z1, r1 * Math.sin(a2));
+
+                if (r2 <= EPS || (closure === 'apex' && lvl === levelsData.length - 1)) {
+                    const apex = new THREE.Vector3(0, z2, 0);
+                    trianglesList.push({ vertices: [b1, b2, apex], level: lvl + 1, segment: seg + 1, type: 'apex facet', sideEst: sideLen, componentId: `L${String(lvl+1).padStart(2,'0')}-S${String(seg+1).padStart(2,'0')}-A` });
+                } else {
+                    const t1 = new THREE.Vector3(r2 * Math.cos(a1), z2, r2 * Math.sin(a1));
+                    const t2 = new THREE.Vector3(r2 * Math.cos(a2), z2, r2 * Math.sin(a2));
+                    trianglesList.push({ vertices: [b1, b2, t2], level: lvl + 1, segment: seg + 1, type: 'lower facet', sideEst: sideLen, componentId: `L${String(lvl+1).padStart(2,'0')}-S${String(seg+1).padStart(2,'0')}-L` });
+                    trianglesList.push({ vertices: [b1, t2, t1], level: lvl + 1, segment: seg + 1, type: 'upper facet', sideEst: sideLen, componentId: `L${String(lvl+1).padStart(2,'0')}-S${String(seg+1).padStart(2,'0')}-U` });
+                }
+            }
+        }
+
+        for (let tri of trianglesList) {
+            const [v0, v1, v2] = tri.vertices;
+            const e1 = new THREE.Vector3().subVectors(v1, v0);
+            const e2 = new THREE.Vector3().subVectors(v2, v0);
+            const cross = new THREE.Vector3().crossVectors(e1, e2);
+            const area = 0.5 * cross.length();
+            const normal = area > EPS ? cross.normalize() : new THREE.Vector3(0, 1, 0);
+            const centroid = new THREE.Vector3().add(v0).add(v1).add(v2).multiplyScalar(1 / 3);
+            const edgeLengths = [
+                v0.distanceTo(v1),
+                v1.distanceTo(v2),
+                v2.distanceTo(v0)
+            ];
+            const maxEdge = Math.max(...edgeLengths);
+            const minEdge = Math.min(...edgeLengths);
+            const altitudeLocal = maxEdge > EPS ? (2 * area) / maxEdge : 0;
+            const radialDistance = Math.sqrt(centroid.x * centroid.x + centroid.z * centroid.z);
+            const polarAngleDeg = ((Math.atan2(centroid.z, centroid.x) * 180 / Math.PI) + 360) % 360;
+            const slopeFromHorizontalDeg = Math.atan2(Math.abs(normal.y), Math.sqrt(normal.x * normal.x + normal.z * normal.z)) * 180 / Math.PI;
+            const slopeFromVerticalDeg = Math.acos(Math.min(1, Math.max(-1, Math.abs(normal.y)))) * 180 / Math.PI;
+            const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal.clone().normalize());
+            const euler = new THREE.Euler().setFromQuaternion(q, 'XYZ');
+            const rotationDeg = {
+                x: euler.x * 180 / Math.PI,
+                y: euler.y * 180 / Math.PI,
+                z: euler.z * 180 / Math.PI
+            };
+
+            tri.normal = normal;
+            tri.centroid = centroid;
+            tri.area = area;
+            tri.altitude = altitudeLocal;
+            tri.edgeLengths = edgeLengths;
+            tri.minEdge = minEdge;
+            tri.maxEdge = maxEdge;
+            tri.radialDistance = radialDistance;
+            tri.polarAngleDeg = polarAngleDeg;
+            tri.slopeFromHorizontalDeg = slopeFromHorizontalDeg;
+            tri.slopeFromVerticalDeg = slopeFromVerticalDeg;
+            tri.rotationDeg = rotationDeg;
+        }
+        return trianglesList;
+    }
+
+    function disposeMeshTree(mesh) {
+        mesh.traverse(obj => {
+            if (obj.geometry) obj.geometry.dispose();
+            if (obj.material) {
+                if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
+                else obj.material.dispose();
+            }
+        });
+        scene.remove(mesh);
+    }
+
+    function makeOuterVertices(vertices, scale) {
+        // Concentric-from-base scaling: the base center/origin remains fixed at (0,0,0).
+        return vertices.map(v => new THREE.Vector3(v.x * scale, v.y * scale, v.z * scale));
+    }
+
+    function getExplosionDirection(tri) {
+        const c = tri.centroid;
+        const radial = new THREE.Vector3(c.x, Math.max(c.y * 0.35, 8), c.z);
+        if (radial.lengthSq() < 0.0001) return new THREE.Vector3(0, 1, 0);
+        return radial.normalize();
+    }
+
+    function prismVolumeFromSixVerts(v) {
+        // Signed tetrahedron accumulation for closed triangular-prism/wedge mesh.
+        const faces = [
+            [3, 4, 5], [2, 1, 0],
+            [0, 3, 4], [0, 4, 1],
+            [1, 4, 5], [1, 5, 2],
+            [2, 5, 3], [2, 3, 0]
+        ];
+        let volume = 0;
+        for (const [a,b,c] of faces) {
+            volume += v[a].dot(new THREE.Vector3().crossVectors(v[b], v[c])) / 6;
+        }
+        return Math.abs(volume);
+    }
+
+
+    function deg(rad) { return rad * 180 / Math.PI; }
+    function fmt(n, decimals = 2) { return Number.isFinite(n) ? n.toFixed(decimals) : 'n/a'; }
+    function vecFmt(v, decimals = 2) { return `X ${fmt(v.x,decimals)}, Y ${fmt(v.y,decimals)}, Z ${fmt(v.z,decimals)}`; }
+
+    function angleBetweenNormals(n1, n2) {
+        const dot = Math.min(1, Math.max(-1, Math.abs(n1.clone().normalize().dot(n2.clone().normalize()))));
+        return deg(Math.acos(dot));
+    }
+
+    function makeFaceNormal(a, b, c) {
+        const n = new THREE.Vector3().crossVectors(new THREE.Vector3().subVectors(b, a), new THREE.Vector3().subVectors(c, a));
+        return n.lengthSq() > 0.000001 ? n.normalize() : new THREE.Vector3(0, 1, 0);
+    }
+
+    function computeShellFabricationData(tri, shellScale) {
+        const inner = tri.vertices.map(v => v.clone());
+        const outer = makeOuterVertices(tri.vertices, shellScale);
+        const connectorLengths = inner.map((v, i) => v.distanceTo(outer[i]));
+        const innerEdges = [inner[0].distanceTo(inner[1]), inner[1].distanceTo(inner[2]), inner[2].distanceTo(inner[0])];
+        const outerEdges = [outer[0].distanceTo(outer[1]), outer[1].distanceTo(outer[2]), outer[2].distanceTo(outer[0])];
+        const sideFaces = [
+            { name: 'Edge AB side wall', normal: makeFaceNormal(inner[0], outer[0], outer[1]) },
+            { name: 'Edge BC side wall', normal: makeFaceNormal(inner[1], outer[1], outer[2]) },
+            { name: 'Edge CA side wall', normal: makeFaceNormal(inner[2], outer[2], outer[0]) }
+        ];
+        const innerNormal = tri.normal.clone().normalize();
+        const outerNormal = tri.normal.clone().normalize();
+        const bevels = sideFaces.map(sf => {
+            const dihedral = angleBetweenNormals(innerNormal, sf.normal);
+            return {
+                name: sf.name,
+                dihedralDeg: dihedral,
+                sawBevelDeg: (180 - dihedral) / 2
+            };
+        });
+        const avgConnector = connectorLengths.reduce((a,b)=>a+b,0) / connectorLengths.length;
+        return { inner, outer, innerEdges, outerEdges, connectorLengths, avgConnector, bevels, innerNormal, outerNormal };
+    }
+
+    function applyViewMode() {
+        const mode = viewModeSelect.value;
+        currentMeshes.forEach(mesh => {
+            const isSelected = mesh === selectedMesh;
+            mesh.visible = mode !== 'isolate' || !selectedMesh || isSelected;
+            if (mesh.material) {
+                if (mode === 'ghost' && selectedMesh && !isSelected) {
+                    mesh.material.transparent = true;
+                    mesh.material.opacity = 0.16;
+                } else {
+                    mesh.material.transparent = true;
+                    mesh.material.opacity = renderModeSelect.value === 'shell' ? (voidModeSelect.value === 'open' ? 0.92 : 1.0) : 1.0;
+                }
+            }
+        });
+    }
+
+    function currentSelectedFabricationJSON() {
+        if (!selectedMesh) return null;
+        const tri = selectedMesh.userData.triData;
+        const shellScale = parseFloat(shellScaleSlider.value);
+        const fab = computeShellFabricationData(tri, shellScale);
+        return {
+            componentId: tri.componentId,
+            level: tri.level,
+            segment: tri.segment,
+            facetType: tri.type,
+            centroidCm: { x: tri.centroid.x, y: tri.centroid.y, z: tri.centroid.z },
+            polarPosition: { radiusCm: tri.radialDistance, angleDeg: tri.polarAngleDeg },
+            rotationDeg: tri.rotationDeg,
+            normal: { x: tri.normal.x, y: tri.normal.y, z: tri.normal.z },
+            innerEdgeLengthsCm: fab.innerEdges,
+            outerEdgeLengthsCm: fab.outerEdges,
+            connectorLengthsCm: fab.connectorLengths,
+            innerAreaCm2: tri.area,
+            outerAreaCm2: tri.outerArea || tri.area * shellScale * shellScale,
+            estimatedVolumeCm3: tri.volume || null,
+            bevels: fab.bevels,
+            note: 'Saw bevel values are computational reference angles. Verify against actual joinery, kerf, material thickness, and shop convention.'
+        };
+    }
+
+
+    function renderComponentSnapshot(mesh, viewName = 'iso', width = 900, height = 620) {
+        if (!mesh) return '';
+        const offRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+        offRenderer.setSize(width, height);
+        offRenderer.setPixelRatio(1);
+        offRenderer.setClearColor(0xffffff, 1);
+
+        const offScene = new THREE.Scene();
+        offScene.background = new THREE.Color(0xffffff);
+        offScene.add(new THREE.AmbientLight(0xffffff, 1.8));
+        const lightA = new THREE.DirectionalLight(0xffffff, 1.1);
+        lightA.position.set(2, 4, 3);
+        offScene.add(lightA);
+        const lightB = new THREE.DirectionalLight(0xffffff, 0.65);
+        lightB.position.set(-4, 2, -3);
+        offScene.add(lightB);
+
+        const geometry = mesh.geometry.clone();
+        geometry.computeBoundingBox();
+        const center = new THREE.Vector3();
+        geometry.boundingBox.getCenter(center);
+        geometry.translate(-center.x, -center.y, -center.z);
+        geometry.computeBoundingBox();
+        geometry.computeVertexNormals();
+
+        const material = new THREE.MeshStandardMaterial({ color: 0x4a90d9, roughness: 0.55, metalness: 0.12, side: THREE.DoubleSide });
+        const block = new THREE.Mesh(geometry, material);
+        offScene.add(block);
+        const edges = new THREE.LineSegments(
+            new THREE.EdgesGeometry(geometry, 15),
+            new THREE.LineBasicMaterial({ color: 0x111111, transparent: true, opacity: 0.78 })
+        );
+        offScene.add(edges);
+
+        const sizeVec = new THREE.Vector3();
+        geometry.boundingBox.getSize(sizeVec);
+        const maxDim = Math.max(sizeVec.x, sizeVec.y, sizeVec.z, 1);
+        const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, maxDim * 20);
+        const distance = maxDim * 3.1;
+        const positions = {
+            iso: new THREE.Vector3(distance, distance * 0.72, distance),
+            front: new THREE.Vector3(0, 0, distance),
+            right: new THREE.Vector3(distance, 0, 0),
+            top: new THREE.Vector3(0, distance, 0.01)
+        };
+        camera.position.copy(positions[viewName] || positions.iso);
+        camera.lookAt(0, 0, 0);
+        camera.updateProjectionMatrix();
+
+        const axes = new THREE.AxesHelper(maxDim * 0.42);
+        axes.position.set(-maxDim * 0.78, -maxDim * 0.50, -maxDim * 0.12);
+        offScene.add(axes);
+
+        offRenderer.render(offScene, camera);
+        const url = offRenderer.domElement.toDataURL('image/png');
+        geometry.dispose();
+        material.dispose();
+        edges.geometry.dispose();
+        edges.material.dispose();
+        offRenderer.dispose();
+        return url;
+    }
+
+    function makeVertexDiagramSVG(data) {
+        const e = data.innerEdgeLengthsCm;
+        const c = data.connectorLengthsCm;
+        return `<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="component vertex diagram">
+            <rect x="0" y="0" width="640" height="360" fill="#fff"/>
+            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#333"/></marker></defs>
+            <polygon points="115,265 310,80 515,265" fill="#e9f3ff" stroke="#111" stroke-width="3"/>
+            <polygon points="155,235 310,120 475,235" fill="#f9fdff" stroke="#555" stroke-width="2" stroke-dasharray="7 5"/>
+            <line x1="115" y1="265" x2="155" y2="235" stroke="#b66" stroke-width="2" marker-end="url(#arrow)"/>
+            <line x1="310" y1="80" x2="310" y2="120" stroke="#b66" stroke-width="2" marker-end="url(#arrow)"/>
+            <line x1="515" y1="265" x2="475" y2="235" stroke="#b66" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="96" y="292" font-family="Arial" font-size="20" font-weight="700">A</text>
+            <text x="306" y="62" font-family="Arial" font-size="20" font-weight="700">B</text>
+            <text x="524" y="292" font-family="Arial" font-size="20" font-weight="700">C</text>
+            <text x="159" y="225" font-family="Arial" font-size="16">A′</text>
+            <text x="315" y="119" font-family="Arial" font-size="16">B′</text>
+            <text x="448" y="225" font-family="Arial" font-size="16">C′</text>
+            <text x="188" y="292" font-family="Arial" font-size="15">AB ${fmt(e[0],1)} cm</text>
+            <text x="175" y="152" font-family="Arial" font-size="15">BC ${fmt(e[1],1)} cm</text>
+            <text x="390" y="152" font-family="Arial" font-size="15">CA ${fmt(e[2],1)} cm</text>
+            <text x="34" y="42" font-family="Arial" font-size="20" font-weight="700">${data.componentId} vertex map</text>
+            <text x="34" y="72" font-family="Arial" font-size="14">Red arrows show inner-to-outer shell offsets: A-A′ ${fmt(c[0],1)} cm, B-B′ ${fmt(c[1],1)} cm, C-C′ ${fmt(c[2],1)} cm.</text>
+            <text x="34" y="334" font-family="Arial" font-size="12" fill="#666">Schematic for orientation only; use numeric edge/bevel schedule for fabrication.</text>
+        </svg>`;
+    }
+
+    function buildVisualShopCardHTML(data, viewImages) {
+        const rows = (arr) => arr.map(v => `<td>${fmt(v,2)}</td>`).join('');
+        const bevelRows = data.bevels.map(b => `<tr><td>${b.name}</td><td>${fmt(b.dihedralDeg,2)}°</td><td>${fmt(b.sawBevelDeg,2)}°</td></tr>`).join('');
+        const vertexSvg = makeVertexDiagramSVG(data);
+        return `<!doctype html><html><head><title>${data.componentId} Visual Shop Card</title><style>
+            @page{size:letter;margin:0.35in} body{font-family:Arial,sans-serif;color:#111;margin:0;padding:18px} h1{margin:0 0 4px;font-size:22px}.sub{color:#555;margin-bottom:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:12px;align-items:start}.view{border:1px solid #bbb;padding:8px;break-inside:avoid}.view h3{font-size:12px;margin:0 0 6px;color:#333;text-transform:uppercase;letter-spacing:.7px}.view img{width:100%;height:auto;display:block}table{border-collapse:collapse;width:100%;margin:10px 0;break-inside:avoid}td,th{border:1px solid #bbb;padding:6px;text-align:left;font-size:11px}th{background:#eee}.note{background:#fff7dd;border:1px solid #e0bd58;padding:9px;font-size:11px;margin-top:8px}.small{font-size:10px;color:#555}.section-title{font-size:14px;font-weight:700;margin:12px 0 4px}.schematic svg{width:100%;height:auto;border:1px solid #bbb}.meta td:first-child{font-weight:700;width:34%}
+            </style></head><body>
+            <h1>ARTEMIS Visual Component Shop Card</h1><div class="sub">${data.componentId} · Level ${data.level} · Segment ${data.segment} · ${data.facetType}</div>
+            <div class="hero"><div class="view"><h3>Isometric component view</h3><img src="${viewImages.iso}"/></div><div><table class="meta"><tr><td>Centroid XYZ cm</td><td>${fmt(data.centroidCm.x,2)}, ${fmt(data.centroidCm.y,2)}, ${fmt(data.centroidCm.z,2)}</td></tr><tr><td>Polar Position</td><td>R ${fmt(data.polarPosition.radiusCm,2)} cm · ${fmt(data.polarPosition.angleDeg,2)}°</td></tr><tr><td>Rotation XYZ deg</td><td>${fmt(data.rotationDeg.x,2)}, ${fmt(data.rotationDeg.y,2)}, ${fmt(data.rotationDeg.z,2)}</td></tr><tr><td>Normal</td><td>${fmt(data.normal.x,4)}, ${fmt(data.normal.y,4)}, ${fmt(data.normal.z,4)}</td></tr><tr><td>Volume cm³</td><td>${data.estimatedVolumeCm3 ? fmt(data.estimatedVolumeCm3,2) : 'n/a'}</td></tr></table><div class="note">${data.note}</div></div></div>
+            <div class="grid"><div class="view"><h3>Front view</h3><img src="${viewImages.front}"/></div><div class="view"><h3>Right side view</h3><img src="${viewImages.right}"/></div><div class="view"><h3>Top view</h3><img src="${viewImages.top}"/></div><div class="view schematic"><h3>Vertex map</h3>${vertexSvg}</div></div>
+            <div class="section-title">Edge Length Schedule</div><table><thead><tr><th>Edge Set</th><th>A-B</th><th>B-C</th><th>C-A</th></tr></thead><tbody><tr><td>Inner face</td>${rows(data.innerEdgeLengthsCm)}</tr><tr><td>Outer face</td>${rows(data.outerEdgeLengthsCm)}</tr><tr><td>Connector A-A′ / B-B′ / C-C′</td>${rows(data.connectorLengthsCm)}</tr></tbody></table>
+            <div class="section-title">Bevel / Dihedral Reference</div><table><thead><tr><th>Joint / Face</th><th>Dihedral</th><th>Saw Bevel Ref.</th></tr></thead><tbody>${bevelRows}</tbody></table>
+            <div class="small">Visuals are generated from the selected 3D component mesh. They are orientation/shop-review views, not a substitute for final CNC/DXF drawings with toolpath convention, kerf, fastening allowance, and material thickness.</div><script>setTimeout(()=>window.print(),250)<\/script></body></html>`;
+    }
+
+    function createTriangularShellBlockGeometry(tri, shellScale, explodeDistance) {
+        const inner = tri.vertices.map(v => v.clone());
+        const outer = makeOuterVertices(tri.vertices, shellScale);
+        const dir = getExplosionDirection(tri).multiplyScalar(explodeDistance);
+        const verts = [...inner, ...outer].map(v => v.add(dir));
+
+        const positions = [];
+        verts.forEach(v => positions.push(v.x, v.y, v.z));
+
+        const indices = [
+            // outer face, inner face, then three perimeter side-wall quads split into triangles
+            3, 4, 5,   2, 1, 0,
+            0, 3, 4,   0, 4, 1,
+            1, 4, 5,   1, 5, 2,
+            2, 5, 3,   2, 3, 0
+        ];
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+        geometry.setIndex(indices);
+        geometry.computeVertexNormals();
+        geometry.computeBoundingSphere();
+        return { geometry, volume: prismVolumeFromSixVerts(verts), outerArea: tri.area * shellScale * shellScale };
+    }
+
+    function buildSurfaceMesh(tri, idx, color) {
+        const geometry = new THREE.BufferGeometry();
+        const positions = [];
+        tri.vertices.forEach(v => positions.push(v.x, v.y, v.z));
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+        geometry.setIndex([0, 1, 2]);
+        geometry.computeVertexNormals();
+        const material = new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.3, side: THREE.DoubleSide });
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.userData = { type: 'surface-triangle', triData: tri, index: idx, selectable: true };
+        mesh.name = tri.componentId || `surface-${idx}`;
+        return mesh;
+    }
+
+    function buildShellBlockMesh(tri, idx, color, shellScale, explodeDistance) {
+        const block = createTriangularShellBlockGeometry(tri, shellScale, explodeDistance);
+        const material = new THREE.MeshStandardMaterial({
+            color,
+            roughness: 0.52,
+            metalness: 0.22,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: voidModeSelect.value === 'open' ? 0.92 : 1.0
+        });
+        const mesh = new THREE.Mesh(block.geometry, material);
+        const shellThickness = tri.centroid.distanceTo(tri.centroid.clone().multiplyScalar(shellScale));
+        mesh.userData = {
+            type: 'solid-shell-block',
+            triData: { ...tri, volume: block.volume, outerArea: block.outerArea, shellThickness },
+            index: idx,
+            selectable: true
+        };
+        mesh.name = tri.componentId || `shell-block-${idx}`;
+        return mesh;
+    }
+
+    function build3DScene(geomState, trianglesData) {
+        currentMeshes.forEach(disposeMeshTree);
+        currentMeshes = [];
+        vectorGroup.clear();
+
+        const colorPalette = [0x1e4f7a, 0x245d8f, 0x2a6ba3, 0x3078b8, 0x3686cc, 0x3d94e0, 0x4aa8ff];
+        const renderMode = renderModeSelect.value;
+        const shellScale = parseFloat(shellScaleSlider.value);
+        const explodeDistance = parseFloat(explodeSlider.value);
+
+        for (let idx = 0; idx < trianglesData.length; idx++) {
+            const tri = trianglesData[idx];
+            const color = colorPalette[(tri.level - 1) % colorPalette.length];
+            const mesh = renderMode === 'shell'
+                ? buildShellBlockMesh(tri, idx, color, shellScale, explodeDistance)
+                : buildSurfaceMesh(tri, idx, color);
+
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+
+            const edges = new THREE.EdgesGeometry(mesh.geometry, 20);
+            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: renderMode === 'shell' ? 0.34 : 0.22
+            }));
+            mesh.add(line);
+
+            scene.add(mesh);
+            currentMeshes.push(mesh);
+        }
+        applyViewMode();
+        return currentMeshes;
+    }
+    
+    function updateUI(geomState, trianglesList) {
+        const totalPanels = trianglesList.length;
+        const baseDiam = geomState.baseRadius * 2;
+        const shellScale = parseFloat(shellScaleSlider.value);
+        const shellMode = renderModeSelect.value === 'shell';
+        const totalShellVolume = currentMeshes.reduce((sum, m) => sum + (m.userData?.triData?.volume || 0), 0);
+        
+        document.getElementById('kpi_container').innerHTML = `
+            <div class="kpi"><div class="value">${geomState.totalHeight.toFixed(1)} cm</div><div class="label">Inner Height</div></div>
+            <div class="kpi"><div class="value">${(baseDiam * (shellMode ? shellScale : 1)).toFixed(1)} cm</div><div class="label">${shellMode ? 'Outer Diameter' : 'Base Diameter'}</div></div>
+            <div class="kpi"><div class="value">${shellMode ? shellScale.toFixed(2) + '×' : geomState.theta0Deg.toFixed(1) + '°'}</div><div class="label">${shellMode ? 'Outer Scale' : 'Base Angle'}</div></div>
+            <div class="kpi"><div class="value">${shellMode ? totalShellVolume.toFixed(0) : totalPanels}</div><div class="label">${shellMode ? 'Shell Volume cm³' : 'Total Panels'}</div></div>
+        `;
+        
+        let html = `<table><thead><tr><th>Lvl</th><th>Elev Z₁→Z₂</th><th>Ø Lower</th><th>Ø Upper</th><th>Rise</th><th>Run</th><th>θ°</th><th>Blocks</th></tr></thead><tbody>`;
+        geomState.levelsData.forEach(d => {
+            const blockCount = trianglesList.filter(t => t.level === d.level).length;
+            html += `<tr><td>${d.level}</td><td>${d.cumHeight.toFixed(1)}→${d.nextElev.toFixed(1)}</td><td>${(d.radius*2).toFixed(1)}</td><td>${(d.nextRadius*2).toFixed(1)}</td><td>${d.rise.toFixed(1)}</td><td>${d.run.toFixed(1)}</td><td>${d.thetaDeg.toFixed(1)}</td><td>${blockCount}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+        document.getElementById('schedule_table').innerHTML = html;
+        
+        const warnings = [];
+        let sideErrors = 0;
+        trianglesList.forEach(t => {
+            if (!t.edgeLengths) return;
+            const spread = t.maxEdge - t.minEdge;
+            if (spread > Math.max(2.0, t.sideEst * 0.08)) sideErrors++;
+        });
+        
+        if (sideErrors > 0) warnings.push(`⚠️ ${sideErrors} facets are noticeably non-equilateral; this is expected for a tapered frustum approximation, not a solved geodesic-class panelization.`);
+        if (renderModeSelect.value === 'shell') warnings.push(`ℹ️ Boolean subtraction is represented constructively: each matching inner/outer triangular facet becomes one closed solid shell block.`);
+        if (geomState.closure === 'apex' && geomState.levelsData[geomState.levelsData.length-1].nextRadius > 2) {
+            warnings.push(`⚠️ Apex tolerance gap detected.`);
+        }
+        
+        const validDiv = document.getElementById('validation_panel');
+        if(warnings.length) {
+            validDiv.innerHTML = `<div class="validation-warning">${warnings.join('<br>')}</div>`;
+        } else {
+            validDiv.innerHTML = `<div class="validation-warning" style="background:#0f2a1a; border-left-color:#4caf50; margin:16px;">✅ Geometry validation passed within tolerance limits.</div>`;
+        }
+    }
+    
+    function updateVectorsForSelected(mesh, show = true) {
+        vectorGroup.clear();
+        if (!mesh || !show) return;
+        
+        const tri = mesh.userData.triData;
+        const centroid = tri.centroid;
+        const normal = tri.normal.clone().normalize();
+        
+        const arrowNormal = new THREE.ArrowHelper(normal, centroid, 25, 0xf5b63f, 6, 4);
+        vectorGroup.add(arrowNormal);
+        
+        const v0 = tri.vertices[0], v1 = tri.vertices[1], v2 = tri.vertices[2];
+        const edge1 = new THREE.Vector3().subVectors(v1, v0).normalize();
+        const edge2 = new THREE.Vector3().subVectors(v2, v0).normalize();
+        
+        const arrowE1 = new THREE.ArrowHelper(edge1, v0, 15, 0x4aa8ff, 5, 3);
+        const arrowE2 = new THREE.ArrowHelper(edge2, v0, 15, 0x4aa8ff, 5, 3);
+        vectorGroup.add(arrowE1, arrowE2);
+    }
+    
+    function updateFormulaCard(tri) {
+        if (!tri) {
+            document.getElementById('formula_content').innerHTML = 'Select any solid block to inspect fabrication geometry, bevel references, position, and rotation.';
+            document.getElementById('selected_info').innerHTML = '<div class="dim-note">No component selected. Click a shell block in the model, then use Isolate Selected or Print Shop Card.</div>';
+            return;
+        }
+        const shellScale = parseFloat(shellScaleSlider.value);
+        const fab = computeShellFabricationData(tri, shellScale);
+        const normalVec = tri.normal.toArray().map(v => v.toFixed(3)).join(', ');
+        const centroid = tri.centroid;
+        const rot = tri.rotationDeg || {x:0,y:0,z:0};
+        const bevelRows = fab.bevels.map(b => `<tr><td>${b.name}</td><td>${fmt(b.dihedralDeg,2)}°</td><td>${fmt(b.sawBevelDeg,2)}°</td></tr>`).join('');
+        const vertexRows = fab.inner.map((v, i) => `<tr><td>${['A','B','C'][i]}</td><td>${vecFmt(v,1)}</td><td>${vecFmt(fab.outer[i],1)}</td><td>${fmt(fab.connectorLengths[i],1)}</td></tr>`).join('');
+        const volumeLine = tri.volume ? `<div class="eq">Block volume ≈ ${tri.volume.toFixed(1)} cm³ · shell offset avg ≈ ${fab.avgConnector.toFixed(1)} cm</div>` : '';
+
+        document.getElementById('formula_content').innerHTML = `
+            <div class="eq">Component ID = ${tri.componentId}</div>
+            <div class="eq">Inner face area = ½|e₁×e₂| = ${fmt(tri.area,2)} cm²</div>
+            <div class="eq">Outer face area = inner area × scale² = ${fmt(tri.area,2)} × ${fmt(shellScale,2)}² = ${fmt(tri.area * shellScale * shellScale,2)} cm²</div>
+            <div class="eq">Normal = normalize(cross(e₁,e₂)) = (${normalVec})</div>
+            <div class="eq">Approx rotation from flat XY panel: Rx ${fmt(rot.x,2)}°, Ry ${fmt(rot.y,2)}°, Rz ${fmt(rot.z,2)}°</div>
+            ${volumeLine}
+        `;
+
+        document.getElementById('selected_info').innerHTML = `
+            <div class="shop-card">
+                <div class="component-id">${tri.componentId}</div>
+                <div class="property-row"><span>Level / Segment / Type</span><span>L${tri.level} · S${tri.segment} · ${tri.type}</span></div>
+                <div class="property-row"><span>Centroid Position</span><span>${vecFmt(centroid,1)} cm</span></div>
+                <div class="property-row"><span>Polar Position</span><span>R ${fmt(tri.radialDistance,1)} cm · ${fmt(tri.polarAngleDeg,1)}°</span></div>
+                <div class="property-row"><span>Panel Slope Reference</span><span>${fmt(tri.slopeFromHorizontalDeg,2)}° from horizontal</span></div>
+                <div class="property-row"><span>Design Side Reference</span><span>${fmt(tri.sideEst,1)} cm</span></div>
+                <div class="property-row"><span>Inner Edges A-B / B-C / C-A</span><span>${fab.innerEdges.map(v=>fmt(v,1)).join(' / ')} cm</span></div>
+                <div class="property-row"><span>Outer Edges A-B / B-C / C-A</span><span>${fab.outerEdges.map(v=>fmt(v,1)).join(' / ')} cm</span></div>
+                <div class="property-row"><span>Connector Edges A-A′ / B-B′ / C-C′</span><span>${fab.connectorLengths.map(v=>fmt(v,1)).join(' / ')} cm</span></div>
+                <div class="property-row"><span>Inner / Outer Area</span><span>${fmt(tri.area,1)} / ${fmt(tri.area * shellScale * shellScale,1)} cm²</span></div>
+                ${tri.volume ? `<div class="property-row"><span>Estimated Solid Volume</span><span>${fmt(tri.volume,1)} cm³</span></div>` : ''}
+                <table class="mini-table"><thead><tr><th>Vertex</th><th>Inner XYZ cm</th><th>Outer XYZ cm</th><th>Offset</th></tr></thead><tbody>${vertexRows}</tbody></table>
+                <table class="mini-table"><thead><tr><th>Joint / Face</th><th>Dihedral</th><th>Saw Bevel Ref.</th></tr></thead><tbody>${bevelRows}</tbody></table>
+                <div class="dim-note"><b>Bevel convention:</b> dihedral is the face-to-face angle between the triangular face and side wall. Saw bevel reference is half the supplement, useful as a starting layout value. Confirm against the actual material thickness, blade convention, kerf, fastening method, and whether the shop cuts from inner or outer face.</div>
+            </div>
+        `;
+    }
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let pointerStart = null;
+
+    function getSelectableMeshes() {
+        return currentMeshes.filter(m => m.visible && m.userData && m.userData.selectable && m.userData.triData);
+    }
+
+    function setStatus(message, good = true) {
+        const badge = document.getElementById('status_msg');
+        badge.textContent = message;
+        badge.style.borderLeftColor = good ? '#4caf50' : '#ff8c42';
+    }
+
+    function findSelectableFromObject(obj) {
+        let cur = obj;
+        while (cur) {
+            if (cur.userData && cur.userData.selectable && cur.userData.triData) return cur;
+            cur = cur.parent;
+        }
+        return null;
+    }
+
+    function pickMeshFromPointer(event) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        // recursive=true allows clicks on edge-line children to resolve back to their parent block.
+        const intersects = raycaster.intersectObjects(getSelectableMeshes(), true);
+        for (const hit of intersects) {
+            const selectable = findSelectableFromObject(hit.object);
+            if (selectable) return selectable;
+        }
+        return null;
+    }
+
+    function selectMesh(mesh) {
+        if (selectedMesh && selectedMesh.material && selectedMesh.material.emissive) {
+            selectedMesh.material.emissive.setHex(0x000000);
+        }
+
+        selectedMesh = mesh;
+
+        if (!selectedMesh) {
+            updateVectorsForSelected(null, false);
+            updateFormulaCard(null);
+            applyViewMode();
+            setStatus('No block selected. Click directly on a solid face or edge.', false);
+            return;
+        }
+
+        if (selectedMesh.material && selectedMesh.material.emissive) {
+            selectedMesh.material.emissive.setHex(0x443018);
+        }
+        updateVectorsForSelected(selectedMesh, showVectors);
+        updateFormulaCard(selectedMesh.userData.triData);
+        applyViewMode();
+        setStatus(`Selected ${selectedMesh.userData.triData.componentId} · fabrication data loaded`, true);
+    }
+
+    function onCanvasPointerUp(event) {
+        if (pointerStart) {
+            const dx = event.clientX - pointerStart.x;
+            const dy = event.clientY - pointerStart.y;
+            const moved = Math.hypot(dx, dy);
+            pointerStart = null;
+            // Do not select after an orbit-drag. Select only after a click/tap.
+            if (moved > 6) return;
+        }
+        selectMesh(pickMeshFromPointer(event));
+    }
+
+    function onCanvasPointerMove(event) {
+        const hit = pickMeshFromPointer(event);
+        renderer.domElement.style.cursor = hit ? 'pointer' : 'crosshair';
+    }
+    
+    let currentGeomState = null;
+    let currentTriangles = [];
+    
+    function refreshGeometry() {
+        const geom = computeDomeGeometry();
+        const tris = generateTriangles(geom);
+        build3DScene(geom, tris);
+        currentGeomState = geom;
+        currentTriangles = tris;
+        updateUI(geom, tris);
+        
+        if (selectedMesh) {
+            const oldCent = selectedMesh.userData.triData.centroid;
+            const newMatch = currentMeshes.find(m => m.userData.triData.centroid.distanceTo(oldCent) < 0.5);
+            if (newMatch) {
+                selectedMesh = newMatch;
+                selectedMesh.material.emissive.setHex(0x2a2a2a);
+                updateVectorsForSelected(selectedMesh, showVectors);
+                updateFormulaCard(selectedMesh.userData.triData);
+            } else {
+                selectedMesh = null;
+                updateVectorsForSelected(null, false);
+                updateFormulaCard(null);
+            }
+        }
+    }
+    
+    sideSlider.addEventListener('input', () => { document.getElementById('side_val').innerText = sideSlider.value; refreshGeometry(); });
+    levelsSlider.addEventListener('input', () => { document.getElementById('levels_val').innerText = levelsSlider.value; refreshGeometry(); });
+    scaleSlider.addEventListener('input', () => { document.getElementById('scale_val').innerText = scaleSlider.value; refreshGeometry(); });
+    segmentsSlider.addEventListener('input', () => { document.getElementById('segments_val').innerText = segmentsSlider.value; refreshGeometry(); });
+    intensitySlider.addEventListener('input', () => { document.getElementById('intensity_val').innerText = intensitySlider.value; refreshGeometry(); });
+    profileSelect.addEventListener('change', () => refreshGeometry());
+    closureSelect.addEventListener('change', () => refreshGeometry());
+    renderModeSelect.addEventListener('change', () => refreshGeometry());
+    shellScaleSlider.addEventListener('input', () => { document.getElementById('shell_scale_val').innerText = parseFloat(shellScaleSlider.value).toFixed(2) + '×'; refreshGeometry(); });
+    explodeSlider.addEventListener('input', () => { document.getElementById('explode_val').innerText = explodeSlider.value + ' cm'; refreshGeometry(); });
+    voidModeSelect.addEventListener('change', () => refreshGeometry());
+    viewModeSelect.addEventListener('change', () => applyViewMode());
+    
+    document.getElementById('toggle_vectors').addEventListener('click', () => {
+        showVectors = !showVectors;
+        document.getElementById('toggle_vectors').innerText = showVectors ? '🔘 Vectors: ON' : '🔘 Vectors: OFF';
+        updateVectorsForSelected(selectedMesh, showVectors);
+    });
+    
+    document.getElementById('reset_view').addEventListener('click', () => {
+        camera.position.set(250, 180, 300);
+        controls.target.set(0, 60, 0);
+        controls.update();
+    });
+    
+    document.getElementById('isolate_selected').addEventListener('click', () => {
+        if (!selectedMesh) return;
+        viewModeSelect.value = 'isolate';
+        applyViewMode();
+    });
+
+    document.getElementById('show_all_blocks').addEventListener('click', () => {
+        viewModeSelect.value = 'all';
+        applyViewMode();
+    });
+
+    document.getElementById('copy_component_json').addEventListener('click', async () => {
+        const data = currentSelectedFabricationJSON();
+        if (!data) return;
+        try {
+            await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+            document.getElementById('status_msg').innerText = `Copied ${data.componentId} fabrication JSON`;
+        } catch (err) {
+            document.getElementById('status_msg').innerText = 'Clipboard copy blocked by browser permissions';
+        }
+    });
+
+    document.getElementById('print_component').addEventListener('click', () => {
+        const data = currentSelectedFabricationJSON();
+        if (!data || !selectedMesh) return;
+        setStatus(`Generating visual shop card for ${data.componentId}`, true);
+        const viewImages = {
+            iso: renderComponentSnapshot(selectedMesh, 'iso'),
+            front: renderComponentSnapshot(selectedMesh, 'front'),
+            right: renderComponentSnapshot(selectedMesh, 'right'),
+            top: renderComponentSnapshot(selectedMesh, 'top')
+        };
+        const html = buildVisualShopCardHTML(data, viewImages);
+        const win = window.open('', '_blank');
+        if (win) { win.document.write(html); win.document.close(); }
+    });
+
+    document.getElementById('export_png').addEventListener('click', () => {
+        renderer.render(scene, camera);
+        const canvas = renderer.domElement;
+        const link = document.createElement('a');
+        link.download = 'artemis_solid_shell_dome_snapshot.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+    
+    document.getElementById('export_json').addEventListener('click', () => {
+        const shellScale = parseFloat(shellScaleSlider.value);
+        const exportData = {
+            geometry: currentGeomState,
+            renderMode: renderModeSelect.value,
+            viewMode: viewModeSelect.value,
+            shellScale,
+            explodeDistance: parseFloat(explodeSlider.value),
+            trianglesCount: currentTriangles.length,
+            solidBlocksCount: renderModeSelect.value === 'shell' ? currentMeshes.length : 0,
+            shellVolumeCm3: currentMeshes.reduce((sum, m) => sum + (m.userData?.triData?.volume || 0), 0),
+            levelsData: currentGeomState.levelsData.map(d => ({
+                ...d,
+                blockCount: currentTriangles.filter(t => t.level === d.level).length,
+                lowerDiameter: d.radius * 2,
+                upperDiameter: d.nextRadius * 2
+            })),
+            components: currentMeshes.map(m => {
+                const t = m.userData.triData;
+                const fab = computeShellFabricationData(t, shellScale);
+                return {
+                    componentId: t.componentId,
+                    level: t.level,
+                    segment: t.segment,
+                    type: t.type,
+                    centroid: t.centroid,
+                    polarAngleDeg: t.polarAngleDeg,
+                    radialDistance: t.radialDistance,
+                    rotationDeg: t.rotationDeg,
+                    normal: t.normal,
+                    innerEdgesCm: fab.innerEdges,
+                    outerEdgesCm: fab.outerEdges,
+                    connectorEdgesCm: fab.connectorLengths,
+                    innerAreaCm2: t.area,
+                    outerAreaCm2: t.area * shellScale * shellScale,
+                    volumeCm3: t.volume || null,
+                    bevels: fab.bevels
+                };
+            })
+        };
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'artemis_solid_shell_dome_geometry.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+    
+    renderer.domElement.addEventListener('pointerdown', (event) => { pointerStart = { x: event.clientX, y: event.clientY }; });
+    renderer.domElement.addEventListener('pointerup', onCanvasPointerUp);
+    renderer.domElement.addEventListener('pointermove', onCanvasPointerMove);
+    
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    function onWindowResize() {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        if(width === 0 || height === 0) return;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+    }
+    
+    window.addEventListener('resize', onWindowResize);
+    // Initial delay to ensure flex layout is fully computed
+    setTimeout(() => {
+        onWindowResize();
+        refreshGeometry();
+        animate();
+    }, 50);
+</script>
+</body>
+</html>
