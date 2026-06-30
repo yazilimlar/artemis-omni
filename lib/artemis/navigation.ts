@@ -10,6 +10,7 @@ export const primaryNav: NavLink[] = [
   { title: "Solutions", href: "/solutions" },
   { title: "Products", href: "/products" },
   { title: "Studio", href: "/studio" },
+  { title: "ArtemisIX", href: "/artemisix" },
   { title: "Demo", href: "/demo" },
   { title: "Portfolio", href: "/portfolio" },
   { title: "Library", href: "/library" },
@@ -38,6 +39,7 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
   {
     heading: "Explore",
     links: [
+      { title: "ArtemisIX", href: "/artemisix" },
       { title: "Studio", href: "/studio" },
       { title: "Labs", href: "/labs" },
       { title: "Tools", href: "/tools" },

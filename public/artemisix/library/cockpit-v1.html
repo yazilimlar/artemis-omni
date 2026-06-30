@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artemis Utility Intelligence Bridge — Cockpit v1.0</title>
+<meta name="author" content="George Oktem">
+<meta name="description" content="The connective cockpit for the DEP Sewer Utility Intelligence Bridge: one parametric model across six disciplines, with a live preview of the production estimate engine.">
+<style>
+/* ============================================================================
+   ARTEMIS UTILITY INTELLIGENCE BRIDGE — COCKPIT
+   George Oktem · New York · 2026 · IPC Resiliency Partners
+   Offline-safe · single-file · zero external dependencies
+   --------------------------------------------------------------------------
+   Design system — "The Section & The Spine"
+   Subject world: sub-grade civil utility construction (trench section,
+   station chainage, gravity profile, survey-monument brass).
+   Palette is stratified by material, not a single accent:
+     sub-grade ink (bg) / strata panel / IPC water-blue (the data spine) /
+     survey brass (the one bold accent) / contained section tones
+     (clay pipe, gravel bedding, concrete cradle).
+   Type: humanist sans (the human voice) paired with a monospace instrument
+   voice (the machine/data voice) — the contrast is the bridge.
+============================================================================ */
+
+:root{
+  /* — sub-grade strata (dark cockpit, leads) — */
+  --bg:#0b1622;            /* sub-grade ink, below datum            */
+  --bg2:#0e1c2c;           /* second stratum                        */
+  --panel:#122537;         /* surface panel                         */
+  --panel2:#0f2030;        /* recessed panel                        */
+  --line:#22384f;          /* drafting grid / hairline              */
+  --line2:#2e4a66;
+  --ink:#e8f0fa;           /* primary annotation                    */
+  --muted:#90a7c2;         /* secondary annotation                  */
+  --faint:#5d728e;         /* tertiary annotation                   */
+  /* — material hues — */
+  --blue:#2f8fe0;          /* IPC water-blue: the data spine + flow */
+  --blue-deep:#0f4c81;     /* IPC brand navy                        */
+  --blue-soft:#7cc0f5;
+  --brass:#e0b65a;         /* survey-monument brass: the accent     */
+  --brass-deep:#c99a2e;
+  --clay:#c2724a;          /* clay/RCP pipe section tone            */
+  --gravel:#9c8156;        /* stone bedding section tone            */
+  --concrete:#8b97a4;      /* concrete cradle section tone          */
+  --green:#36c98b;
+  --red:#ff7a6b;
+  --amber:#f0a84b;
+  /* — system — */
+  --hud:rgba(11,22,34,.86);
+  --shadow:0 18px 48px rgba(0,0,0,.5);
+  --shadow-sm:0 6px 18px rgba(0,0,0,.35);
+  --r:14px;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+  --maxw:1180px;
+}
+[data-theme="light"]{
+  --bg:#eef3f9; --bg2:#e7eef7; --panel:#ffffff; --panel2:#f5f9fd;
+  --line:#d7e0ec; --line2:#c3d1e2; --ink:#13243a; --muted:#5d7089;
+  --blue:#1d6fb8; --blue-deep:#0f4c81; --blue-soft:#0f4c81;
+  --brass:#b8862a; --brass-deep:#8a6418;
+  --clay:#a6512c; --gravel:#7d6233; --concrete:#5f6b78;
+  --hud:rgba(255,255,255,.9); --shadow:0 14px 36px rgba(15,40,75,.14);
+  --shadow-sm:0 5px 14px rgba(15,40,75,.10);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:
+    radial-gradient(1200px 600px at 78% -8%, color-mix(in srgb,var(--blue-deep) 22%, transparent), transparent 60%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 40%);
+  color:var(--ink); font-family:var(--sans); line-height:1.55;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+
+/* drafting-grid texture behind everything */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:46px 46px; mask:radial-gradient(120% 90% at 50% 0%,#000 30%,transparent 90%);
+}
+.wrap{position:relative; z-index:1; max-width:var(--maxw); margin:0 auto; padding:0 22px}
+
+/* ---------- type scale ---------- */
+.eyebrow{font-family:var(--mono); font-size:11.5px; letter-spacing:.28em; text-transform:uppercase; color:var(--brass); font-weight:600}
+h1,h2,h3{font-weight:760; letter-spacing:-.02em; line-height:1.08; margin:0}
+h2{font-size:clamp(24px,3.2vw,34px)}
+h3{font-size:18px; letter-spacing:-.01em}
+p{margin:.5em 0}
+.lead{font-size:clamp(15px,1.6vw,18px); color:var(--muted); max-width:64ch}
+.mono{font-family:var(--mono)}
+.sta{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--brass)}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40; backdrop-filter:blur(10px);
+  background:var(--hud); border-bottom:1px solid var(--line);
+}
+.topbar .row{display:flex; align-items:center; gap:14px; height:60px}
+.brand{display:flex; align-items:center; gap:11px; font-weight:740; letter-spacing:-.01em}
+.mark{width:30px; height:30px; flex:0 0 auto}
+.brand small{display:block; font-family:var(--mono); font-size:9.5px; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; font-weight:600; margin-top:1px}
+.brand b{font-size:15px}
+.spacer{flex:1}
+.tlinks{display:flex; gap:4px}
+.tlinks a{color:var(--muted); text-decoration:none; font-size:12.5px; padding:7px 11px; border-radius:8px; font-weight:600}
+.tlinks a:hover{color:var(--ink); background:color-mix(in srgb,var(--blue) 14%,transparent)}
+.themebtn{
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--ink);
+  background:var(--panel2); border:1px solid var(--line2); border-radius:9px;
+  padding:8px 12px; cursor:pointer; text-transform:uppercase
+}
+.themebtn:hover{border-color:var(--brass)}
+@media(max-width:820px){.tlinks{display:none}}
+
+/* ---------- hero ---------- */
+.hero{padding:54px 0 8px}
+.hero .eyebrow{margin-bottom:14px}
+.hero h1{font-size:clamp(30px,5.4vw,58px); max-width:18ch}
+.hero h1 .ipc{color:var(--blue)}
+.hero h1 .br{color:var(--brass)}
+.hero .lead{margin-top:18px}
+.hero-meta{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:20px; font-family:var(--mono); font-size:11.5px; color:var(--muted); letter-spacing:.04em}
+.hero-meta span b{color:var(--blue-soft); font-weight:600}
+
+/* ---------- the spine (signature) ---------- */
+.spine-stage{
+  margin:30px 0 4px; padding:0; border-radius:18px; overflow:hidden;
+  border:1px solid var(--line); background:
+    linear-gradient(180deg, color-mix(in srgb,var(--panel) 60%,transparent), var(--panel2));
+  box-shadow:var(--shadow);
+}
+.spine-stage svg{display:block; width:100%; height:auto}
+.legend{
+  display:flex; flex-wrap:wrap; gap:6px 16px; padding:12px 18px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; color:var(--muted); text-transform:uppercase;
+}
+.legend i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px}
+
+/* SVG element styling */
+.profile{fill:none; stroke:var(--blue); stroke-width:2.4; filter:drop-shadow(0 0 6px color-mix(in srgb,var(--blue) 50%,transparent))}
+.datum{stroke:var(--brass); stroke-width:1; stroke-dasharray:2 4; opacity:.6}
+.feeder{fill:none; stroke:var(--line2); stroke-width:1.2; stroke-dasharray:3 4}
+.st-node{cursor:pointer}
+.st-ring{fill:none; stroke:var(--brass); stroke-width:1.6}
+.st-dot{fill:var(--brass)}
+.st-lab{font-family:var(--mono); font-size:11px; fill:var(--ink); font-weight:600}
+.st-sub{font-family:var(--mono); font-size:8.5px; fill:var(--muted); letter-spacing:.12em; text-transform:uppercase}
+.st-node:hover .st-ring{stroke-width:3; stroke:var(--blue-soft)}
+.st-node:hover .st-dot{fill:var(--blue-soft)}
+.st-node.dim{opacity:.32}
+.packet{fill:var(--blue-soft); filter:drop-shadow(0 0 4px var(--blue))}
+.src-box{fill:color-mix(in srgb,var(--blue-deep) 55%,var(--panel)); stroke:var(--blue); stroke-width:1.4}
+.src-lab{font-family:var(--mono); font-size:9px; fill:var(--blue-soft); letter-spacing:.1em}
+.strata-lab{font-family:var(--mono); font-size:8px; fill:#0b1622; letter-spacing:.08em; font-weight:700}
+.chain{font-family:var(--mono); font-size:8px; fill:var(--muted); letter-spacing:.04em}
+
+/* ---------- generic section ---------- */
+.section{padding:66px 0}
+.section.tight{padding:44px 0}
+.section-head{max-width:62ch; margin-bottom:30px}
+.section-head .eyebrow{display:block; margin-bottom:12px}
+.section-head p{color:var(--muted)}
+
+/* ---------- live preview ---------- */
+.preview{
+  border:1px solid var(--line); border-radius:18px; overflow:hidden;
+  background:linear-gradient(180deg,var(--panel),var(--panel2)); box-shadow:var(--shadow);
+}
+.preview-top{display:flex; flex-wrap:wrap; align-items:center; gap:14px; padding:16px 20px; border-bottom:1px solid var(--line); background:var(--panel2)}
+.preview-top .tag{font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--brass); padding:4px 9px; border:1px solid var(--brass-deep); border-radius:6px}
+.preview-top .ttl{font-weight:700; font-size:14.5px}
+.controls{display:flex; flex-wrap:wrap; gap:18px; padding:18px 20px; border-bottom:1px solid var(--line)}
+.ctl{display:flex; flex-direction:column; gap:7px}
+.ctl label{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.seg{display:inline-flex; border:1px solid var(--line2); border-radius:9px; overflow:hidden; background:var(--bg2)}
+.seg button{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; padding:8px 13px; border:0;
+  background:transparent; color:var(--muted); cursor:pointer; font-weight:600
+}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--blue); color:#fff}
+.seg button.on.alt{background:var(--brass); color:#15233a}
+.seg button:hover:not(.on){color:var(--ink)}
+
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line)}
+.kpi{background:var(--panel); padding:18px 20px}
+.kpi .k-lab{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px}
+.kpi .k-val{font-family:var(--mono); font-size:clamp(20px,2.4vw,28px); font-weight:680; letter-spacing:-.01em; color:var(--ink)}
+.kpi .k-sub{font-family:var(--mono); font-size:11px; color:var(--blue-soft); margin-top:4px}
+.kpi .k-sub.warn{color:var(--amber)} .kpi .k-sub.bad{color:var(--red)} .kpi .k-sub.good{color:var(--green)}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+
+.preview-body{display:grid; grid-template-columns:1.15fr 1fr; gap:1px; background:var(--line)}
+@media(max-width:860px){.preview-body{grid-template-columns:1fr}}
+.pb{background:var(--panel); padding:20px}
+.pb h4{margin:0 0 14px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600}
+
+/* cost split bar */
+.splitbar{display:flex; height:30px; border-radius:7px; overflow:hidden; border:1px solid var(--line2)}
+.splitbar span{transition:flex-grow .5s cubic-bezier(.4,0,.2,1)}
+.cat-L{background:var(--blue)} .cat-M{background:var(--gravel)} .cat-C{background:var(--concrete)}
+.cat-S{background:var(--clay)} .cat-E{background:var(--brass)}
+.split-leg{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:14px; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.split-leg span i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px; vertical-align:-1px}
+.split-leg span b{color:var(--ink); font-weight:600}
+
+/* code table */
+table.codes{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px}
+table.codes th{text-align:left; color:var(--muted); font-weight:600; font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:0 0 8px; border-bottom:1px solid var(--line)}
+table.codes th.num,table.codes td.num{text-align:right}
+table.codes td{padding:7px 0; border-bottom:1px solid var(--line)}
+table.codes tr:last-child td{border-bottom:0}
+table.codes .cc{color:var(--brass)}
+.minibar{display:inline-block; height:6px; border-radius:3px; background:var(--blue); vertical-align:middle; margin-left:8px}
+
+/* monte carlo strip */
+.mc{position:relative; height:60px; margin-top:6px; border:1px solid var(--line); border-radius:8px; background:var(--bg2); overflow:hidden}
+.mc .bar{position:absolute; bottom:0; width:2px; background:color-mix(in srgb,var(--blue) 55%,transparent)}
+.mc .p{position:absolute; top:0; bottom:0; width:0; border-left:1.5px dashed var(--brass)}
+.mc .p label{position:absolute; top:3px; left:5px; font-family:var(--mono); font-size:9px; color:var(--brass); white-space:nowrap}
+.mc-note{font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:10px}
+.mc-note b{color:var(--ink)}
+
+/* ---------- capability matrix ---------- */
+.matrix{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+@media(max-width:900px){.matrix{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.matrix{grid-template-columns:1fr}}
+.cap{
+  position:relative; border:1px solid var(--line); border-radius:14px; padding:20px 18px 18px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2)); box-shadow:var(--shadow-sm);
+  transition:transform .25s,border-color .25s; overflow:hidden;
+}
+.cap::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent,var(--blue))}
+.cap:hover{transform:translateY(-3px); border-color:var(--accent,var(--blue))}
+.cap .cnum{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--muted)}
+.cap h3{margin:6px 0 4px; font-size:16.5px}
+.cap .own{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; color:var(--accent,var(--blue)); margin-bottom:10px}
+.cap p{font-size:13px; color:var(--muted); margin:0 0 14px}
+.cap .metric{font-family:var(--mono); font-size:13px; color:var(--ink); padding-top:10px; border-top:1px solid var(--line)}
+.cap .metric b{color:var(--brass); font-weight:600}
+.cap .ai{display:flex; flex-wrap:wrap; gap:5px; margin-top:11px}
+.cap .ai span{font-family:var(--mono); font-size:9px; letter-spacing:.06em; padding:2px 7px; border-radius:5px; background:var(--bg2); border:1px solid var(--line); color:var(--muted)}
+
+/* ---------- synthesis pipeline ---------- */
+.pipe{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; counter-reset:step}
+@media(max-width:900px){.pipe{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.pipe{grid-template-columns:1fr}}
+.step{
+  position:relative; border:1px solid var(--line); border-radius:12px; padding:18px 16px;
+  background:var(--panel2); counter-increment:step;
+}
+.step::before{
+  content:counter(step,decimal-leading-zero); font-family:var(--mono); font-size:11px; font-weight:700;
+  color:var(--bg); background:var(--brass); width:26px; height:26px; border-radius:7px;
+  display:flex; align-items:center; justify-content:center; margin-bottom:12px
+}
+.step .who{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--blue-soft); text-transform:uppercase; margin-bottom:5px}
+.step h3{font-size:15px; margin-bottom:6px}
+.step p{font-size:12.5px; color:var(--muted); margin:0}
+.pipe-foot{margin-top:22px; padding:18px 20px; border:1px dashed var(--line2); border-radius:12px; background:var(--panel2); font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+.pipe-foot b{color:var(--brass)}
+.pipe-foot code{color:var(--blue-soft); background:var(--bg2); padding:1px 6px; border-radius:5px}
+
+/* ---------- personas ---------- */
+.people{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+@media(max-width:900px){.people{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.people{grid-template-columns:1fr}}
+.person{border:1px solid var(--line); border-radius:12px; padding:18px; background:var(--panel)}
+.person .role{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--brass); margin-bottom:7px}
+.person h3{font-size:15px; margin-bottom:8px}
+.person p{font-size:12.5px; color:var(--muted); margin:0}
+
+/* ---------- launch bay ---------- */
+.bay{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+@media(max-width:760px){.bay{grid-template-columns:1fr}}
+.launch{
+  display:flex; gap:16px; align-items:flex-start; text-decoration:none; color:inherit;
+  border:1px solid var(--line); border-radius:14px; padding:18px 20px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2)); transition:border-color .2s,transform .2s
+}
+.launch:hover{border-color:var(--blue); transform:translateY(-2px)}
+.launch .ic{flex:0 0 auto; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:var(--bg2); border:1px solid var(--line2)}
+.launch .ic svg{width:24px; height:24px}
+.launch h3{font-size:15px; margin-bottom:3px}
+.launch .ver{font-family:var(--mono); font-size:10px; color:var(--brass); letter-spacing:.06em}
+.launch p{font-size:12.5px; color:var(--muted); margin:6px 0 0}
+.launch .go{font-family:var(--mono); font-size:11px; color:var(--blue-soft); margin-top:9px; display:inline-block}
+.bay-note{font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:14px; padding:12px 14px; border:1px dashed var(--line2); border-radius:10px}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--line); margin-top:30px; padding:34px 0 50px}
+.sig{
+  display:inline-flex; align-items:center; gap:14px; padding:14px 20px; border:1px solid var(--brass-deep);
+  border-radius:12px; background:linear-gradient(180deg,color-mix(in srgb,var(--brass) 10%,transparent),transparent)
+}
+.sig .mark{width:34px;height:34px}
+.sig .who{font-weight:740; letter-spacing:-.01em}
+.sig .meta{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-top:2px}
+.foot .fine{font-family:var(--mono); font-size:10.5px; color:var(--faint); margin-top:18px; letter-spacing:.03em}
+
+/* ---------- reveal animation ---------- */
+.reveal{opacity:0; transform:translateY(18px); transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1; transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1; transform:none; transition:none}
+  .packet{display:none}
+  .profile{stroke-dasharray:none !important; stroke-dashoffset:0 !important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ TOP BAR ============================ -->
+<header class="topbar">
+  <div class="wrap row">
+    <a class="brand" href="#top" style="text-decoration:none;color:inherit">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18.5" fill="none" stroke="var(--brass)" stroke-width="1.4"/>
+        <path d="M20 5 L33 27 H7 Z" fill="none" stroke="var(--blue)" stroke-width="2"/>
+        <circle cx="20" cy="22" r="3.4" fill="var(--brass)"/>
+        <line x1="20" y1="5" x2="20" y2="35" stroke="var(--blue)" stroke-width=".8" opacity=".5"/>
+      </svg>
+      <span><b>Utility Intelligence Bridge</b><small>Artemis · Cockpit v1.0</small></span>
+    </a>
+    <div class="spacer"></div>
+    <nav class="tlinks">
+      <a href="#preview">Live engine</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#synthesis">Synthesis</a>
+      <a href="#team">Disciplines</a>
+      <a href="#launch">Launch</a>
+    </nav>
+    <button class="themebtn" id="themeBtn" type="button">☼ Light</button>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- ============================ HERO ============================ -->
+<section class="wrap hero">
+  <span class="eyebrow reveal">ESCR · SANDRESM1 · Reach K — East Side Coastal Resiliency</span>
+  <h1 class="reveal">One parametric model.<br><span class="ipc">Six disciplines.</span><br><span class="br">One source of truth.</span></h1>
+  <p class="lead reveal">The Bridge takes a single sub-grade utility model and lets every team read it in their own language — the BIM coordinator sees geometry, the controls manager sees cost codes, the field engineer sees the day's quantities, DEP sees the standard detail. Change the model once; every discipline updates downstream.</p>
+  <div class="hero-meta reveal">
+    <span>Engine activities <b>15</b></span>
+    <span>CMiC cost codes <b>live</b></span>
+    <span>Disciplines bridged <b>6</b></span>
+    <span>External dependencies <b>0</b></span>
+    <span>Deployment <b>single file · offline</b></span>
+  </div>
+</section>
+
+<!-- ============================ THE SPINE (signature) ============================ -->
+<section class="wrap reveal">
+  <div class="spine-stage">
+    <svg id="spineSvg" viewBox="0 0 1140 478" role="img" aria-label="Longitudinal data spine: one model feeding six disciplines along a gravity-flow profile, with a trench section below the datum line.">
+      <!-- chainage ticks -->
+      <g id="chainGroup"></g>
+      <!-- datum line -->
+      <line class="datum" x1="60" y1="150" x2="1090" y2="150"/>
+      <text class="chain" x="60" y="143">DATUM EL. 100.00</text>
+      <!-- gravity profile line (sewers fall left -> right) -->
+      <path id="profile" class="profile" d="M120 168 L1040 236"/>
+      <!-- source model node -->
+      <g id="source">
+        <rect class="src-box" x="44" y="60" width="86" height="58" rx="9"/>
+        <text class="src-lab" x="87" y="82" text-anchor="middle">PARAMETRIC</text>
+        <text class="src-lab" x="87" y="95" text-anchor="middle">3D MODEL</text>
+        <text class="src-lab" x="87" y="108" text-anchor="middle" style="fill:var(--brass)">SOURCE</text>
+      </g>
+      <!-- discipline stations + feeders + packets injected by JS -->
+      <g id="stations"></g>
+      <g id="feeders"></g>
+      <g id="packets"></g>
+      <!-- trench section below datum -->
+      <g id="section" transform="translate(0,262)"></g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:var(--blue)"></i>Data spine / flow</span>
+      <span><i style="background:var(--brass)"></i>Discipline station</span>
+      <span><i style="background:var(--concrete)"></i>Backfill</span>
+      <span><i style="background:var(--gravel)"></i>Stone bedding</span>
+      <span><i style="background:var(--clay)"></i>RCP pipe</span>
+      <span style="margin-left:auto;color:var(--faint)">Hover a station to trace its feed →</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LIVE ENGINE PREVIEW ============================ -->
+<section class="wrap section" id="preview">
+  <div class="section-head reveal">
+    <span class="eyebrow">Live capability · not a screenshot</span>
+    <h2>The estimate engine, computing in front of you</h2>
+    <p>A faithful preview of the production estimate engine running on a representative ~800 LF reach (48″ RCP, ~15 ft cut). Change the scenario or the ground and every number below recomputes from the real activity model, crew rates, and CMiC codes — the same math the full Workbench carries.</p>
+  </div>
+
+  <div class="preview reveal">
+    <div class="preview-top">
+      <span class="tag">Live</span>
+      <span class="ttl">Reach K — representative segment set</span>
+      <span style="flex:1"></span>
+      <span class="mono" style="font-size:11px;color:var(--muted)" id="basisNote"></span>
+    </div>
+
+    <div class="controls">
+      <div class="ctl">
+        <label>Scenario</label>
+        <div class="seg" id="scenSeg">
+          <button data-scen="best">Best</button>
+          <button data-scen="base" class="on">Base</button>
+          <button data-scen="worst">Worst</button>
+          <button data-scen="recovery">Recovery</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Ground</label>
+        <div class="seg" id="groundSeg">
+          <button data-ground="Soil" class="on alt">Soil</button>
+          <button data-ground="Rock">Rock</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Water table</label>
+        <div class="seg" id="waterSeg">
+          <button data-water="Dry" class="on alt">Dry</button>
+          <button data-water="Wet">Wet</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="k-lab">Cost basis</div><div class="k-val" id="kCost">—</div><div class="k-sub" id="kCostSub">direct + indirect</div></div>
+      <div class="kpi"><div class="k-lab">Revenue / SOV</div><div class="k-val" id="kRev">—</div><div class="k-sub" id="kRevSub">at 12% markup</div></div>
+      <div class="kpi"><div class="k-lab">Schedule</div><div class="k-val" id="kDur">—</div><div class="k-sub" id="kDurSub">working days</div></div>
+      <div class="kpi"><div class="k-lab">Labor hours</div><div class="k-val" id="kHrs">—</div><div class="k-sub">all crews</div></div>
+    </div>
+
+    <div class="preview-body">
+      <div class="pb">
+        <h4>Cost composition · L / M / C / S / E</h4>
+        <div class="splitbar" id="splitBar"></div>
+        <div class="split-leg" id="splitLeg"></div>
+        <h4 style="margin-top:24px">Monte Carlo · 2,000 trials over 8-item risk register</h4>
+        <div class="mc" id="mc"></div>
+        <div class="mc-note" id="mcNote"></div>
+      </div>
+      <div class="pb">
+        <h4>Top CMiC cost codes by value</h4>
+        <table class="codes">
+          <thead><tr><th>Code</th><th>Activity</th><th class="num">Value</th></tr></thead>
+          <tbody id="codeRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CAPABILITY MATRIX ============================ -->
+<section class="wrap section" id="capabilities">
+  <div class="section-head reveal">
+    <span class="eyebrow">What the Bridge carries</span>
+    <h2>Every capability, mapped to the discipline that owns it</h2>
+    <p>Each module is built for a specific reader, shaped through the multi-AI synthesis workflow, and tied back to the one model. Metrics shown are drawn live from the engine.</p>
+  </div>
+  <div class="matrix" id="matrix"></div>
+</section>
+
+<!-- ============================ SYNTHESIS PIPELINE ============================ -->
+<section class="wrap section" id="synthesis" style="background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--blue-deep) 9%,transparent),transparent)">
+  <div class="section-head reveal">
+    <span class="eyebrow">How it was built</span>
+    <h2>Multi-AI synthesis, with experts in the loop</h2>
+    <p>Order matters here — this is a real relay. Each model's output becomes the next model's input, with industry experts, project managers, BIM coordinators, and field engineers reviewing at every hand-off before anything reaches the deliverable.</p>
+  </div>
+  <div class="pipe reveal">
+    <div class="step"><div class="who">Claude</div><h3>Architecture &amp; engine</h3><p>Sets the data model, the estimate logic, and the single-file structure that every other pass builds on.</p></div>
+    <div class="step"><div class="who">GPT</div><h3>Breadth &amp; edge cases</h3><p>Stress-tests the activity model, fills gaps in cost codes and QA logic, proposes alternatives to review.</p></div>
+    <div class="step"><div class="who">Gemini</div><h3>Visual &amp; spatial</h3><p>Refines the 3D/4D geometry, section detailing, and how each discipline reads the same model.</p></div>
+    <div class="step"><div class="who">Grok</div><h3>Field realism</h3><p>Pressure-checks productivity, crew make-up, and sequencing against how the work actually runs in the trench.</p></div>
+    <div class="step"><div class="who">DeepSeek</div><h3>Convergence &amp; QA</h3><p>Reconciles the passes, hardens the offline build, and verifies formulas and commercial guards survive intact.</p></div>
+  </div>
+  <div class="pipe-foot reveal">
+    <b>Verification gate →</b> every iteration is extracted from the HTML and checked with <code>node --check</code> before it ships. Formulas and commercial quantity guards are protected across versions; changes land as surgical patches, never blind rewrites.
+  </div>
+</section>
+
+<!-- ============================ DISCIPLINES / PERSONAS ============================ -->
+<section class="wrap section" id="team">
+  <div class="section-head reveal">
+    <span class="eyebrow">Who reads the model</span>
+    <h2>The same truth, in six professional dialects</h2>
+    <p>The Bridge earns its name by giving each role exactly what they need from one model — no re-keying, no version drift between the drawing, the estimate, and the field.</p>
+  </div>
+  <div class="people" id="people"></div>
+</section>
+
+<!-- ============================ LAUNCH BAY ============================ -->
+<section class="wrap section tight" id="launch">
+  <div class="section-head reveal">
+    <span class="eyebrow">Open the live tools</span>
+    <h2>Launch bay</h2>
+    <p>The cockpit is the front door; these are the working applications behind it. Keep them in the same folder as this file and the links open directly.</p>
+  </div>
+  <div class="bay" id="bay"></div>
+  <div class="bay-note reveal">Each tool is a self-contained, offline-safe single-file application. The cockpit links to them by filename — if you renamed a file, update the link or just open it directly.</div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="wrap foot">
+  <div class="sig reveal">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="20" r="18.5" fill="none" stroke="var(--brass)" stroke-width="1.4"/>
+      <path d="M20 5 L33 27 H7 Z" fill="none" stroke="var(--blue)" stroke-width="2"/>
+      <circle cx="20" cy="22" r="3.4" fill="var(--brass)"/>
+    </svg>
+    <div>
+      <div class="who">George Oktem</div>
+      <div class="meta">New York · 2026 · IPC Resiliency Partners</div>
+    </div>
+  </div>
+  <p class="fine">Artemis Utility Intelligence Bridge — Cockpit v1.0 · Live preview reproduces the production estimate engine (15 activities, NYC prevailing-wage crew model, CMiC cost codes, scenario &amp; ground factors). Figures are representative of a single reach for demonstration; the full Workbench carries the complete geometry, QTO, EVM, and risk pipeline.</p>
+</footer>
+
+<script>
+/* ============================================================================
+   ENGINE SUBSET — reproduced faithfully from the production Bridge (RC5)
+   so the live preview is real, not decorative.
+============================================================================ */
+const wageLibrary={
+  Foreman:{base:72,fringe:58,payroll:12}, Operator:{base:70,fringe:57,payroll:12},
+  Laborer:{base:55,fringe:50,payroll:10}, Dockbuilder:{base:62,fringe:55,payroll:11},
+  Carpenter:{base:61,fringe:54,payroll:11}, Mason:{base:60,fringe:53,payroll:11},
+  TruckDriver:{base:57,fringe:50,payroll:10}, Surveyor:{base:66,fringe:52,payroll:10},
+  QAQC:{base:64,fringe:50,payroll:10}
+};
+const crewTemplates={
+  "Survey/Layout":{Surveyor:1,Foreman:.5,Laborer:1},
+  "Shoring/Sheeting":{Foreman:1,Dockbuilder:3,Operator:1,Laborer:2},
+  "Excavation":{Foreman:1,Operator:2,Laborer:3,TruckDriver:3},
+  "Concrete/Formwork":{Foreman:1,Carpenter:2,Laborer:3,Operator:1},
+  "Pipe Install":{Foreman:1,Operator:1,Laborer:5,TruckDriver:1},
+  "Manhole Crew":{Foreman:1,Mason:2,Laborer:3,Operator:1},
+  "Backfill":{Foreman:1,Operator:2,Laborer:3,TruckDriver:2},
+  "Paving":{Foreman:1,Operator:2,Laborer:4,TruckDriver:2},
+  "QA":{Foreman:1,QAQC:1,Laborer:2}
+};
+const wageRate=t=>{const w=wageLibrary[t]||{};return(+w.base||0)+(+w.fringe||0)+(+w.payroll||0);};
+const crewSize=c=>Object.values(crewTemplates[c]||{}).reduce((a,b)=>a+(+b||0),0);
+const crewRate=c=>Object.entries(crewTemplates[c]||{}).reduce((s,[t,n])=>s+wageRate(t)*(+n),0);
+
+/* 15-activity model — codes, drivers, crews, productivity from the production engine */
+const ACTS=[
+ {id:"A01",name:"Survey / Layout / MPT",        code:"0100-MOB", driver:"LS",        unit:"LS", prod:1,   crew:"Survey/Layout",   equipDay:800, matU:4500, subU:0},
+ {id:"A14",name:"Sawcut / Pavement Removal",    code:"0210-SAW", driver:"PAV_SY",    unit:"SY", prod:950, crew:"Paving",          equipDay:2100,matU:2,    subU:8},
+ {id:"A02",name:"Shoring / Sheeting",           code:"0220-SHOR",driver:"SHORING_SF",unit:"SF", prod:900, crew:"Shoring/Sheeting",equipDay:3500,matU:12,   subU:0},
+ {id:"A03",name:"Dewatering",                   code:"0250-DEW", driver:"DAYS",      unit:"DAY",prod:1,   crew:"Excavation",      equipDay:1200,matU:250,  subU:650},
+ {id:"A04",name:"Excavation / Disposal",        code:"0310-EXC", driver:"EXC_CY",    unit:"CY", prod:165, crew:"Excavation",      equipDay:5200,matU:8,    subU:30},
+ {id:"A05",name:"Stone Bedding",                code:"0330-BED", driver:"BEDDING_CY",unit:"CY", prod:85,  crew:"Backfill",        equipDay:2200,matU:82,   subU:0},
+ {id:"A06",name:"Concrete Cradle / Encase",     code:"0340-CONC",driver:"CONC_CY",   unit:"CY", prod:36,  crew:"Concrete/Formwork",equipDay:1900,matU:285,subU:0},
+ {id:"A07",name:"Pipe Installation",            code:"0410-PIPE",driver:"PIPE_LF",   unit:"LF", prod:55,  crew:"Pipe Install",    equipDay:3200,matU:420,  subU:0},
+ {id:"A08",name:"Manholes",                     code:"0510-MH",  driver:"MH_EA",     unit:"EA", prod:1.1, crew:"Manhole Crew",    equipDay:2600,matU:7200, subU:0},
+ {id:"A09",name:"Catch Basins",                 code:"0520-CB",  driver:"CB_EA",     unit:"EA", prod:1.2, crew:"Manhole Crew",    equipDay:1800,matU:4800, subU:0},
+ {id:"A10",name:"House Connections / Risers",   code:"0530-HC",  driver:"HC_EA",     unit:"EA", prod:2,   crew:"Pipe Install",    equipDay:1200,matU:4200, subU:0},
+ {id:"A11",name:"Backfill / Compaction",        code:"0610-BACK",driver:"BACKFILL_CY",unit:"CY",prod:190, crew:"Backfill",        equipDay:4100,matU:46,   subU:0},
+ {id:"A15",name:"Testing / Lamping / Inspection",code:"0810-TEST",driver:"PIPE_LF",  unit:"LF", prod:600, crew:"QA",              equipDay:700, matU:1.5,  subU:2.5},
+ {id:"A12",name:"Pavement Restoration",         code:"0710-PAVE",driver:"PAV_SY",    unit:"SY", prod:155, crew:"Paving",          equipDay:4300,matU:88,   subU:62},
+ {id:"A13",name:"QA/QC / Closeout",             code:"0900-QA",  driver:"LS",        unit:"LS", prod:1,   crew:"QA",              equipDay:900, matU:2500, subU:0}
+];
+
+/* representative geometry for a single ~800 LF reach (48" RCP, ~15 ft cut, Manhattan) */
+const G={
+  length:800, sheetingSF:24000, dewaterDays:42, excavationCY:3556, bedCY:355,
+  cradleCY:150, mhCount:4, cbCount:8, hcCount:10, backfillNeatCY:2900, paveSY:1100
+};
+const qtyFor=(driver)=>({
+  LS:1, SHORING_SF:G.sheetingSF, DAYS:G.dewaterDays, EXC_CY:G.excavationCY, CONC_CY:G.cradleCY,
+  BEDDING_CY:G.bedCY, PIPE_LF:G.length, MH_EA:G.mhCount, CB_EA:G.cbCount, HC_EA:G.hcCount,
+  BACKFILL_CY:G.backfillNeatCY, PAV_SY:G.paveSY
+}[driver]||0);
+
+const PROD_F={best:1.12,base:1,worst:.82,recovery:1.18};
+const COST_F={best:.96,base:1,worst:1.12,recovery:1.18};
+const MARKUP=12, CONTINGENCY=5, BOND=2.5, OVERHEAD_DAY=3800;
+/* risk register [name, prob, lo, hi] as fractional cost impact (negative = opportunity) */
+const RISKS=[
+  ["Utility conflict / relocation",.25,.03,.12],["Wet trench / dewatering escalation",.18,.02,.09],
+  ["Rock / hard dig overrun",.16,.02,.10],["Low productivity / access",.25,.02,.08],
+  ["Material delay / escalation",.14,.01,.06],["Overtime recovery premium",.20,.02,.07],
+  ["Opportunity: better production",.18,-.08,-.02],["Opportunity: buyout savings",.12,-.05,-.01]
+];
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+/* faithful port of estimate() */
+function estimate(scen,ground,water){
+  const prodF=PROD_F[scen]||1, costF=COST_F[scen]||1;
+  const rows=ACTS.map(a=>{
+    let qty=qtyFor(a.driver), prod=a.prod*prodF;
+    if(a.driver==="LS") qty=1;
+    if(ground==="Rock" && ["A04","A05","A06","A07"].includes(a.id)) prod*=.75;
+    if(water==="Wet"  && ["A02","A03","A04","A05","A06","A07","A11"].includes(a.id)) prod*=.86;
+    let days = a.id==="A01" ? clamp(G.length/250,3,8)
+             : a.id==="A13" ? 3
+             : qty<=0 ? 0 : qty/Math.max(1e-4,prod);
+    const laborHrs=days*8*crewSize(a.crew);
+    const L=days*8*crewRate(a.crew)*costF;
+    const Eq=days*(+a.equipDay)*costF;
+    const M=qty*(+a.matU)*costF;
+    let S=qty*(+a.subU)*costF;
+    const C=L*.07;
+    const total=L+M+C+S+Eq;
+    return {...a,qty,days,laborHrs,cat:{L,M,C,S,E:Eq},total};
+  });
+  const subtotal=rows.reduce((s,r)=>s+r.total,0);
+  const durGuess=rows.reduce((s,r)=>s+r.days,0)*.62;
+  const overhead=durGuess*OVERHEAD_DAY;
+  const contingency=subtotal*CONTINGENCY/100;
+  const bond=(subtotal+overhead+contingency)*BOND/100;
+  const costBasis=subtotal+overhead+contingency+bond;
+  const revenue=costBasis*(1+MARKUP/100);
+  return {rows,subtotal,overhead,contingency,bond,costBasis,revenue,
+    laborHrs:rows.reduce((s,r)=>s+r.laborHrs,0),
+    durWork:Math.round(durGuess)};
+}
+
+/* Monte Carlo over the risk register -> distribution of cost basis */
+function monteCarlo(base,trials=2000){
+  const out=[];
+  for(let i=0;i<trials;i++){
+    let f=0;
+    for(const [,p,lo,hi] of RISKS){ if(Math.random()<p) f+=lo+Math.random()*(hi-lo); }
+    out.push(base*(1+f));
+  }
+  out.sort((a,b)=>a-b);
+  const pct=q=>out[Math.floor(clamp(q,0,.999)*out.length)];
+  return {data:out,p10:pct(.10),p50:pct(.50),p80:pct(.80),min:out[0],max:out[out.length-1]};
+}
+
+/* ---------- formatters ---------- */
+const fmt=n=>"$"+Math.round(n).toLocaleString();
+const fmtM=n=>"$"+(n/1e6).toFixed(2)+"M";
+const fmtK=n=>n>=1e6?"$"+(n/1e6).toFixed(2)+"M":"$"+Math.round(n/1e3)+"K";
+
+/* ============================================================================
+   STATE + RENDER
+============================================================================ */
+let SCEN="base", GROUND="Soil", WATER="Dry";
+const CAT_META={L:["Labor","cat-L"],M:["Material","cat-M"],C:["Consumable","cat-C"],S:["Subcontract","cat-S"],E:["Equipment","cat-E"]};
+
+function renderPreview(){
+  const e=estimate(SCEN,GROUND,WATER);
+  document.getElementById("kCost").textContent=fmtM(e.costBasis);
+  document.getElementById("kRev").textContent=fmtM(e.revenue);
+  document.getElementById("kDur").textContent=e.durWork;
+  document.getElementById("kHrs").textContent=Math.round(e.laborHrs).toLocaleString();
+  const profit=e.revenue-e.costBasis;
+  const rs=document.getElementById("kRevSub");
+  rs.textContent="profit "+fmtK(profit);
+  rs.className="k-sub good";
+  document.getElementById("kCostSub").textContent="subtotal "+fmtK(e.subtotal);
+
+  // category split
+  const tot={L:0,M:0,C:0,S:0,E:0};
+  e.rows.forEach(r=>{for(const k in tot)tot[k]+=r.cat[k];});
+  const sum=Object.values(tot).reduce((a,b)=>a+b,0)||1;
+  const bar=document.getElementById("splitBar"), leg=document.getElementById("splitLeg");
+  bar.innerHTML=""; leg.innerHTML="";
+  for(const k of ["L","M","C","S","E"]){
+    const pct=tot[k]/sum*100;
+    const s=document.createElement("span");
+    s.className=CAT_META[k][1]; s.style.flex=pct+" 0 0"; s.title=CAT_META[k][0]+" "+pct.toFixed(0)+"%";
+    bar.appendChild(s);
+    const l=document.createElement("span");
+    l.innerHTML=`<i class="${CAT_META[k][1]}"></i>${CAT_META[k][0]} <b>${pct.toFixed(0)}%</b>`;
+    leg.appendChild(l);
+  }
+
+  // top cost codes
+  const sorted=[...e.rows].sort((a,b)=>b.total-a.total).slice(0,7);
+  const maxV=sorted[0].total||1;
+  document.getElementById("codeRows").innerHTML=sorted.map(r=>`
+    <tr><td class="cc">${r.code}</td><td>${r.name}</td>
+    <td class="num">${fmtK(r.total)}<span class="minibar" style="width:${Math.max(4,r.total/maxV*46)}px"></span></td></tr>`).join("");
+
+  // monte carlo
+  const mc=monteCarlo(e.costBasis);
+  const box=document.getElementById("mc"); box.innerHTML="";
+  const bins=80, lo=mc.min, hi=mc.max, span=(hi-lo)||1;
+  const counts=new Array(bins).fill(0);
+  mc.data.forEach(v=>{counts[clamp(Math.floor((v-lo)/span*bins),0,bins-1)]++;});
+  const maxc=Math.max(...counts)||1;
+  const W=box.clientWidth||700;
+  counts.forEach((c,i)=>{
+    const b=document.createElement("div"); b.className="bar";
+    b.style.left=(i/bins*100)+"%"; b.style.width=(100/bins)+"%";
+    b.style.height=(c/maxc*100)+"%"; box.appendChild(b);
+  });
+  [["P50",mc.p50],["P80",mc.p80]].forEach(([lab,v])=>{
+    const p=document.createElement("div"); p.className="p";
+    p.style.left=clamp((v-lo)/span*100,1,98)+"%";
+    p.innerHTML=`<label>${lab} ${fmtM(v)}</label>`; box.appendChild(p);
+  });
+  document.getElementById("mcNote").innerHTML=
+    `P50 <b>${fmtM(mc.p50)}</b> · P80 <b>${fmtM(mc.p80)}</b> · contingency to reach P80 ≈ <b>${fmtK(mc.p80-e.costBasis)}</b>`;
+
+  document.getElementById("basisNote").textContent=
+    `${SCEN.toUpperCase()} · ${GROUND} · ${WATER} · 800 LF`;
+  renderMatrixMetrics(e);
+}
+
+/* segmented controls */
+function bindSeg(id,attr,set){
+  document.getElementById(id).addEventListener("click",ev=>{
+    const b=ev.target.closest("button"); if(!b)return;
+    [...b.parentNode.children].forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); set(b.dataset[attr]); renderPreview();
+  });
+}
+bindSeg("scenSeg","scen",v=>SCEN=v);
+bindSeg("groundSeg","ground",v=>GROUND=v);
+bindSeg("waterSeg","water",v=>WATER=v);
+
+/* ============================================================================
+   CAPABILITY MATRIX
+============================================================================ */
+const CAPS=[
+  {n:"01",t:"Parametric 3D / 4D / 5D model",own:"Senior BIM Coordinator",acc:"var(--blue)",
+   d:"The source of truth. Drive geometry from station, pipe family, depth and shoring; play the build day-by-day as cost accrues.",
+   metric:e=>`Activities sequenced: <b>${e.rows.length}</b>`, ai:["Claude","Gemini","Grok"]},
+  {n:"02",t:"Quantity takeoff (QTO)",own:"CAD Draftsman / Estimator",acc:"var(--gravel)",
+   d:"Geometry resolves to bank/loose/compacted volumes, sheeting SF, pipe LF and structures — no manual scaling between drawing and bid.",
+   metric:()=>`Trench excavation: <b>${G.excavationCY.toLocaleString()} CY</b>`, ai:["Claude","GPT"]},
+  {n:"03",t:"CMiC cost codes",own:"Project Controls Manager",acc:"var(--brass)",
+   d:"Every activity maps to a CMiC code split by L/M/C/S/E, ready to reconcile against the PM Forecast and JC detail.",
+   metric:e=>`Codes live: <b>${e.rows.length}</b> · top ${'0410-PIPE'}`, ai:["Claude","DeepSeek"]},
+  {n:"04",t:"EVM & forecast",own:"Project Controls Manager",acc:"var(--blue)",
+   d:"PV / EV / AC with CPI, SPI and EAC anchored to the PM Forecast as financial truth — variance is visible before it bites.",
+   metric:e=>`Cost basis: <b>${fmtM(e.costBasis)}</b>`, ai:["Claude","GPT","DeepSeek"]},
+  {n:"05",t:"Monte Carlo risk",own:"PM / Executive",acc:"var(--red)",
+   d:"2,000-trial simulation over the risk register returns P50/P80 and the contingency needed to hit a confidence target.",
+   metric:()=>`Risk register: <b>8 items</b>`, ai:["Claude","Grok"]},
+  {n:"06",t:"Field log & actuals",own:"Field Engineer",acc:"var(--green)",
+   d:"Daily quantities, crew hours and equipment hours import by CSV and feed EVM the same day — the field closes the loop.",
+   metric:e=>`Planned labor: <b>${Math.round(e.laborHrs).toLocaleString()} hrs</b>`, ai:["Grok","Claude"]},
+  {n:"07",t:"DEP Standards Lens",own:"Industry Expert / QA",acc:"var(--brass)",
+   d:"Bedding, backfill, encasement and manhole spacing checked against DEP standard details before geometry is committed.",
+   metric:()=>`Max MH spacing rule: <b>enforced</b>`, ai:["GPT","DeepSeek"]},
+  {n:"08",t:"Satellite / GIS alignment",own:"Senior BIM Coordinator",acc:"var(--blue)",
+   d:"The model georeferences to the real alignment with offline tile fallback — station chainage to lat/long, on or off the network.",
+   metric:()=>`Reach length: <b>${G.length} LF</b>`, ai:["Gemini","Claude"]},
+  {n:"09",t:"Executive room & exports",own:"PM / Executive",acc:"var(--brass)",
+   d:"A presentation mode plus eight export formats — SOV, cost codes, schedule, procurement, audit — for the room that signs.",
+   metric:e=>`SOV value: <b>${fmtM(e.revenue)}</b>`, ai:["Claude","GPT"]}
+];
+function renderMatrix(){
+  document.getElementById("matrix").innerHTML=CAPS.map((c,i)=>`
+    <div class="cap reveal" style="--accent:${c.acc};transition-delay:${i*40}ms">
+      <div class="cnum">${c.n}</div>
+      <h3>${c.t}</h3>
+      <div class="own">${c.own}</div>
+      <p>${c.d}</p>
+      <div class="metric" data-cap="${i}"></div>
+      <div class="ai">${c.ai.map(a=>`<span>${a}</span>`).join("")}</div>
+    </div>`).join("");
+}
+function renderMatrixMetrics(e){
+  document.querySelectorAll(".metric[data-cap]").forEach(el=>{
+    el.innerHTML=CAPS[+el.dataset.cap].metric(e);
+  });
+}
+
+/* ============================================================================
+   PERSONAS
+============================================================================ */
+const PEOPLE=[
+  {r:"PM / Executive",t:"Decisions, not spreadsheets",d:"Opens to a KPI dashboard and a presentation room: cost basis, P80, schedule and variance in one glance, ready to defend in the meeting that matters."},
+  {r:"Project Controls Manager",t:"One reconciled ledger",d:"CMiC codes, EVM and SOV all trace to the same model and the PM Forecast — no parallel workbook drifting away from reality."},
+  {r:"Senior BIM Coordinator",t:"Geometry that means something",d:"Changes a parameter and watches quantities, cost and the 4D sequence move with it. The model is the contract, not a picture of it."},
+  {r:"CAD Draftsman",t:"Sections that self-quantify",d:"Trench sections and details carry their own takeoff. Draw it once, correctly, and the numbers fall out — no re-measuring by hand."},
+  {r:"Field Engineer",t:"Today's quantities, tonight's EVM",d:"Logs the day's production from the trench; the same entry lands in actuals and updates the forecast before the next shift starts."},
+  {r:"Industry Expert / QA",t:"Standards in the loop",d:"DEP details, OSHA slope and reinforcing rules are checked as the model is built — compliance is designed in, not audited after."}
+];
+function renderPeople(){
+  document.getElementById("people").innerHTML=PEOPLE.map((p,i)=>`
+    <div class="person reveal" style="transition-delay:${i*40}ms">
+      <div class="role">${p.r}</div><h3>${p.t}</h3><p>${p.d}</p>
+    </div>`).join("");
+}
+
+/* ============================================================================
+   LAUNCH BAY — links to the actual suite (co-located files)
+============================================================================ */
+const ICON={
+  cube:'<path d="M12 2 21 7v10l-9 5-9-5V7z" fill="none" stroke="var(--blue)" stroke-width="1.6"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="var(--brass)" stroke-width="1.2"/>',
+  chart:'<rect x="3" y="13" width="4" height="8" fill="var(--blue)"/><rect x="10" y="8" width="4" height="13" fill="var(--brass)"/><rect x="17" y="4" width="4" height="17" fill="var(--blue-soft)"/>',
+  bridge:'<path d="M2 16h20M4 16V9M20 16V9M4 9c4-4 12-4 16 0" fill="none" stroke="var(--brass)" stroke-width="1.6"/><line x1="8" y1="16" x2="8" y2="11" stroke="var(--blue)" stroke-width="1.2"/><line x1="12" y1="16" x2="12" y2="10" stroke="var(--blue)" stroke-width="1.2"/><line x1="16" y1="16" x2="16" y2="11" stroke="var(--blue)" stroke-width="1.2"/>'
+};
+const TOOLS=[
+  {file:"Artemis_DEP_Sewer_Utility_Intelligence_Bridge_RC5.html",ic:"bridge",ver:"RC5",
+   t:"Artemis Bridge — full Workbench",d:"The 182-function flagship: 3D/4D model, EVM, Monte Carlo, DEP Standards Lens, GIS, executive room, regression — all disciplines in one."},
+  {file:"DEP_Sewer_Construction_Intelligence_Workbench_v2_8_1_LIGHT_DEFAULT_OFFLINE_SAFE.html",ic:"chart",ver:"v2.8.1",
+   t:"Construction Intelligence Workbench",d:"The cost / EVM / risk engine, light-default and offline-safe — project controls without the 3D viewport."},
+  {file:"DEP_Sewer_Parametric_3D_Workbench_v1_5_1_ViewStyle_Hotfix.html",ic:"cube",ver:"v1.5.1",
+   t:"Parametric 3D Workbench",d:"The BIM/4D modeling side: 3D + time simulator, cashflow/EVM, construction sequence, quantities/QA."},
+  {file:"DEP_Sewer_Parametric_3D_Workbench_v1_2_FIXED_model_screen__1_.html",ic:"cube",ver:"v1.2",
+   t:"Parametric 3D Workbench (baseline)",d:"The earlier full-feature 3D baseline retained for regression and comparison against later builds."}
+];
+function renderBay(){
+  document.getElementById("bay").innerHTML=TOOLS.map(t=>`
+    <a class="launch reveal" href="${t.file}" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24">${ICON[t.ic]}</svg></span>
+      <span><h3>${t.t}</h3><span class="ver">${t.ver}</span>
+      <p>${t.d}</p><span class="go">Open tool →</span></span>
+    </a>`).join("");
+}
+
+/* ============================================================================
+   THE SPINE — build stations, feeders, packets, trench section
+============================================================================ */
+const STATIONS=[
+  {x:300, lab:"BIM / 3D",   sub:"GEOMETRY"},
+  {x:430, lab:"QTO",        sub:"QUANTITIES"},
+  {x:560, lab:"COST CODES", sub:"CMIC"},
+  {x:690, lab:"EVM",        sub:"FORECAST"},
+  {x:820, lab:"FIELD",      sub:"ACTUALS"},
+  {x:960, lab:"DEP / EXEC", sub:"STANDARDS"}
+];
+function profileY(x){ // matches the profile path M120 168 -> 1040 236
+  const t=clamp((x-120)/(1040-120),0,1); return 168+(236-168)*t;
+}
+function buildSpine(){
+  const sg=document.getElementById("stations");
+  const fg=document.getElementById("feeders");
+  const pg=document.getElementById("packets");
+  const cg=document.getElementById("chainGroup");
+  const reduce=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  // chainage ticks along datum
+  let chain="";
+  for(let i=0;i<=10;i++){const x=120+(1040-120)*i/10; const sta=i*100;
+    chain+=`<line x1="${x}" y1="146" x2="${x}" y2="154" stroke="var(--line2)" stroke-width="1"/>
+            <text class="chain" x="${x}" y="166" text-anchor="middle">${i}+${String(sta%100).padStart(2,"0")}</text>`;}
+  cg.innerHTML=chain;
+
+  STATIONS.forEach((s,i)=>{
+    const py=profileY(s.x), topY=42;
+    // feeder from source(130,89) up-over to station, then down to profile
+    fg.innerHTML+=`<path class="feeder" d="M130 89 C ${s.x*0.5+65} 40, ${s.x-40} ${topY}, ${s.x} ${topY}"/>
+                   <line class="feeder" x1="${s.x}" y1="${topY}" x2="${s.x}" y2="${py}"/>`;
+    // station node
+    sg.innerHTML+=`<g class="st-node" data-i="${i}">
+      <circle class="st-ring" cx="${s.x}" cy="${topY}" r="9"/>
+      <circle class="st-dot" cx="${s.x}" cy="${topY}" r="3.4"/>
+      <text class="st-lab" x="${s.x}" y="${topY-16}" text-anchor="middle">${s.lab}</text>
+      <text class="st-sub" x="${s.x}" y="${topY+22}" text-anchor="middle">${s.sub}</text>
+      <circle cx="${s.x}" cy="${py}" r="3" fill="var(--blue)"/>
+    </g>`;
+    // animated packet traveling source -> station along feeder
+    if(!reduce){
+      const dur=(2.4+i*0.25).toFixed(2);
+      pg.innerHTML+=`<circle class="packet" r="2.6">
+        <animateMotion dur="${dur}s" repeatCount="indefinite" path="M130 89 C ${s.x*0.5+65} 40, ${s.x-40} ${topY}, ${s.x} ${topY}" rotate="auto"/>
+        <animate attributeName="opacity" values="0;1;1;0" dur="${dur}s" repeatCount="indefinite"/>
+      </circle>`;
+    }
+  });
+
+  // hover: dim siblings + emphasize feeder
+  sg.querySelectorAll(".st-node").forEach(node=>{
+    node.addEventListener("mouseenter",()=>{
+      sg.querySelectorAll(".st-node").forEach(n=>{if(n!==node)n.classList.add("dim");});
+    });
+    node.addEventListener("mouseleave",()=>{
+      sg.querySelectorAll(".st-node").forEach(n=>n.classList.remove("dim"));
+    });
+  });
+
+  // trench section (below datum, group already translated +150)
+  buildSection();
+}
+function buildSection(){
+  // Group is translated to (0,262); all coords below are group-local.
+  // Centered under STA 5+00 (root x=580) so the section-cut leader drops
+  // straight from the profile into its own clear band — no collision with
+  // chainage labels or the gravity profile line above.
+  const g=document.getElementById("section");
+  const w=300, x0=430, cx=x0+w/2, top=14;   // cx = 580 = STA 5+00
+  // profile point at STA 5+00 lives at root y≈206 -> local y = 206-262 = -56
+  const cutTopY=-56;
+  // compressed strata: pavement / backfill / stone bedding
+  const layers=[
+    {h:12,fill:"#2c3540",      lab:"PAVEMENT",      lc:"#cdd6e0"},
+    {h:62,fill:"var(--concrete)",lab:"BACKFILL",     lc:"#0b1622"},
+    {h:24,fill:"var(--gravel)",  lab:"STONE BEDDING",lc:"#0b1622"}
+  ];
+  const layerBottom=top+layers.reduce((a,L)=>a+L.h,0); // 112
+  const subH=16, sectBottom=layerBottom+subH;           // 128
+
+  let y=top, html="";
+
+  // ---- section-cut callout: leader from the profile down into the section ----
+  html+=`<line x1="${cx}" y1="${cutTopY+9}" x2="${cx}" y2="${top-6}" stroke="var(--brass)" stroke-width="1.4" stroke-dasharray="5 4" opacity=".9"/>
+         <path d="M${cx-4} ${top-9} L${cx} ${top-2} L${cx+4} ${top-9} Z" fill="var(--brass)"/>
+         <circle cx="${cx}" cy="${cutTopY}" r="9" fill="var(--brass)"/>
+         <text x="${cx}" y="${cutTopY+3.4}" text-anchor="middle" style="font-family:var(--mono);font-size:10px;font-weight:700;fill:#0b1622">A</text>`;
+
+  // ---- full-depth sheeting both sides ----
+  html+=`<line x1="${x0-5}" y1="${top}" x2="${x0-5}" y2="${sectBottom}" stroke="var(--brass)" stroke-width="2"/>
+         <line x1="${x0+w+5}" y1="${top}" x2="${x0+w+5}" y2="${sectBottom}" stroke="var(--brass)" stroke-width="2"/>
+         <text class="strata-lab" x="${x0-13}" y="${top+(sectBottom-top)/2}" text-anchor="middle" transform="rotate(-90 ${x0-13} ${top+(sectBottom-top)/2})" style="fill:var(--brass)">SHEETING</text>`;
+
+  // ---- strata bands (labels left-anchored so the centered pipe never covers them) ----
+  layers.forEach(L=>{
+    html+=`<rect x="${x0}" y="${y}" width="${w}" height="${L.h}" fill="${L.fill}" opacity=".92"/>
+           <text class="strata-lab" x="${x0+12}" y="${y+L.h/2+3}" text-anchor="start" style="fill:${L.lc}">${L.lab}</text>`;
+    y+=L.h;
+  });
+
+  // ---- subgrade / invert band ----
+  html+=`<rect x="${x0}" y="${layerBottom}" width="${w}" height="${subH}" fill="var(--bg)" opacity=".7"/>
+         <text class="strata-lab" x="${x0+12}" y="${layerBottom+subH/2+3}" text-anchor="start" style="fill:var(--faint)">SUB-GRADE / INVERT</text>`;
+
+  // ---- RCP pipe bedded on stone, springline mid-trench, centered ----
+  const pcx=cx, pcy=74, pr=26;
+  html+=`<circle cx="${pcx}" cy="${pcy}" r="${pr}" fill="none" stroke="var(--clay)" stroke-width="8"/>
+         <circle cx="${pcx}" cy="${pcy}" r="${pr-6}" fill="#0b1622"/>
+         <text x="${pcx}" y="${pcy+3}" text-anchor="middle" style="font-family:var(--mono);font-size:9.5px;fill:var(--clay)">48&quot; RCP</text>`;
+
+  // ---- caption ----
+  html+=`<text class="sta" x="${x0-5}" y="${top-12}" style="fill:var(--brass)">SECTION A&ndash;A &middot; STA 5+00</text>`;
+
+  g.innerHTML=html;
+}
+
+/* ============================================================================
+   THEME + REVEAL + INIT
+============================================================================ */
+const themeBtn=document.getElementById("themeBtn");
+themeBtn.addEventListener("click",()=>{
+  const dark=document.documentElement.getAttribute("data-theme")!=="light";
+  document.documentElement.setAttribute("data-theme",dark?"light":"dark");
+  themeBtn.textContent=dark?"☾ Dark":"☼ Light";
+});
+
+function initReveal(){
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+}
+
+function init(){
+  buildSpine();
+  renderMatrix();
+  renderPeople();
+  renderBay();
+  renderPreview();      // also populates matrix metrics + reveal nodes added above
+  initReveal();
+}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
