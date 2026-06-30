@@ -60,6 +60,13 @@ const privacyModes: { id: ArtemisIX19Privacy; label: string }[] = [
 ];
 
 const savedPackagesStorageKey = "artemisix19.savedPackages.v2";
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const selectionSurface =
+  "rounded-md border text-left transition-colors " + focusRing;
+const actionSurface =
+  "inline-flex max-w-full items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors " +
+  focusRing;
 
 type SavedArtemisIX19Package = {
   id: string;
@@ -85,8 +92,12 @@ export function ArtemisIX19Generator() {
   );
   const [triangleLocked, setTriangleLocked] = useState(false);
   const [intensity, setIntensity] = useState(3);
-  const [copied, setCopied] = useState(false);
-  const [markdownCopied, setMarkdownCopied] = useState(false);
+  const [promptCopyState, setPromptCopyState] = useState<"idle" | "copied" | "downloaded">(
+    "idle",
+  );
+  const [markdownCopyState, setMarkdownCopyState] = useState<
+    "idle" | "copied" | "downloaded"
+  >("idle");
   const [savedPackages, setSavedPackages] = useState<SavedArtemisIX19Package[]>([]);
   const [storageReady, setStorageReady] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
@@ -108,6 +119,9 @@ export function ArtemisIX19Generator() {
   );
 
   const source = artemisIX19Sources.find((item) => item.id === sourceId) ?? artemisIX19Sources[0];
+  const selectedAsset =
+    artemisIX19AssetProfiles.find((item) => item.id === assetType) ??
+    artemisIX19AssetProfiles[0];
   const intent =
     artemisIX19SolutionIntents.find((item) => item.id === intentId) ??
     artemisIX19SolutionIntents[0];
@@ -160,21 +174,47 @@ export function ArtemisIX19Generator() {
     setTerrainId(artemisIX19SolutionTerrains[0].id);
     setTriangleLocked(false);
     setIntensity(3);
-    setCopied(false);
-    setMarkdownCopied(false);
+    setPromptCopyState("idle");
+    setMarkdownCopyState("idle");
     setSavedNotice(false);
   }
 
-  async function copyPrompt() {
-    await navigator.clipboard.writeText(generated.prompt);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+  async function copyText({
+    content,
+    filename,
+    setState,
+  }: {
+    content: string;
+    filename: string;
+    setState: React.Dispatch<React.SetStateAction<"idle" | "copied" | "downloaded">>;
+  }) {
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error("Clipboard API unavailable");
+      }
+      await navigator.clipboard.writeText(content);
+      setState("copied");
+    } catch {
+      downloadTextFile({ content, filename, type: "text/plain" });
+      setState("downloaded");
+    }
+    window.setTimeout(() => setState("idle"), 1800);
   }
 
-  async function copyMarkdown() {
-    await navigator.clipboard.writeText(markdown);
-    setMarkdownCopied(true);
-    window.setTimeout(() => setMarkdownCopied(false), 1800);
+  function copyPrompt() {
+    void copyText({
+      content: generated.prompt,
+      filename: `artemisix19-${source.id}-${assetType}-prompt.txt`,
+      setState: setPromptCopyState,
+    });
+  }
+
+  function copyMarkdown() {
+    void copyText({
+      content: markdown,
+      filename: `artemisix19-${source.id}-${assetType}.md`,
+      setState: setMarkdownCopyState,
+    });
   }
 
   function downloadTextFile({
@@ -191,8 +231,10 @@ export function ArtemisIX19Generator() {
     const link = document.createElement("a");
     link.href = url;
     link.download = filename;
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
   function downloadJson() {
@@ -245,16 +287,34 @@ export function ArtemisIX19Generator() {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-      <section className="rounded-lg border border-border/70 bg-navy-deep/45 p-5 shadow-panel">
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+      <section className="min-w-0 overflow-hidden rounded-lg border border-border/70 bg-navy-deep/45 p-4 shadow-panel sm:p-5">
         <div className="flex items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-[0.66rem] uppercase tracking-wider text-signal-soft">
-              Autonomous Console
+              Codex Leadership Console
             </p>
             <h2 className="display-serif mt-2 text-2xl text-parchment">ArtemisIX19 Generator</h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              Configure the client problem, lock the triangle, and produce a source-labeled
+              package with a human review gate.
+            </p>
           </div>
           <ShieldCheck className="h-6 w-6 text-gold-soft" aria-hidden />
+        </div>
+
+        <CommandSpine generated={generated} />
+
+        <div className="mt-5 rounded-md border border-gold/25 bg-gold/5 p-4">
+          <p className="font-mono text-[0.58rem] uppercase tracking-wider text-gold-soft">
+            Active Brief
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-foreground/84">
+            {generated.executiveBrief}
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+            {generated.operatorBrief}
+          </p>
         </div>
 
         <div className="mt-6 space-y-6">
@@ -276,7 +336,8 @@ export function ArtemisIX19Generator() {
                         setTriangleLocked(false);
                       }}
                       className={cn(
-                        "min-h-24 rounded-md border p-3 text-left transition-colors",
+                        selectionSurface,
+                        "min-h-24 p-3",
                         intentId === item.id
                           ? "border-gold/55 bg-gold/10 text-parchment"
                           : "border-border/70 bg-background/25 text-muted-foreground hover:border-signal-soft/45 hover:text-foreground",
@@ -306,7 +367,8 @@ export function ArtemisIX19Generator() {
                         setTriangleLocked(false);
                       }}
                       className={cn(
-                        "min-h-24 rounded-md border p-3 text-left transition-colors",
+                        selectionSurface,
+                        "min-h-24 p-3",
                         terrainId === item.id
                           ? "border-signal-soft/55 bg-signal-soft/10 text-parchment"
                           : "border-border/70 bg-background/25 text-muted-foreground hover:border-signal-soft/45 hover:text-foreground",
@@ -324,7 +386,8 @@ export function ArtemisIX19Generator() {
                 aria-pressed={triangleLocked}
                 onClick={() => setTriangleLocked(true)}
                 className={cn(
-                  "group relative flex w-full items-center gap-4 overflow-hidden rounded-md border p-4 text-left transition-colors",
+                  selectionSurface,
+                  "group relative flex w-full items-center gap-4 overflow-hidden p-4",
                   triangleLocked
                     ? "border-gold/60 bg-gold/10 text-parchment shadow-[0_0_36px_rgba(242,208,107,0.14)]"
                     : "border-border/70 bg-background/25 text-muted-foreground hover:border-gold/45 hover:text-foreground",
@@ -364,14 +427,23 @@ export function ArtemisIX19Generator() {
                     setTriangleLocked(false);
                   }}
                   className={cn(
-                    "rounded-md border p-3 text-left transition-colors",
+                    selectionSurface,
+                    "p-3",
                     sourceId === item.id
                       ? "border-gold/55 bg-gold/10 text-parchment"
                       : "border-border/70 bg-background/25 text-muted-foreground hover:border-signal-soft/45 hover:text-foreground",
                   )}
                 >
-                  <span className="block text-sm font-semibold">{item.title}</span>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-semibold">{item.title}</span>
+                    <span className="rounded-full border border-border/60 bg-background/30 px-2 py-0.5 font-mono text-[0.56rem] uppercase tracking-wider text-muted-foreground">
+                      {item.status}
+                    </span>
+                  </span>
                   <span className="mt-1 block text-xs leading-relaxed">{item.family}</span>
+                  <span className="mt-2 block text-xs leading-relaxed text-muted-foreground">
+                    {item.leadershipUse}
+                  </span>
                 </button>
               ))}
             </div>
@@ -391,6 +463,7 @@ export function ArtemisIX19Generator() {
                     onClick={() => setAssetType(profile.id)}
                     className={cn(
                       "grid aspect-square place-items-center rounded-md border transition-colors",
+                      focusRing,
                       assetType === profile.id
                         ? "border-gold/60 bg-gold/10 text-gold-soft"
                         : "border-border/70 bg-background/25 text-muted-foreground hover:border-signal-soft/45 hover:text-signal-soft",
@@ -401,6 +474,10 @@ export function ArtemisIX19Generator() {
                 );
               })}
             </div>
+            <p className="mt-3 rounded-md border border-border/50 bg-background/25 p-3 text-xs leading-relaxed text-muted-foreground">
+              <span className="font-semibold text-parchment">{selectedAsset.command}</span>:{" "}
+              {selectedAsset.output}
+            </p>
           </ControlGroup>
 
           <ControlGroup label="Audience">
@@ -413,6 +490,7 @@ export function ArtemisIX19Generator() {
                   onClick={() => setAudience(item)}
                   className={cn(
                     "rounded-md border px-3 py-2 text-sm transition-colors",
+                    focusRing,
                     audience === item
                       ? "border-gold/55 bg-gold/10 text-parchment"
                       : "border-border/70 bg-background/25 text-muted-foreground hover:border-signal-soft/45 hover:text-foreground",
@@ -434,6 +512,7 @@ export function ArtemisIX19Generator() {
                   onClick={() => setPrivacy(item.id)}
                   className={cn(
                     "rounded-md border px-3 py-2 text-sm transition-colors",
+                    focusRing,
                     privacy === item.id
                       ? "border-emerald-300/45 bg-emerald-400/10 text-emerald-100"
                       : "border-border/70 bg-background/25 text-muted-foreground hover:border-emerald-300/35 hover:text-foreground",
@@ -453,7 +532,7 @@ export function ArtemisIX19Generator() {
               max="5"
               value={intensity}
               onChange={(event) => setIntensity(Number(event.target.value))}
-              className="w-full accent-gold"
+              className={cn("w-full accent-gold", focusRing)}
             />
             <div className="mt-2 flex justify-between font-mono text-[0.58rem] uppercase tracking-wider text-muted-foreground">
               <span>Restrained</span>
@@ -461,31 +540,46 @@ export function ArtemisIX19Generator() {
             </div>
           </ControlGroup>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3" aria-live="polite">
             <button
               type="button"
               onClick={copyPrompt}
-              className="inline-flex items-center gap-2 rounded-md border border-gold/35 bg-gold/10 px-4 py-2 text-sm text-gold-soft transition-colors hover:bg-gold/15"
+              className={cn(actionSurface, "border-gold/35 bg-gold/10 text-gold-soft hover:bg-gold/15")}
             >
-              <Clipboard className="h-4 w-4" aria-hidden />
-              {copied ? "Copied" : "Copy Prompt"}
+              {promptCopyState === "copied" ? (
+                <Check className="h-4 w-4" aria-hidden />
+              ) : (
+                <Clipboard className="h-4 w-4" aria-hidden />
+              )}
+              {promptCopyState === "copied"
+                ? "Prompt Copied"
+                : promptCopyState === "downloaded"
+                  ? "Prompt Downloaded"
+                  : "Copy Prompt"}
             </button>
             <button
               type="button"
               onClick={copyMarkdown}
-              className="inline-flex items-center gap-2 rounded-md border border-gold/35 bg-gold/10 px-4 py-2 text-sm text-gold-soft transition-colors hover:bg-gold/15"
+              className={cn(actionSurface, "border-gold/35 bg-gold/10 text-gold-soft hover:bg-gold/15")}
             >
-              {markdownCopied ? (
+              {markdownCopyState === "copied" ? (
                 <Check className="h-4 w-4" aria-hidden />
               ) : (
                 <Copy className="h-4 w-4" aria-hidden />
               )}
-              {markdownCopied ? "Markdown Copied" : "Copy Markdown"}
+              {markdownCopyState === "copied"
+                ? "Markdown Copied"
+                : markdownCopyState === "downloaded"
+                  ? "Markdown Downloaded"
+                  : "Copy Markdown"}
             </button>
             <button
               type="button"
               onClick={savePackage}
-              className="inline-flex items-center gap-2 rounded-md border border-emerald-300/35 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition-colors hover:bg-emerald-400/15"
+              className={cn(
+                actionSurface,
+                "border-emerald-300/35 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/15",
+              )}
             >
               {savedNotice ? (
                 <Check className="h-4 w-4" aria-hidden />
@@ -497,7 +591,10 @@ export function ArtemisIX19Generator() {
             <button
               type="button"
               onClick={downloadJson}
-              className="inline-flex items-center gap-2 rounded-md border border-signal-soft/35 bg-signal-soft/10 px-4 py-2 text-sm text-signal-soft transition-colors hover:bg-signal-soft/15"
+              className={cn(
+                actionSurface,
+                "border-signal-soft/35 bg-signal-soft/10 text-signal-soft hover:bg-signal-soft/15",
+              )}
             >
               <Download className="h-4 w-4" aria-hidden />
               Export JSON
@@ -505,7 +602,10 @@ export function ArtemisIX19Generator() {
             <button
               type="button"
               onClick={downloadMarkdown}
-              className="inline-flex items-center gap-2 rounded-md border border-signal-soft/35 bg-signal-soft/10 px-4 py-2 text-sm text-signal-soft transition-colors hover:bg-signal-soft/15"
+              className={cn(
+                actionSurface,
+                "border-signal-soft/35 bg-signal-soft/10 text-signal-soft hover:bg-signal-soft/15",
+              )}
             >
               <FileText className="h-4 w-4" aria-hidden />
               Export MD
@@ -513,7 +613,10 @@ export function ArtemisIX19Generator() {
             <button
               type="button"
               onClick={reset}
-              className="inline-flex items-center gap-2 rounded-md border border-border/70 bg-background/25 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-silver/35 hover:text-foreground"
+              className={cn(
+                actionSurface,
+                "border-border/70 bg-background/25 text-muted-foreground hover:border-silver/35 hover:text-foreground",
+              )}
             >
               <RefreshCw className="h-4 w-4" aria-hidden />
               Reset
@@ -522,9 +625,9 @@ export function ArtemisIX19Generator() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-border/70 bg-background/30 p-5 shadow-panel">
+      <section className="min-w-0 overflow-hidden rounded-lg border border-border/70 bg-background/30 p-4 shadow-panel sm:p-5">
         <div className="flex flex-col justify-between gap-4 border-b border-border/60 pb-5 lg:flex-row lg:items-start">
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-[0.66rem] uppercase tracking-wider text-gold-soft">
               {generated.assetLabel} Package
             </p>
@@ -536,7 +639,7 @@ export function ArtemisIX19Generator() {
               {generated.convergence.clickPath.map((step) => (
                 <span
                   key={step}
-                  className="rounded-full border border-border/60 bg-navy-deep/45 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-wider text-muted-foreground"
+                  className="max-w-full break-words rounded-full border border-border/60 bg-navy-deep/45 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-wider text-muted-foreground"
                 >
                   {step}
                 </span>
@@ -549,13 +652,28 @@ export function ArtemisIX19Generator() {
           </span>
         </div>
 
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <MetricTile label="Audience" value={generated.audience} />
+          <MetricTile label="Visibility" value={privacyModes.find((item) => item.id === privacy)?.label ?? privacy} />
+          <MetricTile label="Intensity" value={`${generated.intensity} / 5`} />
+          <MetricTile label="Package" value={`${source.id}-${assetType}`} />
+        </div>
+
         <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_0.86fr]">
           <div className="space-y-5">
+            <OutputBlock title="Codex Leadership Brief">
+              <div className="space-y-3 text-sm leading-relaxed text-foreground/84">
+                <p>{generated.executiveBrief}</p>
+                <p className="rounded-md border border-gold/20 bg-gold/5 p-3 text-muted-foreground">
+                  {generated.operatorBrief}
+                </p>
+              </div>
+            </OutputBlock>
             <ConvergenceCard generated={generated} />
             <ArtifactPreview generated={generated} maxPlot={maxPlot} />
 
             <OutputBlock title="Master Prompt">
-              <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-foreground/84">
+              <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap break-words rounded-md border border-border/40 bg-background/30 p-3 font-mono text-xs leading-relaxed text-foreground/84">
                 {generated.prompt}
               </pre>
             </OutputBlock>
@@ -570,6 +688,8 @@ export function ArtemisIX19Generator() {
           </div>
 
           <div className="space-y-5">
+            <ProvenancePanel generated={generated} />
+
             <OutputBlock title="Category Stack">
               <dl className="grid gap-3 text-sm">
                 {[
@@ -598,6 +718,14 @@ export function ArtemisIX19Generator() {
               onDownload={downloadSavedPackage}
               onRemove={removeSavedPackage}
             />
+
+            <OutputBlock title="Handoff Actions">
+              <OrderedList items={generated.handoffActions} />
+            </OutputBlock>
+
+            <OutputBlock title="Review Gate">
+              <Checklist items={generated.reviewChecklist} />
+            </OutputBlock>
 
             <OutputBlock title="Signal Plot">
               <div className="space-y-3">
@@ -686,6 +814,94 @@ export function ArtemisIX19Generator() {
         </div>
       </section>
     </div>
+  );
+}
+
+function CommandSpine({ generated }: { generated: ArtemisIX19GeneratedPackage }) {
+  const steps = [
+    { label: "Purpose", value: generated.convergence.clickPath[0], tone: "text-gold-soft" },
+    { label: "Terrain", value: generated.convergence.clickPath[1], tone: "text-signal-soft" },
+    { label: "Triangle", value: generated.convergence.clickPath[2], tone: "text-parchment" },
+    { label: "Review", value: generated.privacy, tone: "text-emerald-100" },
+  ];
+
+  return (
+    <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-2">
+      {steps.map((step, index) => (
+        <div
+          key={step.label}
+          className="min-w-0 rounded-md border border-border/55 bg-background/25 p-3"
+        >
+          <p className="font-mono text-[0.56rem] uppercase tracking-wider text-muted-foreground">
+            {String(index + 1).padStart(2, "0")} / {step.label}
+          </p>
+          <p className={cn("mt-1 break-words text-sm font-semibold", step.tone)}>{step.value}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MetricTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-md border border-border/55 bg-navy-deep/35 p-3">
+      <p className="font-mono text-[0.56rem] uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 break-words text-sm font-semibold text-parchment">{value}</p>
+    </div>
+  );
+}
+
+function ProvenancePanel({ generated }: { generated: ArtemisIX19GeneratedPackage }) {
+  return (
+    <OutputBlock title="Source Provenance">
+      <div className="space-y-4">
+        <div className="rounded-md border border-border/50 bg-background/25 p-3">
+          <p className="font-mono text-[0.58rem] uppercase tracking-wider text-muted-foreground">
+            Family / Status
+          </p>
+          <p className="mt-1 text-sm leading-relaxed text-foreground/84">
+            {generated.provenance.sourceFamily}
+          </p>
+          <p className="mt-2 inline-flex max-w-full rounded-full border border-gold/25 bg-gold/5 px-2 py-0.5 font-mono text-[0.56rem] uppercase tracking-wider text-gold-soft">
+            {generated.provenance.status}
+          </p>
+        </div>
+        <p className="rounded-md border border-border/50 bg-background/25 p-3 text-sm leading-relaxed text-muted-foreground">
+          {generated.provenance.influenceNote}
+        </p>
+        <div>
+          <p className="font-mono text-[0.58rem] uppercase tracking-wider text-signal-soft">
+            Sanitized Inputs
+          </p>
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/84">
+            {generated.provenance.sanitizedInputs.map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-soft" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="font-mono text-[0.58rem] uppercase tracking-wider text-signal-soft">
+            Visible Signals
+          </p>
+          <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/84">
+            {generated.provenance.visibleSignals.map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-signal-soft" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <p className="rounded-md border border-emerald-300/25 bg-emerald-400/10 p-3 text-xs leading-relaxed text-emerald-100">
+          {generated.provenance.boundary}
+        </p>
+      </div>
+    </OutputBlock>
   );
 }
 
@@ -885,8 +1101,8 @@ function PackageVault({
         <div className="space-y-3">
           {savedPackages.map((record) => (
             <div key={record.id} className="rounded-md border border-border/50 bg-background/25 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
                   <p className="text-sm font-semibold text-parchment">{record.label}</p>
                   <p className="mt-1 font-mono text-[0.58rem] uppercase tracking-wider text-muted-foreground">
                     {record.assetLabel} · {formatSavedAt(record.savedAt)}
@@ -898,7 +1114,10 @@ function PackageVault({
                     title="Download saved Markdown"
                     aria-label={`Download ${record.label}`}
                     onClick={() => onDownload(record)}
-                    className="grid h-8 w-8 place-items-center rounded-md border border-signal-soft/35 bg-signal-soft/10 text-signal-soft transition-colors hover:bg-signal-soft/15"
+                    className={cn(
+                      "grid h-8 w-8 place-items-center rounded-md border border-signal-soft/35 bg-signal-soft/10 text-signal-soft transition-colors hover:bg-signal-soft/15",
+                      focusRing,
+                    )}
                   >
                     <Download className="h-4 w-4" aria-hidden />
                   </button>
@@ -907,7 +1126,10 @@ function PackageVault({
                     title="Remove saved package"
                     aria-label={`Remove ${record.label}`}
                     onClick={() => onRemove(record.id)}
-                    className="grid h-8 w-8 place-items-center rounded-md border border-border/70 bg-background/25 text-muted-foreground transition-colors hover:border-rose-300/45 hover:text-rose-100"
+                    className={cn(
+                      "grid h-8 w-8 place-items-center rounded-md border border-border/70 bg-background/25 text-muted-foreground transition-colors hover:border-rose-300/45 hover:text-rose-100",
+                      focusRing,
+                    )}
                   >
                     <Trash2 className="h-4 w-4" aria-hidden />
                   </button>
@@ -943,7 +1165,7 @@ function DailyLine({ label, value }: { label: string; value: string }) {
 
 function ControlGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div>
+    <div className="min-w-0">
       <p className="mb-2 font-mono text-[0.62rem] uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
@@ -954,7 +1176,7 @@ function ControlGroup({ label, children }: { label: string; children: React.Reac
 
 function OutputBlock({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-md border border-border/60 bg-navy-deep/45 p-4">
+    <div className="min-w-0 overflow-hidden rounded-md border border-border/60 bg-navy-deep/45 p-4">
       <p className="mb-3 font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
         {title}
       </p>
@@ -966,11 +1188,27 @@ function OutputBlock({ title, children }: { title: string; children: React.React
 function OrderedList({ items }: { items: string[] }) {
   return (
     <ol className="space-y-2 text-sm leading-relaxed text-foreground/84">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <li key={item} className="rounded-md border border-border/50 bg-background/25 p-3">
-          {item}
+          <span className="mr-2 font-mono text-[0.58rem] uppercase tracking-wider text-gold-soft">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <span>{item}</span>
         </li>
       ))}
     </ol>
+  );
+}
+
+function Checklist({ items }: { items: string[] }) {
+  return (
+    <ul className="space-y-2 text-sm leading-relaxed text-foreground/84">
+      {items.map((item) => (
+        <li key={item} className="flex gap-3 rounded-md border border-border/50 bg-background/25 p-3">
+          <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-100" aria-hidden />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
   );
 }

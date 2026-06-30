@@ -33,6 +33,8 @@ export type ArtemisIX19Source = {
   family: string;
   status: "Public-safe rebuild" | "Private reference" | "Sanitize before release";
   summary: string;
+  leadershipUse: string;
+  provenanceNote: string;
   sourceSet: string[];
   signals: string[];
   outputAngles: string[];
@@ -88,6 +90,8 @@ export type ArtemisIX19GeneratedPackage = {
   audience: ArtemisIX19Audience;
   privacy: ArtemisIX19Privacy;
   intensity: number;
+  executiveBrief: string;
+  operatorBrief: string;
   prompt: string;
   imagePrompt: string;
   renderPlan: string[];
@@ -95,6 +99,8 @@ export type ArtemisIX19GeneratedPackage = {
   movieBeats: string[];
   plotPoints: { label: string; value: number }[];
   soundCue: string;
+  handoffActions: string[];
+  reviewChecklist: string[];
   categories: {
     promptCategory: string;
     movieCategory: string;
@@ -112,6 +118,14 @@ export type ArtemisIX19GeneratedPackage = {
     projectPoint: string;
     purpose: string;
     meaning: string;
+  };
+  provenance: {
+    sourceFamily: string;
+    status: ArtemisIX19Source["status"];
+    influenceNote: string;
+    sanitizedInputs: string[];
+    visibleSignals: string[];
+    boundary: string;
   };
   manifest: {
     version: string;
@@ -134,6 +148,10 @@ export const artemisIX19Sources: ArtemisIX19Source[] = [
     status: "Sanitize before release",
     summary:
       "Turns geodesic dome workbench lineage into public-safe fabrication narratives, render directions, shop-card prompts, connector logic, and inspection plots.",
+    leadershipUse:
+      "Use this family when the client needs visible proof that geometry, production sequence, and inspection language can become one controlled package.",
+    provenanceNote:
+      "Influenced by fabrication workbench patterns, but regenerated as generic geometry, public-safe labels, and synthetic review language.",
     sourceSet: [
       "Goldberg geodesic shell workbench",
       "Dowel/socket connector system",
@@ -163,6 +181,10 @@ export const artemisIX19Sources: ArtemisIX19Source[] = [
     status: "Public-safe rebuild",
     summary:
       "Converts the table-base experiments into an autonomous topology generator for prompts, visual assembly logic, constraint plots, and product storytelling.",
+    leadershipUse:
+      "Use this family when the client needs to see a design system become a product surface with constraints, states, and clear pilot value.",
+    provenanceNote:
+      "Influenced by table-base topology explorations, but rebuilt as abstract node logic and non-manufacturing-ready product narrative.",
     sourceSet: [
       "Verified node-driven topology",
       "Gemini miter augmented table base",
@@ -190,6 +212,10 @@ export const artemisIX19Sources: ArtemisIX19Source[] = [
     status: "Sanitize before release",
     summary:
       "Reframes the atlas into a story generator for public-safe routes, map-scene prompts, character-guide boards, video sequences, and ambient soundscapes.",
+    leadershipUse:
+      "Use this family when the client needs spatial storytelling, itinerary logic, and terrain confidence without publishing exact private references.",
+    provenanceNote:
+      "Influenced by atlas and map-scene experiments, but expressed as planning-grade story logic with no embedded tiles, keys, or verified-coordinate claims.",
     sourceSet: [
       "Clinical Mapbox 3D satellite atlas",
       "Polished interactive atlas",
@@ -218,6 +244,10 @@ export const artemisIX19Sources: ArtemisIX19Source[] = [
     status: "Public-safe rebuild",
     summary:
       "Converts the 3D brand-mark reference into a reusable motion identity system for image prompts, render scripts, movie openers, and audio logo cues.",
+    leadershipUse:
+      "Use this family when the client needs a premium command identity for launch films, executive demos, or branded system moments.",
+    provenanceNote:
+      "Influenced by brand-render direction, but limited to identity treatment and not presented as evidence of extra product capability.",
     sourceSet: [
       "Artemis 3D brand mark",
       "Cinematic logo lighting reference",
@@ -245,7 +275,7 @@ export const artemisIX19AssetProfiles: ArtemisIX19AssetProfile[] = [
   {
     id: "prompt",
     label: "Prompt",
-    command: "Write autonomous multi-model instructions",
+    command: "Write model-ready implementation instructions",
     output: "A reusable prompt with role, source signals, constraints, and review gates.",
   },
   {
@@ -693,10 +723,33 @@ export function buildArtemisIX19Package({
   const triangleState = triangleLocked
     ? "Third-click triangle locked: the project has settled to one point, purpose, and meaning."
     : "Awaiting third-click triangle: keep options visible until the client commits the convergence point.";
+  const executiveBrief = [
+    `${source.title} becomes a ${asset.label.toLowerCase()} package for ${terrain.label}.`,
+    intent.purpose,
+    `Leadership value: ${source.leadershipUse}`,
+  ].join(" ");
+  const operatorBrief = [
+    "Codex leadership loop: frame the client decision, map sanitized source signals, generate the artifact, expose the boundary, and prepare a reviewable handoff.",
+    `Current posture: ${triangleLocked ? "converged and ready for review" : "configured, awaiting triangle lock"}.`,
+  ].join(" ");
+  const handoffActions = [
+    `Use the ${asset.label.toLowerCase()} output to brief ${audience.toLowerCase()} stakeholders on ${intent.label.toLowerCase()}.`,
+    `Translate the strongest signal - ${source.signals[0]} - into a visible decision or production artifact.`,
+    `Attach the boundary note before this leaves the Artemis review context.`,
+    `Create the next package variant only after the reviewer confirms terrain, audience, and visibility mode.`,
+  ];
+  const reviewChecklist = [
+    "No raw protected HTML, embedded source assets, private coordinates, or client identifiers are present.",
+    "The decision improved by the package is named and connected to a source signal.",
+    "Assumptions, synthetic examples, and non-verified values remain labeled.",
+    "A human reviewer can accept, edit, or reject the package before publication or pilot use.",
+  ];
 
   const prompt = [
-    `Role: You are ArtemisIX19, an autonomous Artemis content and media generation operator.`,
+    `Role: You are ArtemisIX19, a deterministic Artemis package architect for leadership-grade content and media briefs.`,
     `Mission: ${asset.command} for ${source.title}.`,
+    `Executive brief: ${executiveBrief}`,
+    `Codex leadership posture: ${operatorBrief}`,
     `Two-click solution path: ${intent.label} for ${terrain.label}.`,
     `Third-click triangle: ${triangleState}`,
     `Audience: ${audience}. ${audienceDirectives[audience]}`,
@@ -704,10 +757,12 @@ export function buildArtemisIX19Package({
     `Reasoning mode: deductive contract requirements, inductive field and financial patterns, abductive alternative-solution discovery.`,
     `Style: ${intensityLabel}; premium, technical, clear, source-labeled, and implementation-aware.`,
     `Source signals:\n${signalList}`,
+    `Provenance note: ${source.provenanceNote}`,
     `Connected records: ${terrain.connects.join("; ")}.`,
     `Output rule: ${assetInstructions[assetType]}`,
     `Boundary: ${privacyRules[privacy]} ${source.boundary}`,
-    `Acceptance checks: name the decision improved, identify the source signal, state the limitation, and end with the next review action.`,
+    `Review checklist:\n${reviewChecklist.map((item) => `- ${item}`).join("\n")}`,
+    `Handoff actions:\n${handoffActions.map((item) => `- ${item}`).join("\n")}`,
   ].join("\n\n");
 
   const imagePrompt = [
@@ -724,6 +779,7 @@ export function buildArtemisIX19Package({
     `Materials: matte lunar base, brushed platinum structure, restrained gold edges, cyan signal overlays.`,
     `Overlays: ${source.signals.slice(0, 4).join(", ")}.`,
     `Convergence: render three decision inputs as a triangle that settles on ${intent.point.toLowerCase()}.`,
+    `Review layer: show provenance, limitation, and next decision as quiet annotations.`,
     `Fallback: static SVG/PNG export with the same source labels and boundary note.`,
   ];
 
@@ -735,6 +791,7 @@ export function buildArtemisIX19Package({
     `22-34s: Transform signals into ${asset.output.toLowerCase()}.`,
     `34-46s: Reveal decision value for ${audience.toLowerCase()} users.`,
     `46-55s: Display limitation and review gate: ${source.boundary}`,
+    `55-60s: End on a handoff action, not a claim of unsupervised automation.`,
   ];
 
   const movieBeats = [
@@ -766,6 +823,8 @@ export function buildArtemisIX19Package({
     audience,
     privacy,
     intensity: boundedIntensity,
+    executiveBrief,
+    operatorBrief,
     prompt,
     imagePrompt,
     renderPlan,
@@ -773,6 +832,8 @@ export function buildArtemisIX19Package({
     movieBeats,
     plotPoints,
     soundCue,
+    handoffActions,
+    reviewChecklist,
     categories: {
       promptCategory: pick(promptCategories, categorySeed),
       movieCategory: selectedMovieCategory,
@@ -794,6 +855,14 @@ export function buildArtemisIX19Package({
       projectPoint: intent.point,
       purpose: intent.purpose,
       meaning: intent.meaning,
+    },
+    provenance: {
+      sourceFamily: source.family,
+      status: source.status,
+      influenceNote: source.provenanceNote,
+      sanitizedInputs: source.sourceSet,
+      visibleSignals: source.signals,
+      boundary: `${privacyRules[privacy]} ${source.boundary}`,
     },
     manifest: {
       version: "ArtemisIX19-v2",
@@ -823,6 +892,14 @@ export function formatArtemisIX19Markdown(
     `Intensity: ${generated.intensity}`,
     `Version: ${generated.manifest.version}`,
     "",
+    "## Executive Brief",
+    "",
+    generated.executiveBrief,
+    "",
+    "## Codex Leadership Posture",
+    "",
+    generated.operatorBrief,
+    "",
     "## Triangle Convergence",
     "",
     generated.convergence.triangleState,
@@ -841,6 +918,21 @@ export function formatArtemisIX19Markdown(
     `- Style type: ${generated.categories.styleType}`,
     `- Solution category: ${generated.categories.solutionCategory}`,
     `- Public revenue idea: ${generated.categories.publicRevenueIdea}`,
+    "",
+    "## Provenance",
+    "",
+    `- Source family: ${generated.provenance.sourceFamily}`,
+    `- Source status: ${generated.provenance.status}`,
+    `- Influence note: ${generated.provenance.influenceNote}`,
+    `- Boundary: ${generated.provenance.boundary}`,
+    "",
+    "### Sanitized Inputs",
+    "",
+    ...generated.provenance.sanitizedInputs.map((item) => `- ${item}`),
+    "",
+    "### Visible Signals",
+    "",
+    ...generated.provenance.visibleSignals.map((item) => `- ${item}`),
     "",
     "## Master Prompt",
     "",
@@ -875,6 +967,14 @@ export function formatArtemisIX19Markdown(
     "## Sound Cue",
     "",
     generated.soundCue,
+    "",
+    "## Handoff Actions",
+    "",
+    ...generated.handoffActions.map((item, index) => `${index + 1}. ${item}`),
+    "",
+    "## Review Checklist",
+    "",
+    ...generated.reviewChecklist.map((item) => `- ${item}`),
     "",
     "## Boundary",
     "",

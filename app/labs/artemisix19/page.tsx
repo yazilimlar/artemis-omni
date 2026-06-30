@@ -1,7 +1,15 @@
-import { ArrowRight, CircuitBoard, Library, ShieldCheck, Wand2 } from "lucide-react";
+import {
+  ArrowRight,
+  CircuitBoard,
+  FileCheck2,
+  Library,
+  MousePointer2,
+  ShieldCheck,
+  Triangle,
+  Wand2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { PageHero } from "@/components/layout/PageHero";
 import { ArtemisIX19Generator } from "@/components/labs/ArtemisIX19Generator";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
@@ -20,10 +28,10 @@ import { getProofModules } from "@/data/proofLibrary";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
-  title: "ArtemisIX19 Autonomous Generator",
+  title: "ArtemisIX19 Command Workbench",
   path: "/labs/artemisix19",
   description:
-    "ArtemisIX19 is a public-safe autonomous generator studio with a two-click client solution path, triangle convergence, local package vault, Markdown export, and media package outputs.",
+    "ArtemisIX19 is a public-safe command workbench for deterministic client-solution packages, source-family provenance, Markdown export, and media-ready Artemis Omni deliverables.",
 });
 
 const relatedProofs = getProofModules([
@@ -35,20 +43,125 @@ const relatedProofs = getProofModules([
 export default function ArtemisIX19Page() {
   return (
     <>
-      <PageHero
-        eyebrow="Labs · ArtemisIX19"
-        title="Autonomous client solution and media generator for the Artemis reference library."
-        description="A public-safe branch of the Artemis proof system: two clicks identify a client purpose and operating terrain, the third click locks the triangle, and the page generates prompts, image briefs, render plans, video storyboards, plots, movie beats, sound cues, daily learning streams, and exportable local packages."
-      >
-        <div className="flex flex-wrap items-center gap-3">
-          <StatusBadge tone="test">ArtemisIX19</StatusBadge>
-          <StatusBadge tone="synthetic">Autonomous rules engine</StatusBadge>
-          <StatusBadge tone="private">Raw sources protected</StatusBadge>
-          <Button href="#generator" variant="outline">
-            Open Generator
-          </Button>
-        </div>
-      </PageHero>
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div className="absolute inset-0 -z-10 bg-lunar-radial opacity-95" aria-hidden />
+        <div
+          className="absolute inset-0 -z-10 bg-blueprint-grid bg-grid opacity-[0.13]"
+          aria-hidden
+        />
+        <Container className="grid min-w-0 gap-10 py-16 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:py-20">
+          <div className="min-w-0">
+            <p className="eyebrow">Labs · ArtemisIX19</p>
+            <h1 className="display-serif mt-4 max-w-4xl text-balance text-4xl leading-tight text-parchment sm:text-5xl lg:text-6xl">
+              ArtemisIX19 Command Workbench
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              A leadership-grade generator for Artemis Omni packages. Two clicks define the
+              client problem, the triangle locks the point, and the browser produces
+              source-labeled prompts, render plans, storyboards, plots, sound cues, daily
+              learning streams, and exportable Markdown.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <StatusBadge tone="test">ArtemisIX19</StatusBadge>
+              <StatusBadge tone="synthetic">Deterministic in-browser engine</StatusBadge>
+              <StatusBadge tone="private">Raw sources protected</StatusBadge>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Button href="#generator" size="lg">
+                Open Generator
+              </Button>
+              <Button
+                href="/library/programs#artemisix19-generator-studio"
+                variant="outline"
+                size="lg"
+              >
+                Catalog Entry
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Button>
+            </div>
+            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              {[
+                ["Inputs", "Purpose, terrain, source family"],
+                ["Outputs", "Prompt, image, render, video, plot, movie, sound"],
+                ["Governance", "Public-safe by default"],
+              ].map(([label, value]) => (
+                <div
+                  key={label}
+                  className="min-w-0 rounded-md border border-border/60 bg-background/25 p-4"
+                >
+                  <p className="font-mono text-[0.58rem] uppercase tracking-wider text-gold-soft">
+                    {label}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground/84">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative min-w-0 rounded-lg border border-border/70 bg-navy-deep/55 p-4 shadow-panel sm:p-6">
+            <div
+              className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/70 to-transparent"
+              aria-hidden
+            />
+            <div className="flex items-start justify-between gap-4 border-b border-border/60 pb-5">
+              <div>
+                <p className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+                  Codex Leadership Loop
+                </p>
+                <h2 className="display-serif mt-2 text-2xl text-parchment">Source to package</h2>
+              </div>
+              <ShieldCheck className="h-6 w-6 text-gold-soft" aria-hidden />
+            </div>
+            <div className="mt-5 space-y-3">
+              {[
+                {
+                  icon: MousePointer2,
+                  label: "Client signal",
+                  value: "Purpose and operating terrain are selected by the user.",
+                },
+                {
+                  icon: Triangle,
+                  label: "Convergence",
+                  value: "The triangle turns the path into point, purpose, and meaning.",
+                },
+                {
+                  icon: Library,
+                  label: "Source family",
+                  value: "Protected references appear only as sanitized influence and signals.",
+                },
+                {
+                  icon: FileCheck2,
+                  label: "Review package",
+                  value: "Markdown, JSON, local vault, and human review gates stay available.",
+                },
+              ].map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.label}
+                    className="grid min-w-0 grid-cols-[2.5rem_1fr] gap-3 rounded-md border border-border/50 bg-background/25 p-3"
+                  >
+                    <span className="grid h-10 w-10 place-items-center rounded-md border border-signal-soft/25 bg-signal-soft/10 text-signal-soft">
+                      <Icon className="h-4 w-4" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-mono text-[0.56rem] uppercase tracking-wider text-muted-foreground">
+                        {String(index + 1).padStart(2, "0")} / {item.label}
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-foreground/84">
+                        {item.value}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-5 rounded-md border border-emerald-300/25 bg-emerald-400/10 p-3 text-sm leading-relaxed text-emerald-100">
+              No API keys, backend agents, raw protected HTML, or external publishing are required.
+            </div>
+          </div>
+        </Container>
+      </section>
 
       <section className="border-b border-border/60 py-12 lg:py-16">
         <Container className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
@@ -72,15 +185,15 @@ export default function ArtemisIX19Page() {
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Operating Model"
-            title="One autonomous generator, seven output modes"
-            description="The generator makes a deterministic media package from a selected client path, Artemis source family, audience, privacy mode, and intensity setting. Every output includes a boundary rule."
+            title="One command generator, seven output modes"
+            description="The workbench makes a deterministic media package from a selected client path, Artemis source family, audience, privacy mode, and intensity setting. Every output includes provenance, handoff actions, and a boundary rule."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {[
               {
                 icon: Wand2,
                 title: "Auto Prompt",
-                body: "Multi-model-ready instructions with source signals, constraints, and acceptance checks.",
+                body: "Model-ready instructions with source signals, constraints, review checks, and handoff actions.",
               },
               {
                 icon: CircuitBoard,
