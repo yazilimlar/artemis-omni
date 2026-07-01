@@ -95,6 +95,31 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Contains a public browser Mapbox pk token. Public pk tokens are not secrets, but they must be URL-restricted to approved domains and never replaced with an sk secret token.",
   },
   {
+    slug: "artemis-atlas-all-countries",
+    title: "Artemis Atlas All Countries",
+    kind: "Showcase",
+    statusLabel: "Clone prototype",
+    statusTone: "test",
+    sourceType: "Cloned standalone HTML prototype",
+    summary:
+      "A 3D-first game-style atlas clone that simplifies discovery, campaign route insertion, itinerary planning, guide animation, directions, and partner/booking actions into one Journey command layer.",
+    bestPublicLink: {
+      href: "/labs/artemis-atlas-all-countries",
+      label: "Atlas All Countries",
+    },
+    tutorialUse:
+      "Use as the next phase atlas UX surface for mobile-first route discovery, itinerary customization, campaign loading, and character-led spatial storytelling.",
+    solutionFit:
+      "Creates a scalable product path for country packs, sponsored routes, affiliate booking flows, local partner onboarding, and destination intelligence campaigns.",
+    migrationPath: [
+      "Keep the clone isolated while the Journey UX is tested.",
+      "Add validated country datasets incrementally instead of implying complete global coverage.",
+      "Move reusable route, booking, guide, and HUD patterns into native Artemis components after the prototype proves the workflow.",
+    ],
+    boundary:
+      "All-countries scope is a product shell seeded by the current Türkiye/Greece/Bulgaria atlas data. Public Mapbox pk tokens are browser-readable and must be URL-restricted; secret sk tokens must never be shipped to the browser.",
+  },
+  {
     slug: "sewer-simulator-formula-icons",
     title: "Sewer Construction Formula Tutorial",
     kind: "Tutorial",

@@ -34,6 +34,11 @@ const fastLinks = [
     description: "Interactive cultural-route atlas with map fallbacks and commercial discovery layers.",
   },
   {
+    title: "Atlas All Countries",
+    href: "/labs/artemis-atlas-all-countries",
+    description: "3D-first game atlas clone with Journey commands, guide animation, and route insertion.",
+  },
+  {
     title: "Utility Intelligence Bridge",
     href: "/labs/utility-intelligence-bridge",
     description: "Public narrative for the sewer/utility cockpit and field-to-finance bridge.",

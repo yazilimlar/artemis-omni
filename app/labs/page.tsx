@@ -58,6 +58,22 @@ const standaloneLabModules = [
     boundary:
       "Contains a public Mapbox pk token that must remain URL-restricted before stronger public promotion.",
   },
+  {
+    title: "Artemis Atlas All Countries",
+    eyebrow: "World Atlas / Game Routes",
+    href: "/labs/artemis-atlas-all-countries",
+    statusLabel: "Clone prototype",
+    statusTone: "test" as const,
+    Icon: Globe2,
+    accentIcon: MapIcon,
+    description:
+      "A cloned and upgraded 3D-first atlas surface that combines journey discovery, campaign route loading, itinerary planning, walk/fly animation, and partner-style booking actions into one mobile-friendly command layer.",
+    signals: ["3D default", "HUD toggle", "Animated guides", "Journey builder"],
+    commercialPath:
+      "Best pilot path: destination game maps, sponsored country routes, itinerary products, local partner onboarding, and affiliate booking funnels.",
+    boundary:
+      "All-countries scope is a product shell seeded by the current Türkiye/Greece/Bulgaria atlas data. Public Mapbox pk tokens remain browser-readable and must be URL-restricted.",
+  },
 ];
 
 export const metadata = createMetadata({
@@ -107,10 +123,10 @@ export default function LabsPage() {
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Standalone Modules"
-            title="Two reviewed prototypes now become public Artemis Labs"
+            title="Reviewed prototypes become public Artemis Labs"
             description="These modules preserve the original standalone HTML engines for speed and visibility, while the surrounding Artemis site provides route discipline, catalog context, commercial direction, and review boundaries."
           />
-          <div className="mt-10 grid gap-5 lg:grid-cols-2">
+          <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {standaloneLabModules.map((module) => {
               const Icon = module.Icon;
               const AccentIcon = module.accentIcon;

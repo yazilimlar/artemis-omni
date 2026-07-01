@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/diana-moonshot",
     "/labs/tax-architecture-2026",
     "/labs/turkiye-atlas",
+    "/labs/artemis-atlas-all-countries",
     "/academy",
     "/tools",
     "/case-studies",
