@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#050813" />
+<title>5D Finance Architecture — Tax Lab 2026 (Preview)</title>
+<style>
+:root{
+  --bg:#050813;--bg2:#071426;--ink:#edf6ff;--soft:#bed2e8;--muted:#839ab6;--line:rgba(156,201,255,.18);
+  --panel:rgba(8,15,28,.74);--panel2:rgba(255,255,255,.065);--panel3:rgba(255,255,255,.035);
+  --blue:#69c7ff;--violet:#9b89ff;--gold:#ffd38a;--green:#66efac;--red:#ff6688;--orange:#ffb165;--steel:#a7bdd6;--c-income:var(--blue);--c-reduce:var(--gold);--c-credit:var(--green);--c-tax:var(--red);--c-pay:var(--orange);
+  --shadow:0 30px 110px rgba(0,0,0,.46);--r:24px;--focus:0 0 0 3px rgba(105,199,255,.30);color-scheme:dark;
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
+}
+:root.light{
+  --bg:#f5f8fc;--bg2:#e8f1fc;--ink:#071526;--soft:#243851;--muted:#63758b;--line:rgba(10,42,77,.16);
+  --panel:rgba(255,255,255,.82);--panel2:rgba(10,42,77,.055);--panel3:rgba(10,42,77,.035);
+  --blue:#006ab0;--violet:#7059c8;--gold:#996300;--green:#007c4f;--red:#b8284d;--orange:#ab5300;--steel:#405a76;--c-income:var(--blue);--c-reduce:var(--gold);--c-credit:var(--green);--c-tax:var(--red);--c-pay:var(--orange);
+  --shadow:0 20px 70px rgba(28,55,91,.16);color-scheme:light;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 16% 0%,rgba(105,199,255,.26),transparent 31%),radial-gradient(circle at 82% 4%,rgba(155,137,255,.24),transparent 32%),radial-gradient(circle at 58% 80%,rgba(255,211,138,.11),transparent 42%),linear-gradient(135deg,var(--bg),var(--bg2));color:var(--ink);}
+body{padding:20px;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.26;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(circle at 54% 32%,#000,transparent 80%)}
+button,input,select{font:inherit}button:focus-visible,input:focus-visible,select:focus-visible{outline:none;box-shadow:var(--focus)}a{color:var(--blue)}
+.shell{max-width:1680px;margin:0 auto;position:relative;z-index:1}.hero{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;margin-bottom:18px}.brand{display:flex;gap:16px;align-items:center}.mark{width:66px;height:66px;border-radius:23px;display:grid;place-items:center;background:conic-gradient(from 215deg,var(--blue),var(--violet),var(--gold),var(--blue));color:#05101d;font-weight:1000;letter-spacing:-2px;box-shadow:0 20px 70px rgba(105,199,255,.20);position:relative;overflow:hidden}.mark:after{content:"";position:absolute;inset:8px;border:1px solid rgba(5,10,20,.43);border-radius:17px}.mark span{position:relative;z-index:1}h1{font-size:clamp(34px,5vw,74px);line-height:.88;letter-spacing:-3.8px;margin:0}.tag{display:inline-block;vertical-align:middle;margin-left:9px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(255,211,138,.35);background:rgba(255,211,138,.08);border-radius:999px;padding:6px 9px}.subtitle{max-width:1030px;margin:12px 0 0;color:var(--soft);font-size:15px;line-height:1.52}.tools{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:15px;padding:10px 13px;cursor:pointer;backdrop-filter:blur(14px);transition:transform .16s ease,background .16s ease,border-color .16s ease;white-space:nowrap}.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.11);border-color:rgba(105,199,255,.40)}.btn.primary{border:0;background:linear-gradient(135deg,var(--blue),var(--violet));color:#06101b;font-weight:950}.btn.small{font-size:12px;padding:8px 10px;border-radius:12px}.btn.warn{border-color:rgba(255,177,101,.35);color:#ffe3c2}.btn.danger{border-color:rgba(255,102,136,.35);color:#ffdce5}.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pill{border:1px solid var(--line);background:var(--panel2);color:var(--soft);border-radius:999px;padding:7px 11px;font-size:12px}.layout{display:grid;grid-template-columns:minmax(350px,460px) 1fr;gap:18px;align-items:start}.panel,.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel3));backdrop-filter:blur(22px);box-shadow:var(--shadow);border-radius:var(--r)}.panel{position:sticky;top:15px;max-height:calc(100vh - 30px);overflow:auto;padding:17px}.panel::-webkit-scrollbar{width:8px}.panel::-webkit-scrollbar-thumb{border-radius:999px;background:rgba(156,201,255,.22)}.section{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 9px}.section h2{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--soft)}.section span{font-size:11px;color:var(--muted)}.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;border:1px solid var(--line);background:var(--panel3);border-radius:18px;padding:6px}.seg button{border:0;border-radius:12px;padding:10px 3px;background:transparent;color:var(--soft);font-weight:900;font-size:12px;cursor:pointer}.seg button.active{background:linear-gradient(135deg,var(--blue),var(--violet));color:#06101d}.control{border-bottom:1px solid rgba(156,201,255,.11);padding:12px 0}.controlTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.label{font-weight:900;font-size:13px;color:var(--soft);line-height:1.25}.hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}.num{display:flex;align-items:center;gap:5px;min-width:132px;justify-content:flex-end;border:1px solid rgba(156,201,255,.13);background:rgba(0,0,0,.18);border-radius:13px;padding:7px 9px}.num input{width:85px;border:0;outline:none;background:transparent;color:var(--ink);text-align:right;font-weight:950}.num .prefix,.num .suffix{font-size:12px;color:var(--muted)}input[type=range]{width:100%;accent-color:var(--blue)}.rangeMeta{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:2px}.impact{margin-top:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:11px}.effectChip{border:1px solid var(--line);background:rgba(105,199,255,.07);color:var(--soft);border-radius:999px;padding:4px 7px}.toggleLine{display:flex;gap:9px;align-items:flex-start;padding:10px 0;color:var(--soft);font-size:13px;font-weight:750}.toggleLine input{width:18px;height:18px;accent-color:var(--blue)}.warning{display:none;border:1px solid rgba(255,177,101,.34);background:rgba(255,177,101,.09);border-radius:16px;padding:11px 12px;color:#ffe6c9;font-size:12px;line-height:1.42}.warning.show{display:block}.light .warning{color:#4b2c00}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.card{padding:18px;min-width:0}.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}.span5{grid-column:span 5}.span4{grid-column:span 4}.span3{grid-column:span 3}.card h3{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 13px;font-size:16px;letter-spacing:-.2px}.card h3 span{font-size:12px;color:var(--muted);font-weight:650}.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kpi{min-height:126px;position:relative;overflow:hidden;border:1px solid rgba(156,201,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));border-radius:22px;padding:15px}.kpi:before{content:"";position:absolute;right:-52px;top:-55px;width:132px;height:132px;border-radius:50%;background:radial-gradient(circle,rgba(105,199,255,.20),transparent 69%)}.kpi small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em}.kpi strong{display:block;margin-top:11px;font-size:clamp(22px,2vw,34px);letter-spacing:-1.2px}.kpi em{display:block;margin-top:5px;color:var(--muted);font-size:12px;font-style:normal}.good{color:var(--green)}.bad{color:var(--red)}.gold{color:var(--gold)}.sceneWrap{height:690px;position:relative;border-radius:24px;overflow:hidden;border:1px solid rgba(156,201,255,.14);background:radial-gradient(circle at 53% 40%,rgba(105,199,255,.13),rgba(9,14,26,.78) 45%,rgba(2,4,10,.92));}.sceneWrap:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(255,255,255,.045),transparent 20%,transparent 78%,rgba(0,0,0,.22))}.scene{position:absolute;inset:0}.sceneFallback{display:none;position:absolute;inset:0;place-items:center;text-align:center;padding:28px;color:var(--soft);z-index:2}.sceneHud{position:absolute;left:14px;top:14px;right:14px;z-index:3;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.hudBox{border:1px solid var(--line);background:rgba(4,9,18,.67);backdrop-filter:blur(13px);border-radius:16px;padding:10px 12px}.hudBox small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em}.hudBox strong{display:block;margin-top:4px;font-size:16px}.legend{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.legend span{font-size:10px;color:var(--soft);border:1px solid var(--line);background:rgba(4,9,18,.56);border-radius:999px;padding:7px 9px}.sceneControls{position:absolute;left:14px;right:14px;bottom:14px;display:flex;gap:8px;flex-wrap:wrap;z-index:4}.nodePanel{position:absolute;right:14px;bottom:72px;width:min(395px,calc(100% - 28px));z-index:5;border:1px solid rgba(255,211,138,.30);background:rgba(4,9,18,.78);backdrop-filter:blur(15px);border-radius:18px;padding:14px}.nodePanel h4{margin:0 0 5px;color:var(--gold);font-size:14px;letter-spacing:.03em}.nodePanel p{margin:0;color:var(--soft);font-size:12px;line-height:1.42}.nodePanel .formula{margin-top:9px;padding:9px;border-radius:12px;background:rgba(255,255,255,.055);color:var(--steel);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.label3d{pointer-events:none;transform:translate(-50%,-105%);}.label3d .box{min-width:132px;max-width:220px;border:1px solid rgba(156,201,255,.26);background:rgba(3,8,16,.78);backdrop-filter:blur(12px);border-radius:12px;padding:8px 9px;box-shadow:0 16px 38px rgba(0,0,0,.35)}.label3d b{display:block;color:#f3dcad;font-size:11px;letter-spacing:.04em}.label3d span{display:block;margin-top:4px;color:#d7e8f8;font-size:11px}.label3d i{display:block;margin-top:4px;color:#88a5c2;font-size:10px;font-style:normal}.miniGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.mini{border:1px solid rgba(156,201,255,.12);background:rgba(255,255,255,.045);border-radius:16px;padding:12px;min-height:92px}.mini small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em}.mini strong{display:block;font-size:22px;margin-top:8px;letter-spacing:-.7px}.flow{display:grid;gap:8px}.flowRow{display:grid;grid-template-columns:112px 1fr 90px;gap:9px;align-items:center}.flowRow .name{color:var(--soft);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track{height:13px;background:rgba(255,255,255,.07);border:1px solid rgba(156,201,255,.10);border-radius:999px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:999px}.fill.neg{background:linear-gradient(90deg,var(--gold),var(--orange))}.fill.tax{background:linear-gradient(90deg,var(--orange),var(--red))}.fill.credit{background:linear-gradient(90deg,var(--green),var(--blue))}.flowRow .val{text-align:right;color:var(--soft);font-weight:850;font-size:12px}.bars{height:232px;display:flex;gap:8px;align-items:end;border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 8px 22px;position:relative}.bar{flex:1;min-width:18px;border-radius:10px 10px 0 0;background:linear-gradient(180deg,var(--orange),var(--red));position:relative}.bar span{position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap}.bar label{position:absolute;left:50%;top:calc(100% + 5px);transform:translateX(-50%);font-size:10px;color:var(--muted)}.tableWrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}td,th{border-bottom:1px solid rgba(156,201,255,.11);padding:9px;text-align:right;color:var(--soft)}td:first-child,th:first-child{text-align:left}th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.09em}.taxMap{display:grid;gap:8px}.taxline{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;border:1px solid rgba(156,201,255,.11);background:rgba(255,255,255,.04);border-radius:15px;padding:10px}.taxline code{color:var(--gold);font-weight:950}.taxline .desc{color:var(--soft);font-size:12px}.taxline .amt{font-weight:950}.foot{margin:18px 0 4px;color:var(--muted);font-size:12px;line-height:1.5}.srLive{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}.offlineNote{display:none;margin-top:8px;color:var(--muted);font-size:12px}
+@media(max-width:1180px){.layout{grid-template-columns:1fr}.panel{position:relative;top:auto;max-height:none}.kpis{grid-template-columns:repeat(2,1fr)}.span8,.span7,.span6,.span5,.span4,.span3{grid-column:span 12}.sceneWrap{height:620px}}
+@media(max-width:720px){body{padding:12px}.hero{grid-template-columns:1fr}.tools{justify-content:flex-start}.brand{align-items:flex-start}.mark{width:52px;height:52px;border-radius:18px}h1{font-size:39px;letter-spacing:-2.4px}.panel,.card{border-radius:20px}.kpis,.miniGrid{grid-template-columns:1fr}.sceneWrap{height:560px}.sceneHud{flex-direction:column;align-items:flex-start}.nodePanel{position:absolute;bottom:88px;left:10px;right:10px;width:auto}.flowRow{grid-template-columns:88px 1fr 76px}.seg button{font-size:11px}.sceneControls{bottom:10px}.label3d .box{display:none}}
+@media print{body{background:white;color:#111;padding:0}.panel,.sceneWrap,.btn,.tools{display:none!important}.card{box-shadow:none;break-inside:avoid;background:white;border:1px solid #ccc}.grid{display:block}.card{margin:12px}.kpis,.miniGrid{display:grid;grid-template-columns:repeat(2,1fr)}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div class="brand">
+      <div class="mark"><span>1040</span></div>
+      <div>
+        <h1>5D Finance Architecture <span class="tag">Tax Lab</span></h1>
+        <p class="subtitle">A business-grade individual tax parametric model: income as foundation, deductions as negative space, taxable income as load-bearing core, brackets as heat-stress slabs, credits as shields, and payments as satellites. Drag the geometry or use slicers. Colors are grouped so every slicer matches its 3D shape and label. <b>Dimensional model:</b> 2D plan &middot; 3D geometry (live) &middot; 4D time &amp; 5D scenarios (next build).</p>
+        <div class="pillrow">
+          <span class="pill">Tax Year 2026</span><span class="pill">3D Shape Language</span><span class="pill">Color-Grouped Slicers</span><span class="pill">Three.js WebGL</span><span class="pill">Scenario Ghost &middot; 5D preview</span>
+        </div>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="btn primary" id="shareBtn">Copy Scenario URL</button>
+      <button class="btn" id="exportBtn">Export CSV</button>
+      <button class="btn" id="themeBtn">Light / Dark</button>
+      <button class="btn" onclick="window.print()">Print / PDF</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel" aria-label="Tax model controls">
+      <div class="section"><h2>Filing geometry</h2><span>status drives brackets</span></div>
+      <div class="seg" id="filingSeg"></div>
+      <div class="section"><h2>Scenario presets</h2><span>load examples</span></div>
+      <div class="tools" style="justify-content:flex-start" id="presetBtns"></div>
+      <div id="controls"></div>
+      <label class="toggleLine"><input type="checkbox" id="eitcToggle"> <span>Include simplified EITC if eligible<br><small class="hint">Disabled automatically for married filing separately.</small></span></label>
+      <label class="toggleLine"><input type="checkbox" id="stateToggle"> <span>Include rough state/local flat-rate cash gauge<br><small class="hint">Planning-only: not a state-specific computation.</small></span></label>
+      <div class="warning" id="warnBox"></div>
+      <p class="foot">Educational estimator only. It does not file a return and intentionally omits AMT, NIIT, QBI, passive losses, Social Security taxation worksheets, penalties, and state-specific rules.</p>
+    </aside>
+
+    <section class="grid" aria-label="Tax model dashboard">
+      <div class="card span12">
+        <h3>Executive Tax Cockpit <span id="summaryLine">Live model</span></h3>
+        <div class="kpis" aria-live="polite">
+          <div class="kpi"><small id="resultLabel">Refund / Due</small><strong id="kpiResult">—</strong><em id="payStatus">payments vs liability</em></div>
+          <div class="kpi"><small>Total Federal Tax</small><strong id="kpiTax">—</strong><em>Income tax + SE tax</em></div>
+          <div class="kpi"><small>Effective Rate</small><strong id="kpiEff">—</strong><em>Federal tax / gross income</em></div>
+          <div class="kpi"><small>Top Marginal</small><strong id="kpiMarginal">—</strong><em>Last ordinary-tax layer</em></div>
+          <div class="kpi"><small>After-Modeled-Tax Cash</small><strong id="kpiNet">—</strong><em>Federal + rough state toggle</em></div>
+        </div>
+      </div>
+
+      <div class="card span8">
+        <h3>3D Tax Architecture <span>drag foundation / deduction columns / shield</span></h3>
+        <div class="sceneWrap" id="sceneWrap">
+          <div id="threeScene" class="scene" role="img" aria-label="Interactive 3D visualization of tax model layers"></div>
+          <div class="sceneFallback" id="sceneFallback"><div><h3>3D engine unavailable</h3><p>The dashboard still works, but the WebGL scene could not load. Use a modern browser with network access to the Three.js module CDN.</p></div></div>
+          <div class="sceneHud">
+            <div class="hudBox"><small>Architecture Mode</small><strong id="archMode">Isometric Load Path</strong></div>
+            <div class="legend"><span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c-income)"></i>Income</span><span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c-reduce)"></i>Reduces AGI</span><span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c-tax)"></i>Tax load</span><span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c-credit)"></i>Credits</span><span><i style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle;background:var(--c-pay)"></i>Payments</span></div>
+          </div>
+          <div class="nodePanel" id="nodePanel"><h4 id="nodeTitle">Taxable Core</h4><p id="nodeText">Click or hover a 3D object to inspect its formula, current value, and marginal effect.</p><div class="formula" id="nodeFormula">Taxable Income = AGI − deduction stack</div></div>
+          <div class="sceneControls">
+            <button class="btn small" data-camera="iso">Isometric</button>
+            <button class="btn small" data-camera="top">Top Flow</button>
+            <button class="btn small" data-camera="side">Side Stack</button>
+            <button class="btn small warn" id="pinGhostBtn">Pin Ghost</button>
+            <button class="btn small danger" id="clearGhostBtn">Clear Ghost</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card span4">
+        <h3>Structural Metrics <span>derived live</span></h3>
+        <div class="miniGrid">
+          <div class="mini"><small>AGI / Income</small><strong id="mAgi">—</strong></div>
+          <div class="mini"><small>Deduction Gravity</small><strong id="mDed">—</strong></div>
+          <div class="mini"><small>Taxable Core</small><strong id="mTaxable">—</strong></div>
+          <div class="mini"><small>Credit Shield</small><strong id="mCredit">—</strong></div>
+        </div>
+        <h3 style="margin-top:18px">Live Marginal Effects <span>+ unit move</span></h3>
+        <div class="flow" id="sensitivity"></div>
+      </div>
+
+      <div class="card span6">
+        <h3>Layer-by-Layer Cash Waterfall <span>Form 1040 logic</span></h3>
+        <div class="flow" id="waterfall"></div>
+      </div>
+      <div class="card span6">
+        <h3>Bracket Heat Load <span>ordinary income</span></h3>
+        <div class="bars" id="bracketBars"></div>
+      </div>
+      <div class="card span5">
+        <h3>1040 Line Map <span>simplified</span></h3>
+        <div class="taxMap" id="taxMap"></div>
+      </div>
+      <div class="card span7">
+        <h3>Audit Table <span>rounded dollars</span></h3>
+        <div class="tableWrap"><table><tbody id="auditTable"></tbody></table></div>
+      </div>
+      <div class="card span12">
+        <h3>Implementation Notes <span>what changed</span></h3>
+        <p class="foot">5D Tax Lab variant: control slicers are now color-grouped to match their 3D shapes and labels, tax brackets render as a stepped pyramid, and the payment satellite gains an orbit ring — building toward a 4D timeline scrubber and active 5D scenario comparison. This version replaces the pseudo-3D canvas with a real Three.js scene, uses volume-based scaling instead of radius inflation, attaches HTML info cards to geometry, implements direct drag-to-adjust for selected objects, and stores/restores scenarios locally and through URL encoding. Source constants are embedded as 2026 planning assumptions with comments in the code.</p>
+      </div>
+    </section>
+  </main>
+  <div class="srLive" id="liveSummary" aria-live="polite"></div>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+const $ = id => document.getElementById(id);
+const money = v => (v < 0 ? '-' : '') + '$' + Math.round(Math.abs(v || 0)).toLocaleString();
+const pct = v => ((v || 0) * 100).toFixed(1) + '%';
+const clamp = (v,min,max) => Math.min(max, Math.max(min, Number.isFinite(+v) ? +v : 0));
+const ROOT = document.documentElement;
+
+// 2026 federal planning constants. Sources: IRS IR-2025-103 / Rev. Proc. 2025-32, IRS retirement plan COLA notice, SSA 2026 contribution and benefit base.
+const TAX = {
+  year: 2026,
+  standard: { single:16100, mfj:32200, mfs:16100, hoh:24150 },
+  seniorExtra: { single:2000, hoh:2000, mfj:1600, mfs:1600 },
+  brackets: {
+    single:[[0,.10],[12400,.12],[50400,.22],[105700,.24],[201775,.32],[256225,.35],[640600,.37]],
+    mfs:[[0,.10],[12400,.12],[50400,.22],[105700,.24],[201775,.32],[256225,.35],[384350,.37]],
+    mfj:[[0,.10],[24800,.12],[100800,.22],[211400,.24],[403550,.32],[512450,.35],[768700,.37]],
+    hoh:[[0,.10],[17700,.12],[67450,.22],[105700,.24],[201750,.32],[256200,.35],[640600,.37]]
+  },
+  capGains: {
+    single:[[0,0],[49625,.15],[545500,.20]],
+    mfs:[[0,0],[49625,.15],[306900,.20]],
+    mfj:[[0,0],[99250,.15],[613700,.20]],
+    hoh:[[0,0],[66500,.15],[580750,.20]]
+  },
+  retirement:{ k401:24500, ira:7500, hsaSingle:4300, hsaFamily:8550 },
+  payroll:{ ssBase:184500, employeeSS:.062, employeeMed:.0145, seFactor:.9235, seSS:.124, seMed:.029, addMed:.009, addMedThreshold:{single:200000,hoh:200000,mfs:125000,mfj:250000} },
+  credits:{ ctc:2200, actc:1700, otherDep:500, ctcPhaseout:{single:200000,hoh:200000,mfs:200000,mfj:400000}, actcFloor:2500, actcRate:.15, phaseStep:1000, phaseLoss:50 },
+  eitc:{
+    // simplified 2026 approximation; model disallows MFS and caps investment income at $12,200.
+    invLimit:12200,
+    max:[664,4427,7316,8231], earnedAt:[8680,13020,18290,18290], phaseStartSingle:[10860,23890,23890,23890], phaseEndSingle:[19104,50740,57710,61833], phaseStartMFJ:[18140,31160,31160,31160], phaseEndMFJ:[26820,58863,65899,70224]
+  }
+};
+const FILING = { single:'Single', mfj:'Married Filing Jointly', mfs:'Married Filing Separately', hoh:'Head of Household' };
+const DEFAULT = { filing:'single', wages:92000, seIncome:0, ordinaryInv:1800, ltcg:3500, k401:8500, ira:0, hsa:0, itemized:0, children:0, otherDeps:0, age65:0, withholding:14500, estimated:0, stateRate:6.0, includeEITC:true, showState:false };
+const CONTROLS = [
+  {group:'Income foundation', key:'wages', label:'W‑2 wages', hint:'Earned wages before pre-tax deferrals. Subject to employee payroll tax.', min:0, max:750000, step:1000, prefix:'$', effect:'↑ AGI / ↑ payroll / ↑ tax', drag:1000},
+  {group:'Income foundation', key:'seIncome', label:'Self-employment profit', hint:'Schedule C/K‑1 style net earnings before simplified SE tax.', min:0, max:500000, step:1000, prefix:'$', effect:'↑ AGI / ↑ SE tax', drag:1000},
+  {group:'Income foundation', key:'ordinaryInv', label:'Interest / ordinary dividends', hint:'Ordinary investment income taxed at ordinary rates.', min:0, max:100000, step:500, prefix:'$', effect:'↑ AGI / ↑ ordinary tax', drag:500},
+  {group:'Income foundation', key:'ltcg', label:'LTCG / qualified dividends', hint:'Preferential income modeled with 0/15/20% capital gain layers.', min:0, max:300000, step:500, prefix:'$', effect:'↑ AGI / preferential tax', drag:500},
+  {group:'Above-line adjustments', key:'k401', label:'Pre-tax 401(k) / 403(b)', hint:'Reduces W‑2 box 1 taxable income; 2026 regular limit modeled.', min:0, max:TAX.retirement.k401, step:500, prefix:'$', effect:'↓ AGI / ↓ ordinary tax', drag:250},
+  {group:'Above-line adjustments', key:'ira', label:'Traditional IRA deduction', hint:'Simplified deductible IRA input, capped at 2026 regular contribution limit.', min:0, max:TAX.retirement.ira, step:250, prefix:'$', effect:'↓ AGI', drag:100},
+  {group:'Above-line adjustments', key:'hsa', label:'HSA deduction', hint:'Simplified HSA above-line deduction input.', min:0, max:TAX.retirement.hsaFamily, step:250, prefix:'$', effect:'↓ AGI', drag:100},
+  {group:'Deduction / credits', key:'itemized', label:'Itemized deductions', hint:'Compared against standard deduction. State/SALT limitations are not modeled.', min:0, max:120000, step:500, prefix:'$', effect:'↓ taxable if above standard', drag:250},
+  {group:'Deduction / credits', key:'children', label:'Qualifying children', hint:'Simplified CTC/ACTC model: $2,200 CTC; ACTC limited by earned income and cap.', min:0, max:6, step:1, effect:'↑ credits', drag:0.02},
+  {group:'Deduction / credits', key:'otherDeps', label:'Other dependents', hint:'Simplified $500 other dependent credit.', min:0, max:6, step:1, effect:'↑ credits', drag:0.02},
+  {group:'Deduction / credits', key:'age65', label:'Taxpayers age 65+', hint:'Adds age-65 standard deduction increment. Senior bonus deduction not fully modeled.', min:0, max:2, step:1, effect:'↓ taxable', drag:0.02},
+  {group:'Payments', key:'withholding', label:'Federal withholding', hint:'W‑2/1099 federal tax withheld. This shifts refund/due, not tax liability.', min:0, max:250000, step:500, prefix:'$', effect:'↑ refund / ↓ due', drag:500},
+  {group:'Payments', key:'estimated', label:'Estimated payments', hint:'Quarterly/extension payments and similar federal payments.', min:0, max:250000, step:500, prefix:'$', effect:'↑ refund / ↓ due', drag:500},
+  {group:'State what-if', key:'stateRate', label:'Rough state/local rate', hint:'Flat AGI rate for cash-flow planning only. Not a state-specific tax engine.', min:0, max:15, step:0.25, suffix:'%', effect:'↓ net cash', drag:0.02}
+];
+const PRESETS = {
+  Teacher:{ filing:'single', wages:68000, seIncome:0, ordinaryInv:350, ltcg:0, k401:4500, ira:0, hsa:0, itemized:0, children:0, otherDeps:0, age65:0, withholding:8200, estimated:0, stateRate:5.8, includeEITC:true, showState:false },
+  Family:{ filing:'mfj', wages:156000, seIncome:12000, ordinaryInv:1200, ltcg:2500, k401:16000, ira:0, hsa:4200, itemized:18500, children:2, otherDeps:0, age65:0, withholding:19000, estimated:0, stateRate:6.2, includeEITC:true, showState:false },
+  Gig:{ filing:'single', wages:18000, seIncome:76000, ordinaryInv:400, ltcg:0, k401:0, ira:3500, hsa:0, itemized:0, children:1, otherDeps:0, age65:0, withholding:1500, estimated:7000, stateRate:5.0, includeEITC:true, showState:false },
+  Investor:{ filing:'mfj', wages:220000, seIncome:0, ordinaryInv:18000, ltcg:145000, k401:24500, ira:0, hsa:8550, itemized:42000, children:0, otherDeps:0, age65:0, withholding:42000, estimated:26000, stateRate:7.0, includeEITC:false, showState:true }
+};
+let state = loadInitialState();
+let lastCalc = null, renderQueued = false, previousCalc = null, ghostPinned = false;
+let THREE_READY = false;
+
+function sanitize(s){
+  const out = {...DEFAULT,...s};
+  if(!FILING[out.filing]) out.filing = 'single';
+  CONTROLS.forEach(c => { out[c.key] = clamp(out[c.key], c.min, c.max); if(c.step === 1) out[c.key] = Math.round(out[c.key]); });
+  out.k401 = Math.min(out.k401, TAX.retirement.k401, Math.max(0, out.wages));
+  out.ira = Math.min(out.ira, TAX.retirement.ira);
+  out.hsa = Math.min(out.hsa, TAX.retirement.hsaFamily);
+  if(out.filing === 'mfs') out.includeEITC = false;
+  return out;
+}
+function loadInitialState(){
+  try{ const qs = new URLSearchParams(location.search); if(qs.get('s')) return sanitize(JSON.parse(atob(qs.get('s')))); }catch(e){}
+  try{ const saved = localStorage.getItem('taxArchitecture2026'); if(saved) return sanitize(JSON.parse(saved)); }catch(e){}
+  return sanitize(DEFAULT);
+}
+function saveState(){ try{ localStorage.setItem('taxArchitecture2026', JSON.stringify(state)); }catch(e){} }
+function calculatePayrollTax(s){
+  const taxableWages = Math.max(0, s.wages - Math.min(s.k401, s.wages));
+  const employeeFica = Math.min(taxableWages, TAX.payroll.ssBase) * TAX.payroll.employeeSS + taxableWages * TAX.payroll.employeeMed;
+  const seNet = Math.max(0, s.seIncome) * TAX.payroll.seFactor;
+  const seSS = Math.min(seNet, TAX.payroll.ssBase) * TAX.payroll.seSS;
+  const seMed = seNet * TAX.payroll.seMed;
+  const addMedBase = Math.max(0, taxableWages + seNet - TAX.payroll.addMedThreshold[s.filing]);
+  const additionalMedicare = addMedBase * TAX.payroll.addMed;
+  const seTax = seSS + seMed + additionalMedicare;
+  return {taxableWages, employeeFica, seNet, seTax, halfSETax:seTax/2, additionalMedicare};
+}
+function calculateAGI(s){
+  const payroll = calculatePayrollTax(s);
+  const wageBox1 = Math.max(0, s.wages - Math.min(s.k401, s.wages));
+  const totalIncome = wageBox1 + s.seIncome + s.ordinaryInv + s.ltcg;
+  const aboveLine = s.ira + s.hsa + payroll.halfSETax;
+  const agi = Math.max(0, totalIncome - aboveLine);
+  return {payroll, wageBox1, totalIncome, aboveLine, agi};
+}
+function calculateTaxableIncome(s, agi){
+  const standard = TAX.standard[s.filing];
+  const senior = (s.age65 || 0) * TAX.seniorExtra[s.filing];
+  const baseDeduction = Math.max(standard, s.itemized);
+  const taxable = Math.max(0, agi.agi - baseDeduction - senior);
+  return {standard, senior, baseDeduction, deductionTotal:baseDeduction+senior, taxable};
+}
+function taxByBrackets(amount, filing){
+  const b = TAX.brackets[filing]; let tax=0, loads=[];
+  for(let i=0;i<b.length;i++){
+    const start=b[i][0], rate=b[i][1], end=i<b.length-1?b[i+1][0]:Infinity;
+    const loaded=Math.max(0, Math.min(amount,end)-start);
+    if(loaded>0) tax += loaded*rate;
+    loads.push({rate,start,end,loaded,tax:loaded*rate});
+  }
+  const top = [...loads].reverse().find(x=>x.loaded>0)?.rate || 0;
+  return {tax, loads, top};
+}
+function capGainsTax(ordinaryTaxable, prefIncome, filing){
+  const thresholds = TAX.capGains[filing]; let remaining = Math.max(0,prefIncome), tax=0, loads=[];
+  for(let i=0;i<thresholds.length;i++){
+    const start = thresholds[i][0], rate = thresholds[i][1], end = i<thresholds.length-1?thresholds[i+1][0]:Infinity;
+    const room = Math.max(0, end - Math.max(start, ordinaryTaxable));
+    const loaded = Math.min(remaining, room);
+    if(loaded>0){ tax += loaded*rate; remaining -= loaded; }
+    loads.push({rate,start,end,loaded,tax:loaded*rate});
+  }
+  if(remaining>0){ tax += remaining*.20; loads[loads.length-1].loaded += remaining; loads[loads.length-1].tax += remaining*.20; }
+  return {tax, loads};
+}
+function calculateIncomeTax(s, deduction){
+  const pref = Math.min(Math.max(0,s.ltcg), deduction.taxable);
+  const ordinaryTaxable = Math.max(0, deduction.taxable - pref);
+  const ordinary = taxByBrackets(ordinaryTaxable, s.filing);
+  const cap = capGainsTax(ordinaryTaxable, pref, s.filing);
+  return {ordinaryTaxable, prefTaxable:pref, ordinaryTax:ordinary.tax, capTax:cap.tax, incomeTaxBeforeCredits:ordinary.tax+cap.tax, ordinaryLoads:ordinary.loads, capLoads:cap.loads, topMarginal:ordinary.top};
+}
+function calculateEITC(s, agi){
+  if(!s.includeEITC || s.filing === 'mfs' || (s.ordinaryInv+s.ltcg) > TAX.eitc.invLimit) return 0;
+  const n = Math.min(3, Math.max(0, Math.round(s.children)));
+  const mfj = s.filing === 'mfj';
+  const earned = Math.max(0, s.wages + s.seIncome);
+  const max = TAX.eitc.max[n], earnedAt = TAX.eitc.earnedAt[n];
+  const phaseStart = mfj ? TAX.eitc.phaseStartMFJ[n] : TAX.eitc.phaseStartSingle[n];
+  const phaseEnd = mfj ? TAX.eitc.phaseEndMFJ[n] : TAX.eitc.phaseEndSingle[n];
+  const phaseIncome = Math.max(agi.agi, earned);
+  const phaseRate = max / Math.max(1, phaseEnd - phaseStart);
+  const beforePhase = Math.min(max, earned * max / earnedAt);
+  const afterPhase = Math.max(0, beforePhase - Math.max(0, phaseIncome - phaseStart) * phaseRate);
+  return Math.max(0, afterPhase);
+}
+function calculateCredits(s, agi, tax){
+  const phaseoutStart = TAX.credits.ctcPhaseout[s.filing];
+  const childBase = Math.max(0, Math.round(s.children)) * TAX.credits.ctc;
+  const otherBase = Math.max(0, Math.round(s.otherDeps)) * TAX.credits.otherDep;
+  const phaseLoss = Math.ceil(Math.max(0, agi.agi - phaseoutStart) / TAX.credits.phaseStep) * TAX.credits.phaseLoss;
+  const ctcAfterPhase = Math.max(0, childBase + otherBase - phaseLoss);
+  const nonrefundable = Math.min(tax.incomeTaxBeforeCredits, ctcAfterPhase);
+  const childRemaining = Math.max(0, childBase - Math.max(0, phaseLoss - otherBase) - nonrefundable);
+  const actcEarnedLimit = Math.max(0, (s.wages + s.seIncome - TAX.credits.actcFloor) * TAX.credits.actcRate);
+  const actc = Math.min(Math.round(s.children)*TAX.credits.actc, childRemaining, actcEarnedLimit);
+  const eitc = calculateEITC(s, agi);
+  return {ctcAfterPhase, nonrefundable, actc, eitc, totalNonrefundable:nonrefundable, totalRefundable:actc+eitc, totalCredits:nonrefundable+actc+eitc};
+}
+function calculateNetPosition(s, agi, deduction, tax, credits){
+  const incomeTaxAfterCredits = Math.max(0, tax.incomeTaxBeforeCredits - credits.totalNonrefundable);
+  const totalFederalTax = incomeTaxAfterCredits + agi.payroll.seTax;
+  const payments = s.withholding + s.estimated + credits.totalRefundable;
+  const refund = payments - totalFederalTax;
+  const stateLocal = s.showState ? agi.agi * (s.stateRate/100) : 0;
+  const employeeFica = agi.payroll.employeeFica;
+  const totalCashTax = totalFederalTax + employeeFica + stateLocal;
+  const netAfterTax = agi.totalIncome - totalFederalTax - employeeFica - stateLocal;
+  return {incomeTaxAfterCredits,totalFederalTax,payments,refund,stateLocal,employeeFica,totalCashTax,netAfterTax};
+}
+function calculate(s){
+  s = sanitize(s); const agi=calculateAGI(s), deduction=calculateTaxableIncome(s,agi), tax=calculateIncomeTax(s,deduction), credits=calculateCredits(s,agi,tax), net=calculateNetPosition(s,agi,deduction,tax,credits);
+  return {state:{...s}, agi, deduction, tax, credits, net};
+}
+function scenarioDelta(mutator){ const base=lastCalc || calculate(state); const s={...state}; mutator(s); const c=calculate(s); return c.net.refund - base.net.refund; }
+function controlDelta(c){
+  if(c.key === 'children' || c.key === 'otherDeps' || c.key === 'age65') return scenarioDelta(s=>s[c.key]=Math.min(c.max, s[c.key]+1));
+  const step = c.key === 'stateRate' ? .25 : Math.min(1000, c.step*2);
+  return scenarioDelta(s=>s[c.key]=Math.min(c.max, s[c.key]+step));
+}
+
+const CTRL_COLOR={wages:'--c-income',seIncome:'--c-income',ordinaryInv:'--c-income',ltcg:'--c-income',k401:'--c-reduce',ira:'--c-reduce',hsa:'--c-reduce',itemized:'--c-reduce',age65:'--c-reduce',children:'--c-credit',otherDeps:'--c-credit',withholding:'--c-pay',estimated:'--c-pay',stateRate:'--c-tax'};
+function ctrlColor(key){ return 'var('+(CTRL_COLOR[key]||'--soft')+')'; }
+const GROUP_COLOR={'Income foundation':'--c-income','Above-line adjustments':'--c-reduce','Payments':'--c-pay','State what-if':'--c-tax'};
+function groupColor(g){ return GROUP_COLOR[g] ? 'var('+GROUP_COLOR[g]+')' : 'var(--line)'; }
+function renderStaticControls(){
+  $('filingSeg').innerHTML = Object.entries(FILING).map(([k,v])=>`<button data-filing="${k}" class="${state.filing===k?'active':''}">${k.toUpperCase()}</button>`).join('');
+  $('filingSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{ setState({filing:b.dataset.filing}); renderStaticControls(); });
+  $('presetBtns').innerHTML = Object.keys(PRESETS).map(name=>`<button class="btn small" data-preset="${name}">${name}</button>`).join('') + `<button class="btn small danger" id="resetBtn">Reset</button>`;
+  $('presetBtns').querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{ state=sanitize(PRESETS[b.dataset.preset]); ghostPinned=false; renderAll(true); });
+  $('resetBtn').onclick=()=>{ state=sanitize(DEFAULT); ghostPinned=false; renderAll(true); };
+  const groups = [...new Set(CONTROLS.map(c=>c.group))];
+  let html = '';
+  groups.forEach(group=>{
+    html += `<div class="section" style="border-left:3px solid ${groupColor(group)};padding-left:9px"><h2>${group}</h2><span>parametric slicers</span></div>`;
+    CONTROLS.filter(c=>c.group===group).forEach(c=>{
+      const prefix=c.prefix||'', suffix=c.suffix||'';
+      const col=ctrlColor(c.key); html += `<div class="control" data-control="${c.key}" style="border-left:3px solid ${col};padding-left:11px">
+        <div class="controlTop"><div><div class="label"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${col};margin-right:7px;vertical-align:middle"></span>${c.label}</div><div class="hint">${c.hint}</div></div>
+        <div class="num"><span class="prefix">${prefix}</span><input type="number" min="${c.min}" max="${c.max}" step="${c.step}" value="${state[c.key]}" data-key="${c.key}"><span class="suffix">${suffix}</span></div></div>
+        <input type="range" min="${c.min}" max="${c.max}" step="${c.step}" value="${state[c.key]}" data-key="${c.key}" aria-label="${c.label}" style="accent-color:${col}">
+        <div class="rangeMeta"><span>${prefix}${Number(c.min).toLocaleString()}${suffix}</span><span>${prefix}${Number(c.max).toLocaleString()}${suffix}</span></div>
+        <div class="impact"><span class="effectChip">${c.effect}</span><span id="impact-${c.key}">calculating impact…</span></div>
+      </div>`;
+    });
+  });
+  $('controls').innerHTML = html;
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    el.addEventListener('input', e=>{ const key=e.target.dataset.key; const cfg=CONTROLS.find(c=>c.key===key); setState({[key]: clamp(e.target.value, cfg.min, cfg.max)}); syncInputs(key); });
+  });
+  $('eitcToggle').checked = state.includeEITC; $('eitcToggle').disabled = state.filing === 'mfs';
+  $('stateToggle').checked = state.showState;
+  $('eitcToggle').onchange=e=>setState({includeEITC:e.target.checked});
+  $('stateToggle').onchange=e=>setState({showState:e.target.checked});
+}
+function syncInputs(key){ document.querySelectorAll(`[data-key="${key}"]`).forEach(el=>{ if(+el.value !== +state[key]) el.value = state[key]; }); }
+function setState(patch){ previousCalc = lastCalc ? JSON.parse(JSON.stringify(lastCalc)) : calculate(state); state = sanitize({...state,...patch}); renderAll(); }
+function schedule(){ if(renderQueued) return; renderQueued=true; requestAnimationFrame(()=>{ renderQueued=false; renderAll(); }); }
+function renderAll(forceControls=false){
+  state = sanitize(state); saveState(); if(forceControls) renderStaticControls();
+  lastCalc = calculate(state); renderStaticOnly(); update3D(lastCalc, previousCalc && !ghostPinned ? previousCalc : null); if(!ghostPinned) setTimeout(()=>{ previousCalc=null; update3D(lastCalc,null); }, 1800);
+}
+function renderStaticOnly(){
+  const c=lastCalc;
+  $('summaryLine').textContent = `${FILING[state.filing]} · AGI ${money(c.agi.agi)} · Taxable ${money(c.deduction.taxable)}`;
+  $('resultLabel').textContent = c.net.refund >= 0 ? 'Projected Federal Refund' : 'Projected Amount Due';
+  $('kpiResult').textContent = money(Math.abs(c.net.refund)); $('kpiResult').className = c.net.refund>=0?'good':'bad';
+  $('payStatus').textContent = `${money(c.net.payments)} payments vs ${money(c.net.totalFederalTax)} liability`;
+  $('kpiTax').textContent = money(c.net.totalFederalTax); $('kpiEff').textContent = pct(c.agi.totalIncome?c.net.totalFederalTax/c.agi.totalIncome:0); $('kpiMarginal').textContent = pct(c.tax.topMarginal); $('kpiNet').textContent = money(c.net.netAfterTax);
+  $('mAgi').textContent = pct(c.agi.totalIncome?c.agi.agi/c.agi.totalIncome:0); $('mDed').textContent = pct(c.agi.agi?c.deduction.deductionTotal/c.agi.agi:0); $('mTaxable').textContent = pct(c.agi.agi?c.deduction.taxable/c.agi.agi:0); $('mCredit').textContent = pct(c.tax.incomeTaxBeforeCredits?c.credits.totalCredits/c.tax.incomeTaxBeforeCredits:0);
+  renderWaterfall(c); renderBracketBars(c); renderTaxMap(c); renderAuditTable(c); renderSensitivity(); renderWarnings(c); updateControlImpacts();
+  $('liveSummary').textContent = `Federal ${c.net.refund>=0?'refund':'amount due'} ${money(Math.abs(c.net.refund))}. AGI ${money(c.agi.agi)}. Taxable income ${money(c.deduction.taxable)}.`;
+}
+function renderWaterfall(c){
+  const rows=[['Gross income',c.agi.totalIncome,''],['Above-line adjustments',-c.agi.aboveLine,'neg'],['AGI',c.agi.agi,''],['Deduction gravity',-c.deduction.deductionTotal,'neg'],['Taxable core',c.deduction.taxable,''],['Income tax before credits',c.tax.incomeTaxBeforeCredits,'tax'],['Credit shield',-c.credits.totalCredits,'credit'],['SE tax',c.agi.payroll.seTax,'tax'],['Payments + refundable',-c.net.payments,'credit'],['Refund / Due',c.net.refund,c.net.refund>=0?'credit':'tax']];
+  const max=Math.max(...rows.map(r=>Math.abs(r[1])),1);
+  $('waterfall').innerHTML = rows.map(([name,val,kind])=>`<div class="flowRow"><div class="name">${name}</div><div class="track"><div class="fill ${kind}" style="width:${Math.max(2,Math.abs(val)/max*100)}%"></div></div><div class="val ${name.includes('Refund')?(val>=0?'good':'bad'):''}">${money(Math.abs(val))}</div></div>`).join('');
+}
+function renderBracketBars(c){
+  const max=Math.max(...c.tax.ordinaryLoads.map(x=>x.loaded),1);
+  $('bracketBars').innerHTML = c.tax.ordinaryLoads.map(x=>`<div class="bar" style="height:${Math.max(2,x.loaded/max*100)}%"><span>${money(x.loaded)}</span><label>${Math.round(x.rate*100)}%</label></div>`).join('');
+}
+function renderTaxMap(c){
+  const rows=[['1z','Total income',c.agi.totalIncome],['10','IRA/HSA + 1/2 SE tax',-c.agi.aboveLine],['11','Adjusted gross income',c.agi.agi],['12','Standard/itemized + age-65 add-on',-c.deduction.deductionTotal],['15','Taxable income',c.deduction.taxable],['16','Income tax before credits',c.tax.incomeTaxBeforeCredits],['19/28','CTC / ACTC / EITC simplified',-c.credits.totalCredits],['23','Self-employment tax',c.agi.payroll.seTax],['25/26','Withholding + estimated payments',-(state.withholding+state.estimated)],['34/37','Refund positive / due negative',c.net.refund]];
+  $('taxMap').innerHTML = rows.map(([line,desc,amt])=>`<div class="taxline"><code>${line}</code><div class="desc">${desc}</div><div class="amt ${line==='34/37'?(amt>=0?'good':'bad'):''}">${money(Math.abs(amt))}</div></div>`).join('');
+}
+function renderAuditTable(c){
+  const rows=[['Filing status',FILING[state.filing]],['Wage Box 1 after 401(k)',money(c.agi.wageBox1)],['Self-employment profit',money(state.seIncome)],['Ordinary investment income',money(state.ordinaryInv)],['LTCG / qualified dividends',money(state.ltcg)],['AGI',money(c.agi.agi)],['Standard deduction',money(c.deduction.standard)],['Itemized input',money(state.itemized)],['Deduction used',money(c.deduction.deductionTotal)],['Taxable income',money(c.deduction.taxable)],['Ordinary income tax',money(c.tax.ordinaryTax)],['Capital gain tax',money(c.tax.capTax)],['Nonrefundable credits',money(c.credits.totalNonrefundable)],['Refundable credits',money(c.credits.totalRefundable)],['Self-employment tax',money(c.agi.payroll.seTax)],['Employee FICA cash gauge',money(c.net.employeeFica)],['Federal tax liability',money(c.net.totalFederalTax)],['Federal payments',money(c.net.payments)],['Federal refund / due',money(c.net.refund)],['Rough state/local cash gauge',money(c.net.stateLocal)]];
+  $('auditTable').innerHTML = rows.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('');
+}
+function renderSensitivity(){
+  const items=[['+$1k wages',scenarioDelta(s=>s.wages+=1000)],['+$1k 401(k)',scenarioDelta(s=>s.k401=Math.min(TAX.retirement.k401,s.k401+1000))],['+$1k itemized',scenarioDelta(s=>s.itemized+=1000)],['+$1k LTCG/QD',scenarioDelta(s=>s.ltcg+=1000)],['+1 child',scenarioDelta(s=>s.children+=1)],['+$1k withholding',scenarioDelta(s=>s.withholding+=1000)]];
+  $('sensitivity').innerHTML = items.map(([name,d])=>`<div class="flowRow"><div class="name">${name}</div><div class="track"><div class="fill ${d>=0?'credit':'tax'}" style="width:${Math.min(100,Math.max(5,Math.abs(d)/1200*100))}%"></div></div><div class="val ${d>=0?'good':'bad'}">${d>=0?'+':'−'}${money(Math.abs(d))}</div></div>`).join('');
+}
+function renderWarnings(c){
+  const w=[]; if(state.filing==='mfs') w.push('Married filing separately disables the simplified EITC toggle.');
+  if(c.deduction.taxable>1000000) w.push('High-income scenario: AMT, NIIT, QBI, itemized limitation refinements, and advanced credits should be separately modeled.');
+  if(state.showState) w.push('State/local tax is a flat-rate AGI planning gauge only. It is not a state-specific return model.');
+  if(!Number.isFinite(c.net.totalFederalTax)) w.push('Extreme input produced an invalid result; inputs have been sanitized.');
+  $('warnBox').innerHTML=w.join('<br>'); $('warnBox').classList.toggle('show',w.length>0);
+}
+function updateControlImpacts(){ CONTROLS.forEach(c=>{ const el=$('impact-'+c.key); if(!el) return; const d=controlDelta(c); const unit=(c.step===1?'+1':(c.key==='stateRate'?'+0.25%':'+$1k')); el.innerHTML = `${unit} changes refund/due by <b class="${d>=0?'good':'bad'}">${d>=0?'+':'−'}${money(Math.abs(d))}</b>`; }); $('eitcToggle').checked=state.includeEITC; $('eitcToggle').disabled=state.filing==='mfs'; $('stateToggle').checked=state.showState; }
+function download(filename,text,type='text/plain'){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},0); }
+function exportCSV(){ const c=lastCalc; const rows=[['Metric','Value'],['Filing status',FILING[state.filing]],['AGI',Math.round(c.agi.agi)],['Taxable income',Math.round(c.deduction.taxable)],['Income tax before credits',Math.round(c.tax.incomeTaxBeforeCredits)],['Credits',Math.round(c.credits.totalCredits)],['SE tax',Math.round(c.agi.payroll.seTax)],['Total federal tax',Math.round(c.net.totalFederalTax)],['Payments',Math.round(c.net.payments)],['Refund positive / due negative',Math.round(c.net.refund)],['Net after modeled tax',Math.round(c.net.netAfterTax)]]; download(`1040-finance-architecture-${TAX.year}.csv`, rows.map(r=>r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(',')).join('\n'), 'text/csv'); }
+function shareURL(){ const qs = btoa(JSON.stringify(state)); const url = location.origin + location.pathname + '?s=' + encodeURIComponent(qs); navigator.clipboard?.writeText(url).then(()=>alert('Scenario URL copied.')).catch(()=>prompt('Copy scenario URL:',url)); }
+
+// ---- Three.js Scene ----
+let scene, camera, renderer, labelRenderer, controls3d, raycaster, pointer, mainGroup, ghostGroup, flowGroup, meshMap={}, labels={}, drag=null, clock;
+const palette = { income:0x69c7ff, agi:0x9b89ff, deduction:0xffd38a, taxable:0x8fd4ff, tax:0xff6688, credit:0x66efac, payment:0x78a9ff, ghost:0xffffff };
+function volScale(value, maxValue, min=.08, max=1){ return min + (Math.cbrt(Math.max(0,value)/Math.max(1,maxValue)))*(max-min); }
+function mat(color, opts={}){ return new THREE.MeshStandardMaterial({color, metalness:opts.metalness??.28, roughness:opts.roughness??.42, transparent:opts.transparent??false, opacity:opts.opacity??1, emissive:opts.emissive??0x000000, emissiveIntensity:opts.emissiveIntensity??0}); }
+function makeLabel(id,title){ const div=document.createElement('div'); div.className='label3d'; div.innerHTML=`<div class="box"><b>${title}</b><span id="lbl-${id}-val">—</span><i id="lbl-${id}-sub">—</i></div>`; const obj=new CSS2DObject(div); labels[id]=obj; return obj; }
+function makeBox(name,color,userdata={}){ const g=new THREE.Group(); const mesh=new THREE.Mesh(new THREE.BoxGeometry(1,1,1), mat(color,{transparent:userdata.transparent, opacity:userdata.opacity||1, emissive:userdata.emissive||0x000000, emissiveIntensity:userdata.emissiveIntensity||0})); mesh.castShadow=true; mesh.receiveShadow=true; mesh.userData={...userdata, name}; const edge=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:.32})); g.add(mesh,edge); g.userData=mesh.userData; meshMap[name]={group:g,mesh,edge}; mainGroup.add(g); return g; }
+function makeCylinder(name,color,geo,userdata={}){ const mesh=new THREE.Mesh(geo, mat(color,{transparent:userdata.transparent, opacity:userdata.opacity||1, metalness:.38, roughness:.32, emissive:userdata.emissive||0x000000, emissiveIntensity:userdata.emissiveIntensity||0})); mesh.castShadow=true; mesh.receiveShadow=true; mesh.userData={...userdata,name}; const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:.22})); const g=new THREE.Group(); g.add(mesh,edge); g.userData=mesh.userData; meshMap[name]={group:g,mesh,edge}; mainGroup.add(g); return g; }
+function init3D(){
+  try{
+    const root=$('threeScene'); scene=new THREE.Scene(); scene.fog=new THREE.Fog(0x050813,18,52); camera=new THREE.PerspectiveCamera(45,root.clientWidth/root.clientHeight,.1,120); camera.position.set(10,8,12); clock=new THREE.Clock();
+    renderer=new THREE.WebGLRenderer({antialias:true,alpha:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(root.clientWidth,root.clientHeight); renderer.shadowMap.enabled=true; root.appendChild(renderer.domElement);
+    labelRenderer=new CSS2DRenderer(); labelRenderer.setSize(root.clientWidth,root.clientHeight); labelRenderer.domElement.style.position='absolute'; labelRenderer.domElement.style.inset='0'; labelRenderer.domElement.style.pointerEvents='none'; root.appendChild(labelRenderer.domElement);
+    controls3d=new OrbitControls(camera,renderer.domElement); controls3d.enableDamping=true; controls3d.dampingFactor=.08; controls3d.maxDistance=34; controls3d.minDistance=5; controls3d.target.set(0,1.5,0);
+    scene.add(new THREE.HemisphereLight(0xdbeeff,0x08101c,1.05)); const key=new THREE.DirectionalLight(0xffffff,2.2); key.position.set(8,12,10); key.castShadow=true; key.shadow.mapSize.set(2048,2048); scene.add(key); const rim=new THREE.DirectionalLight(0x69c7ff,1.2); rim.position.set(-10,5,-8); scene.add(rim);
+    const grid=new THREE.GridHelper(26,26,0x31587d,0x17324d); grid.position.y=-.02; scene.add(grid);
+    const floor=new THREE.Mesh(new THREE.PlaneGeometry(38,38),new THREE.MeshStandardMaterial({color:0x071020,roughness:.86,metalness:.1,transparent:true,opacity:.62})); floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; scene.add(floor);
+    mainGroup=new THREE.Group(); ghostGroup=new THREE.Group(); flowGroup=new THREE.Group(); scene.add(ghostGroup,mainGroup,flowGroup);
+    buildObjects(); buildFlows();
+    raycaster=new THREE.Raycaster(); pointer=new THREE.Vector2(); THREE_READY=true; root.addEventListener('pointerdown',onPointerDown); root.addEventListener('pointermove',onPointerMove); root.addEventListener('pointerup',onPointerUp); root.addEventListener('pointerleave',onPointerUp); window.addEventListener('resize',onResize);
+    document.querySelectorAll('[data-camera]').forEach(b=>b.onclick=()=>setCamera(b.dataset.camera)); $('pinGhostBtn').onclick=()=>{ previousCalc=JSON.parse(JSON.stringify(lastCalc)); ghostPinned=true; update3D(lastCalc, previousCalc); }; $('clearGhostBtn').onclick=()=>{ previousCalc=null; ghostPinned=false; clearGhost(); };
+    animate();
+  }catch(e){ console.error(e); $('sceneFallback').style.display='grid'; }
+}
+function buildObjects(){
+  const foundation=makeBox('foundation',palette.income,{node:'Income Foundation',key:'wages',dragKey:'wages'}); foundation.add(makeLabel('foundation','Income Foundation'));
+  const agi=makeBox('agi',palette.agi,{node:'AGI Mesh'}); agi.add(makeLabel('agi','AGI Mesh'));
+  const deduction=makeBox('deductionVoid',palette.deduction,{node:'Deduction Cut',key:'itemized',dragKey:'itemized',transparent:true,opacity:.58,emissive:0x553600,emissiveIntensity:.2}); deduction.add(makeLabel('deduction','Deduction Void'));
+  const taxable=makeBox('taxableCore',palette.taxable,{node:'Taxable Core'}); taxable.add(makeLabel('taxable','Taxable Core'));
+  for(let i=0;i<7;i++){ const slab=makeBox('taxSlab'+i,palette.tax,{node:'Bracket Heat Slab'}); slab.userData.bracket=i; }
+  const shield=makeCylinder('creditShield',palette.credit,new THREE.CylinderGeometry(1,1,.16,96),{node:'Credit Shield',key:'children',dragKey:'children',transparent:true,opacity:.78,emissive:0x06482b,emissiveIntensity:.35}); shield.rotation.x=Math.PI/2; shield.add(makeLabel('credit','Credit Shield'));
+  const pay=makeCylinder('paymentSatellite',palette.payment,new THREE.SphereGeometry(.8,48,32),{node:'Payment Satellite',key:'withholding',dragKey:'withholding',emissive:0x112d66,emissiveIntensity:.28}); pay.add(makeLabel('payment','Payment Satellite')); const payRing=new THREE.Mesh(new THREE.TorusGeometry(1.6,.03,8,72), new THREE.MeshBasicMaterial({color:palette.payment,transparent:true,opacity:.45})); payRing.rotation.x=Math.PI/2; pay.add(payRing);
+  const k401=makeBox('k401Column',0x76a4ff,{node:'401(k) Column',key:'k401',dragKey:'k401',transparent:true,opacity:.84}); k401.add(makeLabel('k401','401(k) Column'));
+  const stateGauge=makeCylinder('stateGauge',0xffb165,new THREE.CylinderGeometry(.55,.55,.35,48),{node:'State Gauge',key:'stateRate',dragKey:'stateRate',transparent:true,opacity:.72}); stateGauge.add(makeLabel('state','State Gauge'));
+}
+function buildFlows(){ for(let i=0;i<64;i++){ const s=new THREE.Mesh(new THREE.SphereGeometry(.035,10,8),new THREE.MeshBasicMaterial({color:i%3?0x69c7ff:0xffd38a, transparent:true, opacity:.78})); s.userData.t=i/64; flowGroup.add(s); } }
+function update3D(c,ghostCalc=null){ if(!THREE_READY) return; updateMainGeometry(c); if(ghostCalc) updateGhost(ghostCalc); }
+function updateMainGeometry(c){
+  const max=Math.max(c.agi.totalIncome,c.agi.agi,c.deduction.taxable,100000); const s=volScale;
+  const incomeH=1.0+s(c.agi.totalIncome,max,.1,1)*5.0; setBox('foundation',{pos:[0,incomeH/2,0],scale:[6.8,incomeH,4.0]});
+  const agiH=1+s(c.agi.agi,max,.1,1)*4.4; setBox('agi',{pos:[-3.95,agiH/2,.15],scale:[.62,agiH,3.65]});
+  const dedH=.35+s(c.deduction.deductionTotal,max,.1,1)*3.2; setBox('deductionVoid',{pos:[0.95,incomeH-dedH/2+.02,0],scale:[2.15,dedH,4.18]});
+  const taxH=.55+s(c.deduction.taxable,max,.1,1)*4.6; setBox('taxableCore',{pos:[-.85,taxH/2+.05,0],scale:[2.65,taxH,2.85]});
+  const taxMax=Math.max(...c.tax.ordinaryLoads.map(x=>x.loaded),1); let y=taxH+.15; c.tax.ordinaryLoads.forEach((b,i)=>{ const h=.06+volScale(b.loaded,taxMax,0,1)*.72; const slab=meshMap['taxSlab'+i]; if(slab){ slab.group.visible=b.loaded>0; slab.group.position.set(-.85,y+h/2,0); const shrink=Math.max(.32,1-i*0.11); slab.group.scale.set(2.75*shrink,h,2.95*shrink); const intensity=.12+i*.04; slab.mesh.material.color.setHSL(.98-i*.02,.84,.55+Math.min(.13,intensity)); slab.mesh.material.emissive.setHex(0x33060f); slab.mesh.material.emissiveIntensity=.08+i*.025; y+=h+.035; }});
+  const shield=meshMap.creditShield.group; const shieldScale=.75+volScale(c.credits.totalCredits,Math.max(1,c.tax.incomeTaxBeforeCredits),0,1)*1.25; shield.position.set(2.95,2.4,2.45); shield.scale.set(shieldScale,shieldScale,shieldScale);
+  const pay=meshMap.paymentSatellite.group; const payScale=.5+volScale(Math.abs(c.net.refund),Math.max(10000,c.net.totalFederalTax),0,1)*1.25; pay.position.set(4.2,4.0,-2.65); pay.scale.set(payScale,payScale,payScale); pay.children[0].material.color.setHex(c.net.refund>=0?palette.credit:palette.tax);
+  const k401H=.35+volScale(state.k401,TAX.retirement.k401,.0,1)*3.2; setBox('k401Column',{pos:[-4.85,k401H/2,-2.45],scale:[.65,k401H,.65]});
+  const stateGauge=meshMap.stateGauge.group; stateGauge.position.set(4.1,.55,2.65); stateGauge.scale.set(1+state.stateRate/12,.55+state.stateRate/18,1+state.stateRate/12);
+  updateLabels(c); updateNodePanel(currentNode || 'taxableCore', c); updateFlows(c); mainGroup.rotation.y += .0001;
+}
+function setBox(name,{pos,scale}){ const o=meshMap[name]; if(!o) return; o.group.position.set(...pos); o.group.scale.set(...scale); }
+function updateLabels(c){
+  const set=(id,val,sub)=>{ const v=$('lbl-'+id+'-val'), s=$('lbl-'+id+'-sub'); if(v) v.textContent=val; if(s) s.textContent=sub; };
+  set('foundation',money(c.agi.totalIncome),'Gross model income volume'); set('agi',money(c.agi.agi),'AGI after above-line deductions'); set('deduction',money(c.deduction.deductionTotal),'Carved from AGI'); set('taxable',money(c.deduction.taxable),'Load-bearing tax core'); set('credit',money(c.credits.totalCredits),'Tax deflection shield'); set('payment',money(Math.abs(c.net.refund)),c.net.refund>=0?'Refund satellite':'Amount-due satellite'); set('k401',money(state.k401),'Drag column to defer more'); set('state',pct(state.stateRate/100),'Rough state/local gauge');
+}
+function updateGhost(g){ clearGhost(); const max=Math.max(g.agi.totalIncome,g.agi.agi,g.deduction.taxable,100000); const specs=[['foundation',[0,1,0],[6.8,1+volScale(g.agi.totalIncome,max,.1,1)*5.0,4.0]],['deduction',[.95,1,0],[2.15,.35+volScale(g.deduction.deductionTotal,max,.1,1)*3.2,4.18]],['taxable',[-.85,1,0],[2.65,.55+volScale(g.deduction.taxable,max,.1,1)*4.6,2.85]]]; specs.forEach(([n,pos,scale])=>{ const geo=new THREE.BoxGeometry(1,1,1); const mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true,transparent:true,opacity:.22})); mesh.position.set(pos[0],scale[1]/2,pos[2]); mesh.scale.set(...scale); ghostGroup.add(mesh); }); }
+function clearGhost(){ if(!ghostGroup) return; while(ghostGroup.children.length){ const o=ghostGroup.children.pop(); o.geometry?.dispose?.(); o.material?.dispose?.(); } }
+function updateFlows(c){
+  const pts=[new THREE.Vector3(-3.4,3.1,1.9),new THREE.Vector3(-1.7,3.1,1.6),new THREE.Vector3(-.8,4.5,.3),new THREE.Vector3(1.5,3.5,1.4),new THREE.Vector3(3.4,3.8,2.2),new THREE.Vector3(4.2,4.0,-2.65)];
+  const curve=new THREE.CatmullRomCurve3(pts); const t=clock.getElapsedTime()*0.045; flowGroup.children.forEach((p,i)=>{ const pos=curve.getPoint((p.userData.t+t)%1); p.position.copy(pos); p.scale.setScalar(.75+Math.sin((p.userData.t+t)*Math.PI*2)*.35); });
+}
+let currentNode='taxableCore';
+const nodeInfo = {
+  foundation:{title:'Income Foundation', text:'The total model input entering the structure. W‑2 wages are netted for pre-tax 401(k) in the AGI computation, while SE and investment income add additional mass.', formula:'Total income = W‑2 box 1 + SE profit + ordinary investment + LTCG/QD', key:'wages'},
+  agi:{title:'AGI Mesh', text:'AGI is the first engineered load path: income minus above-line deductions such as IRA, HSA, and one-half of self-employment tax.', formula:'AGI = total income − IRA − HSA − 1/2 SE tax', key:'ira'},
+  deductionVoid:{title:'Deduction Void', text:'This is shown as carved negative space. The model uses the greater of standard deduction or itemized input, plus age‑65 increments.', formula:'Deduction used = max(standard, itemized) + age‑65 increment', key:'itemized'},
+  taxableCore:{title:'Taxable Core', text:'The remaining load-bearing core after deductions. Ordinary and preferential income layers are taxed against this core.', formula:'Taxable income = max(0, AGI − deduction stack)', key:'wages'},
+  creditShield:{title:'Credit Shield', text:'Credits reduce tax after the bracket stress calculation. Child and dependent credits are phaseout-tested; refundable ACTC/EITC are simplified.', formula:'Net tax = income tax − nonrefundable credits + SE tax', key:'children'},
+  paymentSatellite:{title:'Payment Satellite', text:'Withholding, estimated payments, and refundable credits orbit the liability. Positive satellite means refund; red means amount due.', formula:'Refund / due = payments + refundable credits − federal liability', key:'withholding'},
+  k401Column:{title:'401(k) Deferral Column', text:'A direct lever that lowers taxable W‑2 income before AGI. Drag this column vertically to simulate more or less pre-tax deferral.', formula:'W‑2 box 1 = wages − pre-tax 401(k), capped at 2026 limit', key:'k401'},
+  stateGauge:{title:'State/Local Cash Gauge', text:'A rough flat-rate AGI gauge for cash planning. It is intentionally not a state-specific return model.', formula:'State/local gauge = AGI × selected flat rate', key:'stateRate'}
+};
+function updateNodePanel(name,c){ const info=nodeInfo[name] || nodeInfo.taxableCore; currentNode=name; const d=info.key ? controlDelta(CONTROLS.find(x=>x.key===info.key)) : 0; $('nodeTitle').textContent=info.title; $('nodeText').innerHTML = `${info.text}<br><br><b>Marginal read:</b> next unit changes refund/due by <span class="${d>=0?'good':'bad'}">${d>=0?'+':'−'}${money(Math.abs(d))}</span>.`; $('nodeFormula').textContent=info.formula; }
+function onResize(){ const root=$('threeScene'); if(!renderer) return; camera.aspect=root.clientWidth/root.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(root.clientWidth,root.clientHeight); labelRenderer.setSize(root.clientWidth,root.clientHeight); }
+function setPointer(e){ const rect=renderer.domElement.getBoundingClientRect(); pointer.x=((e.clientX-rect.left)/rect.width)*2-1; pointer.y=-((e.clientY-rect.top)/rect.height)*2+1; }
+function intersect(e){ setPointer(e); raycaster.setFromCamera(pointer,camera); const meshes=Object.values(meshMap).map(o=>o.mesh); return raycaster.intersectObjects(meshes,false)[0]; }
+function onPointerDown(e){ const hit=intersect(e); if(hit){ const name=hit.object.userData.name; updateNodePanel(name,lastCalc); if(hit.object.userData.dragKey){ drag={key:hit.object.userData.dragKey, y:e.clientY, start:state[hit.object.userData.dragKey]}; controls3d.enabled=false; previousCalc=JSON.parse(JSON.stringify(lastCalc)); ghostPinned=false; } } }
+function onPointerMove(e){ if(drag){ const cfg=CONTROLS.find(c=>c.key===drag.key); const delta=(drag.y-e.clientY)*(cfg.drag||cfg.step||1); let val=drag.start+delta; if(cfg.step===1) val=Math.round(val); state=sanitize({...state,[drag.key]:clamp(val,cfg.min,cfg.max)}); syncInputs(drag.key); lastCalc=calculate(state); renderStaticOnly(); update3D(lastCalc,previousCalc); return; } const hit=intersect(e); renderer.domElement.style.cursor=hit?(hit.object.userData.dragKey?'ns-resize':'pointer'):'grab'; if(hit) updateNodePanel(hit.object.userData.name,lastCalc); }
+function onPointerUp(){ if(drag){ drag=null; controls3d.enabled=true; saveState(); } }
+function setCamera(mode){ if(!camera) return; const target={iso:[10,8,12],top:[0,17,.01],side:[13,4,.01]}[mode] || [10,8,12]; camera.position.set(...target); controls3d.target.set(0,2,0); controls3d.update(); $('archMode').textContent = mode==='top'?'Top-Down Flow View':mode==='side'?'Side Load Stack':'Isometric Load Path'; }
+function animate(){ requestAnimationFrame(animate); if(!renderer) return; controls3d.update(); if(flowGroup && clock) updateFlows(lastCalc||calculate(state)); renderer.render(scene,camera); labelRenderer.render(scene,camera); }
+
+$('themeBtn').onclick=()=>ROOT.classList.toggle('light'); $('exportBtn').onclick=exportCSV; $('shareBtn').onclick=shareURL;
+renderStaticControls(); init3D(); renderAll(true);
+</script>
+</body>
+</html>
