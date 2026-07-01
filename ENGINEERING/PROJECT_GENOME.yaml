@@ -1,0 +1,64 @@
+project:
+  name: Artemis
+  philosophy:
+    - engineering-first
+    - AI-native
+    - documentation-driven
+    - public-safe by default
+
+frontend:
+  framework: Next.js
+  router: App Router
+  language: TypeScript
+  styling:
+    - Tailwind CSS
+    - isolated standalone HTML labs when approved
+
+deployment:
+  platform: Vercel
+  preview_first: true
+  custom_domain: artemis.agoraxai.com
+
+content:
+  system: MDX plus typed registries
+  public_safety: sanitize private assets before publishing
+
+mapping:
+  primary_provider: Mapbox
+  fallbacks:
+    - MapLibre
+    - Leaflet
+  rule: browser Mapbox pk tokens are public and must be URL-restricted
+
+governance:
+  adr_required_for_architecture: true
+  ai_agent_rules: ENGINEERING/AI_AGENT_RULES.md
+  adr_index: decisions/ADR-INDEX.md
+  authority_order:
+    - source_code_and_tests
+    - accepted_adrs
+    - engineering_architecture
+    - standards_and_security
+    - feature_passports
+    - prompts_and_handovers
+    - conversations
+
+domains:
+  - labs
+  - atlas
+  - tax_finance_architecture
+  - construction_intelligence
+  - utility_intelligence
+  - knowledge_os
+
+validation:
+  standard_commands:
+    - npm run typecheck
+    - npm run lint
+    - npm run build
+  future_checks:
+    - architecture_validation
+    - security_validation
+    - performance_validation
+    - accessibility_validation
+    - documentation_validation
