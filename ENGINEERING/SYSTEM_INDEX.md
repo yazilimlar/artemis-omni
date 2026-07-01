@@ -5,16 +5,18 @@ it to understand the repo. Read top-down; stop when you have what you need.
 
 ## Start sequence for any AI session
 
-1. `ENGINEERING/AI_AGENT_RULES.md` — the operating rules (amnesia rule, authority order, confidence grades).
-2. `ENGINEERING/ARCHITECTURE.md` — the architecture authority and Knowledge Pyramid.
-3. `decisions/ADR-INDEX.md` — accepted decisions; read any ADR for the area you touch.
-4. `docs/HANDOVER.md` — the current live state and what is uncommitted right now.
-5. The feature passport for the domain you are changing (if one exists).
+1. `ENGINEERING/AI_SESSION_START_PROTOCOL.md` — run the state check + declare intent BEFORE any edit.
+2. `ENGINEERING/AI_AGENT_RULES.md` — the operating rules (amnesia rule, authority order, confidence grades).
+3. `ENGINEERING/ARCHITECTURE.md` — the architecture authority and Knowledge Pyramid.
+4. `decisions/ADR-INDEX.md` — accepted decisions; read any ADR for the area you touch.
+5. `docs/HANDOVER.md` — the current live state and what is uncommitted right now.
+6. The feature passport for the domain you are changing (if one exists).
 
 ## Governance documents
 
 | Doc | Purpose |
 |---|---|
+| `AI_SESSION_START_PROTOCOL.md` | Mandatory pre-edit state check + intent declaration; no `git add -A` |
 | `AI_AGENT_RULES.md` | Golden rule, authority order, change classes, handoff requirement |
 | `ARCHITECTURE.md` | Architecture authority, protected areas, product domains |
 | `PROJECT_GENOME.yaml` | Machine-readable project configuration |
