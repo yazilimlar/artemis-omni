@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agoraxai.com/schemas/rainbow/theme.schema.json",
+  "title": "Rainbow Adaptive Botanical Theme",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "theme_id",
+    "specimen_id",
+    "mode",
+    "palette",
+    "habitat",
+    "season",
+    "typography",
+    "accessibility"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "theme_id": {
+      "type": "string"
+    },
+    "specimen_id": {
+      "type": "string",
+      "pattern": "^RB-[0-9]{4}-[0-9]{5}$"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "overview",
+        "scientific",
+        "engineering",
+        "heritage",
+        "ecology",
+        "atlas",
+        "art",
+        "social"
+      ]
+    },
+    "palette": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["background", "surface", "text", "primary", "secondary", "accent", "line", "focus"],
+      "properties": {
+        "background": { "$ref": "#/$defs/color" },
+        "surface": { "$ref": "#/$defs/color" },
+        "surface_alt": { "$ref": "#/$defs/color" },
+        "text": { "$ref": "#/$defs/color" },
+        "muted_text": { "$ref": "#/$defs/color" },
+        "primary": { "$ref": "#/$defs/color" },
+        "secondary": { "$ref": "#/$defs/color" },
+        "accent": { "$ref": "#/$defs/color" },
+        "line": { "$ref": "#/$defs/color" },
+        "focus": { "$ref": "#/$defs/color" },
+        "warning": { "$ref": "#/$defs/color" }
+      }
+    },
+    "extracted_colors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "name", "hex", "source"],
+        "properties": {
+          "role": { "type": "string" },
+          "name": { "type": "string" },
+          "hex": { "$ref": "#/$defs/hex" },
+          "source": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "habitat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["theme_name"],
+      "properties": {
+        "theme_name": { "type": "string" },
+        "texture": { "type": "string" },
+        "map_style": { "type": "string" }
+      }
+    },
+    "season": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": { "type": "string", "enum": ["spring", "summer", "autumn", "winter", "unknown"] },
+        "phenology_state": { "type": "string" },
+        "time_of_day_variant": { "type": "string" }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "heading_style": { "type": "string" },
+        "body_style": { "type": "string" },
+        "technical_style": { "type": "string" },
+        "label_style": { "type": "string" }
+      }
+    },
+    "blueprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background": { "$ref": "#/$defs/color" },
+        "drafting_line": { "$ref": "#/$defs/color" },
+        "dimension_line": { "$ref": "#/$defs/color" },
+        "grid": { "$ref": "#/$defs/color" }
+      }
+    },
+    "heritage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style": { "type": "string" },
+        "paper": { "$ref": "#/$defs/color" },
+        "ink": { "$ref": "#/$defs/color" },
+        "texture": { "type": "string" }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contrast_checked", "reduced_motion_supported"],
+      "properties": {
+        "contrast_checked": { "type": "boolean" },
+        "minimum_body_contrast": { "type": "number" },
+        "reduced_motion_supported": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "hex": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "color": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "hex"],
+      "properties": {
+        "name": { "type": "string" },
+        "hex": { "$ref": "#/$defs/hex" }
+      }
+    }
+  }
+}

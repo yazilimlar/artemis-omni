@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0.0",
+  "theme_id": "hemerocallis-fulva-summer-engineering-v1",
+  "specimen_id": "RB-2026-00071",
+  "mode": "engineering",
+  "palette": {
+    "background": {
+      "name": "Deep Botanical Black Green",
+      "hex": "#071613"
+    },
+    "surface": {
+      "name": "Archive Green Panel",
+      "hex": "#10241E"
+    },
+    "surface_alt": {
+      "name": "Copper Technical Panel",
+      "hex": "#3A1F12"
+    },
+    "text": {
+      "name": "Warm Parchment",
+      "hex": "#F6E8C8"
+    },
+    "muted_text": {
+      "name": "Muted Herbarium Gold",
+      "hex": "#C8B06A"
+    },
+    "primary": {
+      "name": "Solar Yellow",
+      "hex": "#FFD700"
+    },
+    "secondary": {
+      "name": "Golden Orange",
+      "hex": "#FF8C00"
+    },
+    "accent": {
+      "name": "Copper Orange",
+      "hex": "#D2691E"
+    },
+    "line": {
+      "name": "Aged Gold Rule",
+      "hex": "#8F6E2F"
+    },
+    "focus": {
+      "name": "Pale Sage Focus",
+      "hex": "#BFD8A8"
+    },
+    "warning": {
+      "name": "Oxidized Burgundy",
+      "hex": "#8B1A1A"
+    }
+  },
+  "extracted_colors": [
+    {
+      "role": "primary",
+      "name": "Solar Yellow",
+      "hex": "#FFD700",
+      "source": "flower throat visual reference",
+      "confidence": 0.65
+    },
+    {
+      "role": "secondary",
+      "name": "Golden Orange",
+      "hex": "#FF8C00",
+      "source": "tepal field visual reference",
+      "confidence": 0.65
+    },
+    {
+      "role": "accent",
+      "name": "Copper Orange",
+      "hex": "#D2691E",
+      "source": "tepal edge visual reference",
+      "confidence": 0.55
+    },
+    {
+      "role": "structural",
+      "name": "Oxidized Burgundy",
+      "hex": "#8B1A1A",
+      "source": "eyezone and throat visual reference",
+      "confidence": 0.55
+    },
+    {
+      "role": "leaf",
+      "name": "Forest Green",
+      "hex": "#228B22",
+      "source": "foliage visual reference",
+      "confidence": 0.45
+    }
+  ],
+  "habitat": {
+    "theme_name": "Temperate garden edge and roadside archive",
+    "texture": "subtle botanical paper and technical grid",
+    "map_style": "privacy-safe Atlas placeholder with terrain muted behind source-safe labels"
+  },
+  "season": {
+    "state": "summer",
+    "phenology_state": "full bloom",
+    "time_of_day_variant": "golden hour technical archive"
+  },
+  "typography": {
+    "heading_style": "museum serif display",
+    "body_style": "readable editorial serif or system sans fallback",
+    "technical_style": "monospace measurement labels",
+    "label_style": "small caps archive captions"
+  },
+  "blueprint": {
+    "background": {
+      "name": "Copper Blueprint Ground",
+      "hex": "#3A1F12"
+    },
+    "drafting_line": {
+      "name": "Cream Drafting Line",
+      "hex": "#F7E7C2"
+    },
+    "dimension_line": {
+      "name": "Bronze Dimension",
+      "hex": "#B87333"
+    },
+    "grid": {
+      "name": "Muted Gold Grid",
+      "hex": "#6F5A2A"
+    }
+  },
+  "heritage": {
+    "style": "Victorian botanical plate with light parchment alternate",
+    "paper": {
+      "name": "Cream Watercolor",
+      "hex": "#FFF8F0"
+    },
+    "ink": {
+      "name": "Muted Green Ink",
+      "hex": "#6B8E6B"
+    },
+    "texture": "pressed-flower paper grain"
+  },
+  "accessibility": {
+    "contrast_checked": false,
+    "minimum_body_contrast": 0,
+    "reduced_motion_supported": true,
+    "notes": "Palette is a fixture and must be contrast-tested in the rendered UI before public use."
+  }
+}

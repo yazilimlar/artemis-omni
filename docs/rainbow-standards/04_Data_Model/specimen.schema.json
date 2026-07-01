@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agoraxai.com/schemas/rainbow/specimen.schema.json",
+  "title": "Rainbow Botanical Specimen",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "specimen_id",
+    "record_status",
+    "identity",
+    "taxonomy",
+    "names",
+    "observation",
+    "location",
+    "morphology",
+    "phenology",
+    "ecology",
+    "engineering",
+    "knowledge_layers",
+    "assets",
+    "ai_metadata",
+    "references",
+    "qa",
+    "revision_history"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "specimen_id": {
+      "type": "string",
+      "pattern": "^RB-[0-9]{4}-[0-9]{5}$"
+    },
+    "record_status": {
+      "type": "string",
+      "enum": ["draft", "review", "approved", "published", "archived"]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scientific_name", "primary_common_name", "spectrum_designation"],
+      "properties": {
+        "scientific_name": { "type": "string" },
+        "authority": { "type": "string" },
+        "primary_common_name": { "type": "string" },
+        "spectrum_designation": { "type": "string" },
+        "classification_tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "taxonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kingdom", "order", "family", "genus", "species"],
+      "properties": {
+        "kingdom": { "type": "string" },
+        "clade": { "type": "string" },
+        "order": { "type": "string" },
+        "family": { "type": "string" },
+        "genus": { "type": "string" },
+        "species": { "type": "string" },
+        "synonyms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "taxonomic_notes": { "type": "string" }
+      }
+    },
+    "names": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["common", "source_status"],
+      "properties": {
+        "common": { "type": "array", "items": { "type": "string" } },
+        "regional": { "type": "array", "items": { "type": "string" } },
+        "historical": { "type": "array", "items": { "type": "string" } },
+        "indigenous": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "language_or_community", "source_status"],
+            "properties": {
+              "name": { "type": "string" },
+              "language_or_community": { "type": "string" },
+              "source_status": { "$ref": "#/$defs/source_status" }
+            }
+          }
+        },
+        "pronunciation": { "type": "string" },
+        "etymology": { "type": "string" },
+        "source_status": { "$ref": "#/$defs/source_status" }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capture_year", "capture_set", "observer_role"],
+      "properties": {
+        "capture_year": { "type": "integer", "minimum": 2000 },
+        "capture_dates": {
+          "type": "array",
+          "items": { "type": "string", "format": "date" }
+        },
+        "observer_role": { "type": "string" },
+        "capture_set": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "habitat",
+              "entire_plant",
+              "front_flower",
+              "side_flower",
+              "rear_flower",
+              "leaf",
+              "stem",
+              "bud",
+              "seed_pod",
+              "bark_or_trunk",
+              "root_if_exposed",
+              "pollinator",
+              "other"
+            ]
+          }
+        },
+        "source_photo_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["privacy_level", "public_location_label", "atlas_status"],
+      "properties": {
+        "privacy_level": {
+          "type": "string",
+          "enum": ["private_exact", "rounded_public", "regional_public", "withheld"]
+        },
+        "public_location_label": { "type": "string" },
+        "native_range": { "type": "string" },
+        "naturalized_range": { "type": "string" },
+        "usda_zones": { "type": "string" },
+        "habitat": { "type": "string" },
+        "soil": { "type": "string" },
+        "hydrology": { "type": "string" },
+        "atlas_status": {
+          "type": "string",
+          "enum": ["not_started", "placeholder", "mapped_private", "public_safe", "published"]
+        }
+      }
+    },
+    "morphology": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "growth_habit": { "type": "string" },
+        "height_cm": { "$ref": "#/$defs/range_number" },
+        "spread_cm": { "$ref": "#/$defs/range_number" },
+        "flower_diameter_cm": { "$ref": "#/$defs/range_number" },
+        "flower_duration": { "type": "string" },
+        "diagnostic_features": { "type": "array", "items": { "type": "string" } },
+        "measurement_status": { "$ref": "#/$defs/source_status" }
+      }
+    },
+    "phenology": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bloom_season": { "type": "string" },
+        "current_bloom_stage": { "type": "string" },
+        "annual_observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["year", "note"],
+            "properties": {
+              "year": { "type": "integer" },
+              "first_bloom_date": { "type": "string", "format": "date" },
+              "peak_bloom_date": { "type": "string", "format": "date" },
+              "note": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "ecology": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pollinator_value": { "type": "string" },
+        "known_pollinators": { "type": "array", "items": { "type": "string" } },
+        "companion_species": { "type": "array", "items": { "type": "string" } },
+        "wildlife_interactions": { "type": "array", "items": { "type": "string" } },
+        "ecological_notes": { "type": "string" },
+        "source_status": { "$ref": "#/$defs/source_status" }
+      }
+    },
+    "engineering": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "root_architecture": { "type": "string" },
+        "soil_stabilization": { "type": "string" },
+        "water_management": { "type": "string" },
+        "urban_resilience": { "type": "string" },
+        "geometry": { "type": "string" },
+        "biomimicry_notes": { "type": "string" },
+        "claim_status": { "$ref": "#/$defs/source_status" }
+      }
+    },
+    "knowledge_layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["layer", "status", "source_status"],
+        "properties": {
+          "layer": { "type": "string" },
+          "status": { "type": "string", "enum": ["not_started", "draft", "review", "approved", "published"] },
+          "summary": { "type": "string" },
+          "source_status": { "$ref": "#/$defs/source_status" }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "poster": { "$ref": "#/$defs/asset_status" },
+        "blueprint": { "$ref": "#/$defs/asset_status" },
+        "heritage": { "$ref": "#/$defs/asset_status" },
+        "photo_plate": { "$ref": "#/$defs/asset_status" },
+        "atlas_page": { "$ref": "#/$defs/asset_status" },
+        "social_package": { "$ref": "#/$defs/asset_status" },
+        "pdf": { "$ref": "#/$defs/asset_status" },
+        "webgl": { "$ref": "#/$defs/asset_status" }
+      }
+    },
+    "ai_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identification_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "candidate_species": { "type": "array", "items": { "type": "string" } },
+        "vision_model_notes": { "type": "string" },
+        "color_analysis_status": { "type": "string" },
+        "health_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "model_reviewers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "source_status"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "note": { "type": "string" },
+          "source_status": { "$ref": "#/$defs/source_status" }
+        }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["privacy_checked", "claims_checked", "human_approved"],
+      "properties": {
+        "privacy_checked": { "type": "boolean" },
+        "claims_checked": { "type": "boolean" },
+        "accessibility_checked": { "type": "boolean" },
+        "visual_assets_checked": { "type": "boolean" },
+        "human_approved": { "type": "boolean" },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "revision_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "change"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "change": { "type": "string" },
+          "actor": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "source_status": {
+      "type": "string",
+      "enum": ["verified", "historical", "traditional", "interpretive", "needs_source", "not_applicable"]
+    },
+    "range_number": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "unit": { "type": "string" }
+      }
+    },
+    "asset_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["not_started", "draft", "review", "approved", "published"] },
+        "version": { "type": "string" },
+        "path": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "schema_version": "1.0.0",
+  "specimen_id": "RB-2026-00071",
+  "record_status": "draft",
+  "identity": {
+    "scientific_name": "Hemerocallis fulva",
+    "authority": "",
+    "primary_common_name": "Tawny Daylily",
+    "spectrum_designation": "High-Contrast Orange",
+    "classification_tags": [
+      "Structural Perennial",
+      "Resilient Naturalized Species",
+      "Living Engineering Asset",
+      "Ecological Infrastructure Component"
+    ]
+  },
+  "taxonomy": {
+    "kingdom": "Plantae",
+    "clade": "Angiosperms",
+    "order": "Asparagales",
+    "family": "Asphodelaceae",
+    "genus": "Hemerocallis",
+    "species": "Hemerocallis fulva",
+    "synonyms": [],
+    "taxonomic_notes": "Draft taxonomy for the M2 fixture. Verify authority, family placement, synonyms, and alternate candidate species before publication."
+  },
+  "names": {
+    "common": [
+      "Orange Daylily",
+      "Tawny Daylily",
+      "Ditch Lily",
+      "Roadside Lily"
+    ],
+    "regional": [
+      "Roadside Lily"
+    ],
+    "historical": [
+      "Wash-house Lily"
+    ],
+    "indigenous": [],
+    "pronunciation": "hem-er-oh-KAL-iss FUL-vuh",
+    "etymology": "Draft note: the genus name is commonly explained from Greek roots associated with day and beauty. Cite a botanical etymology source before public release.",
+    "source_status": "needs_source"
+  },
+  "observation": {
+    "capture_year": 2026,
+    "capture_dates": [
+      "2026-06-30"
+    ],
+    "observer_role": "owner field photographer",
+    "capture_set": [
+      "habitat",
+      "entire_plant",
+      "front_flower",
+      "side_flower",
+      "bud"
+    ],
+    "source_photo_count": 3
+  },
+  "location": {
+    "privacy_level": "withheld",
+    "public_location_label": "Private Northeastern United States observation context withheld for M2.",
+    "native_range": "East Asia (draft; needs source).",
+    "naturalized_range": "North America and Europe (draft; needs source).",
+    "usda_zones": "3-9 (draft; needs source).",
+    "habitat": "Visible field-photo context suggests garden, roadside, or edge-colony vegetation; exact site withheld.",
+    "soil": "Unknown; not measured.",
+    "hydrology": "Moderate moisture context inferred from foliage only; not measured.",
+    "atlas_status": "placeholder"
+  },
+  "morphology": {
+    "growth_habit": "Dense clump-forming perennial herb.",
+    "height_cm": {
+      "min": 60,
+      "max": 120,
+      "unit": "cm"
+    },
+    "spread_cm": {
+      "min": 60,
+      "max": 90,
+      "unit": "cm"
+    },
+    "flower_diameter_cm": {
+      "min": 10,
+      "max": 12,
+      "unit": "cm"
+    },
+    "flower_duration": "Approximately one day; source verification required.",
+    "diagnostic_features": [
+      "Orange to tawny six-part floral presentation",
+      "Yellow throat",
+      "Red-orange eyezone",
+      "Projecting stamens and style",
+      "Strap-like green foliage",
+      "Clump-forming colony habit"
+    ],
+    "measurement_status": "needs_source"
+  },
+  "phenology": {
+    "bloom_season": "Late June through August in many temperate North American contexts; source verification required.",
+    "current_bloom_stage": "Full bloom in reviewed field-photo context.",
+    "annual_observations": [
+      {
+        "year": 2026,
+        "note": "M2 reference context shows a full bloom, surrounding foliage, buds, and additional blooms. First bloom and peak bloom dates are not established."
+      }
+    ]
+  },
+  "ecology": {
+    "pollinator_value": "Potential nectar and pollinator context; verify before publication.",
+    "known_pollinators": [
+      "Native bees (draft)",
+      "Butterflies (draft)"
+    ],
+    "companion_species": [
+      "Rudbeckia (generated-poster concept claim; needs source)",
+      "Echinacea (generated-poster concept claim; needs source)"
+    ],
+    "wildlife_interactions": [],
+    "ecological_notes": "Dense foliage and clump habit may contribute to small-scale habitat complexity. Treat soil and pollinator claims as draft until sourced.",
+    "source_status": "needs_source"
+  },
+  "engineering": {
+    "root_architecture": "Fibrous and tuberous root network; source verification required.",
+    "soil_stabilization": "Interpretive engineering layer: root mass may help bind surface soil in edge or slope planting contexts.",
+    "water_management": "Interpretive layer: established clumps may suit moderate-water, rain-garden, or drainage-edge design contexts when site conditions are appropriate.",
+    "urban_resilience": "Interpretive layer: roadside and edge-colony behavior suggests resilience, but claims require regional sourcing.",
+    "geometry": "Six-part radial floral presentation with approximate 60-degree rotational interpretation.",
+    "biomimicry_notes": "Sequential one-day blooms can be framed as distributed redundancy: the plant maintains seasonal display through repeated replacement instead of single-bloom longevity.",
+    "claim_status": "interpretive"
+  },
+  "knowledge_layers": [
+    {
+      "layer": "Overview",
+      "status": "draft",
+      "summary": "Reference specimen for the Rainbow Botanics standards and Prismaflora Foundry Pipeline.",
+      "source_status": "interpretive"
+    },
+    {
+      "layer": "Scientific Herbarium",
+      "status": "draft",
+      "summary": "Taxonomy and morphology are structured but await source verification.",
+      "source_status": "needs_source"
+    },
+    {
+      "layer": "Blueprint Engineering",
+      "status": "draft",
+      "summary": "Geometry, root architecture, hydrology, and soil-stabilization interpretations are captured for review.",
+      "source_status": "interpretive"
+    },
+    {
+      "layer": "Heritage Illustration",
+      "status": "draft",
+      "summary": "Generated concept art suggests Victorian and parchment-style visual directions.",
+      "source_status": "interpretive"
+    },
+    {
+      "layer": "Photographic Plate",
+      "status": "review",
+      "summary": "Three source-photo contexts were reviewed locally but not committed as repository assets.",
+      "source_status": "interpretive"
+    },
+    {
+      "layer": "Geographic Origin",
+      "status": "draft",
+      "summary": "East Asian origin and naturalized-range narrative are draft until sourced.",
+      "source_status": "needs_source"
+    },
+    {
+      "layer": "Cultural Atlas",
+      "status": "draft",
+      "summary": "Common names are listed; generated language, mythology, and symbolism claims require review.",
+      "source_status": "needs_source"
+    },
+    {
+      "layer": "Digital Twin",
+      "status": "draft",
+      "summary": "Atlas and longitudinal tracking are placeholders. Exact location remains withheld.",
+      "source_status": "not_applicable"
+    }
+  ],
+  "assets": {
+    "poster": {
+      "status": "draft",
+      "version": "m2-context",
+      "notes": "Concept posters reviewed; final poster must be rebuilt from source-safe content."
+    },
+    "blueprint": {
+      "status": "draft",
+      "version": "m2-context",
+      "notes": "Blueprint direction established from generated concepts; measurements and claims remain unverified."
+    },
+    "heritage": {
+      "status": "draft",
+      "version": "m2-context",
+      "notes": "Victorian and parchment visual directions captured as concepts only."
+    },
+    "photo_plate": {
+      "status": "review",
+      "version": "m2-context",
+      "notes": "Field-photo context reviewed locally; no source images committed."
+    },
+    "atlas_page": {
+      "status": "not_started",
+      "notes": "Exact GPS and locality overlays withheld pending public-safe Atlas design."
+    },
+    "social_package": {
+      "status": "not_started",
+      "notes": "Social package waits for source review and public-safe copy."
+    },
+    "pdf": {
+      "status": "not_started"
+    },
+    "webgl": {
+      "status": "not_started",
+      "notes": "No 3D reconstruction is available."
+    }
+  },
+  "ai_metadata": {
+    "candidate_species": [
+      "Hemerocallis fulva"
+    ],
+    "vision_model_notes": "No repository AI vision run has been performed. Generated-poster confidence values are not accepted as evidence.",
+    "color_analysis_status": "Manual palette captured from visual reference only.",
+    "model_reviewers": [
+      "Codex standards pass"
+    ]
+  },
+  "references": [
+    {
+      "title": "Rainbow Botanical Standards Manual v1.0",
+      "note": "Internal standards source for record shape and production gates.",
+      "source_status": "interpretive"
+    },
+    {
+      "title": "Hemerocallis fulva Visual Source Register",
+      "note": "Internal process register for reviewed local image context.",
+      "source_status": "interpretive"
+    },
+    {
+      "title": "External botanical citations pending",
+      "note": "Required before public claims about range, morphology, names, etymology, ecology, and history.",
+      "source_status": "needs_source"
+    }
+  ],
+  "qa": {
+    "privacy_checked": true,
+    "claims_checked": false,
+    "accessibility_checked": false,
+    "visual_assets_checked": false,
+    "human_approved": false,
+    "blockers": [
+      "No external botanical citations attached.",
+      "Exact public Atlas display not approved.",
+      "Generated poster text contains unverified claims.",
+      "Generated poster coordinates and locality overlays must be redacted or approved.",
+      "No production visual assets have been rebuilt from the structured data."
+    ]
+  },
+  "revision_history": [
+    {
+      "date": "2026-07-01",
+      "change": "Created M2 repository-safe specimen fixture from the standards manual and reviewed visual context.",
+      "actor": "Codex"
+    }
+  ]
+}
