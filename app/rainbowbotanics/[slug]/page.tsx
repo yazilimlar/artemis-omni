@@ -1,13 +1,13 @@
-import { redirect } from "next/navigation";
 import {
   getRainbowSpecimenMetadata,
   getRainbowStaticParams,
+  RainbowSpecimenPage,
 } from "@/components/rainbow/RainbowSpecimenPage";
 
 type Params = { slug: string };
 type PageProps = { params: Promise<Params> };
 
-const legacyRouteBase = "/rainbowbotanics-2026";
+const routeBase = "/rainbowbotanics";
 
 export const dynamicParams = false;
 
@@ -15,10 +15,10 @@ export const generateStaticParams = getRainbowStaticParams;
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  return getRainbowSpecimenMetadata(slug, legacyRouteBase);
+  return getRainbowSpecimenMetadata(slug, routeBase);
 }
 
-export default async function RainbowBotanicsLegacyPage({ params }: PageProps) {
+export default async function RainbowBotanicsCanonicalPage({ params }: PageProps) {
   const { slug } = await params;
-  redirect(`/rainbowbotanics/${slug}`);
+  return <RainbowSpecimenPage slug={slug} />;
 }

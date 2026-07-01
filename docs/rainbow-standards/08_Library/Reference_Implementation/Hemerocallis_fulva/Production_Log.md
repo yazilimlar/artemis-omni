@@ -116,3 +116,24 @@ Remaining gates:
 - Replace draft/generated concept claims with sourced data.
 - Decide whether the launch path remains `/rainbowbotanics-2026/...` or moves under a
   Labs/Library review surface.
+
+## M4 - Canonical Rainbow Botanics Route
+
+Date: 2026-07-01
+Branch: feature/rainbow-botanics-prismaflora-preview
+
+Completed:
+
+- Added canonical app route at `/rainbowbotanics/hemerocallis-fulva`.
+- Added `/rainbowbotanics` redirect to the first source-safe specimen page.
+- Converted the legacy `/rainbowbotanics-2026/hemerocallis-fulva` route into a
+  redirect to `/rainbowbotanics/hemerocallis-fulva`.
+- Shared the specimen rendering logic through `components/rainbow/RainbowSpecimenPage.tsx`
+  so canonical and legacy routes cannot drift.
+- Kept `noindex`, exact-location withholding, and publication blockers in place.
+
+Remaining gates:
+
+- Apex `agoraxai.com/rainbowbotanics/...` requires Squarespace routing or DNS ownership
+  changes because the apex domain is not served by this Vercel project.
+- Add external citations before lifting `noindex` or including the route in `sitemap.xml`.
