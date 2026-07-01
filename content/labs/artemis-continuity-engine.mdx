@@ -1,0 +1,130 @@
+---
+title: "Artemis Continuity Engine"
+summary: "The AI-native engineering operating system that keeps Artemis coherent across Codex, Claude Code, GPT, design review, documentation, and future autonomous agents."
+date: "2026-06-30"
+category: "Governance"
+tags: ["ai-governance", "architecture", "adr", "handover", "knowledge-os"]
+heroImage: "/og/artemis-default.svg"
+seoDescription: "Artemis Continuity Engine is the AI-native governance lab for preserving architecture, decisions, session handovers, and engineering memory across AI-assisted development."
+author: "Artemis Labs"
+readingTime: "6 min read"
+---
+
+## Why it exists
+
+Multi-agent AI development creates speed, but it also creates drift. Each model enters a
+session with incomplete memory. If the repository does not carry the truth, every agent
+is forced to infer intent from chat history, partial files, or stale assumptions.
+
+The Artemis Continuity Engine turns governance into a product surface. It gives every
+AI session the same starting point: source code, accepted architecture decisions,
+engineering rules, feature passports, and durable handover notes.
+
+<Callout title="Operating rule">
+Every AI starts as a capable engineer with amnesia. The repository must provide the
+memory, the hierarchy of authority, and the validation path.
+</Callout>
+
+## The knowledge pyramid
+
+When sources disagree, Artemis resolves conflicts by authority:
+
+1. Source code and verified build output
+2. Accepted Architecture Decision Records
+3. Engineering architecture files
+4. Security, deployment, and operating rules
+5. Feature passports and component specifications
+6. Prompt templates and handovers
+7. AI session notes
+8. Conversation context
+
+Conversation is useful direction. It is not final architectural authority.
+
+## The repo-native system
+
+The continuity layer is now represented by durable files:
+
+- `ENGINEERING/AI_AGENT_RULES.md`
+- `ENGINEERING/ARCHITECTURE.md`
+- `ENGINEERING/PROJECT_GENOME.yaml`
+- `ENGINEERING/FEATURE_PASSPORT_TEMPLATE.md`
+- `decisions/ADR-INDEX.md`
+- `decisions/ADR-005-ai-engineering-operating-system.md`
+- `docs/ArtemisAIEngineeringOperatingSystem.md`
+
+These files make the operating system readable by humans and by future AI agents before
+they touch implementation code.
+
+## What it protects
+
+The Continuity Engine protects Artemis from quiet architectural decay:
+
+- agents changing folder structure without a decision record
+- standalone prototypes being merged into product surfaces without boundaries
+- public pages overstating current capability
+- token or credential language leaking into user-facing copy
+- multiple agents duplicating components or inventing incompatible patterns
+- handovers disappearing into chat instead of becoming repository memory
+
+## Feature passports
+
+Every major Artemis module should eventually have a passport:
+
+- purpose
+- scope
+- owner
+- dependencies
+- ADRs
+- tests
+- documentation
+- security considerations
+- known risks
+- roadmap
+
+Atlas, Finance Architecture, ArtemisIX19, Knowledge OS, GIS, CAD/BIM, ERP, and future
+agent workflows should become independently evolvable without losing the same governance
+model.
+
+## Validation beyond build success
+
+A build can pass while architecture degrades. The next version of this system should
+measure:
+
+- ADR coverage
+- component documentation coverage
+- dependency direction
+- duplicate components
+- design token usage
+- prompt freshness
+- security rule compliance
+- accessibility and performance checks
+- handover completeness
+
+The target is not process for its own sake. The target is measurable coherence.
+
+## Confidence labels
+
+AI recommendations should carry confidence levels:
+
+- **A:** verified by repository
+- **B:** consistent with repository
+- **C:** inference from available context
+- **D:** speculation
+
+This prevents a generated explanation from sounding more certain than the evidence
+allows.
+
+## Roadmap
+
+The next useful steps are practical:
+
+- add feature passports for Atlas, Finance Architecture, and ArtemisIX19
+- add a pull request template with ADR citation and AI safety checklist
+- generate repository indexes for systems, components, prompts, and tests
+- add lightweight architecture drift checks to CI
+- preserve screenshots, build output, prompt versions, and deployment metadata at major
+  milestones
+
+The long-term asset is not only the website. It is the engineering memory that lets the
+website, Atlas, finance tools, GIS modules, knowledge systems, and future agents evolve
+without losing the reason they exist.

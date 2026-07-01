@@ -251,6 +251,33 @@ export const proofModules: ProofModule[] = [
       "This is a brand and experience layer, not a current product-capability claim.",
   },
   {
+    slug: "artemis-continuity-engine",
+    title: "Artemis Continuity Engine",
+    eyebrow: "AI governance",
+    href: "/labs/artemis-continuity-engine",
+    statusLabel: "Governance live",
+    statusTone: "public",
+    summary:
+      "An AI-native engineering operating system for preserving architecture, ADRs, handovers, feature passports, and repository memory across Codex, Claude Code, GPT, and future agents.",
+    decision:
+      "How does Artemis keep architectural consistency when many AI sessions and product domains evolve in parallel?",
+    signals: [
+      "ADR index",
+      "AI agent rules",
+      "Project genome",
+      "Feature passports",
+      "Session handovers",
+      "Validation gates",
+    ],
+    outcomes: [
+      "Less architectural drift",
+      "Cleaner AI handoffs",
+      "A repo-native memory system for future autonomous engineering",
+    ],
+    boundary:
+      "This Labs page documents the governance system and roadmap. Some automation checks and generated indexes are planned future enforcement layers.",
+  },
+  {
     slug: "system-graphics-library",
     title: "System Graphics Library",
     eyebrow: "Visual proof",

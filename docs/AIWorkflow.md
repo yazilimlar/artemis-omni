@@ -26,11 +26,22 @@ human-approved deployment steps.
 
 ## Guardrails
 
+- Every AI session should start from `ENGINEERING/AI_AGENT_RULES.md`,
+  `ENGINEERING/ARCHITECTURE.md`, and `decisions/ADR-INDEX.md`.
 - No AI tool holds account credentials, API keys, or DNS access.
 - Secrets live only in `.env.local` (local) and Vercel env vars (deployed) — never in
   code, never pasted into chat. See `SecurityRules.md`.
 - DNS / Squarespace changes are **owner-performed manually** from written instructions.
 - Every change lands via GitHub with human review before deploy.
+- Architecture-relevant changes should cite the accepted ADR they touch or propose a new
+  ADR before implementation.
+
+## AI Engineering Operating System
+
+The durable governance model is documented in `docs/ArtemisAIEngineeringOperatingSystem.md`.
+It turns the AI workflow into a repository-native operating system: ADRs preserve intent,
+standards preserve consistency, structured metadata gives AI agents shared context, and
+validation prevents architectural drift.
 
 ## Prompt files
 
