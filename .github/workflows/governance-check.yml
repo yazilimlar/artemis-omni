@@ -1,0 +1,59 @@
+# Artemis AIEOS — governance & quality check.
+# Real gates: typecheck, lint, build. Advisory: governance reminders (non-blocking).
+name: Governance Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  quality:
+    name: Typecheck · Lint · Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: Install
+        run: npm ci || npm install
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+
+  governance:
+    name: Governance advisories (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify governance docs exist
+        run: |
+          for f in ENGINEERING/AI_AGENT_RULES.md ENGINEERING/ARCHITECTURE.md decisions/ADR-INDEX.md; do
+            if [ ! -f "$f" ]; then echo "::warning::Missing governance doc $f"; fi
+          done
+      - name: Remind ADR citation for architecture-relevant changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ]; then
+            CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" || true)
+            echo "$CHANGED" | grep -qsE '^(app/|components/ui/|next.config|tailwind.config|decisions/|ENGINEERING/)' \
+              && echo "::warning::Architecture-relevant files changed — confirm the PR cites the touched ADR(s)." \
+              || echo "No architecture-relevant paths detected."
+          fi
+      - name: Remind handover freshness
+        run: |
+          if [ -f docs/HANDOVER.md ]; then
+            echo "HANDOVER present. Confirm it reflects this session."
+          else
+            echo "::warning::docs/HANDOVER.md missing — add a session handover."
+          fi
