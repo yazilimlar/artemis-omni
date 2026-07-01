@@ -97,6 +97,13 @@ button,input,select{font:inherit}button:focus-visible,input:focus-visible,select
         </div>
       </div>
 
+      <div class="card span12" id="timelineCard">
+        <h3>4D Timeline <span>tax year build-up &middot; illustrative</span></h3>
+        <input type="range" id="timeScrub" min="0" max="100" step="1" value="100" aria-label="Tax year timeline" style="width:100%;accent-color:var(--c-income);margin-top:4px">
+        <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:2px"><span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span><span>File</span></div>
+        <div id="timeMilestone" style="margin-top:10px;padding:10px 12px;border:1px solid var(--line);background:rgba(105,199,255,.06);border-radius:14px;font-size:12px;color:var(--soft);line-height:1.42">Drag the timeline to walk through the tax year: the structure builds up as income accumulates, deferral decisions lock in, and payments resolve. Numbers stay at your full-year model; this axis is an illustrative time view.</div>
+      </div>
+
       <div class="card span4">
         <h3>Structural Metrics <span>derived live</span></h3>
         <div class="miniGrid">
@@ -487,10 +494,26 @@ function intersect(e){ setPointer(e); raycaster.setFromCamera(pointer,camera); c
 function onPointerDown(e){ const hit=intersect(e); if(hit){ const name=hit.object.userData.name; updateNodePanel(name,lastCalc); if(hit.object.userData.dragKey){ drag={key:hit.object.userData.dragKey, y:e.clientY, start:state[hit.object.userData.dragKey]}; controls3d.enabled=false; previousCalc=JSON.parse(JSON.stringify(lastCalc)); ghostPinned=false; } } }
 function onPointerMove(e){ if(drag){ const cfg=CONTROLS.find(c=>c.key===drag.key); const delta=(drag.y-e.clientY)*(cfg.drag||cfg.step||1); let val=drag.start+delta; if(cfg.step===1) val=Math.round(val); state=sanitize({...state,[drag.key]:clamp(val,cfg.min,cfg.max)}); syncInputs(drag.key); lastCalc=calculate(state); renderStaticOnly(); update3D(lastCalc,previousCalc); return; } const hit=intersect(e); renderer.domElement.style.cursor=hit?(hit.object.userData.dragKey?'ns-resize':'pointer'):'grab'; if(hit) updateNodePanel(hit.object.userData.name,lastCalc); }
 function onPointerUp(){ if(drag){ drag=null; controls3d.enabled=true; saveState(); } }
+let timeFactor=1;
+const MILESTONES=[
+  {p:0,   month:'January',      node:'foundation',      msg:'W&#8209;2 withholding begins. Wage income starts accumulating into the foundation; payments quietly build.'},
+  {p:.28, month:'April',        node:'paymentSatellite',msg:'Estimated tax due &amp; prior-year filing. Self-employment liability is recognized; first reconciliation point.'},
+  {p:.55, month:'July',         node:'taxableCore',     msg:'Mid-year checkpoint. The taxable core is taking shape &mdash; still time to adjust deferrals before year-end.'},
+  {p:.9,  month:'December',     node:'k401Column',      msg:'Last chance for 401(k) deferrals. The deferral column locks in &mdash; the final AGI-reduction opportunity.'},
+  {p:1,   month:'April (file)', node:'paymentSatellite',msg:'Filing deadline &mdash; final reconciliation. The payment satellite resolves to a refund or an amount due.'}
+];
+function nearestMilestone(p){ let best=MILESTONES[0]; for(const m of MILESTONES){ if(p>=m.p-1e-9) best=m; } return best; }
+function setTimePhase(progress){
+  timeFactor=0.4+progress*0.6;
+  if(mainGroup) mainGroup.scale.y=timeFactor;
+  const m=nearestMilestone(progress); const el=$('timeMilestone');
+  if(el) el.innerHTML='<b style="color:var(--c-income)">'+m.month+'</b> &middot; '+m.msg;
+  if(lastCalc) updateNodePanel(m.node, lastCalc);
+}
 function setCamera(mode){ if(!camera) return; const target={iso:[10,8,12],top:[0,17,.01],side:[13,4,.01]}[mode] || [10,8,12]; camera.position.set(...target); controls3d.target.set(0,2,0); controls3d.update(); $('archMode').textContent = mode==='top'?'Top-Down Flow View':mode==='side'?'Side Load Stack':'Isometric Load Path'; }
 function animate(){ requestAnimationFrame(animate); if(!renderer) return; controls3d.update(); if(flowGroup && clock) updateFlows(lastCalc||calculate(state)); renderer.render(scene,camera); labelRenderer.render(scene,camera); }
 
-$('themeBtn').onclick=()=>ROOT.classList.toggle('light'); $('exportBtn').onclick=exportCSV; $('shareBtn').onclick=shareURL;
+$('themeBtn').onclick=()=>ROOT.classList.toggle('light'); $('exportBtn').onclick=exportCSV; $('shareBtn').onclick=shareURL; $('timeScrub').oninput=e=>setTimePhase(+e.target.value/100);
 renderStaticControls(); init3D(); renderAll(true);
 </script>
 </body>
