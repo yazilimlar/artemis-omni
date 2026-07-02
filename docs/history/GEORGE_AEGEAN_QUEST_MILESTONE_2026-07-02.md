@@ -50,18 +50,33 @@ asset for fast iPhone load:
 - Stylized 3D route board instead of a full GIS map.
 - Default George route is active at startup.
 - Route list is available as a drawer rather than a permanent blocking panel.
+- User can add custom stops after the current checkpoint.
+- User can remove route stops and reset the default route.
+- User can switch characters from a local roster.
+- Troy Time Atlas KML anchors are projected as a local c. 600 BC layer:
+  Troy Citadel, Temple of Athena, Archaic Lower Town, Sigeum, Scamander River,
+  and the Dardanelles / Hellespont.
+- Added local compressed image assets for the George variants, roster references,
+  Troy/St. George reference, and workshop council scene.
 
 ## Boundary
 
-This is a mobile game prototype and itinerary-storytelling shell. It is not a complete
-GIS dataset, navigation app, travel agency, or booking engine. Future booking or partner
-actions should be added as explicit handoff flows after route pacing and character-led
-discovery are validated.
+This is a mobile game prototype and itinerary-storytelling shell. The Troy KML points
+are preserved as data and projected onto the stylized game board; the result is not a
+survey-grade GIS view, navigation app, travel agency, or booking engine. Future booking
+or partner actions should be added as explicit handoff flows after route pacing and
+character-led discovery are validated.
 
 ## Files
 
 - `public/standalone/george-aegean-quest.html`
 - `public/standalone/assets/george-aegean-quest/george.jpg`
+- `public/standalone/assets/george-aegean-quest/george-strong.jpg`
+- `public/standalone/assets/george-aegean-quest/george-purple.jpg`
+- `public/standalone/assets/george-aegean-quest/troy-st-george.jpg`
+- `public/standalone/assets/george-aegean-quest/professional-roster.jpg`
+- `public/standalone/assets/george-aegean-quest/historical-roster.jpg`
+- `public/standalone/assets/george-aegean-quest/workshop-council.jpg`
 - `app/labs/george-aegean-quest/page.tsx`
 - `app/labs/page.tsx`
 - `app/library/programs/page.tsx`

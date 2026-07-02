@@ -69,12 +69,12 @@ const standaloneLabModules = [
     Icon: Gamepad2,
     accentIcon: Crown,
     description:
-      "A super-simplified iPhone-first Atlas game starring George on a default quest route from Istanbul through the Aegean, Rhodes, Pamphylia, Cilicia, and Adana.",
-    signals: ["George guide", "17-stop route", "One-thumb controls", "No map token"],
+      "A super-simplified iPhone-first Atlas game starring George, now with editable route stops, character switching, and a Troy Time Atlas KML layer.",
+    signals: ["George guide", "Troy KML layer", "Route editor", "Character roster"],
     commercialPath:
       "Best pilot path: character-led destination quests, sponsored route packs, mobile itinerary funnels, and premium cultural game tours.",
     boundary:
-      "This is a lightweight standalone iPhone game prototype with a stylized route map. It is not a full GIS dataset or production booking engine.",
+      "This is a lightweight standalone iPhone game prototype with stylized KML projection. It is not a full GIS dataset, navigation product, or production booking engine.",
   },
 ];
 

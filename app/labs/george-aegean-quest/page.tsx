@@ -4,7 +4,7 @@ export const metadata = createMetadata({
   title: "George Aegean Quest",
   path: "/labs/george-aegean-quest",
   description:
-    "iPhone-first Artemis Atlas game route starring George across Istanbul, the Aegean coast, Rhodes, Pamphylia, Cilicia, and Adana.",
+    "iPhone-first Artemis Atlas game starring George with editable route stops, character switching, and a Troy Time Atlas KML layer.",
 });
 
 export default function GeorgeAegeanQuestPage() {

@@ -204,6 +204,21 @@
       will-change: transform;
     }
 
+    .map-plane::before {
+      content: "";
+      position: absolute;
+      inset: -10%;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 64% 31%, rgba(255,255,255,0.16), transparent 16%),
+        radial-gradient(ellipse at 52% 58%, rgba(244,201,107,0.13), transparent 18%),
+        repeating-radial-gradient(ellipse at 58% 52%, rgba(255,255,255,0.07) 0 1px, transparent 1px 14px);
+      mix-blend-mode: screen;
+      opacity: 0.5;
+      transform: rotate(8deg);
+      z-index: 1;
+    }
+
     .land {
       position: absolute;
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -250,6 +265,7 @@
       inset: 0;
       overflow: visible;
       pointer-events: none;
+      z-index: 2;
     }
 
     .route-shadow {
@@ -291,11 +307,17 @@
       font-weight: 900;
       transition: transform 360ms cubic-bezier(.2,.8,.2,1), background 360ms, border 360ms;
       will-change: transform;
+      z-index: 5;
     }
 
     .stop.visited {
       background: var(--mint);
       border-color: rgba(141, 243, 200, 0.95);
+    }
+
+    .stop.custom {
+      background: #8df3c8;
+      border-color: rgba(255,255,255,0.88);
     }
 
     .stop.active {
@@ -341,6 +363,65 @@
       border-radius: 50%;
       background: rgba(251, 246, 231, 0.44);
       box-shadow: 0 5px 10px rgba(0,0,0,0.18);
+    }
+
+    .anchor-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    .poi {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0 -9px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      pointer-events: auto;
+      border: 2px solid rgba(255,255,255,0.85);
+      background: rgba(85,214,255,0.84);
+      color: #08202a;
+      box-shadow: 0 0 0 8px rgba(85,214,255,0.10), 0 9px 18px rgba(0,0,0,0.28);
+      font-size: 9px;
+      font-weight: 1000;
+      opacity: 0;
+      transform: scale(0.72);
+      transition: opacity 260ms, transform 260ms;
+    }
+
+    .poi.citadel {
+      background: #ffbd55;
+      box-shadow: 0 0 0 9px rgba(255,189,85,0.14), 0 9px 18px rgba(0,0,0,0.30);
+    }
+
+    .poi.custom {
+      background: #8df3c8;
+      box-shadow: 0 0 0 8px rgba(141,243,200,0.12), 0 9px 18px rgba(0,0,0,0.26);
+    }
+
+    .show-troy .poi {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .map-caption {
+      position: absolute;
+      right: 8%;
+      top: 12%;
+      z-index: 9;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px;
+      background: rgba(5,10,14,0.52);
+      color: rgba(251,246,231,0.72);
+      padding: 6px 9px;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(12px);
     }
 
     .route-label {
@@ -474,6 +555,29 @@
       padding: 7px 13px 13px;
     }
 
+    .mini-controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      padding: 2px 13px 0;
+    }
+
+    .mini-control {
+      min-height: 34px;
+      border-radius: 13px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.11);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+    }
+
+    .mini-control.active {
+      color: #10130d;
+      background: linear-gradient(135deg, #8df3c8, #55d6ff);
+    }
+
     .control {
       min-height: 50px;
       border-radius: 17px;
@@ -501,13 +605,14 @@
       transform: translateY(1px) scale(0.99);
     }
 
-    .quest-drawer {
+    .quest-drawer,
+    .panel-drawer {
       position: absolute;
       left: 10px;
       right: 10px;
-      bottom: calc(154px + var(--safe-bottom));
+      bottom: calc(194px + var(--safe-bottom));
       z-index: 26;
-      max-height: min(48dvh, 430px);
+      max-height: min(52dvh, 470px);
       border: 1px solid rgba(255,255,255,0.13);
       border-radius: 22px;
       background: rgba(6, 12, 16, 0.77);
@@ -520,7 +625,8 @@
       transition: opacity 220ms, transform 220ms;
     }
 
-    .quest-drawer.open {
+    .quest-drawer.open,
+    .panel-drawer.open {
       opacity: 1;
       transform: translateY(0);
       pointer-events: auto;
@@ -548,20 +654,22 @@
       font-weight: 900;
     }
 
-    .stop-list {
-      max-height: calc(min(48dvh, 430px) - 57px);
+    .stop-list,
+    .panel-body {
+      max-height: calc(min(52dvh, 470px) - 57px);
       overflow: auto;
       padding: 8px;
       scrollbar-width: none;
     }
 
-    .stop-list::-webkit-scrollbar {
+    .stop-list::-webkit-scrollbar,
+    .panel-body::-webkit-scrollbar {
       display: none;
     }
 
     .stop-row {
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr) auto;
+      grid-template-columns: 34px minmax(0, 1fr) auto auto;
       gap: 10px;
       align-items: center;
       width: 100%;
@@ -620,6 +728,143 @@
       font-style: normal;
       font-weight: 900;
       text-transform: uppercase;
+    }
+
+    .icon-action {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.08);
+      color: rgba(251,246,231,0.78);
+      font-weight: 1000;
+    }
+
+    .icon-action.danger {
+      color: #ffd1d1;
+      background: rgba(255,90,90,0.11);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 8px;
+      padding: 10px 8px 8px;
+    }
+
+    .field {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      padding: 0 11px;
+      outline: none;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .field::placeholder {
+      color: rgba(251,246,231,0.42);
+    }
+
+    .form-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .panel-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 92px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+    .panel-card scenic {
+      display: none;
+    }
+
+    .scene-card {
+      min-height: 126px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .scene-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.62));
+    }
+
+    .scene-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .character-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .character-card {
+      display: grid;
+      gap: 7px;
+      min-height: 162px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.07);
+      padding: 8px;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .character-card.active {
+      border-color: rgba(244,201,107,0.66);
+      background: rgba(244,201,107,0.12);
+    }
+
+    .character-art {
+      height: 92px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.09);
+    }
+
+    .character-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .character-card b,
+    .panel-card b {
+      display: block;
+      font-size: 12px;
+      line-height: 1.12;
+    }
+
+    .character-card small,
+    .panel-card small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.28;
+    }
+
+    .anchor-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
     }
 
     .toast {
@@ -713,10 +958,11 @@
         <div class="sky" aria-hidden="true"></div>
         <div class="water" aria-hidden="true"></div>
 
-        <div class="map-plane" id="mapPlane" aria-hidden="true">
+        <div class="map-plane" id="mapPlane">
           <div class="land aegean"></div>
           <div class="land turkey"></div>
           <div class="land cyprus"></div>
+          <div class="map-caption">stylized Aegean + Troy layer</div>
           <div class="island-dot" style="left:18%;top:48%"></div>
           <div class="island-dot" style="left:25%;top:55%"></div>
           <div class="island-dot" style="left:30%;top:63%"></div>
@@ -733,8 +979,10 @@
             <polyline id="routeShadow" class="route-shadow" points=""></polyline>
             <polyline id="routeLine" class="route-line" points=""></polyline>
           </svg>
+          <div id="troyLayer" class="anchor-layer"></div>
+          <div id="customLayer" class="anchor-layer"></div>
           <div id="stopsLayer"></div>
-          <div class="george-token" id="georgeToken"><img src="/standalone/assets/george-aegean-quest/george.jpg" alt="" /></div>
+          <div class="george-token" id="georgeToken"><img id="tokenImg" src="/standalone/assets/george-aegean-quest/george-strong.jpg" alt="" /></div>
         </div>
       </main>
 
@@ -748,20 +996,75 @@
 
       <aside class="quest-drawer" id="questDrawer" aria-label="George route itinerary">
         <div class="drawer-head">
-          <strong>George Route - 17 stops</strong>
+          <strong id="routeCountTitle">George Route - 17 stops</strong>
           <button type="button" id="closeDrawer" aria-label="Close route list">x</button>
         </div>
         <div class="stop-list" id="stopList"></div>
       </aside>
 
+      <aside class="panel-drawer" id="locationDrawer" aria-label="Add a route location">
+        <div class="drawer-head">
+          <strong>Add / Remove Location</strong>
+          <button type="button" id="closeLocationDrawer" aria-label="Close location tools">x</button>
+        </div>
+        <div class="panel-body">
+          <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/workshop-council.jpg')">
+            <b>Route Workshop</b>
+            <small>Add a custom checkpoint after George's current stop. Remove route stops from the Route drawer.</small>
+          </div>
+          <div class="form-grid">
+            <input class="field" id="customName" maxlength="32" placeholder="Location name" />
+            <input class="field" id="customTag" maxlength="22" placeholder="Short tag, e.g. Harbor" />
+            <input class="field" id="customBrief" maxlength="120" placeholder="One-line mission note" />
+            <div class="form-actions">
+              <button class="control primary" type="button" id="addCustomStop">Add Stop</button>
+              <button class="control" type="button" id="resetRoute">Reset Route</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <aside class="panel-drawer" id="characterDrawer" aria-label="Change character">
+        <div class="drawer-head">
+          <strong>Choose Character</strong>
+          <button type="button" id="closeCharacterDrawer" aria-label="Close character selector">x</button>
+        </div>
+        <div class="panel-body">
+          <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/professional-roster.jpg')">
+            <b>Atlas Character Roster</b>
+            <small>Switch the guide without leaving the quest. George stays the canonical default.</small>
+          </div>
+          <div class="character-grid" id="characterGrid"></div>
+        </div>
+      </aside>
+
+      <aside class="panel-drawer" id="troyDrawer" aria-label="Troy time atlas anchors">
+        <div class="drawer-head">
+          <strong>Troy Time Atlas - c. 600 BC</strong>
+          <button type="button" id="closeTroyDrawer" aria-label="Close Troy layer">x</button>
+        </div>
+        <div class="panel-body">
+          <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/troy-st-george.jpg')">
+            <b>Archaic Ilion KML Layer</b>
+            <small>These anchors are adapted from the supplied KML coordinates and projected onto the stylized route board.</small>
+          </div>
+          <div id="troyAnchorList"></div>
+        </div>
+      </aside>
+
       <section class="bottom-card">
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
         <div class="hero-row">
-          <div class="portrait"><img src="/standalone/assets/george-aegean-quest/george.jpg" alt="George, the special Artemis Atlas guide" /></div>
+          <div class="portrait"><img id="portraitImg" src="/standalone/assets/george-aegean-quest/george-strong.jpg" alt="George, the special Artemis Atlas guide" /></div>
           <div class="hero-copy">
             <strong id="missionTitle">George is ready.</strong>
             <span id="missionText">Tap Next Stop to move through the default Aegean quest. Everything is tuned for one-thumb iPhone play.</span>
           </div>
+        </div>
+        <div class="mini-controls">
+          <button class="mini-control" type="button" id="characterButton">Character</button>
+          <button class="mini-control" type="button" id="addButton">Add Stop</button>
+          <button class="mini-control" type="button" id="troyButton">Troy Layer</button>
         </div>
         <div class="controls">
           <button class="control" type="button" id="routeButton">Route</button>
@@ -775,7 +1078,7 @@
   </div>
 
   <script>
-    const georgeRoute = [
+    const defaultRoute = [
       { name: "Istanbul", tag: "Gateway", x: 62, y: 20, km: 0, brief: "George begins at the Bosphorus gateway and unlocks the Aegean quest route." },
       { name: "Asos", tag: "Stone harbor", x: 37, y: 34, km: 390, brief: "A coastal jump into ancient stone, sea air, and the first Aegean checkpoint." },
       { name: "Ephesus", tag: "Ancient city", x: 33, y: 54, km: 560, brief: "The route reaches the marble theater, library axis, and Artemis memory field." },
@@ -795,18 +1098,137 @@
       { name: "Adana", tag: "Final city", x: 87, y: 70, km: 1845, brief: "The default quest completes at Adana with the bridge, city, and reward screen." },
     ];
 
+    const troyAnchors = [
+      { name: "Troy Citadel (Archaic Ilion)", tag: "Citadel", style: "citadel", x: 41, y: 31, lon: 26.238889, lat: 39.9575, alt: 30, brief: "The fortified acropolis on the hill of Hisarlik." },
+      { name: "Temple of Athena", tag: "Temple", style: "infrastructure", x: 43, y: 29, lon: 26.2386, lat: 39.9578, alt: 35, brief: "Primary religious center inside the upper citadel, reconstructed in later periods." },
+      { name: "Archaic Lower Town", tag: "Lower town", style: "infrastructure", x: 44, y: 34, lon: 26.2395, lat: 39.9565, alt: 20, brief: "Residential and commercial zone extending south and east of the citadel." },
+      { name: "Sigeum (Harbor Outpost)", tag: "Harbor", style: "infrastructure", x: 31, y: 37, lon: 26.1833, lat: 39.95, alt: 5, brief: "Coastal settlement controlling the entrance to the Hellespont trade corridor." },
+      { name: "Scamander River", tag: "River", style: "infrastructure", x: 35, y: 24, lon: 26.2, lat: 39.97, alt: 5, brief: "Primary waterway defining the Plain of Troy and local agriculture." },
+      { name: "Dardanelles Strait", tag: "Hellespont", style: "infrastructure", x: 34, y: 14, lon: 26.195, lat: 40.01, alt: 0, brief: "Vital maritime chokepoint north of the Troy plain." },
+    ];
+
+    const characters = [
+      {
+        id: "george-strong",
+        name: "George",
+        role: "Aegean quest champion",
+        image: "/standalone/assets/george-aegean-quest/george-strong.jpg",
+        position: "50% 18%",
+        scale: "1.34",
+        note: "Canonical default guide for the iPhone quest.",
+      },
+      {
+        id: "george-laurel",
+        name: "George Laurel",
+        role: "Smooth atlas host",
+        image: "/standalone/assets/george-aegean-quest/george-purple.jpg",
+        position: "50% 18%",
+        scale: "1.22",
+        note: "Softer character mode for calm route presentation.",
+      },
+      {
+        id: "saint-george",
+        name: "Saint George",
+        role: "Legend route guardian",
+        image: "/standalone/assets/george-aegean-quest/troy-st-george.jpg",
+        position: "54% 48%",
+        scale: "1.42",
+        note: "Legend layer for Troy, quests, and heroic route beats.",
+      },
+      {
+        id: "aegean-curator",
+        name: "Aegean Curator",
+        role: "Museum route analyst",
+        image: "/standalone/assets/george-aegean-quest/professional-roster.jpg",
+        position: "50% 64%",
+        scale: "1.70",
+        note: "Professional guide mode for cultural context and evidence notes.",
+      },
+      {
+        id: "herodotus",
+        name: "Herodotus",
+        role: "Historical narrator",
+        image: "/standalone/assets/george-aegean-quest/historical-roster.jpg",
+        position: "17% 57%",
+        scale: "1.76",
+        note: "Story mode for history-first route narration.",
+      },
+      {
+        id: "workshop-council",
+        name: "Atlas Council",
+        role: "Planning table",
+        image: "/standalone/assets/george-aegean-quest/workshop-council.jpg",
+        position: "52% 48%",
+        scale: "1.18",
+        note: "Workshop mode for editing and route strategy.",
+      },
+    ];
+
+    const storageKeys = {
+      route: "george_aegean_route_v2",
+      character: "george_aegean_character_v2",
+      troy: "george_aegean_troy_visible_v2",
+    };
+
+    function esc(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+      })[ch]);
+    }
+
+    function cloneDefaultRoute() {
+      return defaultRoute.map((stop) => ({ ...stop, fixed: true }));
+    }
+
+    function safeNumber(value, fallback, min, max) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? clamp(parsed, min, max) : fallback;
+    }
+
+    function readRoute() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKeys.route) || "null");
+        if (Array.isArray(saved) && saved.length && saved.every((stop) => stop && stop.name)) {
+          return saved.slice(0, 48).map((stop, index) => ({
+            name: String(stop.name).slice(0, 32),
+            tag: String(stop.tag || "Custom").slice(0, 22),
+            x: safeNumber(stop.x, defaultRoute[index % defaultRoute.length].x, 9, 91),
+            y: safeNumber(stop.y, defaultRoute[index % defaultRoute.length].y, 12, 86),
+            km: Math.max(0, Math.round(Number(stop.km) || index * 80)),
+            brief: String(stop.brief || "Custom route stop.").slice(0, 140),
+            fixed: Boolean(stop.fixed),
+            custom: Boolean(stop.custom),
+            kml: Boolean(stop.kml),
+          }));
+        }
+      } catch (_) {}
+      return cloneDefaultRoute();
+    }
+
+    let routeStops = readRoute();
+
     const state = {
       index: 0,
       xp: 0,
       auto: false,
       timer: null,
-      drawerOpen: false,
+      drawerOpen: "",
+      characterId: localStorage.getItem(storageKeys.character) || "george-strong",
+      troyVisible: localStorage.getItem(storageKeys.troy) !== "false",
     };
 
     const routeLine = document.getElementById("routeLine");
     const routeShadow = document.getElementById("routeShadow");
     const stopsLayer = document.getElementById("stopsLayer");
+    const troyLayer = document.getElementById("troyLayer");
+    const mapPlane = document.getElementById("mapPlane");
     const georgeToken = document.getElementById("georgeToken");
+    const tokenImg = document.getElementById("tokenImg");
+    const portraitImg = document.getElementById("portraitImg");
     const stopList = document.getElementById("stopList");
     const placeTitle = document.getElementById("placeTitle");
     const placeBrief = document.getElementById("placeBrief");
@@ -818,14 +1240,35 @@
     const missionTitle = document.getElementById("missionTitle");
     const missionText = document.getElementById("missionText");
     const questDrawer = document.getElementById("questDrawer");
+    const locationDrawer = document.getElementById("locationDrawer");
+    const characterDrawer = document.getElementById("characterDrawer");
+    const troyDrawer = document.getElementById("troyDrawer");
     const toast = document.getElementById("toast");
     const routeButton = document.getElementById("routeButton");
+    const addButton = document.getElementById("addButton");
+    const characterButton = document.getElementById("characterButton");
+    const troyButton = document.getElementById("troyButton");
     const nextButton = document.getElementById("nextButton");
     const autoButton = document.getElementById("autoButton");
     const closeDrawer = document.getElementById("closeDrawer");
+    const closeLocationDrawer = document.getElementById("closeLocationDrawer");
+    const closeCharacterDrawer = document.getElementById("closeCharacterDrawer");
+    const closeTroyDrawer = document.getElementById("closeTroyDrawer");
+    const routeCountTitle = document.getElementById("routeCountTitle");
+    const customName = document.getElementById("customName");
+    const customTag = document.getElementById("customTag");
+    const customBrief = document.getElementById("customBrief");
+    const addCustomStop = document.getElementById("addCustomStop");
+    const resetRoute = document.getElementById("resetRoute");
+    const characterGrid = document.getElementById("characterGrid");
+    const troyAnchorList = document.getElementById("troyAnchorList");
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
+    }
+
+    function saveRoute() {
+      localStorage.setItem(storageKeys.route, JSON.stringify(routeStops));
     }
 
     function buzz(pattern) {
@@ -840,12 +1283,13 @@
     }
 
     function drawRoute() {
-      const points = georgeRoute.map((stop) => `${stop.x},${stop.y}`).join(" ");
+      const points = routeStops.map((stop) => `${stop.x},${stop.y}`).join(" ");
       routeLine.setAttribute("points", points);
       routeShadow.setAttribute("points", points);
+      routeCountTitle.textContent = `George Route - ${routeStops.length} stops`;
 
-      stopsLayer.innerHTML = georgeRoute.map((stop, index) => (
-        `<button class="stop" data-index="${index}" style="left:${stop.x}%;top:${stop.y}%" aria-label="${stop.name}">${index + 1}</button>`
+      stopsLayer.innerHTML = routeStops.map((stop, index) => (
+        `<button class="stop ${stop.custom ? "custom" : ""}" data-index="${index}" style="left:${stop.x}%;top:${stop.y}%" aria-label="${esc(stop.name)}">${index + 1}</button>`
       )).join("");
 
       stopsLayer.querySelectorAll(".stop").forEach((node) => {
@@ -853,20 +1297,72 @@
       });
     }
 
+    function drawTroyLayer() {
+      mapPlane.classList.toggle("show-troy", state.troyVisible);
+      troyButton.classList.toggle("active", state.troyVisible);
+      troyLayer.innerHTML = troyAnchors.map((anchor, index) => (
+        `<button class="poi ${anchor.style === "citadel" ? "citadel" : ""}" data-anchor="${index}" style="left:${anchor.x}%;top:${anchor.y}%" aria-label="${esc(anchor.name)}">${anchor.style === "citadel" ? "T" : index + 1}</button>`
+      )).join("");
+      troyLayer.querySelectorAll(".poi").forEach((node) => {
+        node.addEventListener("click", () => focusTroyAnchor(Number(node.dataset.anchor), false));
+      });
+    }
+
     function drawList() {
-      stopList.innerHTML = georgeRoute.map((stop, index) => (
-        `<button type="button" class="stop-row" data-index="${index}">
+      stopList.innerHTML = routeStops.map((stop, index) => (
+        `<div role="button" tabindex="0" class="stop-row" data-index="${index}">
           <span class="stop-num">${index + 1}</span>
-          <span><b>${stop.name}</b><small>${stop.brief}</small></span>
-          <em>${stop.tag}</em>
-        </button>`
+          <span><b>${esc(stop.name)}</b><small>${esc(stop.brief)}</small></span>
+          <em>${esc(stop.tag)}</em>
+          <button class="icon-action danger" type="button" data-remove="${index}" aria-label="Remove ${esc(stop.name)}">x</button>
+        </div>`
       )).join("");
 
       stopList.querySelectorAll(".stop-row").forEach((node) => {
         node.addEventListener("click", () => {
           goTo(Number(node.dataset.index), true);
-          setDrawer(false);
+          setDrawer("");
         });
+        node.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            goTo(Number(node.dataset.index), true);
+            setDrawer("");
+          }
+        });
+      });
+      stopList.querySelectorAll("[data-remove]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.stopPropagation();
+          removeStop(Number(node.dataset.remove));
+        });
+      });
+    }
+
+    function drawCharacters() {
+      characterGrid.innerHTML = characters.map((character) => (
+        `<button type="button" class="character-card ${character.id === state.characterId ? "active" : ""}" data-character="${esc(character.id)}">
+          <span class="character-art"><img src="${character.image}" alt="" style="object-position:${character.position};transform:scale(${character.scale})"></span>
+          <span><b>${esc(character.name)}</b><small>${esc(character.role)} · ${esc(character.note)}</small></span>
+        </button>`
+      )).join("");
+      characterGrid.querySelectorAll("[data-character]").forEach((node) => {
+        node.addEventListener("click", () => {
+          applyCharacter(String(node.dataset.character), true);
+          setDrawer("");
+        });
+      });
+    }
+
+    function drawTroyList() {
+      troyAnchorList.innerHTML = troyAnchors.map((anchor, index) => (
+        `<div class="panel-card anchor-row">
+          <span><b>${esc(anchor.name)}</b><small>${esc(anchor.brief)}<br>${anchor.lon.toFixed(6)}, ${anchor.lat.toFixed(6)}, ${anchor.alt}m</small></span>
+          <button class="control" type="button" data-add-anchor="${index}">Add</button>
+        </div>`
+      )).join("");
+      troyAnchorList.querySelectorAll("[data-add-anchor]").forEach((node) => {
+        node.addEventListener("click", () => addTroyAnchorToRoute(troyAnchors[Number(node.dataset.addAnchor)]));
       });
     }
 
@@ -882,9 +1378,9 @@
     }
 
     function goTo(index, userAction) {
-      state.index = clamp(index, 0, georgeRoute.length - 1);
-      const stop = georgeRoute[state.index];
-      const progress = state.index / (georgeRoute.length - 1);
+      state.index = clamp(index, 0, routeStops.length - 1);
+      const stop = routeStops[state.index];
+      const progress = routeStops.length > 1 ? state.index / (routeStops.length - 1) : 1;
       const reward = state.index === 0 ? 0 : 120 + state.index * 15;
       state.xp = Math.max(state.xp, reward);
 
@@ -898,14 +1394,15 @@
       placeBrief.textContent = stop.brief;
       chapterText.textContent = stop.tag;
       distanceText.textContent = `${stop.km} km`;
-      stepText.textContent = `${state.index + 1}/${georgeRoute.length}`;
+      stepText.textContent = `${state.index + 1}/${routeStops.length}`;
       xpText.textContent = `XP ${state.xp}`;
       progressFill.style.width = `${Math.max(2, progress * 100)}%`;
-      missionTitle.textContent = state.index === georgeRoute.length - 1 ? "Quest complete." : `George reached ${stop.name}.`;
-      missionText.textContent = state.index === georgeRoute.length - 1
-        ? "The Aegean quest is complete. Tap Route to replay any checkpoint."
-        : `Next checkpoint: ${georgeRoute[state.index + 1].name}.`;
-      nextButton.textContent = state.index === georgeRoute.length - 1 ? "Replay" : "Next Stop";
+      const character = activeCharacter();
+      missionTitle.textContent = state.index === routeStops.length - 1 ? "Quest complete." : `${character.name} reached ${stop.name}.`;
+      missionText.textContent = state.index === routeStops.length - 1
+        ? "The quest is complete. Add a new stop, replay any checkpoint, or open the Troy KML layer."
+        : `Next checkpoint: ${routeStops[state.index + 1].name}.`;
+      nextButton.textContent = state.index === routeStops.length - 1 ? "Replay" : "Next Stop";
 
       updateStopClasses();
       if (userAction) {
@@ -915,17 +1412,22 @@
     }
 
     function nextStop() {
-      if (state.index >= georgeRoute.length - 1) {
+      if (state.index >= routeStops.length - 1) {
         goTo(0, true);
         return;
       }
       goTo(state.index + 1, true);
     }
 
-    function setDrawer(open) {
-      state.drawerOpen = open;
-      questDrawer.classList.toggle("open", open);
-      routeButton.textContent = open ? "Hide" : "Route";
+    function setDrawer(name) {
+      state.drawerOpen = name;
+      questDrawer.classList.toggle("open", name === "route");
+      locationDrawer.classList.toggle("open", name === "location");
+      characterDrawer.classList.toggle("open", name === "character");
+      troyDrawer.classList.toggle("open", name === "troy");
+      routeButton.textContent = name === "route" ? "Hide" : "Route";
+      addButton.classList.toggle("active", name === "location");
+      characterButton.classList.toggle("active", name === "character");
     }
 
     function toggleAuto() {
@@ -946,18 +1448,155 @@
       }
     }
 
+    function activeCharacter() {
+      return characters.find((character) => character.id === state.characterId) || characters[0];
+    }
+
+    function applyCharacter(id, userAction) {
+      state.characterId = characters.some((character) => character.id === id) ? id : "george-strong";
+      const character = activeCharacter();
+      localStorage.setItem(storageKeys.character, state.characterId);
+      [tokenImg, portraitImg].forEach((img) => {
+        img.src = character.image;
+        img.alt = character.name;
+        img.style.objectPosition = character.position;
+        img.style.transform = `scale(${character.scale})`;
+      });
+      drawCharacters();
+      if (userAction) {
+        showToast(`${character.name} selected`);
+        missionTitle.textContent = `${character.name} is guiding.`;
+        missionText.textContent = character.note;
+      }
+    }
+
+    function addCustomLocation() {
+      const name = customName.value.trim().slice(0, 32);
+      if (!name) {
+        showToast("Name the stop first");
+        return;
+      }
+      const base = routeStops[state.index] || routeStops[0];
+      const bias = ((routeStops.length * 7) % 13) - 6;
+      const stop = {
+        name,
+        tag: (customTag.value.trim() || "Custom").slice(0, 22),
+        x: clamp(base.x + 4 + bias, 10, 90),
+        y: clamp(base.y + 4 - bias / 2, 13, 84),
+        km: Math.round((base.km || 0) + 35 + routeStops.length * 3),
+        brief: (customBrief.value.trim() || "Custom route checkpoint added by the player.").slice(0, 140),
+        custom: true,
+      };
+      routeStops.splice(state.index + 1, 0, stop);
+      saveRoute();
+      drawRoute();
+      drawList();
+      goTo(state.index + 1, true);
+      customName.value = "";
+      customTag.value = "";
+      customBrief.value = "";
+      setDrawer("");
+      showToast(`${stop.name} added`);
+    }
+
+    function removeStop(index) {
+      if (routeStops.length <= 1) {
+        showToast("Keep at least one stop");
+        return;
+      }
+      const removed = routeStops.splice(index, 1)[0];
+      state.index = clamp(state.index >= index ? state.index - 1 : state.index, 0, routeStops.length - 1);
+      saveRoute();
+      drawRoute();
+      drawList();
+      goTo(state.index, false);
+      showToast(`${removed.name} removed`);
+    }
+
+    function resetDefaultRoute() {
+      routeStops = cloneDefaultRoute();
+      state.index = 0;
+      state.xp = 0;
+      saveRoute();
+      drawRoute();
+      drawList();
+      goTo(0, true);
+      showToast("Default route restored");
+      setDrawer("");
+    }
+
+    function focusTroyAnchor(index, openDrawer) {
+      const anchor = troyAnchors[index];
+      if (!anchor) return;
+      georgeToken.style.left = `${anchor.x}%`;
+      georgeToken.style.top = `${anchor.y}%`;
+      placeTitle.textContent = anchor.name;
+      placeBrief.textContent = anchor.brief;
+      chapterText.textContent = `Troy KML · ${anchor.tag}`;
+      distanceText.textContent = `${anchor.alt}m`;
+      missionTitle.textContent = "Troy Time Atlas anchor.";
+      missionText.textContent = `${anchor.lon.toFixed(6)}, ${anchor.lat.toFixed(6)} · tap Add inside Troy Layer to insert it into the route.`;
+      if (openDrawer) setDrawer("troy");
+      showToast(anchor.tag);
+    }
+
+    function addTroyAnchorToRoute(anchor) {
+      const stop = {
+        name: anchor.name.replace(" (Archaic Ilion)", ""),
+        tag: `KML ${anchor.tag}`,
+        x: anchor.x,
+        y: anchor.y,
+        km: Math.round(410 + anchor.alt),
+        brief: `${anchor.brief} KML: ${anchor.lon.toFixed(5)}, ${anchor.lat.toFixed(5)}, ${anchor.alt}m.`,
+        custom: true,
+        kml: true,
+      };
+      routeStops.splice(state.index + 1, 0, stop);
+      saveRoute();
+      drawRoute();
+      drawList();
+      goTo(state.index + 1, true);
+      setDrawer("");
+      showToast(`${stop.name} added`);
+    }
+
+    function toggleTroy() {
+      state.troyVisible = !state.troyVisible;
+      localStorage.setItem(storageKeys.troy, String(state.troyVisible));
+      drawTroyLayer();
+      if (state.troyVisible) {
+        setDrawer("troy");
+        focusTroyAnchor(0, false);
+      } else {
+        setDrawer("");
+        showToast("Troy layer hidden");
+      }
+    }
+
     function boot() {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         document.getElementById("app").classList.add("reduced-motion");
       }
+      applyCharacter(state.characterId, false);
       drawRoute();
       drawList();
+      drawCharacters();
+      drawTroyLayer();
+      drawTroyList();
       goTo(0, false);
-      showToast("Default George route loaded");
+      showToast("George route + Troy KML loaded");
 
       nextButton.addEventListener("click", nextStop);
-      routeButton.addEventListener("click", () => setDrawer(!state.drawerOpen));
-      closeDrawer.addEventListener("click", () => setDrawer(false));
+      routeButton.addEventListener("click", () => setDrawer(state.drawerOpen === "route" ? "" : "route"));
+      addButton.addEventListener("click", () => setDrawer(state.drawerOpen === "location" ? "" : "location"));
+      characterButton.addEventListener("click", () => setDrawer(state.drawerOpen === "character" ? "" : "character"));
+      troyButton.addEventListener("click", toggleTroy);
+      closeDrawer.addEventListener("click", () => setDrawer(""));
+      closeLocationDrawer.addEventListener("click", () => setDrawer(""));
+      closeCharacterDrawer.addEventListener("click", () => setDrawer(""));
+      closeTroyDrawer.addEventListener("click", () => setDrawer(""));
+      addCustomStop.addEventListener("click", addCustomLocation);
+      resetRoute.addEventListener("click", resetDefaultRoute);
       autoButton.addEventListener("click", toggleAuto);
     }
 
