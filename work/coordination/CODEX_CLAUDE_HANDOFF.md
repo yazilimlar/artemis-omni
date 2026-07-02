@@ -1,8 +1,8 @@
 # Codex / Claude Code Handoff
 
-Updated: 2026-07-02 19:15 America/New_York
+Updated: 2026-07-02 19:18 America/New_York
 Workspace: /Users/theoppositeofturtle/Documents/artemis-for-codex/artemis-omni-codex-local
-Current owner: Codex through deploy verification
+Current owner: Human / next agent
 
 ## Objective
 
@@ -64,6 +64,12 @@ Start Artemis Time Atlas as an isolated Troy vertical slice using the attached p
 - `npm run start -- -p 3031`
 - `curl -I http://localhost:3031/development-env001/troy-priam-a03-x7q9z2`
 - `curl -I http://localhost:3031/time-atlas/troy`
+- `git commit -m "feat: publish Priam Lens time atlas dev route"`
+- `git push -u origin feature/priam-lens-a0-3`
+- `vercel deploy --yes`
+- `vercel deploy --prod --yes`
+- `curl -I -L https://artemis.agoraxai.com/development-env001/troy-priam-a03-x7q9z2`
+- `curl -I -L https://artemis.agoraxai.com/time-atlas/troy`
 
 ## Verification
 
@@ -73,6 +79,17 @@ Start Artemis Time Atlas as an isolated Troy vertical slice using the attached p
   - `/development-env001/troy-priam-a03-x7q9z2`
   - `/time-atlas/troy`
 - Local production smoke checks returned `200 OK` for both new routes.
+- Preview deployment passed: `dpl_6nC9bGZ6cLWkUbdo9M8od2LWHyRq`
+  - `https://artemis-omni-igwqajvqz-gokmen1313-3041s-projects.vercel.app`
+- Production deployment passed: `dpl_Eu7kfJkmPVuZ771PQaVPCoUbmRWx`
+  - Aliased to `https://artemis.agoraxai.com`
+- Public custom-domain smoke checks returned `HTTP/2 200`:
+  - `https://artemis.agoraxai.com/development-env001/troy-priam-a03-x7q9z2`
+  - `https://artemis.agoraxai.com/time-atlas/troy`
+- Rendered-marker checks found expected copy on the public routes:
+  - `Priam Lens A0.3`
+  - `Troy / Ilion c. 600 BC`
+  - `Historical credibility guardrail`
 
 ## Blockers
 
@@ -80,7 +97,7 @@ Claude Code still requires interactive login before `claude -p` can execute. Thi
 
 ## Next Commands
 
-Commit, push `feature/priam-lens-a0-3`, deploy to Vercel, and verify:
+Review the live development route and decide whether to continue with Claude Code after login for the heavier React Three Fiber scene:
 
 - `https://artemis.agoraxai.com/development-env001/troy-priam-a03-x7q9z2`
 - `https://artemis.agoraxai.com/time-atlas/troy`
