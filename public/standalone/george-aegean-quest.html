@@ -261,6 +261,61 @@
       opacity: 0.58;
     }
 
+    .geo-map {
+      position: absolute;
+      inset: -2% -1% 0 -1%;
+      width: 102%;
+      height: 102%;
+      z-index: 1;
+      overflow: visible;
+      filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.18));
+    }
+
+    .geo-sea-grid {
+      fill: none;
+      stroke: rgba(255,255,255,0.045);
+      stroke-width: 0.22;
+    }
+
+    .geo-land {
+      fill: url(#landRelief);
+      stroke: rgba(255,255,255,0.23);
+      stroke-width: 0.38;
+      stroke-linejoin: round;
+    }
+
+    .geo-island {
+      fill: url(#islandRelief);
+      stroke: rgba(255,255,255,0.22);
+      stroke-width: 0.28;
+    }
+
+    .geo-coast {
+      fill: none;
+      stroke: rgba(141,243,200,0.40);
+      stroke-width: 0.33;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .geo-ridge {
+      fill: none;
+      stroke: rgba(255,246,212,0.13);
+      stroke-width: 0.22;
+      stroke-linecap: round;
+    }
+
+    .geo-label {
+      fill: rgba(251,246,231,0.50);
+      font-size: 2.2px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      paint-order: stroke;
+      stroke: rgba(5,10,14,0.48);
+      stroke-width: 0.9px;
+    }
+
     .route-svg {
       position: absolute;
       inset: 0;
@@ -675,6 +730,33 @@
       font-weight: 900;
     }
 
+    .route-tools {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      padding: 8px 8px 0;
+    }
+
+    .tool-button {
+      min-width: 0;
+      min-height: 34px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.07);
+      color: rgba(251,246,231,0.78);
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1;
+      overflow: hidden;
+      padding: 0 5px;
+      text-align: center;
+    }
+
+    .tool-button:disabled {
+      color: rgba(251,246,231,0.32);
+      background: rgba(255,255,255,0.035);
+    }
+
     .stop-list,
     .panel-body {
       max-height: calc(min(52dvh, 470px) - 57px);
@@ -688,10 +770,14 @@
       display: none;
     }
 
+    .quest-drawer .stop-list {
+      max-height: calc(min(52dvh, 470px) - 105px);
+    }
+
     .stop-row {
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr) auto auto;
-      gap: 10px;
+      grid-template-columns: 30px minmax(0, 1fr) auto;
+      gap: 8px;
       align-items: center;
       width: 100%;
       min-height: 54px;
@@ -751,6 +837,19 @@
       text-transform: uppercase;
     }
 
+    .row-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .row-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 30px);
+      gap: 5px;
+    }
+
     .icon-action {
       width: 30px;
       height: 30px;
@@ -759,7 +858,9 @@
       place-items: center;
       background: rgba(255,255,255,0.08);
       color: rgba(251,246,231,0.78);
+      border: 1px solid rgba(255,255,255,0.08);
       font-weight: 1000;
+      font-size: 10px;
     }
 
     .icon-action.danger {
@@ -1041,15 +1142,35 @@
         <div class="water" aria-hidden="true"></div>
 
         <div class="map-plane" id="mapPlane">
-          <div class="land aegean"></div>
-          <div class="land turkey"></div>
-          <div class="land cyprus"></div>
           <div class="map-caption">stylized Aegean + Troy layer</div>
-          <div class="island-dot" style="left:18%;top:48%"></div>
-          <div class="island-dot" style="left:25%;top:55%"></div>
-          <div class="island-dot" style="left:30%;top:63%"></div>
-          <div class="island-dot" style="left:22%;top:70%"></div>
-          <div class="island-dot" style="left:37%;top:75%"></div>
+          <svg class="geo-map" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="landRelief" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#8b9554" />
+                <stop offset="48%" stop-color="#405b3c" />
+                <stop offset="100%" stop-color="#1c322f" />
+              </linearGradient>
+              <linearGradient id="islandRelief" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#7f8649" />
+                <stop offset="100%" stop-color="#263d33" />
+              </linearGradient>
+            </defs>
+            <path class="geo-sea-grid" d="M8 24 C24 20 39 20 55 24 M6 36 C24 33 45 33 72 38 M5 50 C27 47 50 49 92 56 M8 64 C31 62 53 66 94 70 M14 78 C38 76 66 78 96 84" />
+            <path class="geo-land" d="M36 18 C44 16 53 18 61 21 C71 24 81 30 90 40 C96 47 97 57 91 63 C85 69 73 67 65 71 C55 76 48 75 40 69 C34 65 36 60 33 56 C30 51 35 47 32 42 C29 37 34 34 31 29 C29 24 31 20 36 18 Z" />
+            <path class="geo-coast" d="M34 20 C31 24 34 27 32 31 C30 35 34 38 32 42 C30 46 35 49 32 54 C29 59 35 63 40 69" />
+            <path class="geo-land" d="M12 22 C17 19 24 21 29 26 C26 31 24 37 26 43 C23 48 20 53 21 60 C17 63 12 61 9 56 C6 50 9 43 8 37 C7 31 8 25 12 22 Z" />
+            <path class="geo-island" d="M27 28 C31 26 35 27 37 30 C35 33 30 33 27 31 Z" />
+            <path class="geo-island" d="M29 41 C33 39 36 41 36 45 C33 48 29 47 27 44 Z" />
+            <path class="geo-island" d="M27 50 C31 48 35 49 36 53 C33 56 28 56 25 53 Z" />
+            <path class="geo-island" d="M33 58 C37 57 40 59 40 62 C37 65 33 65 31 62 Z" />
+            <path class="geo-island" d="M39 70 C44 68 49 70 51 74 C48 78 42 77 39 74 Z" />
+            <path class="geo-island" d="M72 84 C82 81 92 83 97 89 C91 94 78 94 70 90 Z" />
+            <path class="geo-ridge" d="M41 28 C48 31 56 31 64 35 M45 39 C55 41 67 43 79 50 M43 51 C53 54 64 57 76 61 M51 64 C57 66 64 67 71 65" />
+            <text class="geo-label" x="39" y="17">Marmara</text>
+            <text class="geo-label" x="30" y="47">Aegean Coast</text>
+            <text class="geo-label" x="58" y="36">Anatolia</text>
+            <text class="geo-label" x="70" y="88">Cyprus</text>
+          </svg>
           <svg class="route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
               <linearGradient id="routeGlow" x1="0" x2="1" y1="0" y2="1">
@@ -1078,8 +1199,14 @@
 
       <aside class="quest-drawer" id="questDrawer" aria-label="George route itinerary">
         <div class="drawer-head">
-          <strong id="routeCountTitle">George Route - 17 stops</strong>
+          <strong id="routeCountTitle">Trip Planner - 17 stops</strong>
           <button type="button" id="closeDrawer" aria-label="Close route list">x</button>
+        </div>
+        <div class="route-tools" aria-label="Trip route tools">
+          <button class="tool-button" type="button" id="sortDistanceButton">Shortest</button>
+          <button class="tool-button" type="button" id="sortTimeButton">Fastest</button>
+          <button class="tool-button" type="button" id="undoButton">Undo</button>
+          <button class="tool-button" type="button" id="routeResetButton">Reset</button>
         </div>
         <div class="stop-list" id="stopList"></div>
       </aside>
@@ -1092,7 +1219,7 @@
         <div class="panel-body">
           <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/workshop-council.jpg')">
             <b>Route Workshop</b>
-            <small>Add a custom checkpoint after George's current stop. Remove route stops from the Route drawer.</small>
+            <small>Add a checkpoint after George's current stop. Use Route to move, sort, undo, or remove destinations.</small>
           </div>
           <div class="form-grid">
             <input class="field" id="customName" maxlength="32" placeholder="Location name" />
@@ -1160,33 +1287,44 @@
   </div>
 
   <script>
+    const geoBounds = {
+      minLon: 23.15,
+      maxLon: 36.1,
+      minLat: 35.85,
+      maxLat: 41.25,
+      minX: 8,
+      maxX: 94,
+      minY: 14,
+      maxY: 86,
+    };
+
     const defaultRoute = [
-      { name: "Istanbul", tag: "Gateway", x: 62, y: 20, km: 0, brief: "George begins at the Bosphorus gateway and unlocks the Aegean quest route." },
-      { name: "Asos", tag: "Stone harbor", x: 37, y: 34, km: 390, brief: "A coastal jump into ancient stone, sea air, and the first Aegean checkpoint." },
-      { name: "Ephesus", tag: "Ancient city", x: 33, y: 54, km: 560, brief: "The route reaches the marble theater, library axis, and Artemis memory field." },
-      { name: "Virgin Mary", tag: "Mountain shrine", x: 34, y: 57, km: 570, brief: "A short climb from Ephesus into a quiet spiritual checkpoint." },
-      { name: "Priene", tag: "Grid city", x: 36, y: 61, km: 610, brief: "George scans an ancient planned city above the Maeander plain." },
-      { name: "Miletus", tag: "Harbor memory", x: 37, y: 64, km: 632, brief: "The quest moves through theater ruins and the old harbor imagination." },
-      { name: "Bodrum", tag: "Castle coast", x: 30, y: 72, km: 735, brief: "A night-glow coastal checkpoint at the castle and marina line." },
-      { name: "Rhodes", tag: "Island gate", x: 18, y: 79, km: 835, brief: "George crosses the water to the island gate before returning to the coast." },
-      { name: "Marmaris", tag: "Harbor forest", x: 35, y: 77, km: 930, brief: "A green harbor stop where the route becomes more cinematic." },
-      { name: "Gokova", tag: "Blue valley", x: 40, y: 75, km: 975, brief: "The path bends through blue water, pine slopes, and slow-travel energy." },
-      { name: "Gocek", tag: "Sail corridor", x: 43, y: 81, km: 1045, brief: "A smooth sailing corridor built for one-tap route expansion." },
-      { name: "Aphrodisias", tag: "Stadium city", x: 49, y: 64, km: 1165, brief: "George detours inland to the stadium, sculpture, and marble craft node." },
-      { name: "Didyma", tag: "Oracle", x: 35, y: 67, km: 1245, brief: "The oracle checkpoint lights up as a special route memory." },
-      { name: "Perge", tag: "Column road", x: 62, y: 79, km: 1475, brief: "The quest moves east along the ancient road and stadium corridor." },
-      { name: "Aspendos", tag: "Theater", x: 66, y: 78, km: 1515, brief: "A perfect theater checkpoint for sound, performance, and route rewards." },
-      { name: "Tarsus", tag: "Cilician gate", x: 82, y: 70, km: 1810, brief: "George reaches the Cilician gate zone and prepares the final sprint." },
-      { name: "Adana", tag: "Final city", x: 87, y: 70, km: 1845, brief: "The default quest completes at Adana with the bridge, city, and reward screen." },
+      { name: "Istanbul", tag: "Gateway", lon: 28.9784, lat: 41.0082, km: 0, brief: "George begins at the Bosphorus gateway and unlocks the Aegean quest route." },
+      { name: "Asos", tag: "Stone harbor", lon: 26.3368, lat: 39.4890, km: 390, brief: "A coastal jump into ancient stone, sea air, and the first Aegean checkpoint." },
+      { name: "Ephesus", tag: "Ancient city", lon: 27.3639, lat: 37.9398, km: 560, brief: "The route reaches the marble theater, library axis, and Artemis memory field." },
+      { name: "Virgin Mary", tag: "Mountain shrine", lon: 27.3489, lat: 37.9128, km: 570, brief: "A short climb from Ephesus into a quiet spiritual checkpoint." },
+      { name: "Priene", tag: "Grid city", lon: 27.2966, lat: 37.6592, km: 610, brief: "George scans an ancient planned city above the Maeander plain." },
+      { name: "Miletus", tag: "Harbor memory", lon: 27.2789, lat: 37.5293, km: 632, brief: "The quest moves through theater ruins and the old harbor imagination." },
+      { name: "Bodrum", tag: "Castle coast", lon: 27.4305, lat: 37.0344, km: 735, brief: "A night-glow coastal checkpoint at the castle and marina line." },
+      { name: "Rhodes", tag: "Island gate", lon: 28.2278, lat: 36.4349, km: 835, island: true, brief: "George crosses the water to the island gate before returning to the coast." },
+      { name: "Marmaris", tag: "Harbor forest", lon: 28.2709, lat: 36.8550, km: 930, brief: "A green harbor stop where the route becomes more cinematic." },
+      { name: "Gokova", tag: "Blue valley", lon: 28.3248, lat: 37.0441, km: 975, brief: "The path bends through blue water, pine slopes, and slow-travel energy." },
+      { name: "Gocek", tag: "Sail corridor", lon: 28.9274, lat: 36.7544, km: 1045, brief: "A smooth sailing corridor built for one-tap route expansion." },
+      { name: "Aphrodisias", tag: "Stadium city", lon: 28.7237, lat: 37.7081, km: 1165, brief: "George detours inland to the stadium, sculpture, and marble craft node." },
+      { name: "Didyma", tag: "Oracle", lon: 27.2567, lat: 37.3848, km: 1245, brief: "The oracle checkpoint lights up as a special route memory." },
+      { name: "Perge", tag: "Column road", lon: 30.8544, lat: 36.9584, km: 1475, brief: "The quest moves east along the ancient road and stadium corridor." },
+      { name: "Aspendos", tag: "Theater", lon: 31.1729, lat: 36.9389, km: 1515, brief: "A perfect theater checkpoint for sound, performance, and route rewards." },
+      { name: "Tarsus", tag: "Cilician gate", lon: 34.8951, lat: 36.9177, km: 1810, brief: "George reaches the Cilician gate zone and prepares the final sprint." },
+      { name: "Adana", tag: "Final city", lon: 35.3213, lat: 37.0000, km: 1845, brief: "The default quest completes at Adana with the bridge, city, and reward screen." },
     ];
 
     const troyAnchors = [
-      { name: "Troy Citadel (Archaic Ilion)", tag: "Citadel", style: "citadel", x: 41, y: 31, lon: 26.238889, lat: 39.9575, alt: 30, brief: "The fortified acropolis on the hill of Hisarlik." },
-      { name: "Temple of Athena", tag: "Temple", style: "infrastructure", x: 43, y: 29, lon: 26.2386, lat: 39.9578, alt: 35, brief: "Primary religious center inside the upper citadel, reconstructed in later periods." },
-      { name: "Archaic Lower Town", tag: "Lower town", style: "infrastructure", x: 44, y: 34, lon: 26.2395, lat: 39.9565, alt: 20, brief: "Residential and commercial zone extending south and east of the citadel." },
-      { name: "Sigeum (Harbor Outpost)", tag: "Harbor", style: "infrastructure", x: 31, y: 37, lon: 26.1833, lat: 39.95, alt: 5, brief: "Coastal settlement controlling the entrance to the Hellespont trade corridor." },
-      { name: "Scamander River", tag: "River", style: "infrastructure", x: 35, y: 24, lon: 26.2, lat: 39.97, alt: 5, brief: "Primary waterway defining the Plain of Troy and local agriculture." },
-      { name: "Dardanelles Strait", tag: "Hellespont", style: "infrastructure", x: 34, y: 14, lon: 26.195, lat: 40.01, alt: 0, brief: "Vital maritime chokepoint north of the Troy plain." },
+      { name: "Troy Citadel (Archaic Ilion)", tag: "Citadel", style: "citadel", lon: 26.238889, lat: 39.9575, alt: 30, brief: "The fortified acropolis on the hill of Hisarlik." },
+      { name: "Temple of Athena", tag: "Temple", style: "infrastructure", lon: 26.2386, lat: 39.9578, alt: 35, brief: "Primary religious center inside the upper citadel, reconstructed in later periods." },
+      { name: "Archaic Lower Town", tag: "Lower town", style: "infrastructure", lon: 26.2395, lat: 39.9565, alt: 20, brief: "Residential and commercial zone extending south and east of the citadel." },
+      { name: "Sigeum (Harbor Outpost)", tag: "Harbor", style: "infrastructure", lon: 26.1833, lat: 39.95, alt: 5, brief: "Coastal settlement controlling the entrance to the Hellespont trade corridor." },
+      { name: "Scamander River", tag: "River", style: "infrastructure", lon: 26.2, lat: 39.97, alt: 5, brief: "Primary waterway defining the Plain of Troy and local agriculture." },
+      { name: "Dardanelles Strait", tag: "Hellespont", style: "infrastructure", lon: 26.195, lat: 40.01, alt: 0, brief: "Vital maritime chokepoint north of the Troy plain." },
     ];
 
     const characters = [
@@ -1252,6 +1390,9 @@
       troy: "george_aegean_troy_visible_v2",
     };
 
+    const defaultStopByName = new Map(defaultRoute.map((stop) => [stop.name.toLowerCase(), stop]));
+    const undoStack = [];
+
     function esc(value) {
       return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
         "&": "&amp;",
@@ -1262,8 +1403,98 @@
       })[ch]);
     }
 
+    function round1(value) {
+      return Math.round(value * 10) / 10;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function projectLonLat(lon, lat) {
+      const x = geoBounds.minX + ((lon - geoBounds.minLon) / (geoBounds.maxLon - geoBounds.minLon)) * (geoBounds.maxX - geoBounds.minX);
+      const y = geoBounds.minY + ((geoBounds.maxLat - lat) / (geoBounds.maxLat - geoBounds.minLat)) * (geoBounds.maxY - geoBounds.minY);
+      return {
+        x: round1(clamp(x, geoBounds.minX, geoBounds.maxX)),
+        y: round1(clamp(y, geoBounds.minY, geoBounds.maxY)),
+      };
+    }
+
+    function inverseProject(x, y) {
+      return {
+        lon: geoBounds.minLon + ((x - geoBounds.minX) / (geoBounds.maxX - geoBounds.minX)) * (geoBounds.maxLon - geoBounds.minLon),
+        lat: geoBounds.maxLat - ((y - geoBounds.minY) / (geoBounds.maxY - geoBounds.minY)) * (geoBounds.maxLat - geoBounds.minLat),
+      };
+    }
+
+    function hasCoordinate(stop) {
+      return Number.isFinite(Number(stop.lon)) && Number.isFinite(Number(stop.lat));
+    }
+
+    function normalizeStop(stop, index) {
+      const known = defaultStopByName.get(String(stop.name || "").toLowerCase());
+      const defaultPoint = projectLonLat(defaultRoute[index % defaultRoute.length].lon, defaultRoute[index % defaultRoute.length].lat);
+      const fallbackPoint = inverseProject(
+        safeNumber(stop.x, known ? projectLonLat(known.lon, known.lat).x : defaultPoint.x, geoBounds.minX, geoBounds.maxX),
+        safeNumber(stop.y, known ? projectLonLat(known.lon, known.lat).y : defaultPoint.y, geoBounds.minY, geoBounds.maxY),
+      );
+      const lon = hasCoordinate(stop) ? Number(stop.lon) : (known ? known.lon : fallbackPoint.lon);
+      const lat = hasCoordinate(stop) ? Number(stop.lat) : (known ? known.lat : fallbackPoint.lat);
+      const point = projectLonLat(lon, lat);
+      return {
+        name: String(stop.name || `Stop ${index + 1}`).slice(0, 32),
+        tag: String(stop.tag || "Custom").slice(0, 22),
+        lon,
+        lat,
+        x: point.x,
+        y: point.y,
+        km: Math.max(0, Math.round(Number(stop.km) || 0)),
+        brief: String(stop.brief || "Custom route stop.").slice(0, 140),
+        fixed: Boolean(stop.fixed),
+        custom: Boolean(stop.custom),
+        kml: Boolean(stop.kml),
+        island: Boolean(stop.island || known?.island),
+      };
+    }
+
+    function toRadians(value) {
+      return value * Math.PI / 180;
+    }
+
+    function directDistanceKm(a, b) {
+      const earthKm = 6371;
+      const dLat = toRadians(b.lat - a.lat);
+      const dLon = toRadians(b.lon - a.lon);
+      const lat1 = toRadians(a.lat);
+      const lat2 = toRadians(b.lat);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+      return 2 * earthKm * Math.asin(Math.min(1, Math.sqrt(h)));
+    }
+
+    function routedDistanceKm(a, b) {
+      const ferryLeg = a.island || b.island;
+      return directDistanceKm(a, b) * (ferryLeg ? 1.08 : 1.28);
+    }
+
+    function tripMinutes(a, b) {
+      const ferryLeg = a.island || b.island;
+      const speed = ferryLeg ? 34 : 68;
+      const transfer = ferryLeg ? 55 : 12;
+      return (routedDistanceKm(a, b) / speed) * 60 + transfer;
+    }
+
+    function assignRouteMetrics(stops) {
+      let cumulative = 0;
+      return stops.map((stop, index, all) => {
+        const normalized = normalizeStop(stop, index);
+        if (index > 0) cumulative += routedDistanceKm(normalizeStop(all[index - 1], index - 1), normalized);
+        normalized.km = Math.round(cumulative);
+        return normalized;
+      });
+    }
+
     function cloneDefaultRoute() {
-      return defaultRoute.map((stop) => ({ ...stop, fixed: true }));
+      return assignRouteMetrics(defaultRoute.map((stop) => ({ ...stop, fixed: true })));
     }
 
     function safeNumber(value, fallback, min, max) {
@@ -1275,17 +1506,21 @@
       try {
         const saved = JSON.parse(localStorage.getItem(storageKeys.route) || "null");
         if (Array.isArray(saved) && saved.length && saved.every((stop) => stop && stop.name)) {
-          return saved.slice(0, 48).map((stop, index) => ({
+          const mapped = saved.slice(0, 48).map((stop, index) => ({
             name: String(stop.name).slice(0, 32),
             tag: String(stop.tag || "Custom").slice(0, 22),
-            x: safeNumber(stop.x, defaultRoute[index % defaultRoute.length].x, 9, 91),
-            y: safeNumber(stop.y, defaultRoute[index % defaultRoute.length].y, 12, 86),
+            lon: Number(stop.lon),
+            lat: Number(stop.lat),
+            x: safeNumber(stop.x, 50, 9, 91),
+            y: safeNumber(stop.y, 50, 12, 86),
             km: Math.max(0, Math.round(Number(stop.km) || index * 80)),
             brief: String(stop.brief || "Custom route stop.").slice(0, 140),
             fixed: Boolean(stop.fixed),
             custom: Boolean(stop.custom),
             kml: Boolean(stop.kml),
+            island: Boolean(stop.island),
           }));
+          return assignRouteMetrics(mapped);
         }
       } catch (_) {}
       return cloneDefaultRoute();
@@ -1342,15 +1577,62 @@
     const customBrief = document.getElementById("customBrief");
     const addCustomStop = document.getElementById("addCustomStop");
     const resetRoute = document.getElementById("resetRoute");
+    const sortDistanceButton = document.getElementById("sortDistanceButton");
+    const sortTimeButton = document.getElementById("sortTimeButton");
+    const undoButton = document.getElementById("undoButton");
+    const routeResetButton = document.getElementById("routeResetButton");
     const characterGrid = document.getElementById("characterGrid");
     const troyAnchorList = document.getElementById("troyAnchorList");
 
-    function clamp(value, min, max) {
-      return Math.max(min, Math.min(max, value));
-    }
-
     function saveRoute() {
       localStorage.setItem(storageKeys.route, JSON.stringify(routeStops));
+    }
+
+    function routeTotalDistance(stops = routeStops) {
+      return stops.reduce((total, stop, index) => (
+        index === 0 ? 0 : total + routedDistanceKm(stops[index - 1], stop)
+      ), 0);
+    }
+
+    function routeTotalMinutes(stops = routeStops) {
+      return stops.reduce((total, stop, index) => (
+        index === 0 ? 0 : total + tripMinutes(stops[index - 1], stop)
+      ), 0);
+    }
+
+    function formatTripTime(minutes) {
+      const rounded = Math.max(0, Math.round(minutes));
+      const hours = Math.floor(rounded / 60);
+      const mins = rounded % 60;
+      return hours ? `${hours}h ${mins}m` : `${mins}m`;
+    }
+
+    function pushUndo(label) {
+      undoStack.push({
+        label,
+        route: routeStops.map((stop) => ({ ...stop })),
+        index: state.index,
+        xp: state.xp,
+      });
+      if (undoStack.length > 10) undoStack.shift();
+      updateUndoState();
+    }
+
+    function updateUndoState() {
+      if (!undoButton) return;
+      undoButton.disabled = undoStack.length === 0;
+      undoButton.textContent = undoStack.length ? "Undo" : "Undo";
+    }
+
+    function refreshRoute(message, focusIndex = state.index) {
+      routeStops = assignRouteMetrics(routeStops);
+      state.index = clamp(focusIndex, 0, routeStops.length - 1);
+      saveRoute();
+      drawRoute();
+      drawList();
+      goTo(state.index, false);
+      if (message) showToast(message);
+      updateUndoState();
     }
 
     function buzz(pattern) {
@@ -1368,7 +1650,7 @@
       const points = routeStops.map((stop) => `${stop.x},${stop.y}`).join(" ");
       routeLine.setAttribute("points", points);
       routeShadow.setAttribute("points", points);
-      routeCountTitle.textContent = `George Route - ${routeStops.length} stops`;
+      routeCountTitle.textContent = `${routeStops.length} stops · ${Math.round(routeTotalDistance())} km · ${formatTripTime(routeTotalMinutes())}`;
 
       stopsLayer.innerHTML = routeStops.map((stop, index) => (
         `<button class="stop ${stop.custom ? "custom" : ""}" data-index="${index}" style="left:${stop.x}%;top:${stop.y}%" aria-label="${esc(stop.name)}">${index + 1}</button>`
@@ -1382,9 +1664,10 @@
     function drawTroyLayer() {
       mapPlane.classList.toggle("show-troy", state.troyVisible);
       troyButton.classList.toggle("active", state.troyVisible);
-      troyLayer.innerHTML = troyAnchors.map((anchor, index) => (
-        `<button class="poi ${anchor.style === "citadel" ? "citadel" : ""}" data-anchor="${index}" style="left:${anchor.x}%;top:${anchor.y}%" aria-label="${esc(anchor.name)}">${anchor.style === "citadel" ? "T" : index + 1}</button>`
-      )).join("");
+      troyLayer.innerHTML = troyAnchors.map((anchor, index) => {
+        const point = projectLonLat(anchor.lon, anchor.lat);
+        return `<button class="poi ${anchor.style === "citadel" ? "citadel" : ""}" data-anchor="${index}" style="left:${point.x}%;top:${point.y}%" aria-label="${esc(anchor.name)}">${anchor.style === "citadel" ? "T" : index + 1}</button>`;
+      }).join("");
       troyLayer.querySelectorAll(".poi").forEach((node) => {
         node.addEventListener("click", () => focusTroyAnchor(Number(node.dataset.anchor), false));
       });
@@ -1394,9 +1677,12 @@
       stopList.innerHTML = routeStops.map((stop, index) => (
         `<div role="button" tabindex="0" class="stop-row" data-index="${index}">
           <span class="stop-num">${index + 1}</span>
-          <span><b>${esc(stop.name)}</b><small>${esc(stop.brief)}</small></span>
-          <em>${esc(stop.tag)}</em>
-          <button class="icon-action danger" type="button" data-remove="${index}" aria-label="Remove ${esc(stop.name)}">x</button>
+          <span><b>${esc(stop.name)}</b><small>${esc(stop.tag)} · ${Math.round(stop.km)} km · ${esc(stop.brief)}</small></span>
+          <span class="row-actions">
+            <button class="icon-action" type="button" data-move="${index}" data-dir="-1" aria-label="Move ${esc(stop.name)} up">Up</button>
+            <button class="icon-action" type="button" data-move="${index}" data-dir="1" aria-label="Move ${esc(stop.name)} down">Dn</button>
+            <button class="icon-action danger" type="button" data-remove="${index}" aria-label="Remove ${esc(stop.name)}">x</button>
+          </span>
         </div>`
       )).join("");
 
@@ -1417,6 +1703,12 @@
         node.addEventListener("click", (event) => {
           event.stopPropagation();
           removeStop(Number(node.dataset.remove));
+        });
+      });
+      stopList.querySelectorAll("[data-move]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.stopPropagation();
+          moveStop(Number(node.dataset.move), Number(node.dataset.dir));
         });
       });
     }
@@ -1512,6 +1804,77 @@
       characterButton.classList.toggle("active", name === "character");
     }
 
+    function moveStop(index, direction) {
+      const target = index + direction;
+      if (target < 0 || target >= routeStops.length) {
+        showToast(direction < 0 ? "Already first" : "Already last");
+        return;
+      }
+      pushUndo("move destination");
+      const moving = routeStops[index];
+      routeStops[index] = routeStops[target];
+      routeStops[target] = moving;
+      let focus = state.index;
+      if (state.index === index) focus = target;
+      else if (state.index === target) focus = index;
+      refreshRoute(`${moving.name} moved`, focus);
+    }
+
+    function optimizedTail(start, tail, metricFn) {
+      const remaining = tail.map((stop) => ({ ...stop }));
+      const ordered = [];
+      let current = start;
+      while (remaining.length) {
+        let bestIndex = 0;
+        let bestScore = Number.POSITIVE_INFINITY;
+        remaining.forEach((candidate, index) => {
+          const score = metricFn(current, candidate);
+          if (score < bestScore) {
+            bestScore = score;
+            bestIndex = index;
+          }
+        });
+        const next = remaining.splice(bestIndex, 1)[0];
+        ordered.push(next);
+        current = next;
+      }
+      return ordered;
+    }
+
+    function sortRoute(mode) {
+      const fixedUntil = clamp(state.index, 0, routeStops.length - 1);
+      const prefix = routeStops.slice(0, fixedUntil + 1);
+      const tail = routeStops.slice(fixedUntil + 1);
+      if (tail.length < 2) {
+        showToast("Need two future stops to sort");
+        return;
+      }
+      pushUndo(mode === "time" ? "fastest sort" : "shortest sort");
+      const metric = mode === "time" ? tripMinutes : routedDistanceKm;
+      routeStops = prefix.concat(optimizedTail(prefix[prefix.length - 1], tail, metric));
+      refreshRoute(mode === "time" ? "Fastest trip order applied" : "Shortest distance order applied", fixedUntil);
+      missionTitle.textContent = mode === "time" ? "Fastest order ready." : "Shortest order ready.";
+      missionText.textContent = `${Math.round(routeTotalDistance())} km · estimated ${formatTripTime(routeTotalMinutes())}. Use Undo to recall the previous order.`;
+    }
+
+    function undoRouteEdit() {
+      const previous = undoStack.pop();
+      if (!previous) {
+        showToast("Nothing to undo");
+        updateUndoState();
+        return;
+      }
+      routeStops = assignRouteMetrics(previous.route);
+      state.index = clamp(previous.index, 0, routeStops.length - 1);
+      state.xp = previous.xp;
+      saveRoute();
+      drawRoute();
+      drawList();
+      goTo(state.index, false);
+      updateUndoState();
+      showToast(`Undid ${previous.label}`);
+    }
+
     function toggleAuto() {
       state.auto = !state.auto;
       autoButton.textContent = state.auto ? "Pause" : "Auto";
@@ -1520,7 +1883,7 @@
       if (state.auto) {
         showToast("Auto quest started");
         state.timer = window.setInterval(() => {
-          if (state.index >= georgeRoute.length - 1) {
+          if (state.index >= routeStops.length - 1) {
             toggleAuto();
             showToast("George completed the route");
           } else {
@@ -1560,25 +1923,27 @@
       }
       const base = routeStops[state.index] || routeStops[0];
       const bias = ((routeStops.length * 7) % 13) - 6;
+      const lon = clamp(base.lon + 0.18 + bias * 0.015, geoBounds.minLon, geoBounds.maxLon);
+      const lat = clamp(base.lat - 0.10 + bias * 0.01, geoBounds.minLat, geoBounds.maxLat);
+      const point = projectLonLat(lon, lat);
       const stop = {
         name,
         tag: (customTag.value.trim() || "Custom").slice(0, 22),
-        x: clamp(base.x + 4 + bias, 10, 90),
-        y: clamp(base.y + 4 - bias / 2, 13, 84),
+        lon,
+        lat,
+        x: point.x,
+        y: point.y,
         km: Math.round((base.km || 0) + 35 + routeStops.length * 3),
         brief: (customBrief.value.trim() || "Custom route checkpoint added by the player.").slice(0, 140),
         custom: true,
       };
+      pushUndo("add stop");
       routeStops.splice(state.index + 1, 0, stop);
-      saveRoute();
-      drawRoute();
-      drawList();
-      goTo(state.index + 1, true);
+      refreshRoute(`${stop.name} added`, state.index + 1);
       customName.value = "";
       customTag.value = "";
       customBrief.value = "";
       setDrawer("");
-      showToast(`${stop.name} added`);
     }
 
     function removeStop(index) {
@@ -1586,32 +1951,27 @@
         showToast("Keep at least one stop");
         return;
       }
+      pushUndo("remove stop");
       const removed = routeStops.splice(index, 1)[0];
-      state.index = clamp(state.index >= index ? state.index - 1 : state.index, 0, routeStops.length - 1);
-      saveRoute();
-      drawRoute();
-      drawList();
-      goTo(state.index, false);
-      showToast(`${removed.name} removed`);
+      const focus = clamp(state.index >= index ? state.index - 1 : state.index, 0, routeStops.length - 1);
+      refreshRoute(`${removed.name} removed`, focus);
     }
 
     function resetDefaultRoute() {
+      pushUndo("reset route");
       routeStops = cloneDefaultRoute();
       state.index = 0;
       state.xp = 0;
-      saveRoute();
-      drawRoute();
-      drawList();
-      goTo(0, true);
-      showToast("Default route restored");
+      refreshRoute("Default route restored", 0);
       setDrawer("");
     }
 
     function focusTroyAnchor(index, openDrawer) {
       const anchor = troyAnchors[index];
       if (!anchor) return;
-      georgeToken.style.left = `${anchor.x}%`;
-      georgeToken.style.top = `${anchor.y}%`;
+      const point = projectLonLat(anchor.lon, anchor.lat);
+      georgeToken.style.left = `${point.x}%`;
+      georgeToken.style.top = `${point.y}%`;
       placeTitle.textContent = anchor.name;
       placeBrief.textContent = anchor.brief;
       chapterText.textContent = `Troy KML · ${anchor.tag}`;
@@ -1623,23 +1983,23 @@
     }
 
     function addTroyAnchorToRoute(anchor) {
+      const point = projectLonLat(anchor.lon, anchor.lat);
       const stop = {
         name: anchor.name.replace(" (Archaic Ilion)", ""),
         tag: `KML ${anchor.tag}`,
-        x: anchor.x,
-        y: anchor.y,
+        lon: anchor.lon,
+        lat: anchor.lat,
+        x: point.x,
+        y: point.y,
         km: Math.round(410 + anchor.alt),
         brief: `${anchor.brief} KML: ${anchor.lon.toFixed(5)}, ${anchor.lat.toFixed(5)}, ${anchor.alt}m.`,
         custom: true,
         kml: true,
       };
+      pushUndo("add Troy anchor");
       routeStops.splice(state.index + 1, 0, stop);
-      saveRoute();
-      drawRoute();
-      drawList();
-      goTo(state.index + 1, true);
+      refreshRoute(`${stop.name} added`, state.index + 1);
       setDrawer("");
-      showToast(`${stop.name} added`);
     }
 
     function toggleTroy() {
@@ -1666,6 +2026,7 @@
       drawTroyLayer();
       drawTroyList();
       goTo(0, false);
+      updateUndoState();
       showToast("George route + Troy KML loaded");
 
       nextButton.addEventListener("click", nextStop);
@@ -1679,6 +2040,10 @@
       closeTroyDrawer.addEventListener("click", () => setDrawer(""));
       addCustomStop.addEventListener("click", addCustomLocation);
       resetRoute.addEventListener("click", resetDefaultRoute);
+      routeResetButton.addEventListener("click", resetDefaultRoute);
+      sortDistanceButton.addEventListener("click", () => sortRoute("distance"));
+      sortTimeButton.addEventListener("click", () => sortRoute("time"));
+      undoButton.addEventListener("click", undoRouteEdit);
       autoButton.addEventListener("click", toggleAuto);
     }
 

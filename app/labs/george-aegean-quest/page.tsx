@@ -4,7 +4,7 @@ export const metadata = createMetadata({
   title: "George Aegean Quest",
   path: "/labs/george-aegean-quest",
   description:
-    "iPhone-first Artemis Atlas game starring George with editable route stops, character switching, and a Troy Time Atlas KML layer.",
+    "iPhone-first Artemis Atlas game starring George with a geography-aware Aegean board, reorderable route stops, shortest/fastest sorting, undo, character switching, and a Troy Time Atlas KML layer.",
 });
 
 export default function GeorgeAegeanQuestPage() {

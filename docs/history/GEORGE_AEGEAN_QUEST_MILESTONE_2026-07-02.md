@@ -47,11 +47,17 @@ asset for fast iPhone load:
 - iPhone-first layout with a centered phone shell on desktop.
 - Simplified one-thumb controls: Route, Next Stop, Auto.
 - No Mapbox, MapLibre, Leaflet, or external map token dependency.
-- Stylized 3D route board instead of a full GIS map.
+- Stylized 3D route board with approximate lon/lat projection and a more realistic
+  Aegean / Anatolia coastline layer instead of a full GIS map.
 - Default George route is active at startup.
 - Route list is available as a drawer rather than a permanent blocking panel.
 - User can add custom stops after the current checkpoint.
 - User can remove route stops and reset the default route.
+- User can move destinations up/down in the itinerary.
+- User can auto-sort future destinations by shortest distance or fastest estimated
+  trip time from the current stop.
+- User can undo the last itinerary edit, including add, remove, reorder, sort, and
+  reset actions.
 - User can switch characters from a local roster.
 - Troy Time Atlas KML anchors are projected as a local c. 600 BC layer:
   Troy Citadel, Temple of Athena, Archaic Lower Town, Sigeum, Scamander River,

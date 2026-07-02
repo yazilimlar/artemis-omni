@@ -102,22 +102,22 @@ export const programCatalogItems: ProgramCatalogItem[] = [
     statusTone: "test",
     sourceType: "New standalone iPhone Atlas game",
     summary:
-      "A mobile-only, one-thumb Artemis Atlas game surface starring George on a default 17-stop route, now enhanced with editable stops, character switching, and a Troy Time Atlas KML anchor layer.",
+      "A mobile-only, one-thumb Artemis Atlas game surface starring George on a default 17-stop route, now enhanced with a geography-aware Aegean board, editable/reorderable stops, shortest/fastest sorting, undo, character switching, and a Troy Time Atlas KML anchor layer.",
     bestPublicLink: {
       href: "/labs/george-aegean-quest",
       label: "George Aegean Quest",
     },
     tutorialUse:
-      "Use as the first character-led mobile Atlas pattern for simplified itinerary progression, destination storytelling, KML anchor interpretation, and iPhone game pacing.",
+      "Use as the first character-led mobile Atlas pattern for simplified itinerary progression, destination storytelling, reorderable trip planning, KML anchor interpretation, and iPhone game pacing.",
     solutionFit:
       "Creates a route for sponsored destination quests, premium character guides, cultural itinerary products, mobile funnel testing, and future booking handoff flows.",
     migrationPath: [
       "Keep this iPhone game route isolated from the heavier map-engine Atlas.",
-      "Validate George, one-thumb controls, route pacing, and character-led storytelling before adding dynamic data.",
+      "Validate George, one-thumb controls, route pacing, route sorting, undo behavior, and character-led storytelling before adding dynamic data.",
       "Add future route packs, richer KML imports, and booking handoffs behind the same lightweight game shell.",
     ],
     boundary:
-      "Stylized route prototype only. It does not use Mapbox, does not expose a map token, and should not be treated as a complete GIS, navigation, or booking product. KML points are projected onto a designed game board.",
+      "Approximate route prototype only. It does not use Mapbox, does not expose a map token, and should not be treated as a complete GIS, navigation, or booking product. KML points and destinations are projected onto a designed game board.",
   },
   {
     slug: "sewer-simulator-formula-icons",
