@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#091016" />
+  <title>George Aegean Quest - Artemis Atlas</title>
+  <style>
+    :root {
+      --bg: #071016;
+      --panel: rgba(9, 16, 22, 0.72);
+      --panel-strong: rgba(13, 24, 29, 0.88);
+      --line: rgba(255, 255, 255, 0.14);
+      --gold: #f4c96b;
+      --gold-2: #a8792c;
+      --aqua: #55d6ff;
+      --mint: #8df3c8;
+      --text: #fbf6e7;
+      --muted: rgba(251, 246, 231, 0.68);
+      --soft: rgba(255, 255, 255, 0.08);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.44);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(91, 214, 255, 0.20), transparent 34%),
+        radial-gradient(circle at 16% 82%, rgba(244, 201, 107, 0.14), transparent 38%),
+        #05090d;
+      color: var(--text);
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+      color: inherit;
+    }
+
+    .phone-shell {
+      min-height: 100dvh;
+      display: grid;
+      place-items: stretch;
+    }
+
+    .app {
+      position: relative;
+      width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(8, 24, 35, 0.95), rgba(7, 12, 17, 1) 70%),
+        var(--bg);
+      isolation: isolate;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.7), transparent 72%);
+      z-index: -1;
+    }
+
+    .topbar {
+      position: absolute;
+      inset: 0 0 auto 0;
+      z-index: 20;
+      padding: calc(10px + var(--safe-top)) 14px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .brand {
+      min-width: 0;
+      pointer-events: auto;
+    }
+
+    .kicker {
+      display: block;
+      font-size: 10px;
+      line-height: 1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--aqua);
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 5px 0 0;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: clamp(19px, 6vw, 28px);
+      line-height: 0.94;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    .hud-pills {
+      display: flex;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .pill {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      background: rgba(6, 12, 16, 0.55);
+      backdrop-filter: blur(16px);
+      padding: 0 10px;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+    }
+
+    .score {
+      color: var(--gold);
+    }
+
+    .map-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .sky {
+      position: absolute;
+      inset: 0 0 45% 0;
+      background:
+        radial-gradient(circle at 62% 18%, rgba(255, 246, 212, 0.34), transparent 19%),
+        linear-gradient(180deg, #87c8e4 0%, #3b86a7 48%, rgba(16, 51, 69, 0.1) 100%);
+      opacity: 0.9;
+    }
+
+    .water {
+      position: absolute;
+      inset: 24% -18% -8%;
+      background:
+        radial-gradient(circle at 33% 42%, rgba(141, 243, 200, 0.20), transparent 19%),
+        radial-gradient(circle at 72% 58%, rgba(85, 214, 255, 0.20), transparent 22%),
+        linear-gradient(160deg, #0d5267 0%, #08303d 54%, #071016 100%);
+      transform: skewY(-7deg);
+    }
+
+    .water::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(115deg, transparent 0 44%, rgba(255,255,255,0.08) 45%, transparent 46% 100%),
+        linear-gradient(100deg, transparent 0 56%, rgba(255,255,255,0.05) 57%, transparent 58% 100%);
+      background-size: 96px 38px, 138px 42px;
+      animation: drift 18s linear infinite;
+      opacity: 0.36;
+    }
+
+    @keyframes drift {
+      to { transform: translate3d(-96px, 42px, 0); }
+    }
+
+    .map-plane {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: min(118vw, 560px);
+      height: min(82dvh, 690px);
+      transform: translate3d(-50%, -50%, 0) perspective(780px) rotateX(54deg) rotateZ(-8deg);
+      transform-origin: center;
+      filter: drop-shadow(0 34px 34px rgba(0, 0, 0, 0.36));
+      will-change: transform;
+    }
+
+    .land {
+      position: absolute;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background:
+        radial-gradient(circle at 42% 34%, rgba(244, 201, 107, 0.24), transparent 32%),
+        linear-gradient(145deg, #6f814a 0%, #324c37 52%, #162a28 100%);
+      box-shadow: inset 0 0 34px rgba(255,255,255,0.07);
+      opacity: 0.96;
+    }
+
+    .land.turkey {
+      left: 36%;
+      top: 17%;
+      width: 58%;
+      height: 68%;
+      border-radius: 46% 39% 42% 49% / 33% 39% 54% 52%;
+      transform: rotate(-7deg);
+    }
+
+    .land.aegean {
+      left: 4%;
+      top: 38%;
+      width: 31%;
+      height: 33%;
+      border-radius: 54% 41% 57% 38% / 42% 57% 35% 48%;
+      transform: rotate(18deg);
+      background:
+        radial-gradient(circle at 50% 42%, rgba(244, 201, 107, 0.20), transparent 34%),
+        linear-gradient(145deg, #6e7441 0%, #273d32 100%);
+    }
+
+    .land.cyprus {
+      right: 2%;
+      bottom: 3%;
+      width: 24%;
+      height: 12%;
+      border-radius: 46%;
+      transform: rotate(-8deg);
+      opacity: 0.58;
+    }
+
+    .route-svg {
+      position: absolute;
+      inset: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .route-shadow {
+      fill: none;
+      stroke: rgba(0, 0, 0, 0.38);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transform: translate(0.7px, 1.2px);
+    }
+
+    .route-line {
+      fill: none;
+      stroke: url(#routeGlow);
+      stroke-width: 1.15;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 2 1.2;
+      animation: routeFlow 7s linear infinite;
+    }
+
+    @keyframes routeFlow {
+      to { stroke-dashoffset: -32; }
+    }
+
+    .stop {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      margin: -11px 0 0 -11px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: #112027;
+      background: rgba(251, 246, 231, 0.82);
+      border: 2px solid rgba(251, 246, 231, 0.9);
+      box-shadow: 0 7px 15px rgba(0,0,0,0.22);
+      font-size: 10px;
+      font-weight: 900;
+      transition: transform 360ms cubic-bezier(.2,.8,.2,1), background 360ms, border 360ms;
+      will-change: transform;
+    }
+
+    .stop.visited {
+      background: var(--mint);
+      border-color: rgba(141, 243, 200, 0.95);
+    }
+
+    .stop.active {
+      background: var(--gold);
+      border-color: #fff6d6;
+      transform: scale(1.42);
+      z-index: 4;
+    }
+
+    .george-token {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      margin: -52px 0 0 -28px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 246, 212, 0.9);
+      background: #0d171e;
+      box-shadow:
+        0 18px 30px rgba(0,0,0,0.34),
+        0 0 0 9px rgba(244, 201, 107, 0.12);
+      overflow: hidden;
+      transition: left 780ms cubic-bezier(.16,1,.3,1), top 780ms cubic-bezier(.16,1,.3,1), transform 420ms;
+      will-change: left, top, transform;
+      z-index: 8;
+    }
+
+    .george-token img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 18%;
+      transform: scale(1.34);
+    }
+
+    .george-token.jump {
+      transform: translate3d(0, -10px, 0) scale(1.05);
+    }
+
+    .island-dot {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(251, 246, 231, 0.44);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.18);
+    }
+
+    .route-label {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: calc(72px + var(--safe-top));
+      z-index: 12;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .route-label-inner {
+      width: min(100%, 390px);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 18px;
+      background: rgba(8, 14, 18, 0.56);
+      backdrop-filter: blur(18px);
+      padding: 10px 12px;
+      box-shadow: 0 18px 34px rgba(0,0,0,0.23);
+    }
+
+    .route-label small {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--aqua);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .route-label h2 {
+      margin: 5px 0 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: clamp(22px, 8vw, 34px);
+      line-height: 0.94;
+      letter-spacing: 0;
+    }
+
+    .route-label p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.32;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .bottom-card {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: calc(10px + var(--safe-bottom));
+      z-index: 30;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 26px;
+      background: rgba(5, 10, 14, 0.70);
+      backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.09);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--aqua), var(--gold));
+      transition: width 520ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .hero-row {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 12px;
+      padding: 13px 13px 8px;
+      align-items: center;
+    }
+
+    .portrait {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(244, 201, 107, 0.38);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.28);
+    }
+
+    .portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 16%;
+      transform: scale(1.14);
+    }
+
+    .hero-copy {
+      min-width: 0;
+    }
+
+    .hero-copy strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.05;
+    }
+
+    .hero-copy span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.33;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr 0.82fr;
+      gap: 8px;
+      padding: 7px 13px 13px;
+    }
+
+    .control {
+      min-height: 50px;
+      border-radius: 17px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.11);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .control.primary {
+      color: #10130d;
+      background: linear-gradient(135deg, #fff0a8, #f4c96b 54%, #b98731);
+      border-color: rgba(255,255,255,0.30);
+      box-shadow: 0 14px 24px rgba(244, 201, 107, 0.16);
+    }
+
+    .control:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .quest-drawer {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: calc(154px + var(--safe-bottom));
+      z-index: 26;
+      max-height: min(48dvh, 430px);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 22px;
+      background: rgba(6, 12, 16, 0.77);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.36);
+      overflow: hidden;
+      transform: translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms, transform 220ms;
+    }
+
+    .quest-drawer.open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 13px 9px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .drawer-head strong {
+      font-size: 13px;
+    }
+
+    .drawer-head button {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      font-weight: 900;
+    }
+
+    .stop-list {
+      max-height: calc(min(48dvh, 430px) - 57px);
+      overflow: auto;
+      padding: 8px;
+      scrollbar-width: none;
+    }
+
+    .stop-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .stop-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      min-height: 54px;
+      margin: 0;
+      padding: 7px 8px;
+      border-radius: 15px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .stop-row.active {
+      background: rgba(244, 201, 107, 0.13);
+    }
+
+    .stop-row.done .stop-num {
+      background: var(--mint);
+      color: #092017;
+    }
+
+    .stop-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.10);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .stop-row b {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      line-height: 1.1;
+    }
+
+    .stop-row small {
+      display: block;
+      margin-top: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stop-row em {
+      color: var(--gold);
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      top: calc(150px + var(--safe-top));
+      z-index: 38;
+      max-width: min(84vw, 360px);
+      transform: translate3d(-50%, -12px, 0);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      background: rgba(8, 14, 18, 0.78);
+      backdrop-filter: blur(18px);
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms, transform 220ms;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.24);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate3d(-50%, 0, 0);
+    }
+
+    .reduced-motion * {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+
+    @media (min-width: 560px) {
+      body {
+        display: grid;
+        place-items: center;
+      }
+
+      .phone-shell {
+        width: min(100vw, 470px);
+        min-height: 100dvh;
+        place-items: center;
+        padding: 18px;
+      }
+
+      .app {
+        width: min(430px, calc(100vw - 36px));
+        height: min(932px, calc(100dvh - 36px));
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 42px;
+        box-shadow: 0 34px 110px rgba(0,0,0,0.52);
+      }
+
+      .app::after {
+        content: "iPhone game build";
+        position: absolute;
+        left: 50%;
+        top: 9px;
+        transform: translateX(-50%);
+        z-index: 60;
+        width: 116px;
+        height: 23px;
+        border-radius: 999px;
+        background: rgba(0,0,0,0.52);
+        color: rgba(255,255,255,0.44);
+        display: grid;
+        place-items: center;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="app" id="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="kicker">Artemis Atlas</span>
+          <h1>George Aegean Quest</h1>
+        </div>
+        <div class="hud-pills">
+          <div class="pill"><span id="stepText">1/17</span></div>
+          <div class="pill score"><span id="xpText">XP 0</span></div>
+        </div>
+      </header>
+
+      <main class="map-wrap" aria-label="George Aegean Quest game map">
+        <div class="sky" aria-hidden="true"></div>
+        <div class="water" aria-hidden="true"></div>
+
+        <div class="map-plane" id="mapPlane" aria-hidden="true">
+          <div class="land aegean"></div>
+          <div class="land turkey"></div>
+          <div class="land cyprus"></div>
+          <div class="island-dot" style="left:18%;top:48%"></div>
+          <div class="island-dot" style="left:25%;top:55%"></div>
+          <div class="island-dot" style="left:30%;top:63%"></div>
+          <div class="island-dot" style="left:22%;top:70%"></div>
+          <div class="island-dot" style="left:37%;top:75%"></div>
+          <svg class="route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="routeGlow" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#55d6ff" />
+                <stop offset="48%" stop-color="#8df3c8" />
+                <stop offset="100%" stop-color="#f4c96b" />
+              </linearGradient>
+            </defs>
+            <polyline id="routeShadow" class="route-shadow" points=""></polyline>
+            <polyline id="routeLine" class="route-line" points=""></polyline>
+          </svg>
+          <div id="stopsLayer"></div>
+          <div class="george-token" id="georgeToken"><img src="/standalone/assets/george-aegean-quest/george.jpg" alt="" /></div>
+        </div>
+      </main>
+
+      <section class="route-label" aria-live="polite">
+        <div class="route-label-inner">
+          <small><span id="chapterText">Default route loaded</span><span id="distanceText">0 km</span></small>
+          <h2 id="placeTitle">Istanbul</h2>
+          <p id="placeBrief">George begins at the Bosphorus gateway and unlocks the Aegean quest route.</p>
+        </div>
+      </section>
+
+      <aside class="quest-drawer" id="questDrawer" aria-label="George route itinerary">
+        <div class="drawer-head">
+          <strong>George Route - 17 stops</strong>
+          <button type="button" id="closeDrawer" aria-label="Close route list">x</button>
+        </div>
+        <div class="stop-list" id="stopList"></div>
+      </aside>
+
+      <section class="bottom-card">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="hero-row">
+          <div class="portrait"><img src="/standalone/assets/george-aegean-quest/george.jpg" alt="George, the special Artemis Atlas guide" /></div>
+          <div class="hero-copy">
+            <strong id="missionTitle">George is ready.</strong>
+            <span id="missionText">Tap Next Stop to move through the default Aegean quest. Everything is tuned for one-thumb iPhone play.</span>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="control" type="button" id="routeButton">Route</button>
+          <button class="control primary" type="button" id="nextButton">Next Stop</button>
+          <button class="control" type="button" id="autoButton">Auto</button>
+        </div>
+      </section>
+
+      <div class="toast" id="toast">Default George route loaded</div>
+    </div>
+  </div>
+
+  <script>
+    const georgeRoute = [
+      { name: "Istanbul", tag: "Gateway", x: 62, y: 20, km: 0, brief: "George begins at the Bosphorus gateway and unlocks the Aegean quest route." },
+      { name: "Asos", tag: "Stone harbor", x: 37, y: 34, km: 390, brief: "A coastal jump into ancient stone, sea air, and the first Aegean checkpoint." },
+      { name: "Ephesus", tag: "Ancient city", x: 33, y: 54, km: 560, brief: "The route reaches the marble theater, library axis, and Artemis memory field." },
+      { name: "Virgin Mary", tag: "Mountain shrine", x: 34, y: 57, km: 570, brief: "A short climb from Ephesus into a quiet spiritual checkpoint." },
+      { name: "Priene", tag: "Grid city", x: 36, y: 61, km: 610, brief: "George scans an ancient planned city above the Maeander plain." },
+      { name: "Miletus", tag: "Harbor memory", x: 37, y: 64, km: 632, brief: "The quest moves through theater ruins and the old harbor imagination." },
+      { name: "Bodrum", tag: "Castle coast", x: 30, y: 72, km: 735, brief: "A night-glow coastal checkpoint at the castle and marina line." },
+      { name: "Rhodes", tag: "Island gate", x: 18, y: 79, km: 835, brief: "George crosses the water to the island gate before returning to the coast." },
+      { name: "Marmaris", tag: "Harbor forest", x: 35, y: 77, km: 930, brief: "A green harbor stop where the route becomes more cinematic." },
+      { name: "Gokova", tag: "Blue valley", x: 40, y: 75, km: 975, brief: "The path bends through blue water, pine slopes, and slow-travel energy." },
+      { name: "Gocek", tag: "Sail corridor", x: 43, y: 81, km: 1045, brief: "A smooth sailing corridor built for one-tap route expansion." },
+      { name: "Aphrodisias", tag: "Stadium city", x: 49, y: 64, km: 1165, brief: "George detours inland to the stadium, sculpture, and marble craft node." },
+      { name: "Didyma", tag: "Oracle", x: 35, y: 67, km: 1245, brief: "The oracle checkpoint lights up as a special route memory." },
+      { name: "Perge", tag: "Column road", x: 62, y: 79, km: 1475, brief: "The quest moves east along the ancient road and stadium corridor." },
+      { name: "Aspendos", tag: "Theater", x: 66, y: 78, km: 1515, brief: "A perfect theater checkpoint for sound, performance, and route rewards." },
+      { name: "Tarsus", tag: "Cilician gate", x: 82, y: 70, km: 1810, brief: "George reaches the Cilician gate zone and prepares the final sprint." },
+      { name: "Adana", tag: "Final city", x: 87, y: 70, km: 1845, brief: "The default quest completes at Adana with the bridge, city, and reward screen." },
+    ];
+
+    const state = {
+      index: 0,
+      xp: 0,
+      auto: false,
+      timer: null,
+      drawerOpen: false,
+    };
+
+    const routeLine = document.getElementById("routeLine");
+    const routeShadow = document.getElementById("routeShadow");
+    const stopsLayer = document.getElementById("stopsLayer");
+    const georgeToken = document.getElementById("georgeToken");
+    const stopList = document.getElementById("stopList");
+    const placeTitle = document.getElementById("placeTitle");
+    const placeBrief = document.getElementById("placeBrief");
+    const chapterText = document.getElementById("chapterText");
+    const distanceText = document.getElementById("distanceText");
+    const stepText = document.getElementById("stepText");
+    const xpText = document.getElementById("xpText");
+    const progressFill = document.getElementById("progressFill");
+    const missionTitle = document.getElementById("missionTitle");
+    const missionText = document.getElementById("missionText");
+    const questDrawer = document.getElementById("questDrawer");
+    const toast = document.getElementById("toast");
+    const routeButton = document.getElementById("routeButton");
+    const nextButton = document.getElementById("nextButton");
+    const autoButton = document.getElementById("autoButton");
+    const closeDrawer = document.getElementById("closeDrawer");
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function buzz(pattern) {
+      if ("vibrate" in navigator) navigator.vibrate(pattern);
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.hideTimer);
+      showToast.hideTimer = window.setTimeout(() => toast.classList.remove("show"), 1450);
+    }
+
+    function drawRoute() {
+      const points = georgeRoute.map((stop) => `${stop.x},${stop.y}`).join(" ");
+      routeLine.setAttribute("points", points);
+      routeShadow.setAttribute("points", points);
+
+      stopsLayer.innerHTML = georgeRoute.map((stop, index) => (
+        `<button class="stop" data-index="${index}" style="left:${stop.x}%;top:${stop.y}%" aria-label="${stop.name}">${index + 1}</button>`
+      )).join("");
+
+      stopsLayer.querySelectorAll(".stop").forEach((node) => {
+        node.addEventListener("click", () => goTo(Number(node.dataset.index), true));
+      });
+    }
+
+    function drawList() {
+      stopList.innerHTML = georgeRoute.map((stop, index) => (
+        `<button type="button" class="stop-row" data-index="${index}">
+          <span class="stop-num">${index + 1}</span>
+          <span><b>${stop.name}</b><small>${stop.brief}</small></span>
+          <em>${stop.tag}</em>
+        </button>`
+      )).join("");
+
+      stopList.querySelectorAll(".stop-row").forEach((node) => {
+        node.addEventListener("click", () => {
+          goTo(Number(node.dataset.index), true);
+          setDrawer(false);
+        });
+      });
+    }
+
+    function updateStopClasses() {
+      document.querySelectorAll(".stop").forEach((node, index) => {
+        node.classList.toggle("visited", index < state.index);
+        node.classList.toggle("active", index === state.index);
+      });
+      document.querySelectorAll(".stop-row").forEach((node, index) => {
+        node.classList.toggle("done", index < state.index);
+        node.classList.toggle("active", index === state.index);
+      });
+    }
+
+    function goTo(index, userAction) {
+      state.index = clamp(index, 0, georgeRoute.length - 1);
+      const stop = georgeRoute[state.index];
+      const progress = state.index / (georgeRoute.length - 1);
+      const reward = state.index === 0 ? 0 : 120 + state.index * 15;
+      state.xp = Math.max(state.xp, reward);
+
+      georgeToken.style.left = `${stop.x}%`;
+      georgeToken.style.top = `${stop.y}%`;
+      georgeToken.classList.remove("jump");
+      requestAnimationFrame(() => georgeToken.classList.add("jump"));
+      window.setTimeout(() => georgeToken.classList.remove("jump"), 420);
+
+      placeTitle.textContent = stop.name;
+      placeBrief.textContent = stop.brief;
+      chapterText.textContent = stop.tag;
+      distanceText.textContent = `${stop.km} km`;
+      stepText.textContent = `${state.index + 1}/${georgeRoute.length}`;
+      xpText.textContent = `XP ${state.xp}`;
+      progressFill.style.width = `${Math.max(2, progress * 100)}%`;
+      missionTitle.textContent = state.index === georgeRoute.length - 1 ? "Quest complete." : `George reached ${stop.name}.`;
+      missionText.textContent = state.index === georgeRoute.length - 1
+        ? "The Aegean quest is complete. Tap Route to replay any checkpoint."
+        : `Next checkpoint: ${georgeRoute[state.index + 1].name}.`;
+      nextButton.textContent = state.index === georgeRoute.length - 1 ? "Replay" : "Next Stop";
+
+      updateStopClasses();
+      if (userAction) {
+        buzz(12);
+        showToast(`${stop.name} unlocked`);
+      }
+    }
+
+    function nextStop() {
+      if (state.index >= georgeRoute.length - 1) {
+        goTo(0, true);
+        return;
+      }
+      goTo(state.index + 1, true);
+    }
+
+    function setDrawer(open) {
+      state.drawerOpen = open;
+      questDrawer.classList.toggle("open", open);
+      routeButton.textContent = open ? "Hide" : "Route";
+    }
+
+    function toggleAuto() {
+      state.auto = !state.auto;
+      autoButton.textContent = state.auto ? "Pause" : "Auto";
+      autoButton.classList.toggle("primary", state.auto);
+      if (state.timer) window.clearInterval(state.timer);
+      if (state.auto) {
+        showToast("Auto quest started");
+        state.timer = window.setInterval(() => {
+          if (state.index >= georgeRoute.length - 1) {
+            toggleAuto();
+            showToast("George completed the route");
+          } else {
+            nextStop();
+          }
+        }, 2100);
+      }
+    }
+
+    function boot() {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.getElementById("app").classList.add("reduced-motion");
+      }
+      drawRoute();
+      drawList();
+      goTo(0, false);
+      showToast("Default George route loaded");
+
+      nextButton.addEventListener("click", nextStop);
+      routeButton.addEventListener("click", () => setDrawer(!state.drawerOpen));
+      closeDrawer.addEventListener("click", () => setDrawer(false));
+      autoButton.addEventListener("click", toggleAuto);
+    }
+
+    boot();
+  </script>
+</body>
+</html>

@@ -34,6 +34,11 @@ const fastLinks = [
     description: "Interactive cultural-route atlas with map fallbacks and commercial discovery layers.",
   },
   {
+    title: "George Aegean Quest",
+    href: "/labs/george-aegean-quest",
+    description: "iPhone-first Atlas game with George and a default 17-stop Aegean route.",
+  },
+  {
     title: "Utility Intelligence Bridge",
     href: "/labs/utility-intelligence-bridge",
     description: "Public narrative for the sewer/utility cockpit and field-to-finance bridge.",

@@ -95,6 +95,31 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Contains a public browser Mapbox pk token. Public pk tokens are not secrets, but they must be URL-restricted to approved domains and never replaced with an sk secret token.",
   },
   {
+    slug: "george-aegean-quest",
+    title: "George Aegean Quest",
+    kind: "Showcase",
+    statusLabel: "iPhone game",
+    statusTone: "test",
+    sourceType: "New standalone iPhone Atlas game",
+    summary:
+      "A mobile-only, one-thumb Artemis Atlas game surface starring George on a default 17-stop route: Istanbul, Asos, Ephesus, Virgin Mary, Priene, Miletus, Bodrum, Rhodes, Marmaris, Gokova, Gocek, Aphrodisias, Didyma, Perge, Aspendos, Tarsus, and Adana.",
+    bestPublicLink: {
+      href: "/labs/george-aegean-quest",
+      label: "George Aegean Quest",
+    },
+    tutorialUse:
+      "Use as the first character-led mobile Atlas pattern for simplified itinerary progression, destination storytelling, and iPhone game pacing.",
+    solutionFit:
+      "Creates a route for sponsored destination quests, premium character guides, cultural itinerary products, mobile funnel testing, and future booking handoff flows.",
+    migrationPath: [
+      "Keep this iPhone game route isolated from the heavier map-engine Atlas.",
+      "Validate George, one-thumb controls, route pacing, and character-led storytelling before adding dynamic data.",
+      "Add future route packs and booking handoffs behind the same lightweight game shell.",
+    ],
+    boundary:
+      "Stylized route prototype only. It does not use Mapbox, does not expose a map token, and should not be treated as a complete GIS, navigation, or booking product.",
+  },
+  {
     slug: "sewer-simulator-formula-icons",
     title: "Sewer Construction Formula Tutorial",
     kind: "Tutorial",
@@ -504,6 +529,7 @@ export const programCatalogSummary = {
     "/labs/construction-intelligence-workbench",
     "/labs/tax-architecture-2026",
     "/labs/turkiye-atlas",
+    "/labs/george-aegean-quest",
     "/insights",
     "/tools",
   ],

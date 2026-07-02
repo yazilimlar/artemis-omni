@@ -1,6 +1,8 @@
 import {
   ArrowRight,
   Calculator,
+  Crown,
+  Gamepad2,
   Globe2,
   Landmark,
   Map as MapIcon,
@@ -58,6 +60,22 @@ const standaloneLabModules = [
     boundary:
       "Contains a public Mapbox pk token that must remain URL-restricted before stronger public promotion.",
   },
+  {
+    title: "George Aegean Quest",
+    eyebrow: "iPhone Atlas Game",
+    href: "/labs/george-aegean-quest",
+    statusLabel: "iPhone game",
+    statusTone: "test" as const,
+    Icon: Gamepad2,
+    accentIcon: Crown,
+    description:
+      "A super-simplified iPhone-first Atlas game starring George on a default quest route from Istanbul through the Aegean, Rhodes, Pamphylia, Cilicia, and Adana.",
+    signals: ["George guide", "17-stop route", "One-thumb controls", "No map token"],
+    commercialPath:
+      "Best pilot path: character-led destination quests, sponsored route packs, mobile itinerary funnels, and premium cultural game tours.",
+    boundary:
+      "This is a lightweight standalone iPhone game prototype with a stylized route map. It is not a full GIS dataset or production booking engine.",
+  },
 ];
 
 export const metadata = createMetadata({
@@ -107,10 +125,10 @@ export default function LabsPage() {
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Standalone Modules"
-            title="Two reviewed prototypes now become public Artemis Labs"
+            title="Reviewed prototypes now become public Artemis Labs"
             description="These modules preserve the original standalone HTML engines for speed and visibility, while the surrounding Artemis site provides route discipline, catalog context, commercial direction, and review boundaries."
           />
-          <div className="mt-10 grid gap-5 lg:grid-cols-2">
+          <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {standaloneLabModules.map((module) => {
               const Icon = module.Icon;
               const AccentIcon = module.accentIcon;
