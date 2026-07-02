@@ -427,17 +427,18 @@
 
     .route-label {
       position: absolute;
-      left: 14px;
-      right: 14px;
+      left: 8px;
+      right: auto;
       top: calc(72px + var(--safe-top));
+      width: min(calc(100vw - 16px), 374px);
       z-index: 12;
       display: flex;
-      justify-content: center;
+      justify-content: stretch;
       pointer-events: none;
     }
 
     .route-label-inner {
-      width: min(100%, 390px);
+      width: 100%;
       border: 1px solid rgba(255,255,255,0.13);
       border-radius: 18px;
       background: rgba(8, 14, 18, 0.56);
@@ -480,10 +481,11 @@
 
     .bottom-card {
       position: absolute;
-      left: 10px;
-      right: 10px;
+      left: 8px;
+      right: auto;
       bottom: calc(10px + var(--safe-bottom));
-      max-width: calc(100vw - 20px);
+      width: min(calc(100vw - 16px), 374px);
+      max-width: 374px;
       z-index: 30;
       border: 1px solid rgba(255,255,255,0.14);
       border-radius: 26px;
@@ -626,9 +628,10 @@
     .quest-drawer,
     .panel-drawer {
       position: absolute;
-      left: 10px;
-      right: 10px;
+      left: 8px;
+      right: auto;
       bottom: calc(194px + var(--safe-bottom));
+      width: min(calc(100vw - 16px), 374px);
       z-index: 26;
       max-height: min(52dvh, 470px);
       border: 1px solid rgba(255,255,255,0.13);
@@ -937,6 +940,26 @@
         box-shadow: 0 34px 110px rgba(0,0,0,0.52);
       }
 
+      .route-label {
+        left: 14px;
+        right: 14px;
+        width: auto;
+        justify-content: center;
+      }
+
+      .route-label-inner {
+        width: min(100%, 390px);
+      }
+
+      .bottom-card,
+      .quest-drawer,
+      .panel-drawer {
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+      }
+
       .app::after {
         content: "iPhone game build";
         position: absolute;
@@ -960,8 +983,6 @@
     @media (max-width: 420px) {
       .bottom-card {
         left: 8px;
-        right: 8px;
-        max-width: calc(100vw - 16px);
         border-radius: 22px;
       }
 
