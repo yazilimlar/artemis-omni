@@ -49,6 +49,9 @@ asset for fast iPhone load:
 - No Mapbox, MapLibre, Leaflet, or external map token dependency.
 - Stylized 3D route board with approximate lon/lat projection and a more realistic
   Aegean / Anatolia coastline layer instead of a full GIS map.
+- Dynamic world-scene backdrop and scene chip now change by destination, using
+  optimized local imagery for Troy, Ephesus, Halicarnassus / Bodrum, Marmaris,
+  Gokova, Didyma, Pamphylia, and the broader Hellenic-Anatolian region.
 - Default George route is active at startup.
 - Route list is available as a drawer rather than a permanent blocking panel.
 - User can add custom stops after the current checkpoint.
@@ -58,12 +61,17 @@ asset for fast iPhone load:
   trip time from the current stop.
 - User can undo the last itinerary edit, including add, remove, reorder, sort, and
   reset actions.
-- User can switch characters from a local roster.
+- User can switch characters from a local roster. The newer roster adds sixteen
+  individualized selectable characters: Helen of Troy, Aphrodite, Psyche,
+  Cleopatra VII, Nefertiti, Nefertari, Sita, Draupadi, Ishtar, Hathor, Esther,
+  Roxana, Zenobia, Xi Shi, Wang Zhaojun, and Calypso.
 - Troy Time Atlas KML anchors are projected as a local c. 600 BC layer:
-  Troy Citadel, Temple of Athena, Archaic Lower Town, Sigeum, Scamander River,
-  and the Dardanelles / Hellespont.
+  citadel, wall circuit, gates, Temple and Altar of Athena, hero shrine, lower
+  town, theatre, outer wall, bridge, Sigeum, Rhoeteum, Scamander river trace,
+  Dardanelles / Hellespont, Plain of Troy, Hanay Tepe, and Kumtepe.
 - Added local compressed image assets for the George variants, roster references,
-  Troy/St. George reference, and workshop council scene.
+  Troy/St. George reference, workshop council scene, destination world scenes,
+  and individual character tiles.
 
 ## Boundary
 
@@ -83,6 +91,8 @@ character-led discovery are validated.
 - `public/standalone/assets/george-aegean-quest/professional-roster.jpg`
 - `public/standalone/assets/george-aegean-quest/historical-roster.jpg`
 - `public/standalone/assets/george-aegean-quest/workshop-council.jpg`
+- `public/standalone/assets/george-aegean-quest/world/`
+- `public/standalone/assets/george-aegean-quest/characters/`
 - `app/labs/george-aegean-quest/page.tsx`
 - `app/labs/page.tsx`
 - `app/library/programs/page.tsx`

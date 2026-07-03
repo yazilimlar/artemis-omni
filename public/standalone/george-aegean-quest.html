@@ -115,11 +115,11 @@
 
     h1 {
       margin: 5px 0 0;
-      max-width: 240px;
+      max-width: min(278px, calc(100vw - 122px));
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: clamp(19px, 6vw, 28px);
+      font-size: clamp(18px, 5.5vw, 24px);
       line-height: 0.94;
       letter-spacing: 0;
       font-weight: 900;
@@ -158,22 +158,59 @@
       overflow: hidden;
     }
 
+    .world-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #071016;
+    }
+
+    .world-backdrop img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.56;
+      filter: saturate(1.12) contrast(1.06);
+      transform: scale(1.04);
+      transition: opacity 260ms ease, transform 680ms cubic-bezier(.16,1,.3,1);
+    }
+
+    .world-backdrop::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(5,10,14,0.34), rgba(5,10,14,0.08) 34%, rgba(5,10,14,0.76) 100%),
+        radial-gradient(circle at 48% 44%, transparent 0 24%, rgba(5,10,14,0.42) 74%);
+    }
+
+    .world-backdrop.changing img {
+      opacity: 0.28;
+      transform: scale(1.08);
+    }
+
     .sky {
       position: absolute;
       inset: 0 0 45% 0;
+      z-index: 1;
       background:
         radial-gradient(circle at 62% 18%, rgba(255, 246, 212, 0.34), transparent 19%),
         linear-gradient(180deg, #87c8e4 0%, #3b86a7 48%, rgba(16, 51, 69, 0.1) 100%);
-      opacity: 0.9;
+      opacity: 0.42;
+      mix-blend-mode: screen;
     }
 
     .water {
       position: absolute;
       inset: 24% -18% -8%;
+      z-index: 1;
       background:
         radial-gradient(circle at 33% 42%, rgba(141, 243, 200, 0.20), transparent 19%),
         radial-gradient(circle at 72% 58%, rgba(85, 214, 255, 0.20), transparent 22%),
         linear-gradient(160deg, #0d5267 0%, #08303d 54%, #071016 100%);
+      opacity: 0.72;
       transform: skewY(-7deg);
     }
 
@@ -197,6 +234,7 @@
       position: absolute;
       left: 50%;
       top: 52%;
+      z-index: 3;
       width: min(118vw, 560px);
       height: min(82dvh, 690px);
       transform: translate3d(-50%, -50%, 0) perspective(780px) rotateX(54deg) rotateZ(-8deg);
@@ -453,6 +491,26 @@
       box-shadow: 0 0 0 9px rgba(255,189,85,0.14), 0 9px 18px rgba(0,0,0,0.30);
     }
 
+    .poi.religious {
+      background: #f4c96b;
+      box-shadow: 0 0 0 8px rgba(244,201,107,0.12), 0 9px 18px rgba(0,0,0,0.28);
+    }
+
+    .poi.military {
+      background: #ff8b6b;
+      box-shadow: 0 0 0 8px rgba(255,139,107,0.13), 0 9px 18px rgba(0,0,0,0.28);
+    }
+
+    .poi.natural {
+      background: #55d6ff;
+      box-shadow: 0 0 0 8px rgba(85,214,255,0.13), 0 9px 18px rgba(0,0,0,0.28);
+    }
+
+    .poi.infrastructure {
+      background: #8df3c8;
+      box-shadow: 0 0 0 8px rgba(141,243,200,0.12), 0 9px 18px rgba(0,0,0,0.26);
+    }
+
     .poi.custom {
       background: #8df3c8;
       box-shadow: 0 0 0 8px rgba(141,243,200,0.12), 0 9px 18px rgba(0,0,0,0.26);
@@ -528,6 +586,47 @@
       color: var(--muted);
       font-size: 12px;
       line-height: 1.32;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .scene-chip {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+      min-height: 54px;
+      border: 1px solid rgba(255,255,255,0.11);
+      border-radius: 15px;
+      background: rgba(255,255,255,0.07);
+      overflow: hidden;
+    }
+
+    .scene-chip img {
+      width: 54px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 13px;
+    }
+
+    .scene-chip b {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 11px;
+      line-height: 1.08;
+    }
+
+    .scene-chip small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 9.5px;
+      line-height: 1.24;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -1138,6 +1237,9 @@
       </header>
 
       <main class="map-wrap" aria-label="George Aegean Quest game map">
+        <div class="world-backdrop" id="worldBackdrop" aria-hidden="true">
+          <img id="worldImage" src="/standalone/assets/george-aegean-quest/world/world-hellenic-anatolian-continuum.jpg" alt="" />
+        </div>
         <div class="sky" aria-hidden="true"></div>
         <div class="water" aria-hidden="true"></div>
 
@@ -1194,6 +1296,10 @@
           <small><span id="chapterText">Default route loaded</span><span id="distanceText">0 km</span></small>
           <h2 id="placeTitle">Istanbul</h2>
           <p id="placeBrief">George begins at the Bosphorus gateway and unlocks the Aegean quest route.</p>
+          <div class="scene-chip" aria-label="Current world scene">
+            <img id="sceneThumb" src="/standalone/assets/george-aegean-quest/world/world-hellenic-anatolian-continuum.jpg" alt="" />
+            <span><b id="sceneTitle">Hellenic-Anatolian Continuum</b><small id="sceneMeta">Gateway world - regional overview for the route.</small></span>
+          </div>
         </div>
       </section>
 
@@ -1239,9 +1345,9 @@
           <button type="button" id="closeCharacterDrawer" aria-label="Close character selector">x</button>
         </div>
         <div class="panel-body">
-          <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/professional-roster.jpg')">
-            <b>Atlas Character Roster</b>
-            <small>Switch the guide without leaving the quest. George stays the canonical default.</small>
+          <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/characters/roster-legendary-women.jpg')">
+            <b>Expanded Character Roster</b>
+            <small>Switch the guide without leaving the quest. George stays the canonical default, with sixteen individualized roster characters now available.</small>
           </div>
           <div class="character-grid" id="characterGrid"></div>
         </div>
@@ -1253,9 +1359,9 @@
           <button type="button" id="closeTroyDrawer" aria-label="Close Troy layer">x</button>
         </div>
         <div class="panel-body">
-          <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/troy-st-george.jpg')">
+          <div class="panel-card scene-card" style="background-image:url('/standalone/assets/george-aegean-quest/world/world-troy-ilion-600bc.jpg')">
             <b>Archaic Ilion KML Layer</b>
-            <small>These anchors are adapted from the supplied KML coordinates and projected onto the stylized route board.</small>
+            <small>Enhanced KML anchors now include gates, walls, cult places, ports, river features, plains, and burial mounds projected onto the game board.</small>
           </div>
           <div id="troyAnchorList"></div>
         </div>
@@ -1319,13 +1425,122 @@
     ];
 
     const troyAnchors = [
-      { name: "Troy Citadel (Archaic Ilion)", tag: "Citadel", style: "citadel", lon: 26.238889, lat: 39.9575, alt: 30, brief: "The fortified acropolis on the hill of Hisarlik." },
-      { name: "Temple of Athena", tag: "Temple", style: "infrastructure", lon: 26.2386, lat: 39.9578, alt: 35, brief: "Primary religious center inside the upper citadel, reconstructed in later periods." },
-      { name: "Archaic Lower Town", tag: "Lower town", style: "infrastructure", lon: 26.2395, lat: 39.9565, alt: 20, brief: "Residential and commercial zone extending south and east of the citadel." },
-      { name: "Sigeum (Harbor Outpost)", tag: "Harbor", style: "infrastructure", lon: 26.1833, lat: 39.95, alt: 5, brief: "Coastal settlement controlling the entrance to the Hellespont trade corridor." },
-      { name: "Scamander River", tag: "River", style: "infrastructure", lon: 26.2, lat: 39.97, alt: 5, brief: "Primary waterway defining the Plain of Troy and local agriculture." },
-      { name: "Dardanelles Strait", tag: "Hellespont", style: "infrastructure", lon: 26.195, lat: 40.01, alt: 0, brief: "Vital maritime chokepoint north of the Troy plain." },
+      { name: "Citadel of Troy (Archaic Ilion)", tag: "Citadel", style: "citadel", mark: "C", lon: 26.238889, lat: 39.9575, alt: 30, brief: "Fortified acropolis on Hisarlik, continuously occupied from the Bronze Age into the Roman period." },
+      { name: "Citadel Walls (approx. circuit)", tag: "Wall circuit", style: "military", mark: "W", lon: 26.2389, lat: 39.9576, alt: 30, brief: "Approximate Archaic fortification circuit incorporating earlier Bronze Age foundations." },
+      { name: "South Gate (main entrance)", tag: "South gate", style: "military", mark: "G", lon: 26.2388, lat: 39.9567, alt: 25, brief: "Principal southern gateway, flanked by towers and connected to the lower-town ramp." },
+      { name: "East Gate", tag: "East gate", style: "military", mark: "G", lon: 26.24, lat: 39.9575, alt: 25, brief: "Secondary eastern gate facing the Scamander plain." },
+      { name: "Temple of Athena (Ilion)", tag: "Temple", style: "religious", mark: "A", lon: 26.2386, lat: 39.9578, alt: 35, brief: "Principal temple of Athena Ilias on the highest citadel point." },
+      { name: "Altar of Athena", tag: "Altar", style: "religious", mark: "A", lon: 26.239, lat: 39.9577, alt: 35, brief: "Open-air altar east of the temple, enlarged during the Archaic period." },
+      { name: "Heroon (Cult of Hector?)", tag: "Hero shrine", style: "religious", mark: "H", lon: 26.2372, lat: 39.9572, alt: 20, brief: "Small shrine outside the citadel walls, possibly linked to Trojan hero cult." },
+      { name: "Archaic Lower Town", tag: "Lower town", style: "infrastructure", mark: "L", lon: 26.2395, lat: 39.9565, alt: 20, brief: "Dense residential, workshop, and storage area spreading south and east of the citadel." },
+      { name: "Lower Town Boundary (approx.)", tag: "Town edge", style: "military", mark: "B", lon: 26.24, lat: 39.9564, alt: 10, brief: "Approximate lower-town extent based on geophysical surveys and test trenches." },
+      { name: "Archaic Theatre", tag: "Theatre", style: "infrastructure", mark: "T", lon: 26.24, lat: 39.9558, alt: 15, brief: "Small assembly or theatral area on the southern lower-town slope." },
+      { name: "Outer Defence Wall (Lower Town)", tag: "Outer wall", style: "military", mark: "W", lon: 26.2415, lat: 39.955, alt: 10, brief: "Lower-town defensive wall with towers and ditch, represented as a projected anchor." },
+      { name: "Scamander Bridge (Archaic)", tag: "Bridge", style: "infrastructure", mark: "R", lon: 26.205, lat: 39.965, alt: 5, brief: "Likely bridge on the road from Troy toward the coast and river plain." },
+      { name: "Sigeum (Harbour Outpost)", tag: "Sigeum port", style: "infrastructure", mark: "S", lon: 26.1833, lat: 39.95, alt: 5, brief: "Coastal harbour outpost controlling the mouth of the Hellespont trade corridor." },
+      { name: "Rhoeteum (Northern Harbour)", tag: "Rhoeteum", style: "infrastructure", mark: "R", lon: 26.2, lat: 39.97, alt: 5, brief: "Northern harbour settlement of the Trojan plain, used for trade and fishing." },
+      { name: "Scamander River Trace", tag: "River trace", style: "natural", mark: "S", lon: 26.2075, lat: 39.9625, alt: 0, brief: "Approximate ancient channel line from the KML river geometry." },
+      { name: "Dardanelles (Hellespont) Strait", tag: "Hellespont", style: "natural", mark: "D", lon: 26.195, lat: 40.01, alt: 0, brief: "Strategic strait connecting the Aegean to the Sea of Marmara." },
+      { name: "Plain of Troy (Scamander Plain)", tag: "Troy plain", style: "natural", mark: "P", lon: 26.21, lat: 39.965, alt: 5, brief: "Alluvial battlefield and agricultural plain fed by the Scamander." },
+      { name: "Hanay Tepe (Tumulus)", tag: "Tumulus", style: "infrastructure", mark: "M", lon: 26.244, lat: 39.952, alt: 15, brief: "Prominent burial mound south of the citadel and landmark on the approach to Troy." },
+      { name: "Kumtepe (Prehistoric Settlement)", tag: "Kumtepe", style: "infrastructure", mark: "K", lon: 26.26, lat: 39.94, alt: 5, brief: "Older settlement mound near Troy, treated in the KML as a rural or burial landscape marker." },
     ];
+
+    const worldAssetBase = "/standalone/assets/george-aegean-quest/world/";
+    const worldScenes = {
+      continuum: {
+        title: "Hellenic-Anatolian Continuum",
+        era: "Regional overview",
+        image: `${worldAssetBase}world-hellenic-anatolian-continuum.jpg`,
+        detail: "Aegean, Marmara, Anatolia, and Greek island context for the full quest.",
+      },
+      troy: {
+        title: "Troy / Ilion c. 600 BC",
+        era: "Archaic Troad",
+        image: `${worldAssetBase}world-troy-ilion-600bc.jpg`,
+        detail: "Citadel, lower town, Hellespont coast, Scamander plain, and Mount Ida region.",
+      },
+      troyRoad: {
+        title: "Roman Troy Strategy Map",
+        era: "100 AD layer",
+        image: `${worldAssetBase}world-troy-roman-road.jpg`,
+        detail: "Road, harbour, river, and settlement logic for the broader Troad world.",
+      },
+      ephesus: {
+        title: "Ephesus / Ephesos",
+        era: "Roman Imperial peak",
+        image: `${worldAssetBase}world-ephesus.jpg`,
+        detail: "Harbour, Celsus axis, theatre, Artemis precinct, and mountain terrain.",
+      },
+      aegeanCoast: {
+        title: "Turkish Aegean Coastline",
+        era: "Ionia, Aeolis, Caria",
+        image: `${worldAssetBase}world-turkish-aegean-coastline.jpg`,
+        detail: "Assos, Pergamum, Ephesus, Priene, Miletus, Didyma, and Halicarnassus route logic.",
+      },
+      greekIslands: {
+        title: "Greek Mainland and Islands",
+        era: "Classical Aegean",
+        image: `${worldAssetBase}world-greek-mainland-islands.jpg`,
+        detail: "Island crossing context for Rhodes and the wider Aegean sea lanes.",
+      },
+      halicarnassus: {
+        title: "Halicarnassus / Bodrum",
+        era: "Caria",
+        image: `${worldAssetBase}world-halicarnassus.jpg`,
+        detail: "Mausoleum city, harbour systems, sacred way, theatre, and peninsula terrain.",
+      },
+      marmaris: {
+        title: "Marmaris / Physkos",
+        era: "Present harbour world",
+        image: `${worldAssetBase}world-marmaris.jpg`,
+        detail: "Blue harbour, castle, old town, marina, and pine mountain setting.",
+      },
+      gokova: {
+        title: "Ceramus and Gokova Gulf",
+        era: "Carian coast",
+        image: `${worldAssetBase}world-gokova-gulf.jpg`,
+        detail: "Gulf, terraces, rock-cut tombs, harbour districts, and coastal road.",
+      },
+      didyma: {
+        title: "Didyma Apollo Sanctuary",
+        era: "Hellenistic oracle",
+        image: `${worldAssetBase}world-didyma-apollo.jpg`,
+        detail: "Apollo temple, Sacred Way, Panormos harbour, and Miletus background.",
+      },
+      patara: {
+        title: "Patara and Xanthos Valley",
+        era: "Lycian coast",
+        image: `${worldAssetBase}world-patara-xanthos.jpg`,
+        detail: "Harbour, lighthouse, marsh, theatre, and Xanthos valley terrain.",
+      },
+      pamphylia: {
+        title: "Attaleia and Pamphylia Coast",
+        era: "Roman Pamphylia",
+        image: `${worldAssetBase}world-attaleia-pamphylia.jpg`,
+        detail: "Antalya, Perge, Aspendos, harbour walls, waterfalls, and mountain rim.",
+      },
+    };
+
+    const sceneByStopName = {
+      istanbul: "continuum",
+      asos: "troy",
+      ephesus: "ephesus",
+      "virgin mary": "ephesus",
+      priene: "aegeanCoast",
+      miletus: "aegeanCoast",
+      bodrum: "halicarnassus",
+      rhodes: "greekIslands",
+      marmaris: "marmaris",
+      gokova: "gokova",
+      gocek: "marmaris",
+      aphrodisias: "aegeanCoast",
+      didyma: "didyma",
+      perge: "pamphylia",
+      aspendos: "pamphylia",
+      tarsus: "pamphylia",
+      adana: "pamphylia",
+    };
 
     const characters = [
       {
@@ -1382,6 +1597,150 @@
         scale: "1.18",
         note: "Workshop mode for editing and route strategy.",
       },
+      {
+        id: "helen-of-troy",
+        name: "Helen of Troy",
+        role: "Trojan legend envoy",
+        image: "/standalone/assets/george-aegean-quest/characters/character-helen-of-troy.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Diplomacy and mythic Troad story mode.",
+      },
+      {
+        id: "aphrodite",
+        name: "Aphrodite",
+        role: "Aegean sanctuary guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-aphrodite.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Beauty, sea routes, and coastal shrine narration.",
+      },
+      {
+        id: "psyche",
+        name: "Psyche",
+        role: "Mythic path guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-psyche.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Light-touch myth mode for discovery and wonder.",
+      },
+      {
+        id: "cleopatra-vii",
+        name: "Cleopatra VII",
+        role: "Alexandrian queen guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-cleopatra-vii.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Royal diplomacy, Mediterranean power, and port strategy.",
+      },
+      {
+        id: "nefertiti",
+        name: "Nefertiti",
+        role: "Amarna royal icon",
+        image: "/standalone/assets/george-aegean-quest/characters/character-nefertiti.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Visual culture, royal presence, and Egyptian context.",
+      },
+      {
+        id: "nefertari",
+        name: "Nefertari",
+        role: "Temple diplomacy guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-nefertari.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Ceremony, temple routes, and monumental storytelling.",
+      },
+      {
+        id: "sita",
+        name: "Sita",
+        role: "Epic virtue guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-sita.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Epic journey mode focused on endurance and memory.",
+      },
+      {
+        id: "draupadi",
+        name: "Draupadi",
+        role: "Epic strategist",
+        image: "/standalone/assets/george-aegean-quest/characters/character-draupadi.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Strategic route choices and council-room narration.",
+      },
+      {
+        id: "ishtar",
+        name: "Ishtar",
+        role: "Star and city guardian",
+        image: "/standalone/assets/george-aegean-quest/characters/character-ishtar.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Mesopotamian power, night routes, and fortified cities.",
+      },
+      {
+        id: "hathor",
+        name: "Hathor",
+        role: "Music and joy guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-hathor.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Festival pacing, sanctuary sound, and gentle rewards.",
+      },
+      {
+        id: "esther",
+        name: "Esther",
+        role: "Palace diplomacy guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-esther.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Negotiation, court choices, and quiet influence.",
+      },
+      {
+        id: "roxana",
+        name: "Roxana",
+        role: "Hellenistic frontier queen",
+        image: "/standalone/assets/george-aegean-quest/characters/character-roxana.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Mountain routes, Hellenistic crossings, and frontier context.",
+      },
+      {
+        id: "zenobia",
+        name: "Zenobia",
+        role: "Palmyrene desert queen",
+        image: "/standalone/assets/george-aegean-quest/characters/character-zenobia.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Caravan power, trade cities, and desert empire storytelling.",
+      },
+      {
+        id: "xi-shi",
+        name: "Xi Shi",
+        role: "Classical diplomacy guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-xi-shi.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Elegant soft-power mode for cultural discovery.",
+      },
+      {
+        id: "wang-zhaojun",
+        name: "Wang Zhaojun",
+        role: "Silk Road envoy",
+        image: "/standalone/assets/george-aegean-quest/characters/character-wang-zhaojun.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Envoy route mode for cross-cultural travel stories.",
+      },
+      {
+        id: "calypso",
+        name: "Calypso",
+        role: "Island sea guide",
+        image: "/standalone/assets/george-aegean-quest/characters/character-calypso.jpg",
+        position: "50% 24%",
+        scale: "1.42",
+        note: "Island, cove, and sea-passage narration.",
+      },
     ];
 
     const storageKeys = {
@@ -1392,6 +1751,31 @@
 
     const defaultStopByName = new Map(defaultRoute.map((stop) => [stop.name.toLowerCase(), stop]));
     const undoStack = [];
+    let activeWorldImage = "";
+
+    function sceneKey(value) {
+      return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function resolveWorldScene(stop) {
+      const name = sceneKey(stop?.name);
+      const explicitScene = sceneByStopName[name];
+      if (explicitScene && worldScenes[explicitScene]) return worldScenes[explicitScene];
+      if (stop?.kml || /troy|ilion|sigeum|rhoeteum|scamander|hellespont|athena|hector|kumtepe|hanay|citadel|gate|wall|tumulus/.test(name)) {
+        return worldScenes.troy;
+      }
+      const lon = Number(stop?.lon);
+      const lat = Number(stop?.lat);
+      if (Number.isFinite(lon) && Number.isFinite(lat)) {
+        if (lon < 27 && lat > 39) return worldScenes.troy;
+        if (lon >= 27 && lon < 28 && lat >= 37.2 && lat <= 38.2) return worldScenes.ephesus;
+        if (lon >= 27 && lon < 27.5 && lat < 37.5) return worldScenes.didyma;
+        if (lon >= 27.4 && lon < 28.1 && lat < 37.2) return worldScenes.halicarnassus;
+        if (lon >= 28 && lon < 29.2 && lat >= 36.6 && lat < 37.2) return worldScenes.marmaris;
+        if (lon >= 30 && lon < 32 && lat >= 36.5 && lat < 37.3) return worldScenes.pamphylia;
+      }
+      return worldScenes.continuum;
+    }
 
     function esc(value) {
       return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
@@ -1543,6 +1927,11 @@
     const stopsLayer = document.getElementById("stopsLayer");
     const troyLayer = document.getElementById("troyLayer");
     const mapPlane = document.getElementById("mapPlane");
+    const worldBackdrop = document.getElementById("worldBackdrop");
+    const worldImage = document.getElementById("worldImage");
+    const sceneThumb = document.getElementById("sceneThumb");
+    const sceneTitle = document.getElementById("sceneTitle");
+    const sceneMeta = document.getElementById("sceneMeta");
     const georgeToken = document.getElementById("georgeToken");
     const tokenImg = document.getElementById("tokenImg");
     const portraitImg = document.getElementById("portraitImg");
@@ -1646,6 +2035,23 @@
       showToast.hideTimer = window.setTimeout(() => toast.classList.remove("show"), 1450);
     }
 
+    function applyWorldScene(scene) {
+      const nextScene = scene || worldScenes.continuum;
+      const meta = `${nextScene.era} - ${nextScene.detail}`;
+      if (activeWorldImage !== nextScene.image) {
+        activeWorldImage = nextScene.image;
+        worldBackdrop.classList.add("changing");
+        window.clearTimeout(applyWorldScene.timer);
+        applyWorldScene.timer = window.setTimeout(() => worldBackdrop.classList.remove("changing"), 260);
+        worldImage.src = nextScene.image;
+        sceneThumb.src = nextScene.image;
+      }
+      worldImage.alt = nextScene.title;
+      sceneThumb.alt = nextScene.title;
+      sceneTitle.textContent = nextScene.title;
+      sceneMeta.textContent = meta;
+    }
+
     function drawRoute() {
       const points = routeStops.map((stop) => `${stop.x},${stop.y}`).join(" ");
       routeLine.setAttribute("points", points);
@@ -1666,7 +2072,7 @@
       troyButton.classList.toggle("active", state.troyVisible);
       troyLayer.innerHTML = troyAnchors.map((anchor, index) => {
         const point = projectLonLat(anchor.lon, anchor.lat);
-        return `<button class="poi ${anchor.style === "citadel" ? "citadel" : ""}" data-anchor="${index}" style="left:${point.x}%;top:${point.y}%" aria-label="${esc(anchor.name)}">${anchor.style === "citadel" ? "T" : index + 1}</button>`;
+        return `<button class="poi ${esc(anchor.style || "infrastructure")}" data-anchor="${index}" style="left:${point.x}%;top:${point.y}%" aria-label="${esc(anchor.name)}">${esc(anchor.mark || index + 1)}</button>`;
       }).join("");
       troyLayer.querySelectorAll(".poi").forEach((node) => {
         node.addEventListener("click", () => focusTroyAnchor(Number(node.dataset.anchor), false));
@@ -1757,6 +2163,7 @@
       const progress = routeStops.length > 1 ? state.index / (routeStops.length - 1) : 1;
       const reward = state.index === 0 ? 0 : 120 + state.index * 15;
       state.xp = Math.max(state.xp, reward);
+      applyWorldScene(resolveWorldScene(stop));
 
       georgeToken.style.left = `${stop.x}%`;
       georgeToken.style.top = `${stop.y}%`;
@@ -1976,6 +2383,7 @@
       placeBrief.textContent = anchor.brief;
       chapterText.textContent = `Troy KML · ${anchor.tag}`;
       distanceText.textContent = `${anchor.alt}m`;
+      applyWorldScene(worldScenes.troy);
       missionTitle.textContent = "Troy Time Atlas anchor.";
       missionText.textContent = `${anchor.lon.toFixed(6)}, ${anchor.lat.toFixed(6)} · tap Add inside Troy Layer to insert it into the route.`;
       if (openDrawer) setDrawer("troy");

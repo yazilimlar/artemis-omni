@@ -69,8 +69,8 @@ const standaloneLabModules = [
     Icon: Gamepad2,
     accentIcon: Crown,
     description:
-      "A super-simplified iPhone-first Atlas game starring George, with a geography-aware Aegean board, reorderable route stops, shortest/fastest sorting, undo, character switching, and a Troy Time Atlas KML layer.",
-    signals: ["George guide", "Geo route board", "Sort + undo planner", "Troy KML layer"],
+      "A super-simplified iPhone-first Atlas game starring George, with dynamic destination world scenes, a geography-aware Aegean board, an expanded character roster, route sorting, undo, and a richer Troy Time Atlas KML layer.",
+    signals: ["George guide", "World scene art", "Expanded roster", "Richer Troy KML"],
     commercialPath:
       "Best pilot path: character-led destination quests, sponsored route packs, mobile itinerary funnels, and premium cultural game tours.",
     boundary:
