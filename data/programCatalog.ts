@@ -102,7 +102,7 @@ export const programCatalogItems: ProgramCatalogItem[] = [
     statusTone: "test",
     sourceType: "New standalone iPhone Atlas game",
     summary:
-      "A mobile-only, one-thumb Artemis Atlas game surface starring George on a default 17-stop route, now enhanced with dynamic destination world scenes, a geography-aware Aegean board, editable/reorderable stops, shortest/fastest sorting, undo, an expanded individualized character roster, and a richer Troy Time Atlas KML anchor layer.",
+      "A mobile-only, one-thumb Artemis Atlas game surface starring George on a default 17-stop route, now enhanced with dynamic destination world scenes, a cartography-lineage Aegean projection board, editable/reorderable stops, shortest/fastest sorting, undo, an expanded individualized character roster, and a richer Troy Time Atlas KML anchor layer.",
     bestPublicLink: {
       href: "/labs/george-aegean-quest",
       label: "George Aegean Quest",
@@ -113,7 +113,7 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Creates a route for sponsored destination quests, premium character guides, cultural itinerary products, mobile funnel testing, and future booking handoff flows.",
     migrationPath: [
       "Keep this iPhone game route isolated from the heavier map-engine Atlas.",
-      "Validate George, one-thumb controls, route pacing, route sorting, undo behavior, environment art, and character-led storytelling before adding dynamic data.",
+      "Validate George, one-thumb controls, route pacing, route sorting, undo behavior, cartography-board readability, environment art, and character-led storytelling before adding dynamic data.",
       "Add future route packs, additional KML imports, richer destination scenes, and booking handoffs behind the same lightweight game shell.",
     ],
     boundary:

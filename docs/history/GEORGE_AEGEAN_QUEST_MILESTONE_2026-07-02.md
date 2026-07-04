@@ -49,6 +49,10 @@ asset for fast iPhone load:
 - No Mapbox, MapLibre, Leaflet, or external map token dependency.
 - Stylized 3D route board with approximate lon/lat projection and a more realistic
   Aegean / Anatolia coastline layer instead of a full GIS map.
+- The main board has a cartography-lineage visual pass: graticule, rhumb lines,
+  compass rose, coastal shelf, city/port marks, and mapmaker labels referencing
+  Eratosthenes, Waldseemuller, Ortelius, Piri Reis, Mercator, Magellan, and the
+  modern orbital mapping era.
 - Dynamic world-scene backdrop and scene chip now change by destination, using
   optimized local imagery for Troy, Ephesus, Halicarnassus / Bodrum, Marmaris,
   Gokova, Didyma, Pamphylia, and the broader Hellenic-Anatolian region.

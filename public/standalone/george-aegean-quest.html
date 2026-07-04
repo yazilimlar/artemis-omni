@@ -250,10 +250,12 @@
       pointer-events: none;
       background:
         radial-gradient(ellipse at 64% 31%, rgba(255,255,255,0.16), transparent 16%),
-        radial-gradient(ellipse at 52% 58%, rgba(244,201,107,0.13), transparent 18%),
-        repeating-radial-gradient(ellipse at 58% 52%, rgba(255,255,255,0.07) 0 1px, transparent 1px 14px);
+        radial-gradient(ellipse at 50% 50%, rgba(244,201,107,0.15), transparent 20%),
+        repeating-linear-gradient(0deg, rgba(255,246,212,0.06) 0 1px, transparent 1px 11px),
+        repeating-linear-gradient(90deg, rgba(255,246,212,0.045) 0 1px, transparent 1px 13px),
+        repeating-radial-gradient(ellipse at 58% 52%, rgba(255,255,255,0.06) 0 1px, transparent 1px 14px);
       mix-blend-mode: screen;
-      opacity: 0.5;
+      opacity: 0.62;
       transform: rotate(8deg);
       z-index: 1;
     }
@@ -311,35 +313,75 @@
 
     .geo-sea-grid {
       fill: none;
-      stroke: rgba(255,255,255,0.045);
+      stroke: rgba(255,246,212,0.10);
+      stroke-width: 0.18;
+    }
+
+    .geo-graticule {
+      fill: none;
+      stroke: rgba(255,246,212,0.16);
+      stroke-width: 0.16;
+      stroke-linecap: round;
+      stroke-dasharray: 0.6 1.1;
+    }
+
+    .geo-rhumb {
+      fill: none;
+      stroke: rgba(244,201,107,0.42);
+      stroke-width: 0.24;
+      stroke-linecap: round;
+      stroke-dasharray: 1.3 1.2;
+    }
+
+    .geo-orbit {
+      fill: none;
+      stroke: rgba(85,214,255,0.44);
       stroke-width: 0.22;
+      stroke-linecap: round;
+      stroke-dasharray: 1.5 1.25;
+    }
+
+    .geo-shelf {
+      fill: none;
+      stroke: rgba(85,214,255,0.22);
+      stroke-width: 1.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.9;
     }
 
     .geo-land {
       fill: url(#landRelief);
-      stroke: rgba(255,255,255,0.23);
-      stroke-width: 0.38;
+      stroke: rgba(255,246,212,0.42);
+      stroke-width: 0.44;
       stroke-linejoin: round;
     }
 
     .geo-island {
       fill: url(#islandRelief);
-      stroke: rgba(255,255,255,0.22);
-      stroke-width: 0.28;
+      stroke: rgba(255,246,212,0.36);
+      stroke-width: 0.34;
     }
 
     .geo-coast {
       fill: none;
-      stroke: rgba(141,243,200,0.40);
-      stroke-width: 0.33;
+      stroke: rgba(141,243,200,0.58);
+      stroke-width: 0.42;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
     .geo-ridge {
       fill: none;
-      stroke: rgba(255,246,212,0.13);
-      stroke-width: 0.22;
+      stroke: rgba(255,246,212,0.20);
+      stroke-width: 0.2;
+      stroke-linecap: round;
+    }
+
+    .geo-river {
+      fill: none;
+      stroke: rgba(85,214,255,0.52);
+      stroke-width: 0.32;
       stroke-linecap: round;
     }
 
@@ -352,6 +394,48 @@
       paint-order: stroke;
       stroke: rgba(5,10,14,0.48);
       stroke-width: 0.9px;
+    }
+
+    .geo-cartographer {
+      fill: rgba(244,201,107,0.68);
+      font-size: 1.45px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      paint-order: stroke;
+      stroke: rgba(5,10,14,0.66);
+      stroke-width: 0.55px;
+    }
+
+    .geo-pin {
+      fill: rgba(244,201,107,0.92);
+      stroke: rgba(5,10,14,0.58);
+      stroke-width: 0.24;
+    }
+
+    .geo-port {
+      fill: rgba(85,214,255,0.90);
+      stroke: rgba(5,10,14,0.62);
+      stroke-width: 0.22;
+    }
+
+    .geo-city {
+      fill: rgba(251,246,231,0.86);
+      stroke: rgba(5,10,14,0.64);
+      stroke-width: 0.24;
+    }
+
+    .geo-compass {
+      fill: rgba(244,201,107,0.72);
+      stroke: rgba(251,246,231,0.56);
+      stroke-width: 0.18;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.28));
+    }
+
+    .geo-compass-line {
+      stroke: rgba(251,246,231,0.48);
+      stroke-width: 0.14;
+      stroke-linecap: round;
     }
 
     .route-svg {
@@ -1244,34 +1328,65 @@
         <div class="water" aria-hidden="true"></div>
 
         <div class="map-plane" id="mapPlane">
-          <div class="map-caption">stylized Aegean + Troy layer</div>
+          <div class="map-caption">atlas projection board</div>
           <svg class="geo-map" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <defs>
               <linearGradient id="landRelief" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0%" stop-color="#8b9554" />
-                <stop offset="48%" stop-color="#405b3c" />
-                <stop offset="100%" stop-color="#1c322f" />
+                <stop offset="0%" stop-color="#b4a36a" />
+                <stop offset="42%" stop-color="#596840" />
+                <stop offset="100%" stop-color="#17312e" />
               </linearGradient>
               <linearGradient id="islandRelief" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0%" stop-color="#7f8649" />
+                <stop offset="0%" stop-color="#a99b5e" />
                 <stop offset="100%" stop-color="#263d33" />
               </linearGradient>
+              <radialGradient id="compassFill" cx="50%" cy="45%" r="60%">
+                <stop offset="0%" stop-color="#fff2b0" />
+                <stop offset="56%" stop-color="#f4c96b" />
+                <stop offset="100%" stop-color="#8a5d22" />
+              </radialGradient>
             </defs>
             <path class="geo-sea-grid" d="M8 24 C24 20 39 20 55 24 M6 36 C24 33 45 33 72 38 M5 50 C27 47 50 49 92 56 M8 64 C31 62 53 66 94 70 M14 78 C38 76 66 78 96 84" />
-            <path class="geo-land" d="M36 18 C44 16 53 18 61 21 C71 24 81 30 90 40 C96 47 97 57 91 63 C85 69 73 67 65 71 C55 76 48 75 40 69 C34 65 36 60 33 56 C30 51 35 47 32 42 C29 37 34 34 31 29 C29 24 31 20 36 18 Z" />
-            <path class="geo-coast" d="M34 20 C31 24 34 27 32 31 C30 35 34 38 32 42 C30 46 35 49 32 54 C29 59 35 63 40 69" />
-            <path class="geo-land" d="M12 22 C17 19 24 21 29 26 C26 31 24 37 26 43 C23 48 20 53 21 60 C17 63 12 61 9 56 C6 50 9 43 8 37 C7 31 8 25 12 22 Z" />
-            <path class="geo-island" d="M27 28 C31 26 35 27 37 30 C35 33 30 33 27 31 Z" />
-            <path class="geo-island" d="M29 41 C33 39 36 41 36 45 C33 48 29 47 27 44 Z" />
-            <path class="geo-island" d="M27 50 C31 48 35 49 36 53 C33 56 28 56 25 53 Z" />
-            <path class="geo-island" d="M33 58 C37 57 40 59 40 62 C37 65 33 65 31 62 Z" />
-            <path class="geo-island" d="M39 70 C44 68 49 70 51 74 C48 78 42 77 39 74 Z" />
-            <path class="geo-island" d="M72 84 C82 81 92 83 97 89 C91 94 78 94 70 90 Z" />
-            <path class="geo-ridge" d="M41 28 C48 31 56 31 64 35 M45 39 C55 41 67 43 79 50 M43 51 C53 54 64 57 76 61 M51 64 C57 66 64 67 71 65" />
-            <text class="geo-label" x="39" y="17">Marmara</text>
-            <text class="geo-label" x="30" y="47">Aegean Coast</text>
+            <path class="geo-graticule" d="M14 8 V92 M28 7 V92 M42 7 V92 M56 7 V92 M70 8 V92 M84 10 V91 M4 18 H96 M3 31 H97 M3 44 H98 M4 57 H98 M6 70 H97 M9 83 H94" />
+            <path class="geo-rhumb" d="M49 50 L13 20 M49 50 L24 13 M49 50 L49 7 M49 50 L76 11 M49 50 L93 26 M49 50 L94 53 M49 50 L82 82 M49 50 L52 93 M49 50 L24 82 M49 50 L7 63" />
+            <path class="geo-orbit" d="M2 17 C23 5 56 4 94 21 M7 91 C28 70 66 56 98 54" />
+            <path class="geo-shelf" d="M34 19 C27 27 28 38 31 45 C27 55 30 64 39 72 M41 75 C52 82 70 74 86 70 M13 19 C6 31 4 48 10 61 C14 70 23 68 29 60" />
+            <path class="geo-land" d="M35 16 C43 14 52 16 61 20 C72 24 82 31 91 41 C97 48 98 57 92 64 C86 70 74 68 65 72 C56 76 48 76 40 70 C34 66 36 61 33 56 C29 51 35 47 32 42 C29 37 34 34 31 29 C29 23 30 18 35 16 Z" />
+            <path class="geo-coast" d="M35 17 C31 23 34 27 32 31 C30 35 35 38 32 42 C30 47 36 49 32 55 C29 60 35 65 40 70 M42 22 C50 23 60 25 70 31 C81 38 89 48 88 58 C86 65 75 64 66 69" />
+            <path class="geo-land" d="M13 19 C18 16 25 18 31 25 C27 31 25 37 27 43 C24 48 20 53 21 60 C17 64 12 62 9 57 C6 51 9 43 8 37 C7 31 8 23 13 19 Z" />
+            <path class="geo-land" d="M18 63 C23 62 29 66 31 72 C28 78 20 78 15 73 C12 69 13 65 18 63 Z" />
+            <path class="geo-island" d="M26 28 C31 25 36 27 38 31 C35 35 29 34 26 31 Z" />
+            <path class="geo-island" d="M29 40 C34 38 37 41 37 45 C34 49 29 48 27 44 Z" />
+            <path class="geo-island" d="M26 50 C31 47 36 49 37 53 C34 57 28 57 25 53 Z" />
+            <path class="geo-island" d="M33 58 C38 56 42 59 41 63 C38 66 33 66 30 62 Z" />
+            <path class="geo-island" d="M39 70 C45 68 50 70 52 75 C49 79 42 78 38 74 Z" />
+            <path class="geo-island" d="M72 84 C82 80 93 83 98 90 C91 96 77 95 69 90 Z" />
+            <path class="geo-ridge" d="M41 28 C48 31 56 31 64 35 M45 39 C55 41 67 43 79 50 M43 51 C53 54 64 57 76 61 M51 64 C57 66 64 67 71 65 M72 39 C76 43 80 47 83 54" />
+            <path class="geo-river" d="M56 22 C55 29 59 35 63 42 C66 47 66 54 62 60 C58 66 58 69 62 72" />
+            <circle class="geo-city" cx="48" cy="18" r="1.05" />
+            <circle class="geo-pin" cx="30" cy="24" r="0.92" />
+            <circle class="geo-city" cx="38" cy="46" r="0.95" />
+            <circle class="geo-city" cx="37" cy="55" r="0.85" />
+            <circle class="geo-port" cx="35" cy="69" r="0.95" />
+            <circle class="geo-port" cx="26" cy="52" r="0.82" />
+            <circle class="geo-port" cx="73" cy="86" r="0.82" />
+            <g transform="translate(84 19)">
+              <path class="geo-compass" fill="url(#compassFill)" d="M0 -8 L2 -2 L8 0 L2 2 L0 8 L-2 2 L-8 0 L-2 -2 Z" />
+              <circle class="geo-compass-line" cx="0" cy="0" r="5.7" fill="none" />
+              <path class="geo-compass-line" d="M0 -10 V10 M-10 0 H10 M-7 -7 L7 7 M7 -7 L-7 7" />
+            </g>
+            <text class="geo-label" x="39" y="15">Marmara</text>
+            <text class="geo-label" x="29" y="47">Aegean Coast</text>
             <text class="geo-label" x="58" y="36">Anatolia</text>
             <text class="geo-label" x="70" y="88">Cyprus</text>
+            <text class="geo-label" x="7" y="69">Hellas</text>
+            <text class="geo-cartographer" x="6" y="13">Eratosthenes</text>
+            <text class="geo-cartographer" x="58" y="10">Musk Orbit</text>
+            <text class="geo-cartographer" x="78" y="33">Mercator</text>
+            <text class="geo-cartographer" x="9" y="87">Ortelius</text>
+            <text class="geo-cartographer" x="43" y="89">Magellan</text>
+            <text class="geo-cartographer" x="63" y="78">Piri Reis</text>
+            <text class="geo-cartographer" x="3" y="32">Waldseemuller</text>
           </svg>
           <svg class="route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
