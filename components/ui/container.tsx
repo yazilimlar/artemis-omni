@@ -6,7 +6,9 @@ export function Container({
   className,
   as: Comp = "div",
   ...props
-}: React.HTMLAttributes<HTMLElement> & { as?: React.ElementType }) {
+}: React.HTMLAttributes<HTMLElement> & {
+  as?: React.ElementType<React.HTMLAttributes<HTMLElement>>;
+}) {
   return (
     <Comp
       className={cn("mx-auto w-full max-w-7xl px-6 lg:px-8", className)}
