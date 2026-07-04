@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Artemis Time Atlas — Troy · Ilion, 600 BC (v2, KML geography)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --parchment:#f2ead8; --gold:#e8b34b; --bg:#241a2e;
+    --serif:"Cormorant Garamond",Georgia,serif; --sans:Inter,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--parchment);font-family:var(--sans);overscroll-behavior:none}
+  /* ---- fixed stage ---- */
+  #stage{position:fixed;inset:0;overflow:hidden}
+  #sky{position:absolute;inset:0;background:linear-gradient(180deg,#f6c67f 0%,#eba96c 26%,#dd9a66 38%,#96586a 62%,#241a2e 100%)}
+  #gl{position:absolute;inset:0;touch-action:pan-y}
+  #tint{position:absolute;inset:0;pointer-events:none;transition:background-color .15s linear}
+  #vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px 18px rgba(10,6,18,.42)}
+  /* ---- HUD ---- */
+  #hud-top{position:absolute;left:0;right:0;top:0;padding:max(env(safe-area-inset-top),14px) 16px 0;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-start;z-index:20}
+  #hud-top .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+  #hud-top h1{font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:.04em;margin-top:2px}
+  #hud-top h1 .dot{color:rgba(255,255,255,.4)}
+  #hud-top .scale-note{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:rgba(255,255,255,.34);margin-top:4px;max-width:230px;line-height:1.5}
+  #kml-btn{pointer-events:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--gold);border:1px solid rgba(232,179,75,.45);background:rgba(10,8,16,.45);border-radius:999px;padding:6px 11px;text-decoration:none;backdrop-filter:blur(8px)}
+  /* timeline rail */
+  #rail{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:20px;align-items:flex-end;z-index:20}
+  #rail button{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:2px}
+  #rail .yr{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:#fff;opacity:.4;transition:all .3s}
+  #rail .dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(255,255,255,.4);transition:all .3s}
+  #rail button.active .yr{opacity:.95}
+  #rail button.active .dot{transform:scale(1.35)}
+  /* layer chips */
+  #chips{position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;overflow-x:auto;padding:8px 16px max(env(safe-area-inset-bottom),12px);z-index:20;scrollbar-width:none;transition:opacity .5s}
+  #chips::-webkit-scrollbar{display:none}
+  #chips.hidden{opacity:0;pointer-events:none}
+  #chips button{flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.72);background:rgba(10,8,16,.45);backdrop-filter:blur(8px);cursor:pointer;transition:all .2s}
+  #chips button .d{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35)}
+  /* POI sheet */
+  #sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:430px;z-index:30;background:rgba(18,16,28,.95);border:1px solid rgba(255,255,255,.12);border-bottom:none;border-radius:18px 18px 0 0;padding:10px 20px max(env(safe-area-inset-bottom),20px);backdrop-filter:blur(16px);box-shadow:0 -18px 60px -18px rgba(0,0,0,.8);transform:translateY(110%);transition:transform .32s cubic-bezier(.32,.72,.33,1)}
+  #sheet.open{transform:translateY(0)}
+  #sheet .grab{width:40px;height:4px;border-radius:99px;background:rgba(255,255,255,.25);margin:0 auto 12px}
+  #sheet .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  #sheet .era-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+  #sheet h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.15;margin-top:3px}
+  #sheet .close{border:1px solid rgba(255,255,255,.15);background:none;color:rgba(255,255,255,.6);border-radius:50%;width:28px;height:28px;font-size:13px;cursor:pointer;line-height:1}
+  #sheet .badges{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
+  .pill .d{width:6px;height:6px;border-radius:50%}
+  #sheet .summary{font-size:13.5px;line-height:1.6;color:rgba(255,255,255,.85)}
+  #sheet .evidence{margin-top:10px;padding-left:11px;border-left:2px solid var(--gold);font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.6)}
+  #sheet .src{margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;line-height:1.6;color:rgba(255,255,255,.35)}
+  /* scroll sections */
+  section{position:relative;height:100svh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 16px 92px;pointer-events:none;z-index:10}
+  .card{width:100%;max-width:430px;border:1px solid rgba(255,255,255,.1);background:rgba(13,11,22,.7);backdrop-filter:blur(10px);border-radius:14px;padding:16px}
+  .card .tags{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .card .kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+  .card h2{font-family:var(--serif);font-size:24px;font-weight:500;line-height:1.15}
+  .card p{margin-top:8px;font-size:13px;line-height:1.6;color:rgba(255,255,255,.75)}
+  .card .note{margin-top:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;line-height:1.6;color:rgba(255,255,255,.35)}
+  #loading{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;transition:opacity .6s}
+  #loading .k{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5);animation:pulse 1.6s ease-in-out infinite}
+  #loading .t{font-family:var(--serif);font-size:26px}
+  #loading .s{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--gold)}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  @media (prefers-reduced-motion: reduce){ #loading .k{animation:none} }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="sky"></div>
+  <div id="gl"></div>
+  <div id="tint"></div>
+  <div id="vignette"></div>
+  <div id="hud-top">
+    <div>
+      <div class="kicker">Artemis Time Atlas · v2</div>
+      <h1>Troy <span class="dot">·</span> Ilion</h1>
+      <div class="scale-note">geography from KML — true scale at the citadel, distances compressed beyond 300&nbsp;m, heights ×5</div>
+    </div>
+    <a id="kml-btn" href="troy-time-atlas-600bc.kml" download>⤓ KML</a>
+  </div>
+  <nav id="rail" aria-label="Timeline"></nav>
+  <div id="chips" role="group" aria-label="Overlay layers"></div>
+  <div id="sheet" aria-live="polite">
+    <div class="grab"></div>
+    <div class="row">
+      <div><div class="era-tag">600 BC · Archaic Ilion</div><h2 id="sh-name"></h2></div>
+      <button class="close" id="sh-close" aria-label="Close card">✕</button>
+    </div>
+    <div class="badges" id="sh-badges"></div>
+    <p class="summary" id="sh-summary"></p>
+    <div class="evidence" id="sh-evidence"></div>
+    <p class="src" id="sh-src"></p>
+  </div>
+</div>
+
+<div id="sections"></div>
+
+<div id="loading">
+  <div class="k">Artemis Time Atlas</div>
+  <div class="t">Troy · Ilion</div>
+  <div class="s">Projecting the Troad — 600 BC</div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from "three";
+
+/* ================= Geo projection (KML → scene) =================
+   Scene axes: x east-ish, z south-ish AFTER a -45° rotation so that true
+   north points into the upper (far) frame diagonal of the isometric camera.
+   1 unit = 100 m at the citadel; beyond R0 the radius is compressed
+   (r' = R0 + (r-R0)^COMP · K) so the 8 km Troad reads as one diorama.
+   Heights use a ×5 vertical exaggeration. */
+const ORIGIN = { lon: 26.238889, lat: 39.9575 };           // Hisarlık summit
+const M_LON = 85345, M_LAT = 111132, M_PER_UNIT = 100;
+const R0 = 3, COMP = 0.55, K = 1.2;
+function geo(lon, lat) {
+  const x0 = (lon - ORIGIN.lon) * M_LON / M_PER_UNIT;
+  const z0 = -((lat - ORIGIN.lat) * M_LAT / M_PER_UNIT);
+  let x = (x0 + z0) * Math.SQRT1_2;                        // rotate -45°
+  let z = (z0 - x0) * Math.SQRT1_2;
+  const r = Math.hypot(x, z);
+  if (r > R0) { const s = (R0 + Math.pow(r - R0, COMP) * K) / r; x *= s; z *= s; }
+  return [x, z];
+}
+
+/* ================= KML data (troy-time-atlas-600bc.kml, rev. B) ========== */
+const LAYERS = {
+  citadel:   { name: "Citadel",    color: "#e8b34b" },
+  religion:  { name: "Religion",   color: "#a887e0" },
+  settlement:{ name: "Settlement", color: "#8fbf58" },
+  defense:   { name: "Defense",    color: "#e2694a" },
+  maritime:  { name: "Maritime",   color: "#5ab6d8" },
+  natural:   { name: "Natural",    color: "#66c6a3" },
+  burial:    { name: "Burial",     color: "#c298a6" },
+};
+const CONF = {
+  attested:    { label: "Attested",    color: "#4ade80" },
+  probable:    { label: "Probable",    color: "#fbbf24" },
+  conjectural: { label: "Conjectural", color: "#94a3b8" },
+};
+const POIS = [
+  { id:"citadel", name:"Citadel of Troy", lon:26.238889, lat:39.9575, layer:"citadel", conf:"attested", yOff:1.15,
+    summary:"The acropolis on Hisarlık — inhabited from the Bronze Age to Rome. In 600 BC a modest settlement lives among six-century-old ruins, crowned by Athena's sanctuary.",
+    evidence:"Continuous occupation layers Troy I–IX are documented on the mound; the Archaic phase is Troy VIII.",
+    src:"Korfmann, 2006; Rose, 2013" },
+  { id:"south-gate", name:"South Gate", lon:26.2388, lat:39.9567, layer:"defense", conf:"attested", yOff:0.5,
+    summary:"Principal gateway on the southern side of the citadel, flanked by towers — the ramp down to the lower town.",
+    evidence:"The Troy VI south gate and its tower survived as visible, reused architecture into the first millennium BC.",
+    src:"Korfmann, 2006" },
+  { id:"east-gate", name:"East Gate", lon:26.2400, lat:39.9575, layer:"defense", conf:"probable", yOff:0.5,
+    summary:"Secondary gate on the eastern wall, giving access toward the Scamander plain and the inland Troad.",
+    evidence:"The Troy VI east gate complex is excavated; its Archaic reuse is inferred from access patterns.",
+    src:"Blegen, 1963" },
+  { id:"athena-temple", name:"Temple of Athena Ilias", lon:26.2386, lat:39.9578, layer:"religion", conf:"probable", yOff:0.75,
+    summary:"The sanctuary that made Ilion famous — an open-air precinct with an early temple on the highest terrace, long before the marble Hellenistic rebuild.",
+    evidence:"Archaic votives and cult activity are documented on the mound; the monumental temple visible today is later.",
+    src:"Rose, 2013; Cook, 1998" },
+  { id:"athena-altar", name:"Altar of Athena", lon:26.2390, lat:39.9577, layer:"religion", conf:"probable", yOff:0.55,
+    summary:"Open-air altar east of the temple. A century and a half later, Xerxes would sacrifice a thousand oxen here on his way to Greece.",
+    evidence:"Herodotus 7.43 records the sacrifice to Athena of Ilion; an Archaic stone platform is attested in the precinct.",
+    src:"Herodotus 7.43; Korfmann, 2006" },
+  { id:"heroon", name:"Heroön of the Heroes", lon:26.2372, lat:39.9572, layer:"religion", conf:"conjectural", yOff:0.45,
+    summary:"A small shrine outside the walls, possibly for Hector or other Trojan heroes — the mound itself was already a place of memory.",
+    evidence:"Votive offerings and a small naiskos of Archaic date; the dedication is uncertain.",
+    src:"Bieg, 2002" },
+  { id:"lower-town", name:"Archaic Lower Town", lon:26.2395, lat:39.9565, layer:"settlement", conf:"probable", yOff:0.55,
+    summary:"Houses, workshops and storage south and east of the mound — thin compared to the great Bronze Age lower city buried beneath it.",
+    evidence:"Geophysical survey maps the Bronze Age lower city; first-millennium occupation below the mound is thinner but present.",
+    src:"Korfmann, 2006; Pernicka, 2008" },
+  { id:"assembly", name:"Assembly Place", lon:26.2400, lat:39.9558, layer:"settlement", conf:"conjectural", yOff:0.45,
+    summary:"A theatral hollow on the southern slope for civic and religious gatherings — monumentalized as a theatre only centuries later.",
+    evidence:"The later theatre location suggests an earlier assembly use; no Archaic structure is excavated.",
+    src:"Radt, 1990" },
+  { id:"outer-wall", name:"Outer Defence Line", lon:26.2415, lat:39.9550, layer:"defense", conf:"probable", yOff:0.45,
+    summary:"A defensive line with towers and a rock-cut ditch guarding the settlement below the mound — the Bronze Age ditch still a visible scar in 600 BC.",
+    evidence:"The Troy VI rock-cut ditch is mapped by magnetometry; Archaic reuse of the line is probable, not proven.",
+    src:"Korfmann, 2006" },
+  { id:"scamander-crossing", name:"Scamander Crossing", lon:26.2050, lat:39.9650, layer:"defense", conf:"conjectural", yOff:0.4,
+    summary:"Where the road to Sigeion crosses the river — a timber bridge or ford. Every load of Aegean trade goods came this way.",
+    evidence:"Mentioned in later sources; archaeological remains have not been definitely located.",
+    src:"Cook, 1998" },
+  { id:"sigeion", name:"Sigeion", lon:26.1800, lat:39.9936, layer:"maritime", conf:"attested", yOff:0.6,
+    summary:"The harbour town on the ridge at the Hellespont's mouth — in 600 BC an Athenian foothold, freshly contested with Mytilene in a war the whole Aegean talked about.",
+    evidence:"Herodotus 5.94–95 records the Athenian–Mytilenean war over Sigeion c. 600 BC, arbitrated by Periander.",
+    src:"Herodotus 5.94–95; Cook, 1973" },
+  { id:"rhoeteion", name:"Rhoeteion", lon:26.2850, lat:40.0150, layer:"maritime", conf:"attested", yOff:0.55,
+    summary:"Harbour settlement on the strait coast north-east of Troy, by the headland later shown to travellers as the tomb of Ajax.",
+    evidence:"Strabo describes Rhoeteion and the Aianteion on this stretch of the strait coast.",
+    src:"Strabo, Geography 13.1" },
+  { id:"scamander", name:"Scamander River", lon:26.2100, lat:39.9600, layer:"natural", conf:"probable", yOff:0.4,
+    summary:"Homer's divine river, rising on Ida and reaching the strait near Kumkale — fresh water, irrigation and the axis of the plain.",
+    evidence:"The Karamenderes' ancient courses are reconstructed from coring; this trace approximates the channel west of the city.",
+    src:"Kraft et al., geomorphology of the Trojan plain" },
+  { id:"hellespont", name:"The Hellespont", lon:26.1950, lat:40.0100, layer:"natural", conf:"attested", yOff:0.35,
+    summary:"The strait that made Troy rich: wind and current force ships to wait at its mouth — and waiting ships pay.",
+    evidence:"Sailing against the Hellespont's prevailing northerlies and surface current is documented throughout antiquity.",
+    src:"Hydrographic data; historical geography" },
+  { id:"hanay-tepe", name:"Hanay Tepe", lon:26.2530, lat:39.9300, layer:"burial", conf:"attested", yOff:0.5,
+    summary:"A burial mound on the inland road — a landmark rising from the plain on the approach from Balli Dag.",
+    evidence:"Excavated by Frank Calvert; occupation and burial layers from the Bronze Age onward.",
+    src:"Calvert excavations; Bieg, 2002" },
+  { id:"kumtepe", name:"Kumtepe", lon:26.2011, lat:39.9860, layer:"burial", conf:"attested", yOff:0.45,
+    summary:"A mound already three thousand years old in 600 BC — a Chalcolithic settlement by the lower river, reused as burial ground.",
+    evidence:"Chalcolithic tell stratigraphy documented by excavation; later reuse attested in surveys.",
+    src:"Blegen, 1963; Korfmann surveys" },
+];
+/* KML polygons / linestrings (lon,lat) */
+const WALL_RING = [[26.2375,39.9585],[26.2395,39.9588],[26.2405,39.9578],[26.2398,39.9568],[26.2380,39.9565],[26.2370,39.9570]];
+const LT_RING   = [[26.2370,39.9550],[26.2405,39.9545],[26.2430,39.9560],[26.2420,39.9580],[26.2390,39.9575]];
+const RIVER_LL  = [[26.1780,40.0080],[26.1900,39.9850],[26.1950,39.9770],[26.2000,39.9700],[26.2050,39.9650],[26.2100,39.9600],[26.2150,39.9550],[26.2200,39.9500],[26.2250,39.9450]];
+const GATES_LL  = [[26.2388,39.9567],[26.2400,39.9575]];
+
+const ERAS = [
+  { id:"e1200", year:"1200 BC", title:"City of the Late Bronze Age", status:"ghost", kicker:"Ghost era — teaser", accent:"#d98e5f", tint:"rgba(24,12,26,.55)",
+    summary:"Troy VI/VIIa: the great limestone circuit, towers and terraced palaces of the city tied to the Trojan War tradition — its footprint haunts every later Troy.",
+    note:"Wireframe teaser only in v2 — the full Bronze Age reconstruction is a later release." },
+  { id:"e600", year:"600 BC", title:"Archaic Ilion", status:"active", kicker:"Fully realized era", accent:"#e8b34b", tint:"rgba(0,0,0,0)",
+    summary:"A modest Greek town on a famous ruin. The Scamander winds to the strait, Sigeion and Rhoeteion work the sea lanes, and Athena's sanctuary crowns the mound.",
+    note:"Geography follows the KML dataset — tap markers; every card states its evidence, confidence and source." },
+  { id:"e150", year:"150 AD", title:"Roman Ilium", status:"ghost", kicker:"Ghost era — teaser", accent:"#c8cfe0", tint:"rgba(10,16,30,.5)",
+    summary:"A marble city of memory tourism: grand Temple of Athena, odeon, bouleuterion and gridded streets. Emperors visit the ancestral home of Rome.",
+    note:"Wireframe teaser only in v2 — Roman Ilium is a planned future era." },
+  { id:"e2026", year:"2026 AD", title:"The Excavated Mound", status:"ghost", kicker:"Ghost era — teaser", accent:"#7fd4b8", tint:"rgba(6,20,22,.5)",
+    summary:"Hisarlık today: trenches through nine cities, a shelter roof, the visitor ramp — and a silted plain where the bay of Troy used to be.",
+    note:"Wireframe teaser only in v2 — the modern site layer is planned next." },
+];
+
+/* ================= Terrain ================= */
+const BOUNDS = { minX:-28, maxX:32, minZ:-26, maxZ:16 };
+/* Shoreline: water begins beyond a bearing-dependent radius (scene polar angle, degrees). */
+const COAST = [[150,17],[165,15.8],[174,14.6],[185,13.6],[200,13.2],[225,13.8],[245,14.4],[258,15.9],[275,16.6],[295,18],[310,21]];
+function coastDist(aDeg) {
+  if (aDeg < COAST[0][0] || aDeg > COAST[COAST.length-1][0]) return Infinity;
+  for (let i = 0; i < COAST.length - 1; i++) {
+    const [a0,d0] = COAST[i], [a1,d1] = COAST[i+1];
+    if (aDeg >= a0 && aDeg <= a1) { const t = (aDeg-a0)/(a1-a0); return d0 + (d1-d0)*t; }
+  }
+  return Infinity;
+}
+const RIVER = RIVER_LL.map(([lo,la]) => geo(lo,la));
+function distToRiver(x, z) {
+  let min = Infinity, minT = 0;
+  for (let i = 0; i < RIVER.length-1; i++) {
+    const [ax,az] = RIVER[i], [bx,bz] = RIVER[i+1];
+    const abx = bx-ax, abz = bz-az;
+    const t = Math.max(0, Math.min(1, ((x-ax)*abx + (z-az)*abz) / (abx*abx + abz*abz)));
+    const d = Math.hypot(x-(ax+abx*t), z-(az+abz*t));
+    if (d < min) { min = d; minT = (i+t)/(RIVER.length-1); }
+  }
+  return [min, minT];
+}
+function smoothstep(e0, e1, x) { const t = Math.min(1, Math.max(0, (x-e0)/(e1-e0))); return t*t*(3-2*t); }
+function gauss(x, z, cx, cz, r) { const dx=x-cx, dz=z-cz; return Math.exp(-(dx*dx+dz*dz)/(r*r)); }
+const SIG = geo(26.1800,39.9936), HANAY = geo(26.2530,39.9300), KUM = geo(26.2011,39.9860), RHOET = geo(26.2850,40.0150);
+function heightAt(x, z) {
+  let h = 0.34 + 0.15*Math.sin(x*0.35)*Math.cos(z*0.3) + 0.09*Math.sin(x*0.8+1.7)*Math.sin(z*0.7+0.4);
+  const r = Math.hypot(x, z);
+  let a = Math.atan2(z, x) * 180/Math.PI; if (a < 0) a += 360;
+  const cd = coastDist(a);
+  if (isFinite(cd)) { const land = 1 - smoothstep(cd-1.3, cd+1.1, r); h = h*land + (-1.7)*(1-land); }
+  h += 1.55 * (1 - smoothstep(1.05, 2.05, r));                    // Hisarlık plateau (~30 m ×5)
+  h += 0.28 * gauss(x, z, 1.9, 0.4, 2.6);                         // lower-town shelf
+  h += 1.15 * gauss(x, z, SIG[0]+0.6, SIG[1]+0.4, 2.3);           // Sigeion / Yenişehir ridge
+  h += 0.85 * gauss(x, z, HANAY[0], HANAY[1], 0.75);              // Hanay Tepe tumulus
+  h += 0.55 * gauss(x, z, KUM[0], KUM[1], 0.55);                  // Kumtepe tell
+  h += 0.38 * gauss(x, z, RHOET[0]-0.8, RHOET[1]+1.0, 0.8);       // In Tepe headland
+  h += 3.2 * gauss(x, z, 21, -1, 5.5) + 5.0 * gauss(x, z, 27.5, 4, 6.5);  // Ida foothills (right frame)
+  const [rd, rt] = distToRiver(x, z);
+  const w = 0.5 + 1.0*(1-rt);                                     // widen toward the mouth
+  const cut = 1 - smoothstep(w, w+0.95, rd);
+  if (cut > 0 && h < 2.2) h = h*(1-cut) + (-0.5)*cut;
+  return h;
+}
+function groundY(x, z) { return Math.max(heightAt(x, z), 0); }
+
+/* ================= three.js scene ================= */
+const mount = document.getElementById("gl");
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:"high-performance" });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+renderer.shadowMap.enabled = true;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+mount.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xdd9a66, 40, 95);
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 2, 160);
+
+/* golden hour */
+const sun = new THREE.DirectionalLight(0xffb46b, 2.9);
+sun.position.set(-26, 15, -12); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); sun.shadow.bias = -0.0004;
+Object.assign(sun.shadow.camera, { left:-16, right:16, top:16, bottom:-16, near:2, far:90 });
+scene.add(sun);
+scene.add(new THREE.DirectionalLight(0x8d9bd8, 0.55).translateX(24).translateY(12).translateZ(18));
+scene.add(new THREE.HemisphereLight(0xffd9ad, 0x4a3c60, 1.25));
+
+/* ---- terrain ---- */
+const SEABED=new THREE.Color("#3a6a72"), SAND=new THREE.Color("#c2a87c"), GRASS_A=new THREE.Color("#7c9a54"),
+      GRASS_B=new THREE.Color("#b2a660"), LUSH=new THREE.Color("#659155"), ROCK=new THREE.Color("#8b7d6b"),
+      PLATEAU=new THREE.Color("#a38d6d"), MARSH=new THREE.Color("#5e7f5a");
+{
+  const W = BOUNDS.maxX-BOUNDS.minX, D = BOUNDS.maxZ-BOUNDS.minZ;
+  const g = new THREE.PlaneGeometry(W, D, 170, 120);
+  g.rotateX(-Math.PI/2);
+  g.translate((BOUNDS.minX+BOUNDS.maxX)/2, 0, (BOUNDS.minZ+BOUNDS.maxZ)/2);
+  const pos = g.attributes.position, col = new Float32Array(pos.count*3), c = new THREE.Color();
+  let seed = 1337;
+  const rnd = () => (seed = (seed*16807)%2147483647) / 2147483647;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), z = pos.getZ(i), h = heightAt(x, z);
+    pos.setY(i, h);
+    const [rd, rt] = distToRiver(x, z);
+    if (h < -0.45) c.copy(SEABED);
+    else if (h < 0.16) c.copy(SAND);
+    else {
+      c.copy(GRASS_A).lerp(GRASS_B, (0.5+0.5*Math.sin(x*0.9+z*0.7))*0.7);
+      if (rd < 3) c.lerp(LUSH, 1-rd/3);
+      if (rt < 0.3 && rd < 4 && h < 0.6) c.lerp(MARSH, 0.5);       // wetland near the mouth
+      const rr = Math.hypot(x, z);
+      if (rr < 2.2 && h > 1.3) c.copy(PLATEAU);
+      else if (h > 1.6) c.lerp(ROCK, Math.min(1, (h-1.6)/3.5));
+    }
+    const v = 0.94 + rnd()*0.12;
+    col[i*3] = c.r*v; col[i*3+1] = c.g*v; col[i*3+2] = c.b*v;
+  }
+  g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  g.computeVertexNormals();
+  const terrain = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ vertexColors:true, flatShading:true, roughness:.95 }));
+  terrain.receiveShadow = true;
+  scene.add(terrain);
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(220, 220),
+    new THREE.MeshStandardMaterial({ color:0x3d7e96, roughness:.22, metalness:.08, transparent:true, opacity:.94 }));
+  water.rotation.x = -Math.PI/2; water.position.set(-6, 0, -5);
+  scene.add(water);
+}
+
+/* ---- backdrop: sun glow, haze, islands, Ida already in heightfield ---- */
+function glowSprite(stops, sx, sy, x, y, z, additive) {
+  const cv = document.createElement("canvas"); cv.width = cv.height = 128;
+  const ctx = cv.getContext("2d"), gr = ctx.createRadialGradient(64,64,2,64,64,64);
+  for (const [o, cl] of stops) gr.addColorStop(o, cl);
+  ctx.fillStyle = gr; ctx.fillRect(0,0,128,128);
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tx, transparent:true, depthWrite:false,
+    blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, fog:false }));
+  sp.scale.set(sx, sy, 1); sp.position.set(x, y, z);
+  scene.add(sp);
+}
+glowSprite([[0,"rgba(255,236,200,1)"],[0.25,"rgba(255,190,120,.85)"],[1,"rgba(255,160,90,0)"]], 15,15, -22,5.5,-16, true);
+glowSprite([[0,"rgba(255,205,150,.5)"],[1,"rgba(255,185,130,0)"]], 46,6.5, -10,1.2,-9, false);
+for (const [x,z,r,h,cl] of [[-24,-3.5,5.5,2.6,"#655370"],[-27.5,-9.5,6.5,5.2,"#71617e"],[-20,-14,4.5,2,"#6f5a68"]]) {
+  const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 9), new THREE.MeshStandardMaterial({ color:cl, roughness:1 }));
+  m.scale.x = 1.5; m.position.set(x, 0, z); scene.add(m);
+}
+
+/* ---- shared builders ---- */
+const layerGroups = {};   // layer id -> materials to glow
+for (const k in LAYERS) layerGroups[k] = [];
+function mat(color, layer, rough = 0.92) {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: rough });
+  if (layer) { m.emissive = new THREE.Color(LAYERS[layer].color); m.emissiveIntensity = 0; layerGroups[layer].push(m); }
+  return m;
+}
+function box(w, h, d, material, x, y, z, ry = 0, cast = true) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  m.position.set(x, y, z); m.rotation.y = ry; m.castShadow = cast;
+  scene.add(m); return m;
+}
+
+/* ---- citadel walls from the KML polygon ---- */
+const wallVerts = WALL_RING.map(([lo,la]) => geo(lo,la));
+const gates = GATES_LL.map(([lo,la]) => geo(lo,la));
+const wallMat = mat("#98876e", "defense"), towerMat = mat("#8e7d64", "defense");
+for (let i = 0; i < wallVerts.length; i++) {
+  const [ax,az] = wallVerts[i], [bx,bz] = wallVerts[(i+1)%wallVerts.length];
+  const segs = 3;
+  for (let s = 0; s < segs; s++) {
+    const t0 = s/segs, t1 = (s+1)/segs;
+    const mx = ax+(bx-ax)*(t0+t1)/2, mz = az+(bz-az)*(t0+t1)/2;
+    if (gates.some(([gx,gz]) => Math.hypot(mx-gx, mz-gz) < 0.4)) continue;   // gate gap
+    const len = Math.hypot(bx-ax, bz-az)/segs + 0.06;
+    box(0.2, 0.5, len, wallMat, mx, heightAt(mx,mz)+0.18, mz, Math.atan2(bx-ax, bz-az));
+  }
+  box(0.34, 0.72, 0.34, towerMat, ax, heightAt(ax,az)+0.26, az);
+}
+for (const [gx,gz] of gates) {
+  const a = Math.atan2(gz, gx);
+  for (const off of [-0.3, 0.3])
+    box(0.26, 0.8, 0.26, towerMat, gx + Math.cos(a+Math.PI/2)*off, heightAt(gx,gz)+0.3, gz + Math.sin(a+Math.PI/2)*off, -a);
+}
+
+/* ---- temple of Athena + altar + heroön (footprints ×2.2 for legibility) ---- */
+{
+  const [tx,tz] = geo(26.2386, 39.9578), ty = heightAt(tx, tz);
+  const g = new THREE.Group(); g.position.set(tx, ty, tz); g.rotation.y = -0.35;
+  const white = mat("#ddd2b6", "religion", .85), roofM = mat("#b3674f", "religion");
+  const add = (m,x,y,z,ry=0) => { m.position.set(x,y,z); m.rotation.y=ry; m.castShadow=true; g.add(m); };
+  add(new THREE.Mesh(new THREE.BoxGeometry(1.2,.08,.68), mat("#cfc2a4", null, .85)), 0,.04,0);
+  add(new THREE.Mesh(new THREE.BoxGeometry(1.05,.1,.55), white), 0,.13,0);
+  for (const cx of [-0.42,-0.14,0.14,0.42]) for (const cz of [-0.2,0.2])
+    add(new THREE.Mesh(new THREE.CylinderGeometry(.03,.037,.3,6), white), cx,.33,cz);
+  add(new THREE.Mesh(new THREE.BoxGeometry(1.0,.07,.5), white), 0,.51,0);
+  const shape = new THREE.Shape(); shape.moveTo(-.3,0); shape.lineTo(.3,0); shape.lineTo(0,.19); shape.closePath();
+  const roofG = new THREE.ExtrudeGeometry(shape, { depth:1.06, bevelEnabled:false });
+  roofG.translate(0,0,-.53); roofG.rotateY(Math.PI/2);
+  add(new THREE.Mesh(roofG, roofM), 0,.55,0);
+  scene.add(g);
+  const [alx,alz] = geo(26.2390, 39.9577);
+  box(.16,.18,.16, mat("#c9bda0","religion"), alx, heightAt(alx,alz)+.09, alz);
+  const [hx,hz] = geo(26.2372, 39.9572), hy = heightAt(hx,hz);
+  const hg = new THREE.Group(); hg.position.set(hx,hy,hz); hg.rotation.y = .6;
+  const hw = mat("#d5c9ab","religion",.85);
+  const hAdd = (m,x,y,z)=>{ m.position.set(x,y,z); m.castShadow=true; hg.add(m); };
+  hAdd(new THREE.Mesh(new THREE.BoxGeometry(.3,.16,.22), hw), 0,.08,0);
+  hAdd(new THREE.Mesh(new THREE.ConeGeometry(.19,.12,4), hw), 0,.22,0);
+  hAdd(new THREE.Mesh(new THREE.BoxGeometry(.05,.26,.12), hw), .26,.13,0);
+  scene.add(hg);
+}
+
+/* ---- houses: citadel + lower town (inside KML polygon) + harbours ---- */
+const ltPoly = LT_RING.map(([lo,la]) => geo(lo,la));
+function inPoly(x, z, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length-1; i < poly.length; j = i++) {
+    const [xi,zi] = poly[i], [xj,zj] = poly[j];
+    if ((zi > z) !== (zj > z) && x < (xj-xi)*(z-zi)/(zj-zi)+xi) inside = !inside;
+  }
+  return inside;
+}
+{
+  let seed = 77; const rnd = () => (seed = (seed*16807)%2147483647) / 2147483647;
+  const spots = [];
+  let guard = 0;
+  while (spots.length < 58 && guard++ < 3000) {                   // lower town
+    const x = -0.5 + rnd()*5.5, z = -2.6 + rnd()*6.6;
+    if (!inPoly(x, z, ltPoly)) continue;
+    if (Math.hypot(x, z) < 1.95) continue;
+    if (spots.some(([sx,,sz]) => Math.hypot(x-sx, z-sz) < 0.28)) continue;
+    spots.push([x, heightAt(x,z), z, 0.16+rnd()*0.1, rnd()*Math.PI]);
+  }
+  for (let i = 0; i < 7; i++) {                                   // on the citadel
+    const a = rnd()*Math.PI*2, rr = 0.5+rnd()*0.55;
+    const x = Math.cos(a)*rr, z = Math.sin(a)*rr;
+    const [tx,tz] = geo(26.2386,39.9578);
+    if (Math.hypot(x-tx, z-tz) < 0.75) continue;
+    spots.push([x, heightAt(x,z), z, 0.15+rnd()*0.06, rnd()*Math.PI]);
+  }
+  for (let i = 0; i < 8; i++) spots.push([SIG[0]+0.4+(rnd()-0.5)*1.6, 0, SIG[1]+0.3+(rnd()-0.5)*1.4, 0.15+rnd()*0.07, rnd()*Math.PI]);
+  for (let i = 0; i < 5; i++) spots.push([RHOET[0]+(rnd()-0.5)*1.1, 0, RHOET[1]+0.5+(rnd()-0.5)*0.9, 0.14+rnd()*0.06, rnd()*Math.PI]);
+  const baseG = new THREE.BoxGeometry(1, .62, .78), roofG = new THREE.ConeGeometry(.62, .36, 4);
+  const baseI = new THREE.InstancedMesh(baseG, new THREE.MeshStandardMaterial({ roughness:.95 }), spots.length);
+  const roofI = new THREE.InstancedMesh(roofG, new THREE.MeshStandardMaterial({ roughness:.95 }), spots.length);
+  baseI.castShadow = true;
+  const d = new THREE.Object3D(), cB = new THREE.Color(), cR = new THREE.Color();
+  const walls = ["#a8916f","#b09877","#9d8768","#b3a07f"], roofs = ["#8a7355","#93805e","#7f6a4e"];
+  spots.forEach(([x, y, z, s, ry], i) => {
+    if (y === 0) y = heightAt(x, z);
+    d.position.set(x, y+0.31*s, z); d.rotation.y = ry; d.scale.setScalar(s); d.updateMatrix();
+    baseI.setMatrixAt(i, d.matrix); baseI.setColorAt(i, cB.set(walls[i % 4]));
+    d.position.y = y + 0.8*s; d.rotation.y = ry + Math.PI/4; d.updateMatrix();
+    roofI.setMatrixAt(i, d.matrix); roofI.setColorAt(i, cR.set(roofs[i % 3]));
+  });
+  scene.add(baseI, roofI);
+}
+
+/* ---- assembly hollow (three arc steps) ---- */
+{
+  const [ax,az] = geo(26.2400, 39.9558), ay = heightAt(ax,az);
+  const facing = Math.atan2(-az, -ax);
+  const m = mat("#b7a98b", "settlement", .9);
+  for (let i = 0; i < 3; i++) {
+    const t = new THREE.Mesh(new THREE.TorusGeometry(.3+i*.12, .045, 5, 20, Math.PI*.85), m);
+    t.rotation.x = -Math.PI/2; t.rotation.z = facing - Math.PI*0.42;
+    t.position.set(ax, ay + .04 + i*.05, az);
+    scene.add(t);
+  }
+}
+
+/* ---- outer defence line + ditch (southern arc of the KML lower-town ring) ---- */
+{
+  const oMat = mat("#8f7f66", "defense"), dMat = new THREE.MeshStandardMaterial({ color:"#4a4034", roughness:1 });
+  for (let i = 0; i < 3; i++) {
+    const [ax,az] = ltPoly[i], [bx,bz] = ltPoly[i+1];
+    const segs = Math.max(2, Math.round(Math.hypot(bx-ax, bz-az)/0.9));
+    for (let s = 0; s < segs; s++) {
+      const mx = ax+(bx-ax)*(s+0.5)/segs, mz = az+(bz-az)*(s+0.5)/segs;
+      const len = Math.hypot(bx-ax, bz-az)/segs + 0.05;
+      box(0.14, 0.26, len, oMat, mx, heightAt(mx,mz)+0.1, mz, Math.atan2(bx-ax, bz-az));
+      const outward = Math.atan2(mz-0.4, mx-1.9);
+      const dx = mx + Math.cos(outward)*0.32, dz = mz + Math.sin(outward)*0.32;
+      const ditch = new THREE.Mesh(new THREE.PlaneGeometry(0.3, len), dMat);
+      ditch.rotation.x = -Math.PI/2; ditch.rotation.z = -Math.atan2(bx-ax, bz-az);
+      ditch.position.set(dx, heightAt(dx,dz)+0.03, dz);
+      scene.add(ditch);
+    }
+    box(0.26, 0.42, 0.26, oMat, ax, heightAt(ax,az)+0.16, az);
+  }
+}
+
+/* ---- Scamander crossing: timber bridge at the KML point ---- */
+{
+  const [bx,bz] = geo(26.2050, 39.9650);
+  const [,] = distToRiver(bx,bz);
+  let dir = 0;
+  for (let i = 0; i < RIVER.length-1; i++) {
+    const [ax,az] = RIVER[i], [cx,cz] = RIVER[i+1];
+    if (Math.hypot(bx-(ax+cx)/2, bz-(az+cz)/2) < 1.2) dir = Math.atan2(cx-ax, cz-az);
+  }
+  const wood = mat("#8a6f4d", "defense", .9);
+  box(0.3, 0.06, 2.4, wood, bx, 0.24, bz, dir + Math.PI/2);
+  for (const t of [-0.8, 0, 0.8])
+    box(0.07, 0.5, 0.07, wood, bx + Math.sin(dir+Math.PI/2)*t, 0, bz + Math.cos(dir+Math.PI/2)*t, 0, false);
+}
+
+/* ---- ships & jetties ---- */
+function ship(x, z, ry, sail = true) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry;
+  const hull = mat("#6d4f33", "maritime", .85), lin = mat("#e8dbb8", null, .9);
+  const add = (m, px, py, pz, rz = 0) => { m.position.set(px,py,pz); m.rotation.z = rz; m.castShadow = true; g.add(m); };
+  add(new THREE.Mesh(new THREE.BoxGeometry(1.1,.18,.32), hull), 0,.04,0);
+  add(new THREE.Mesh(new THREE.BoxGeometry(.28,.09,.24), hull), .54,.16,0,-.5);
+  add(new THREE.Mesh(new THREE.BoxGeometry(.28,.09,.24), hull), -.54,.16,0,.5);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(.02,.026,.85,5), hull), 0,.5,0);
+  if (sail) {
+    add(new THREE.Mesh(new THREE.CylinderGeometry(.017,.017,.62,5), hull), 0,.86,0,Math.PI/2);
+    const s = new THREE.Mesh(new THREE.PlaneGeometry(.58,.44), new THREE.MeshStandardMaterial({ color:"#e8dbb8", roughness:.9, side:THREE.DoubleSide }));
+    s.position.set(0,.62,0); g.add(s);
+  } else add(new THREE.Mesh(new THREE.CylinderGeometry(.028,.028,.6,5), lin), 0,.84,0,Math.PI/2);
+  scene.add(g); return g;
+}
+function jetty(x, z, outAngle) {
+  const wood = mat("#8a6f4d", "maritime", .9);
+  for (let i = 0; i < 3; i++) {
+    const px = x + Math.cos(outAngle)*(0.45+i*0.8), pz = z + Math.sin(outAngle)*(0.45+i*0.8);
+    box(0.85, 0.07, 0.5, wood, px, 0.18, pz, -outAngle);
+    box(0.05, 0.55, 0.05, wood, px+0.2, -0.08, pz+0.18, 0, false);
+  }
+}
+{
+  const sigOut = Math.atan2(SIG[1], SIG[0]);                       // seaward = outward radial
+  jetty(SIG[0]-0.55, SIG[1]-0.1, sigOut);
+  ship(SIG[0]-1.8, SIG[1]+0.9, 2.2, false); ship(SIG[0]-2.4, SIG[1]-0.5, 1.7, false);
+  const rhOut = Math.atan2(RHOET[1], RHOET[0]);
+  jetty(RHOET[0]-0.2, RHOET[1]-0.55, rhOut);
+  ship(RHOET[0]-0.8, RHOET[1]-1.7, -0.4, false);
+  ship(-16,-6, 0.5); ship(-12,-11, -0.3); ship(-18,1, 0.9); ship(-9,-14, 0.1);   // waiting in the strait
+}
+
+/* ---- roads ---- */
+{
+  const rMat = new THREE.MeshStandardMaterial({ color:"#c0a980", roughness:1, transparent:true, opacity:.9, polygonOffset:true, polygonOffsetFactor:-2 });
+  layerGroups.settlement.push(Object.assign(rMat, { emissive:new THREE.Color(LAYERS.settlement.color), emissiveIntensity:0 }));
+  const routes = [
+    [gates[0], [1.15,.42], [2.01,.67], [4.3,1.2], [6.5,2.7], HANAY],            // SE road via lower town
+    [gates[0], [-1.5,2.2], [-4,3.6], [-6.8,4.6], geo(26.2050,39.9650), [-11.5,4.2], [-12.9,2.9], [SIG[0]+.3,SIG[1]+.5]],   // west road over the crossing to Sigeion
+    [[1.15,.42], [0.2,-2.6], [-1.2,-6], [-2.4,-9.5], [-3.2,-12.5], [RHOET[0],RHOET[1]+.7]],  // north track to Rhoeteion
+  ];
+  for (const route of routes) for (let i = 0; i < route.length-1; i++) {
+    const [ax,az] = route[i], [bx,bz] = route[i+1];
+    const dist = Math.hypot(bx-ax, bz-az), steps = Math.max(1, Math.round(dist/0.7));
+    for (let s = 0; s < steps; s++) {
+      const x0 = ax+(bx-ax)*s/steps, z0 = az+(bz-az)*s/steps;
+      const x1 = ax+(bx-ax)*(s+1)/steps, z1 = az+(bz-az)*(s+1)/steps;
+      const mx = (x0+x1)/2, mz = (z0+z1)/2;
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(0.2, Math.hypot(x1-x0, z1-z0)+0.12), rMat);
+      p.rotation.x = -Math.PI/2; p.rotation.z = -Math.atan2(x1-x0, z1-z0);
+      p.position.set(mx, groundY(mx,mz)+0.07, mz);
+      scene.add(p);
+    }
+  }
+}
+
+/* ---- farms along the river + trees ---- */
+{
+  let seed = 4242; const rnd = () => (seed = (seed*16807)%2147483647) / 2147483647;
+  const pMat = new THREE.MeshStandardMaterial({ roughness:1, side:THREE.DoubleSide, polygonOffset:true, polygonOffsetFactor:-1 });
+  layerGroups.natural.push(Object.assign(pMat, { emissive:new THREE.Color(LAYERS.natural.color), emissiveIntensity:0 }));
+  const patchG = new THREE.PlaneGeometry(1, 1); patchG.rotateX(-Math.PI/2);
+  const patches = new THREE.InstancedMesh(patchG, pMat, 26);
+  const d = new THREE.Object3D(), c = new THREE.Color();
+  const colors = ["#96a24e","#b3a453","#7f9448","#c0ab5c"];
+  let placed = 0, guard = 0;
+  while (placed < 26 && guard++ < 900) {
+    const t = 0.45 + rnd()*0.5, i = Math.floor(t*(RIVER.length-1));
+    const [ax,az] = RIVER[i], [bx,bz] = RIVER[i+1] || RIVER[i];
+    const fx = ax+(bx-ax)*(t*(RIVER.length-1)-i), fz = az+(bz-az)*(t*(RIVER.length-1)-i);
+    const perp = Math.atan2(bx-ax, bz-az) + Math.PI/2, off = (1.3+rnd()*1.6) * (rnd() > 0.5 ? 1 : -1);
+    const x = fx + Math.sin(perp)*off, z = fz + Math.cos(perp)*off;
+    const h = heightAt(x, z);
+    if (h < 0.15 || h > 1.1 || Math.hypot(x,z) < 2.2 || inPoly(x,z,ltPoly)) continue;
+    d.position.set(x, h+0.04, z); d.rotation.y = (rnd()-0.5)*0.6;
+    d.scale.set(0.9+rnd()*0.8, 1, 0.6+rnd()*0.5); d.updateMatrix();
+    patches.setMatrixAt(placed, d.matrix); patches.setColorAt(placed, c.set(colors[placed % 4]));
+    placed++;
+  }
+  patches.count = placed; scene.add(patches);
+
+  const trunkG = new THREE.CylinderGeometry(.03,.045,.26,5), oliveG = new THREE.IcosahedronGeometry(.2,0), pineG = new THREE.ConeGeometry(.18,.5,6);
+  const trees = [];
+  guard = 0;
+  while (trees.length < 90 && guard++ < 2500) {                   // olives & oaks on the plain
+    const x = -12 + rnd()*24, z = -8 + rnd()*18;
+    const h = heightAt(x, z), [rd] = distToRiver(x, z);
+    if (h < 0.18 || h > 1.4 || rd < 0.9 || Math.hypot(x,z) < 2.3 || inPoly(x,z,ltPoly)) continue;
+    if (rd > 4 && Math.abs(Math.sin(x*12.9898+z*78.233)) % 1 > 0.3) continue;
+    trees.push([x, h, z, 0.7+rnd()*0.6, 0]);
+  }
+  guard = 0;
+  let pines = 0;
+  while (pines < 40 && guard++ < 900) {                           // pines toward Ida
+    const x = 13 + rnd()*15, z = -8 + rnd()*14;
+    const h = heightAt(x, z);
+    if (h < 1.3 || h > 6.5) continue;
+    trees.push([x, h, z, 0.8+rnd()*0.7, 1]); pines++;
+  }
+  const trunkI = new THREE.InstancedMesh(trunkG, new THREE.MeshStandardMaterial({ color:"#6b5138", roughness:.95 }), trees.length);
+  const oliveI = new THREE.InstancedMesh(oliveG, new THREE.MeshStandardMaterial({ roughness:.95, flatShading:true }), trees.length);
+  const pineI  = new THREE.InstancedMesh(pineG,  new THREE.MeshStandardMaterial({ roughness:.95, flatShading:true }), trees.length);
+  const greens = ["#7d8f57","#6e874d","#8a9a62","#5f7a44"], pgreens = ["#3d5a3a","#466345","#35503a"];
+  let oi = 0, pi = 0;
+  trees.forEach(([x, h, z, s, kind], i) => {
+    d.rotation.set(0,0,0);
+    d.position.set(x, h+0.12*s, z); d.scale.setScalar(s); d.updateMatrix();
+    trunkI.setMatrixAt(i, d.matrix);
+    if (kind === 0) {
+      d.position.y = h + 0.36*s; d.rotation.y = i*1.7; d.scale.set(s, s*0.8, s); d.updateMatrix();
+      oliveI.setMatrixAt(oi, d.matrix); oliveI.setColorAt(oi, c.set(greens[i % 4])); oi++;
+    } else {
+      d.position.y = h + 0.48*s; d.updateMatrix();
+      pineI.setMatrixAt(pi, d.matrix); pineI.setColorAt(pi, c.set(pgreens[i % 3])); pi++;
+    }
+  });
+  oliveI.count = oi; pineI.count = pi;
+  scene.add(trunkI, oliveI, pineI);
+}
+
+/* ---- ghost eras (wireframe teasers, opacity by scroll proximity) ---- */
+const ghosts = [];
+function ghostGroup(order, color, build) {
+  const m = new THREE.MeshBasicMaterial({ color, wireframe:true, transparent:true, opacity:0, depthWrite:false });
+  const g = new THREE.Group(); g.visible = false;
+  build((geoArgs, x, y, z, ry = 0, sx = 1, sz = 1) => {
+    const mesh = new THREE.Mesh(geoArgs, m);
+    mesh.position.set(x, y, z); mesh.rotation.y = ry; mesh.scale.set(sx, 1, sz);
+    g.add(mesh);
+  });
+  scene.add(g); ghosts.push({ g, m, order });
+}
+const plateauY = heightAt(0, 0);
+ghostGroup(0, "#e09a68", (add) => {                                // 1200 BC — Troy VI
+  add(new THREE.CylinderGeometry(1.7, 1.9, 0.85, 18, 1, true), 0, plateauY-0.35, 0);
+  for (const a of [0.35, 1.7, 3.7, 5.1]) add(new THREE.BoxGeometry(.5,.95,.5), Math.cos(a)*1.75, plateauY-0.1, Math.sin(a)*1.75, -a);
+  add(new THREE.BoxGeometry(.9,.5,.55), -0.15, plateauY+0.3, 0.15);
+  add(new THREE.CylinderGeometry(3.4, 3.6, 0.45, 22, 1, true), 1.6, 0.4, 0.3, 0, 1, 0.8);
+});
+ghostGroup(2, "#ccd3e4", (add) => {                                // 150 AD — Roman Ilium
+  const [tx,tz] = geo(26.2386, 39.9578);
+  add(new THREE.BoxGeometry(1.6,.6,.95), tx, plateauY+0.3, tz, -0.35);
+  add(new THREE.CylinderGeometry(.6,.6,.4,14,1,false,0,Math.PI), 1.9, heightAt(1.9,0.9)+0.2, 0.9, 2.4);
+  add(new THREE.BoxGeometry(.55,.35,.55), 1.4, heightAt(1.4,-1)+0.2, -1);
+  for (const o of [-0.6, 0.6]) {
+    add(new THREE.BoxGeometry(3,.03,.16), 1.9+o, heightAt(1.9,0.4)+0.1, 0.4-o, 0.8);
+    add(new THREE.BoxGeometry(3,.03,.16), 1.9+o, heightAt(1.9,0.4)+0.1, 0.4+o, -0.75);
+  }
+});
+ghostGroup(3, "#7fd4b8", (add) => {                                // 2026 AD — the dig
+  add(new THREE.BoxGeometry(.7,.8,2.1), -0.3, plateauY-0.3, 0.15, 0.3);
+  add(new THREE.BoxGeometry(1.7,.05,1.35), 0.4, plateauY+0.55, -0.25, 0, 1, 1);
+  const ramp = new THREE.TorusGeometry(2.1, 0.09, 4, 26, Math.PI*1.35);
+  ramp.rotateX(-Math.PI/2);
+  add(ramp, 0, plateauY-0.5, 0);
+  add(new THREE.BoxGeometry(.7,.3,.45), 2.9, heightAt(2.9,-1.3)+0.18, -1.3);
+});
+
+/* ---- POI markers ---- */
+const markers = [], markerRoot = new THREE.Group();
+scene.add(markerRoot);
+for (const poi of POIS) {
+  const [x, z] = geo(poi.lon, poi.lat);
+  const baseY = groundY(x, z) + poi.yOff * 0.6 + 0.35;
+  const color = new THREE.Color(LAYERS[poi.layer].color);
+  const g = new THREE.Group(); g.position.set(x, baseY, z);
+  const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.22, 0),
+    new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.9, transparent: true }));
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.022, 6, 24),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.75 }));
+  ring.rotation.x = Math.PI/2;
+  const hit = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 8),
+    new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
+  g.add(core, ring, hit);
+  g.userData = { poi, baseY, phase: markers.length * 1.31, core, ring };
+  markerRoot.add(g); markers.push(g);
+}
+
+/* ================= UI ================= */
+const $ = (s) => document.querySelector(s);
+const state = { era: 1, eraF: 1, layers: new Set(), selected: null, parX: 0, parY: 0, reduced: matchMedia("(prefers-reduced-motion: reduce)").matches };
+
+/* sections + rail + chips */
+const secWrap = $("#sections");
+secWrap.innerHTML = ERAS.map(e => `
+  <section aria-label="${e.year} — ${e.title}"><div class="card">
+    <div class="tags"><span class="pill" style="border-color:${e.accent}88;color:${e.accent};background:${e.accent}1a"><span class="d" style="background:${e.accent}"></span>${e.status === "active" ? "Active era" : "Ghost era"}</span>
+    <span class="kick">${e.kicker}</span></div>
+    <h2><span style="color:${e.accent}">${e.year}</span> — ${e.title}</h2>
+    <p>${e.summary}</p><p class="note">${e.note}</p>
+  </div></section>`).join("");
+const rail = $("#rail");
+rail.innerHTML = ERAS.map((e, i) => `<button data-i="${i}" aria-label="${e.year}"><span class="yr">${e.year}</span><span class="dot"></span></button>`).join("");
+rail.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button");
+  if (b) scrollTo({ top: (+b.dataset.i) * innerHeight, behavior: "smooth" });
+});
+function syncRail() {
+  rail.querySelectorAll("button").forEach((b, i) => {
+    const active = i === state.era, a = ERAS[i].accent;
+    b.classList.toggle("active", active);
+    b.querySelector(".yr").style.color = active ? a : "#fff";
+    const dot = b.querySelector(".dot");
+    dot.style.borderColor = active ? a : "rgba(255,255,255,.4)";
+    dot.style.background = active ? a : "transparent";
+    dot.style.boxShadow = active ? `0 0 10px ${a}` : "none";
+  });
+}
+const chips = $("#chips");
+chips.innerHTML = Object.entries(LAYERS).map(([id, l]) =>
+  `<button data-id="${id}" aria-pressed="false" title="${l.name}"><span class="d"></span>${l.name}</button>`).join("");
+chips.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button"); if (!b) return;
+  const id = b.dataset.id;
+  state.layers.has(id) ? state.layers.delete(id) : state.layers.add(id);
+  const on = state.layers.has(id), l = LAYERS[id];
+  b.setAttribute("aria-pressed", on);
+  b.style.borderColor = on ? l.color : "rgba(255,255,255,.18)";
+  b.style.color = on ? l.color : "rgba(255,255,255,.72)";
+  b.style.background = on ? l.color + "26" : "rgba(10,8,16,.45)";
+  b.querySelector(".d").style.background = on ? l.color : "rgba(255,255,255,.35)";
+  for (const k in layerGroups) for (const m of layerGroups[k]) m.emissiveIntensity = state.layers.has(k) ? 0.45 : 0;
+});
+
+/* sheet */
+const sheet = $("#sheet");
+function openSheet(poi) {
+  state.selected = poi.id;
+  $("#sh-name").textContent = poi.name;
+  const l = LAYERS[poi.layer], cf = CONF[poi.conf];
+  $("#sh-badges").innerHTML =
+    `<span class="pill" style="border-color:${cf.color}66;color:${cf.color};background:${cf.color}14"><span class="d" style="background:${cf.color}"></span>${cf.label}</span>` +
+    `<span class="pill" style="border-color:${l.color}66;color:${l.color};background:${l.color}14"><span class="d" style="background:${l.color}"></span>${l.name}</span>` +
+    `<span class="pill" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)">${poi.lon.toFixed(4)}°E ${poi.lat.toFixed(4)}°N</span>`;
+  $("#sh-summary").textContent = poi.summary;
+  $("#sh-evidence").textContent = poi.evidence;
+  $("#sh-evidence").style.borderColor = l.color;
+  $("#sh-src").textContent = "SOURCE — " + poi.src;
+  sheet.classList.add("open");
+}
+function closeSheet() { state.selected = null; sheet.classList.remove("open"); }
+$("#sh-close").addEventListener("click", closeSheet);
+{ /* drag to dismiss */
+  let y0 = null, dy = 0;
+  sheet.addEventListener("touchstart", (e) => { y0 = e.touches[0].clientY; sheet.style.transition = "none"; }, { passive: true });
+  sheet.addEventListener("touchmove", (e) => {
+    if (y0 == null) return;
+    dy = Math.max(0, e.touches[0].clientY - y0);
+    sheet.style.transform = `translateY(${dy}px)`;
+  }, { passive: true });
+  sheet.addEventListener("touchend", () => {
+    sheet.style.transition = ""; sheet.style.transform = "";
+    if (dy > 80) closeSheet();
+    y0 = null; dy = 0;
+  });
+}
+
+/* scroll → era */
+const tintEl = $("#tint");
+function parseTint(t) { const m = t.match(/rgba\((\d+),(\d+),(\d+),([.\d]+)\)/); return m ? [+m[1],+m[2],+m[3],+m[4]] : [0,0,0,0]; }
+const tints = ERAS.map(e => parseTint(e.tint.replace(/\s/g, "")));
+function onScroll() {
+  const p = Math.min(1, Math.max(0, scrollY / (innerHeight * (ERAS.length - 1))));
+  state.eraF = p * (ERAS.length - 1);
+  const era = Math.round(state.eraF);
+  if (era !== state.era) { state.era = era; syncRail(); closeSheet(); }
+  const i = Math.min(ERAS.length - 2, Math.floor(state.eraF)), t = state.eraF - i;
+  const a = tints[i], b = tints[i + 1];
+  tintEl.style.backgroundColor = `rgba(${Math.round(a[0]+(b[0]-a[0])*t)},${Math.round(a[1]+(b[1]-a[1])*t)},${Math.round(a[2]+(b[2]-a[2])*t)},${(a[3]+(b[3]-a[3])*t).toFixed(3)})`;
+  chips.classList.toggle("hidden", era !== 1);
+}
+addEventListener("scroll", onScroll, { passive: true });
+
+/* parallax: pointer + device tilt (no iOS permission prompt — falls back to pointer) */
+addEventListener("pointermove", (e) => {
+  state.parX = (e.clientX / innerWidth - 0.5) * 2;
+  state.parY = (e.clientY / innerHeight - 0.5) * 2;
+}, { passive: true });
+addEventListener("deviceorientation", (e) => {
+  if (e.gamma == null || e.beta == null) return;
+  state.parX = Math.max(-1, Math.min(1, e.gamma / 28));
+  state.parY = Math.max(-1, Math.min(1, (e.beta - 42) / 28));
+}, true);
+
+/* tap → raycast markers */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let downAt = null;
+renderer.domElement.addEventListener("pointerdown", (e) => { downAt = [e.clientX, e.clientY]; }, { passive: true });
+renderer.domElement.addEventListener("pointerup", (e) => {
+  if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 9) { downAt = null; return; }
+  downAt = null;
+  if (state.era !== 1) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hits = ray.intersectObjects(markerRoot.children, true);
+  if (hits.length) {
+    let g = hits[0].object; while (g.parent !== markerRoot) g = g.parent;
+    openSheet(g.userData.poi);
+  } else closeSheet();
+});
+renderer.domElement.addEventListener("pointermove", (e) => {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  document.body.style.cursor = (state.era === 1 && ray.intersectObjects(markerRoot.children, true).length) ? "pointer" : "auto";
+}, { passive: true });
+
+/* ================= camera + frame loop ================= */
+const BASE_TARGET = new THREE.Vector3(-1.9, 0.7, -0.55), OFFSET = new THREE.Vector3(26, 24, 26);
+const RIGHT = new THREE.Vector3(1, 0, -1).normalize();
+const pan = new THREE.Vector3(), want = new THREE.Vector3(), tmp = new THREE.Vector3();
+function resize() {
+  const w = mount.clientWidth, h = mount.clientHeight;
+  renderer.setSize(w, h);
+  const zoom = Math.max(9, Math.min(w / 25, h / 37));
+  camera.left = -w / 2 / zoom; camera.right = w / 2 / zoom;
+  camera.top = h / 2 / zoom; camera.bottom = -h / 2 / zoom;
+  camera.updateProjectionMatrix();
+}
+addEventListener("resize", resize); resize();
+const clock = new THREE.Clock();
+function damp(cur, tgt, l, dt) { return THREE.MathUtils.damp(cur, tgt, l, dt); }
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  if (state.reduced) want.set(0, 0, 0);
+  else want.copy(RIGHT).multiplyScalar(Math.sin(t * 0.07) * 1.2 + state.parX * 0.9)
+           .add(tmp.set(0, Math.sin(t * 0.05) * 0.4 - state.parY * 0.6, 0));
+  pan.set(damp(pan.x, want.x, 2.2, dt), damp(pan.y, want.y, 2.2, dt), damp(pan.z, want.z, 2.2, dt));
+  camera.position.copy(BASE_TARGET).add(OFFSET).add(pan);
+  camera.lookAt(tmp.copy(BASE_TARGET).add(pan));
+
+  const eraW = Math.max(0, 1 - Math.abs(state.eraF - 1));         // marker presence at 600 BC
+  markers.forEach((g) => {
+    const { baseY, phase, poi } = g.userData;
+    const dim = state.layers.size > 0 && !state.layers.has(poi.layer);
+    const sel = state.selected === poi.id;
+    const target = eraW * (sel ? 1.4 : dim ? 0.4 : 1);
+    const s = damp(g.scale.x, target, 6, dt);
+    g.scale.setScalar(Math.max(s, 0.0001));
+    g.visible = s > 0.04;
+    g.position.y = baseY + Math.sin(t * 1.7 + phase) * 0.09;
+    g.rotation.y = t * 0.7 + phase;
+  });
+  for (const { g, m, order } of ghosts) {
+    const prox = Math.max(0, 1 - Math.abs(state.eraF - order));
+    m.opacity = Math.max(0, prox - 0.12) * 0.8;
+    g.visible = m.opacity > 0.02;
+    g.position.y = (1 - prox) * 1.0;
+  }
+  renderer.render(scene, camera);
+});
+
+/* land on 600 BC, then reveal */
+syncRail(); onScroll();
+requestAnimationFrame(() => {
+  scrollTo(0, innerHeight);
+  setTimeout(() => { const l = $("#loading"); l.style.opacity = "0"; setTimeout(() => l.remove(), 650); }, 250);
+});
+</script>
+</body>
+</html>

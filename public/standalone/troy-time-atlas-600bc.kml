@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <name>Artemis Time Atlas: Troy (c. 600 BC) — Enhanced, rev. B</name>
+    <description>
+      Geospatial reconstruction of Archaic Ilion (Troy) around 600 BCE, based on archaeological
+      evidence and literary sources. Includes the fortified citadel, lower town, religious
+      precincts, defensive walls, gates, the Scamander river, harbours and the Hellespont
+      coastline. Source dataset for the Artemis Time Atlas /labs/developmentandtest/troy-time-atlas
+      prototype.
+
+      Revision B corrections vs. rev. A (coordinates aligned with published site locations):
+      - Sigeion moved to the Yenişehir ridge NW of Troy (was placed S of the plain).
+      - Rhoeteion moved to the strait coast NE of Troy near In Tepe (was W of Troy).
+      - Kumtepe moved to the lower Karamenderes near the silted bay NW of Troy.
+      - Hanay Tepe moved SSE of Troy on the Balli Dag road.
+      - Scamander mouth extended to reach the Hellespont near Kumkale.
+      - Broken ScreenOverlay (truncated base64) removed; icon hrefs limited to the
+        standard Google Earth shape set.
+    </description>
+    <atom:author><atom:name>Artemis Time Atlas Team</atom:name></atom:author>
+
+    <Style id="citadelStyle">
+      <IconStyle><color>ff0055ff</color><scale>1.4</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/star.png</href></Icon></IconStyle>
+      <LabelStyle><color>ff00aaff</color><scale>1.2</scale></LabelStyle>
+      <BalloonStyle><text><![CDATA[<b>$[name]</b><br/><i>$[description]</i><br/><hr/>Era: $[era] | Type: $[type] | Confidence: $[confidence] | Source: $[source]]]></text></BalloonStyle>
+    </Style>
+    <Style id="religiousStyle">
+      <IconStyle><color>ffffaa00</color><scale>1.2</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/triangle.png</href></Icon></IconStyle>
+      <LabelStyle><color>ffff8800</color><scale>1.0</scale></LabelStyle>
+      <BalloonStyle><text><![CDATA[<b>$[name]</b><br/><i>$[description]</i><br/><hr/>Era: $[era] | Type: $[type] | Confidence: $[confidence] | Source: $[source]]]></text></BalloonStyle>
+    </Style>
+    <Style id="militaryStyle">
+      <IconStyle><color>ffff0000</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_square.png</href></Icon></IconStyle>
+      <LabelStyle><color>ffff3333</color><scale>0.9</scale></LabelStyle>
+      <BalloonStyle><text><![CDATA[<b>$[name]</b><br/><i>$[description]</i><br/><hr/>Era: $[era] | Type: $[type] | Confidence: $[confidence] | Source: $[source]]]></text></BalloonStyle>
+    </Style>
+    <Style id="infrastructureStyle">
+      <IconStyle><color>ff00aa00</color><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle>
+      <LabelStyle><color>ff00cc44</color><scale>0.9</scale></LabelStyle>
+      <BalloonStyle><text><![CDATA[<b>$[name]</b><br/><i>$[description]</i><br/><hr/>Era: $[era] | Type: $[type] | Confidence: $[confidence] | Source: $[source]]]></text></BalloonStyle>
+    </Style>
+    <Style id="naturalStyle">
+      <IconStyle><color>ff00aaff</color><scale>0.9</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/water.png</href></Icon></IconStyle>
+      <LabelStyle><color>ff00ccff</color><scale>0.9</scale></LabelStyle>
+      <BalloonStyle><text><![CDATA[<b>$[name]</b><br/><i>$[description]</i><br/><hr/>Era: $[era] | Type: $[type] | Confidence: $[confidence] | Source: $[source]]]></text></BalloonStyle>
+    </Style>
+    <Style id="maritimeStyle">
+      <IconStyle><color>ffcc8800</color><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/marina.png</href></Icon></IconStyle>
+      <LabelStyle><color>ffdd9933</color><scale>0.9</scale></LabelStyle>
+      <BalloonStyle><text><![CDATA[<b>$[name]</b><br/><i>$[description]</i><br/><hr/>Era: $[era] | Type: $[type] | Confidence: $[confidence] | Source: $[source]]]></text></BalloonStyle>
+    </Style>
+    <Style id="polygonStyle">
+      <LineStyle><color>ff0055ff</color><width>2</width></LineStyle>
+      <PolyStyle><color>550055ff</color><fill>1</fill></PolyStyle>
+      <LabelStyle><scale>0</scale></LabelStyle>
+    </Style>
+    <Style id="lineStyle">
+      <LineStyle><color>ffff8800</color><width>3</width></LineStyle>
+      <PolyStyle><fill>0</fill></PolyStyle>
+      <LabelStyle><scale>0</scale></LabelStyle>
+    </Style>
+
+    <Folder>
+      <name>1. Citadel &amp; Core</name>
+      <Placemark>
+        <name>Citadel of Troy (Archaic Ilion)</name>
+        <description>The fortified acropolis on the hill of Hisarlik, continuously inhabited from the Bronze Age to the Roman period. In the Archaic era the mound was crowned by the sanctuary of Athena and a modest settlement living among the ruined Troy VI walls.</description>
+        <styleUrl>#citadelStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic (c. 600 BC)</value></Data>
+          <Data name="type"><value>Citadel</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Korfmann, 2006; Rose, 2013</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.238889,39.9575,30</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Citadel Walls (approx. circuit)</name>
+        <description>Reconstructed trace of the fortification circuit, incorporating the standing Bronze Age (Troy VI) foundations reused in the Archaic period. The circuit encloses roughly 200 × 150 m.</description>
+        <styleUrl>#polygonStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic (reusing Troy VI)</value></Data>
+          <Data name="type"><value>Fortification</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Blegen, 1963; Korfmann, 2004</value></Data>
+        </ExtendedData>
+        <Polygon><outerBoundaryIs><LinearRing><coordinates>
+          26.2375,39.9585,30 26.2395,39.9588,30 26.2405,39.9578,30
+          26.2398,39.9568,30 26.2380,39.9565,30 26.2370,39.9570,30
+          26.2375,39.9585,30
+        </coordinates></LinearRing></outerBoundaryIs></Polygon>
+      </Placemark>
+      <Placemark>
+        <name>South Gate (main entrance)</name>
+        <description>Principal gateway on the southern side of the citadel, flanked by towers, giving access to the ramp down to the lower town.</description>
+        <styleUrl>#militaryStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic</value></Data>
+          <Data name="type"><value>Gate</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Korfmann, 2006</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2388,39.9567,25</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>East Gate</name>
+        <description>Secondary gate on the eastern wall, possibly used for access toward the Scamander plain and the inland Troad.</description>
+        <styleUrl>#militaryStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic</value></Data>
+          <Data name="type"><value>Gate</value></Data>
+          <Data name="confidence"><value>probable</value></Data>
+          <Data name="source"><value>Blegen, 1963</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2400,39.9575,25</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>2. Religious &amp; Cult Places</name>
+      <Placemark>
+        <name>Temple of Athena Ilias</name>
+        <description>The principal sanctuary of Athena Ilias on the highest terrace of the mound. Around 600 BC an open-air precinct with an early temple building; rebuilt monumentally in later centuries.</description>
+        <styleUrl>#religiousStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic (c. 600–500 BC)</value></Data>
+          <Data name="type"><value>Temple</value></Data>
+          <Data name="confidence"><value>probable</value></Data>
+          <Data name="source"><value>Rose, 2013; Cook, 1998</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2386,39.9578,35</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Altar of Athena</name>
+        <description>Open-air altar east of the temple where sacrifices were performed; enlarged in the Archaic period with a stone platform. Herodotus (7.43) records Xerxes sacrificing to Athena of Ilion here.</description>
+        <styleUrl>#religiousStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic</value></Data>
+          <Data name="type"><value>Altar</value></Data>
+          <Data name="confidence"><value>probable</value></Data>
+          <Data name="source"><value>Korfmann, 2006; Herodotus 7.43</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2390,39.9577,35</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Heroön (Cult of Hector?)</name>
+        <description>A small shrine or heroön just outside the citadel walls, possibly dedicated to Hector or other Trojan heroes. Archaic finds include votive offerings and a small naiskos.</description>
+        <styleUrl>#religiousStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic (c. 600 BC)</value></Data>
+          <Data name="type"><value>Heroön</value></Data>
+          <Data name="confidence"><value>conjectural</value></Data>
+          <Data name="source"><value>Bieg, 2002</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2372,39.9572,20</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>3. Lower Town &amp; Habitation</name>
+      <Placemark>
+        <name>Archaic Lower Town</name>
+        <description>The residential and working area spreading south and east of the citadel: houses, workshops and storage, thin in the Archaic period compared with the great Bronze Age lower city beneath it.</description>
+        <styleUrl>#infrastructureStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic (c. 600 BC)</value></Data>
+          <Data name="type"><value>Settlement</value></Data>
+          <Data name="confidence"><value>probable</value></Data>
+          <Data name="source"><value>Korfmann, 2006; Pernicka, 2008</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2395,39.9565,20</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Lower Town Boundary (approx.)</name>
+        <description>Approximate extent of the settled area below the mound, based on geophysical survey and test trenches.</description>
+        <styleUrl>#polygonStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic</value></Data>
+          <Data name="type"><value>Settlement</value></Data>
+          <Data name="confidence"><value>probable</value></Data>
+          <Data name="source"><value>Korfmann, 2006; Thumm-Doğrayan, 2011</value></Data>
+        </ExtendedData>
+        <Polygon><outerBoundaryIs><LinearRing><coordinates>
+          26.2370,39.9550,10 26.2405,39.9545,10 26.2430,39.9560,10
+          26.2420,39.9580,10 26.2390,39.9575,10 26.2370,39.9550,10
+        </coordinates></LinearRing></outerBoundaryIs></Polygon>
+      </Placemark>
+      <Placemark>
+        <name>Assembly Place (later theatre area)</name>
+        <description>A theatral or assembly area on the southern slope of the lower town, likely used for civic and religious gatherings; monumentalized only in later periods.</description>
+        <styleUrl>#infrastructureStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic–Hellenistic</value></Data>
+          <Data name="type"><value>Public Building</value></Data>
+          <Data name="confidence"><value>conjectural</value></Data>
+          <Data name="source"><value>Radt, 1990</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2400,39.9558,15</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>4. Defensive &amp; Military Structures</name>
+      <Placemark>
+        <name>Outer Defence Wall (Lower Town)</name>
+        <description>A fortification line with towers and a rock-cut ditch protecting the settlement below the mound; the Bronze Age ditch remained a visible landscape feature in the Archaic period.</description>
+        <styleUrl>#militaryStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Bronze Age, reused Archaic</value></Data>
+          <Data name="type"><value>Fortification</value></Data>
+          <Data name="confidence"><value>probable</value></Data>
+          <Data name="source"><value>Korfmann, 2006</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2415,39.9550,10</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Scamander Crossing (ford / bridge)</name>
+        <description>Likely crossing of the Scamander on the road toward Sigeion and the coast; a timber bridge or ford. No remains have been definitely located.</description>
+        <styleUrl>#infrastructureStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic–Classical</value></Data>
+          <Data name="type"><value>Infrastructure</value></Data>
+          <Data name="confidence"><value>conjectural</value></Data>
+          <Data name="source"><value>Cook, 1998</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2050,39.9650,5</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>5. Ports &amp; Maritime</name>
+      <Placemark>
+        <name>Sigeion (Harbour Outpost)</name>
+        <description>Settlement on the Yenişehir ridge at the Aegean mouth of the Hellespont — around 600 BC an Athenian foothold contested with Mytilene (the war that made Pittacus famous), controlling traffic into the straits.</description>
+        <styleUrl>#maritimeStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic (c. 600 BC)</value></Data>
+          <Data name="type"><value>Port</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Herodotus 5.94–95; Cook, 1973</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.1800,39.9936,5</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Rhoeteion (Northern Harbour)</name>
+        <description>Harbour settlement on the strait coast north-east of Troy, near the tumulus later shown as the tomb of Ajax; used for trade and fishing.</description>
+        <styleUrl>#maritimeStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Archaic</value></Data>
+          <Data name="type"><value>Port</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Strabo, Geography 13.1</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2850,40.0150,5</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>6. Natural &amp; Landscape Features</name>
+      <Placemark>
+        <name>Scamander (Karamenderes) River</name>
+        <description>The principal river of the Troad, rising on Mount Ida and reaching the Hellespont near Kumkale. Its course has shifted over millennia; this trace approximates the ancient channel west of the city.</description>
+        <styleUrl>#lineStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Holocene</value></Data>
+          <Data name="type"><value>River</value></Data>
+          <Data name="confidence"><value>probable</value></Data>
+          <Data name="source"><value>Kraft et al., geomorphology of the Trojan plain</value></Data>
+        </ExtendedData>
+        <LineString><tessellate>1</tessellate><coordinates>
+          26.1780,40.0080,0 26.1900,39.9850,0 26.1950,39.9770,0 26.2000,39.9700,0
+          26.2050,39.9650,0 26.2100,39.9600,0 26.2150,39.9550,0
+          26.2200,39.9500,0 26.2250,39.9450,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Dardanelles (Hellespont) Strait</name>
+        <description>The narrow strait connecting the Aegean to the Sea of Marmara. Adverse wind and current forced ships to wait at its mouth — the delay economy behind Troy's long prosperity.</description>
+        <styleUrl>#naturalStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Holocene</value></Data>
+          <Data name="type"><value>Strait</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Hydrographic data</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.1950,40.0100,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Plain of Troy (Scamander Plain)</name>
+        <description>The alluvial plain below the city — in 600 BC still partly open bay and marsh toward the strait, its rich soils supporting grain, olives and vines.</description>
+        <styleUrl>#naturalStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Holocene</value></Data>
+          <Data name="type"><value>Plain</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Kraft et al.; geomorphology</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2150,39.9700,2</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>7. Cemeteries &amp; Burial Mounds</name>
+      <Placemark>
+        <name>Hanay Tepe (Tumulus)</name>
+        <description>A prominent burial mound south-south-east of the citadel on the road toward Balli Dag — a landmark on the inland approach to Troy, excavated by Calvert.</description>
+        <styleUrl>#infrastructureStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Bronze Age–Archaic</value></Data>
+          <Data name="type"><value>Tumulus</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Calvert excavations; Bieg, 2002</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2530,39.9300,15</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>Kumtepe (Prehistoric Mound)</name>
+        <description>A Chalcolithic settlement mound near the lower Karamenderes, by 600 BC an ancient landmark used as burial ground and rural site.</description>
+        <styleUrl>#infrastructureStyle</styleUrl>
+        <ExtendedData>
+          <Data name="era"><value>Chalcolithic–Archaic</value></Data>
+          <Data name="type"><value>Tell</value></Data>
+          <Data name="confidence"><value>attested</value></Data>
+          <Data name="source"><value>Blegen, 1963; Korfmann surveys</value></Data>
+        </ExtendedData>
+        <Point><coordinates>26.2011,39.9860,5</coordinates></Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
