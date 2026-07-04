@@ -21,6 +21,21 @@
   #gl{position:absolute;inset:0;touch-action:pan-y}
   #tint{position:absolute;inset:0;pointer-events:none;transition:background-color .15s linear}
   #vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px 18px rgba(10,6,18,.42)}
+  /* ---- cartographic plate ---- */
+  #labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .maplabel{position:absolute;left:0;top:0;white-space:nowrap;font-family:var(--serif);font-size:11px;letter-spacing:.32em;color:rgba(240,222,185,.72);text-shadow:0 1px 4px rgba(20,12,8,.9);will-change:transform;visibility:hidden}
+  .maplabel.water{font-style:italic;color:rgba(205,228,232,.78)}
+  .maplabel.big{font-size:13.5px;letter-spacing:.42em}
+  .maplabel.coord{font-family:var(--mono);font-style:normal;font-size:8.5px;letter-spacing:.1em;color:rgba(232,212,170,.55);text-shadow:none}
+  #grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.4}
+  #carto{position:absolute;inset:0;pointer-events:none}
+  #cartouche{border:1px solid rgba(232,179,75,.5);box-shadow:0 0 0 3px rgba(24,18,14,.5),0 0 0 4px rgba(232,179,75,.28);background:rgba(24,18,14,.5);backdrop-filter:blur(8px);border-radius:4px;padding:9px 12px;max-width:255px}
+  #cartouche .homage{font-family:var(--serif);font-style:italic;font-size:10.5px;color:rgba(240,222,185,.58);margin-top:3px;letter-spacing:.03em}
+  #scalebar{position:absolute;left:16px;bottom:88px;z-index:15;pointer-events:none}
+  #scalebar .bar{display:flex;height:5px;border:1px solid rgba(232,212,170,.65);width:120px}
+  #scalebar .bar span{flex:1}
+  #scalebar .bar span:nth-child(odd){background:rgba(232,212,170,.65)}
+  #scalebar .lbl{margin-top:3px;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:rgba(232,212,170,.55)}
   /* ---- HUD ---- */
   #hud-top{position:absolute;left:0;right:0;top:0;padding:max(env(safe-area-inset-top),14px) 16px 0;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-start;z-index:20}
   #hud-top .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5)}
@@ -76,18 +91,26 @@
 <div id="stage">
   <div id="sky"></div>
   <div id="gl"></div>
+  <div id="labels"></div>
+  <div id="grain"></div>
   <div id="tint"></div>
   <div id="vignette"></div>
+  <svg id="carto"></svg>
   <div id="hud-top">
-    <div>
-      <div class="kicker">Artemis Time Atlas · v2</div>
+    <div id="cartouche">
+      <div class="kicker">Artemis Time Atlas · Tabvla I</div>
       <h1>Troy <span class="dot">·</span> Ilion</h1>
+      <div class="homage">after Eratosthenes · Piri Reis · Waldseemüller · Mercator · Ortelius</div>
       <div class="scale-note">geography from KML — true scale at the citadel, distances compressed beyond 300&nbsp;m, heights ×5</div>
     </div>
     <a id="kml-btn" href="troy-time-atlas-600bc.kml" download>⤓ KML</a>
   </div>
   <nav id="rail" aria-label="Timeline"></nav>
   <div id="chips" role="group" aria-label="Overlay layers"></div>
+  <div id="scalebar" aria-hidden="true">
+    <div class="bar"><span></span><span></span><span></span><span></span></div>
+    <div class="lbl">0 · 250 · 500 m — 2.7 stadia · true at the citadel</div>
+  </div>
   <div id="sheet" aria-live="polite">
     <div class="grab"></div>
     <div class="row">
@@ -106,7 +129,7 @@
 <div id="loading">
   <div class="k">Artemis Time Atlas</div>
   <div class="t">Troy · Ilion</div>
-  <div class="s">Projecting the Troad — 600 BC</div>
+  <div class="s">Engraving the plate — 600 BC</div>
 </div>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
@@ -360,6 +383,49 @@ glowSprite([[0,"rgba(255,205,150,.5)"],[1,"rgba(255,185,130,0)"]], 46,6.5, -10,1
 for (const [x,z,r,h,cl] of [[-24,-3.5,5.5,2.6,"#655370"],[-27.5,-9.5,6.5,5.2,"#71617e"],[-20,-14,4.5,2,"#6f5a68"]]) {
   const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 9), new THREE.MeshStandardMaterial({ color:cl, roughness:1 }));
   m.scale.x = 1.5; m.position.set(x, 0, z); scene.add(m);
+}
+
+/* ---- Eratosthenes' grid: a true measured graticule draped over the plate.
+   Meridians/parallels every 0.025°, bent by the radial compression —
+   the distortion of the projection made honest and visible. ---- */
+{
+  const gratMat = new THREE.LineBasicMaterial({ color:0xe8d4a4, transparent:true, opacity:0.16, depthWrite:false });
+  const inBounds = (x, z) => x > BOUNDS.minX+0.5 && x < BOUNDS.maxX-0.5 && z > BOUNDS.minZ+0.5 && z < BOUNDS.maxZ-0.5;
+  const flush = (pts) => { if (pts.length > 1) scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gratMat)); };
+  for (let lon = 26.15; lon <= 26.301; lon += 0.025) {          // meridians
+    let pts = [];
+    for (let lat = 39.9; lat <= 40.031; lat += 0.0025) {
+      const [x, z] = geo(lon, lat);
+      if (inBounds(x, z)) pts.push(new THREE.Vector3(x, groundY(x, z) + 0.07, z));
+      else { flush(pts); pts = []; }
+    }
+    flush(pts);
+  }
+  for (let lat = 39.9; lat <= 40.031; lat += 0.025) {           // parallels
+    let pts = [];
+    for (let lon = 26.14; lon <= 26.311; lon += 0.005) {
+      const [x, z] = geo(lon, lat);
+      if (inBounds(x, z)) pts.push(new THREE.Vector3(x, groundY(x, z) + 0.07, z));
+      else { flush(pts); pts = []; }
+    }
+    flush(pts);
+  }
+}
+
+/* ---- hic svnt dracones: an ink sea serpent in the strait ---- */
+{
+  const cv = document.createElement("canvas"); cv.width = 160; cv.height = 80;
+  const c2 = cv.getContext("2d");
+  c2.strokeStyle = "rgba(14,42,46,.9)"; c2.fillStyle = "rgba(14,42,46,.9)";
+  c2.lineWidth = 7; c2.lineCap = "round";
+  for (const hx of [38, 74, 110]) { c2.beginPath(); c2.arc(hx, 50, 16, Math.PI, 0); c2.stroke(); }
+  c2.beginPath(); c2.arc(128, 40, 12, Math.PI*0.95, Math.PI*1.62); c2.stroke();      // neck
+  c2.beginPath(); c2.arc(139, 27, 5.5, 0, Math.PI*2); c2.fill();                      // head
+  c2.beginPath(); c2.moveTo(20, 46); c2.lineTo(7, 33); c2.moveTo(20, 46); c2.lineTo(5, 48); c2.stroke(); // fluke
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tx, transparent:true, opacity:.6, depthWrite:false }));
+  sp.scale.set(3, 1.5, 1); sp.position.set(-21, 0.55, -10);
+  scene.add(sp);
 }
 
 /* ---- shared builders ---- */
@@ -701,6 +767,79 @@ for (const poi of POIS) {
   markerRoot.add(g); markers.push(g);
 }
 
+/* ================= Cartographic plate (Mercator / Ortelius lettering,
+   Piri Reis rose & rhumbs, Waldseemüller frame, paper grain) ============ */
+const MAP_LABELS = [
+  { t:"HELLESPONTVS", lon:26.197, lat:40.002, cls:"water big", rot:-10 },
+  { t:"SCAMANDER FL.", lon:26.216, lat:39.9575, cls:"water", rot:32 },
+  { t:"ILIVM", lon:26.243, lat:39.9525, cls:"big" },
+  { t:"SIGEION", lon:26.1815, lat:39.9885 },
+  { t:"RHOETEION", lon:26.2865, lat:40.0115 },
+  { t:"IDA MONS", xz:[23, 3.5] },
+  { t:"26°12′ E", lon:26.20, lat:40.016, cls:"coord" },
+  { t:"26°15′ E", lon:26.25, lat:40.014, cls:"coord" },
+  { t:"39°57′ N", lon:26.164, lat:39.95, cls:"coord" },
+  { t:"40°00′ N", lon:26.164, lat:40.00, cls:"coord" },
+];
+const labelsEl = document.getElementById("labels");
+const labelObjs = MAP_LABELS.map((l) => {
+  const d = document.createElement("div");
+  d.className = "maplabel " + (l.cls || "");
+  d.textContent = l.t;
+  labelsEl.appendChild(d);
+  const [x, z] = l.xz ?? geo(l.lon, l.lat);
+  const y = groundY(x, z) + ((l.cls || "").includes("water") ? 0.5 : 0.9);
+  return { d, rot: l.rot || 0, pos: new THREE.Vector3(x, y, z) };
+});
+const pv = new THREE.Vector3();
+function updateLabels() {
+  const w = mount.clientWidth, h = mount.clientHeight;
+  for (const { d, rot, pos } of labelObjs) {
+    pv.copy(pos).project(camera);
+    if (Math.abs(pv.x) > 1.08 || Math.abs(pv.y) > 1.08) { d.style.visibility = "hidden"; continue; }
+    d.style.visibility = "visible";
+    d.style.transform = `translate(-50%,-50%) translate(${((pv.x+1)/2*w).toFixed(1)}px,${((1-(pv.y+1)/2)*h).toFixed(1)}px) rotate(${rot}deg)`;
+  }
+}
+const carto = document.getElementById("carto");
+function buildCarto() {
+  const w = mount.clientWidth, h = mount.clientHeight;
+  carto.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  const ink = "rgba(232,212,170,";
+  const cx = 62, cy = Math.min(320, h * 0.4);
+  let s = "";
+  for (let i = 0; i < 16; i++) {                                  // portolan rhumbs
+    const a = i * Math.PI / 8;
+    s += `<line x1="${cx}" y1="${cy}" x2="${(cx+Math.cos(a)*600).toFixed(0)}" y2="${(cy+Math.sin(a)*600).toFixed(0)}" stroke="${ink}.055)" stroke-width="0.7"/>`;
+  }
+  s += `<rect x="8" y="8" width="${w-16}" height="${h-16}" fill="none" stroke="${ink}.5)" stroke-width="1.4"/>`;
+  s += `<rect x="14" y="14" width="${w-28}" height="${h-28}" fill="none" stroke="${ink}.3)" stroke-width="0.6"/>`;
+  for (let x = 32; x < w - 20; x += 48)
+    s += `<line x1="${x}" y1="8" x2="${x}" y2="14" stroke="${ink}.4)" stroke-width="0.8"/><line x1="${x}" y1="${h-14}" x2="${x}" y2="${h-8}" stroke="${ink}.4)" stroke-width="0.8"/>`;
+  for (let y = 32; y < h - 20; y += 48)
+    s += `<line x1="8" y1="${y}" x2="14" y2="${y}" stroke="${ink}.4)" stroke-width="0.8"/><line x1="${w-14}" y1="${y}" x2="${w-8}" y2="${y}" stroke="${ink}.4)" stroke-width="0.8"/>`;
+  for (const [px, py] of [[8,8],[w-8,8],[8,h-8],[w-8,h-8]])
+    s += `<rect x="${px-4}" y="${py-4}" width="8" height="8" transform="rotate(45 ${px} ${py})" fill="${ink}.35)"/>`;
+  s += `<g transform="translate(${cx} ${cy})">`;                  // compass rose (true north = up in this frame)
+  s += `<circle r="30" fill="none" stroke="${ink}.5)" stroke-width="0.8"/><circle r="23" fill="none" stroke="${ink}.22)" stroke-width="0.5"/><circle r="2.2" fill="${ink}.8)"/>`;
+  for (let i = 0; i < 8; i++) {
+    const L = i % 2 ? 15 : 27;
+    s += `<g transform="rotate(${i*45})"><path d="M0,-${L} L3.4,-3 L0,0 Z" fill="${ink}.75)"/><path d="M0,-${L} L-3.4,-3 L0,0 Z" fill="none" stroke="${ink}.55)" stroke-width="0.6"/></g>`;
+  }
+  s += `<text y="-37" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="13" fill="${ink}.85)">N</text></g>`;
+  carto.innerHTML = s;
+}
+{                                                                 // aged-paper grain
+  const c = document.createElement("canvas"); c.width = c.height = 128;
+  const g = c.getContext("2d"), img = g.createImageData(128, 128);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 110 + Math.random() * 70;
+    img.data[i] = img.data[i+1] = img.data[i+2] = v; img.data[i+3] = 26;
+  }
+  g.putImageData(img, 0, 0);
+  document.getElementById("grain").style.backgroundImage = `url(${c.toDataURL()})`;
+}
+
 /* ================= UI ================= */
 const $ = (s) => document.querySelector(s);
 const state = { era: 1, eraF: 1, layers: new Set(), selected: null, parX: 0, parY: 0, reduced: matchMedia("(prefers-reduced-motion: reduce)").matches };
@@ -842,6 +981,8 @@ function resize() {
   camera.left = -w / 2 / zoom; camera.right = w / 2 / zoom;
   camera.top = h / 2 / zoom; camera.bottom = -h / 2 / zoom;
   camera.updateProjectionMatrix();
+  buildCarto();
+  document.querySelector("#scalebar .bar").style.width = (5 * zoom).toFixed(0) + "px";  // 500 m
 }
 addEventListener("resize", resize); resize();
 const clock = new THREE.Clock();
@@ -873,15 +1014,18 @@ renderer.setAnimationLoop(() => {
     g.visible = m.opacity > 0.02;
     g.position.y = (1 - prox) * 1.0;
   }
+  updateLabels();
   renderer.render(scene, camera);
 });
 
-/* land on 600 BC, then reveal */
+/* land on 600 BC, then reveal (setTimeout, not rAF — must fire even in a
+   throttled/background tab so the splash can never wedge on screen) */
 syncRail(); onScroll();
-requestAnimationFrame(() => {
+setTimeout(() => {
   scrollTo(0, innerHeight);
-  setTimeout(() => { const l = $("#loading"); l.style.opacity = "0"; setTimeout(() => l.remove(), 650); }, 250);
-});
+  onScroll();                    // sync era state even if the scroll event is throttled
+  setTimeout(() => { const l = $("#loading"); if (l) { l.style.opacity = "0"; setTimeout(() => l.remove(), 650); } }, 300);
+}, 60);
 </script>
 </body>
 </html>
