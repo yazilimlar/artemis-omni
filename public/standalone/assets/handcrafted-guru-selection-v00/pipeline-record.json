@@ -1,0 +1,7 @@
+{
+  "generatedAt": "2026-07-05T19:40:56.361Z",
+  "command": "node scripts/build-handcrafted-guru-assets.mjs <archive.zip|source-directory>",
+  "outputBasePath": "/standalone/assets/handcrafted-guru-selection-v00",
+  "curatedAssetCount": 9,
+  "missingAssets": []
+}

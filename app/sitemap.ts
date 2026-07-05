@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/turkiye-atlas",
     "/labs/troy-time-atlas",
     "/labs/george-aegean-quest",
+    "/labs/artemis-atlas-handcrafted-guru-selection-v00",
     "/academy",
     "/tools",
     "/case-studies",

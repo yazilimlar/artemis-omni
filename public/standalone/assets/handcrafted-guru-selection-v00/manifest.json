@@ -1,0 +1,165 @@
+{
+  "name": "Artemis Atlas Handcrafted Guru Selection v00",
+  "slug": "artemis-atlas-handcrafted-guru-selection-v00",
+  "labId": "handcrafted-guru-selection-v00",
+  "version": "v00",
+  "sourceArchive": "Archive 2.zip",
+  "generatedAt": "2026-07-05T19:40:56.361Z",
+  "outputBasePath": "/standalone/assets/handcrafted-guru-selection-v00",
+  "pipeline": [
+    "ingest attached archive",
+    "normalize filenames",
+    "convert curated plates to browser-safe jpeg",
+    "write public asset manifest",
+    "load manifest in standalone lab"
+  ],
+  "assets": [
+    {
+      "id": "time-atlas-troy-interface",
+      "title": "Artemis Time Atlas Troy interface",
+      "role": "game-ui-target",
+      "focus": [
+        "Troy",
+        "timeline",
+        "consult guide",
+        "mobile HUD"
+      ],
+      "missing": false,
+      "sourceName": "image-gen-1.png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/time-atlas-troy-interface.jpg",
+      "width": 1013,
+      "height": 1800
+    },
+    {
+      "id": "strategy-aegean-wide",
+      "title": "Aegean wide strategy board",
+      "role": "strategy-reference",
+      "focus": [
+        "Aegean",
+        "Crete",
+        "Rhodes",
+        "island routes"
+      ],
+      "missing": false,
+      "sourceName": "Screenshot 2026-06-11 at 10.20.25 PM(2).png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/strategy-aegean-wide.jpg",
+      "width": 1800,
+      "height": 872
+    },
+    {
+      "id": "coastal-command-screenshot",
+      "title": "Coastal command screenshot",
+      "role": "camera-reference",
+      "focus": [
+        "coastal camera",
+        "banners",
+        "turn-based map feel"
+      ],
+      "missing": false,
+      "sourceName": "Screenshot 2026-06-11 at 10.21.28 PM(2).png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/coastal-command-screenshot.jpg",
+      "width": 1800,
+      "height": 989
+    },
+    {
+      "id": "troy-ilion-600bc",
+      "title": "Troy Ilion c. 600 BC",
+      "role": "site-plate",
+      "focus": [
+        "Troy",
+        "Dardanelles",
+        "Mount Ida",
+        "citadel"
+      ],
+      "missing": false,
+      "sourceName": "75812963-6182-4a82-a8ea-a152ccde1d4c (1).png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/troy-ilion-600bc.jpg",
+      "width": 1200,
+      "height": 1800
+    },
+    {
+      "id": "ephesus-100ad",
+      "title": "Ephesus c. 100 AD",
+      "role": "site-plate",
+      "focus": [
+        "Ephesus",
+        "Library of Celsus",
+        "harbor",
+        "Mount Pion"
+      ],
+      "missing": false,
+      "sourceName": "Aerial view of ancient Ephesus.png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/ephesus-100ad.jpg",
+      "width": 1200,
+      "height": 1800
+    },
+    {
+      "id": "patara-150ad",
+      "title": "Patara c. 150 AD",
+      "role": "site-plate",
+      "focus": [
+        "Patara",
+        "Lycian harbor",
+        "beach",
+        "theater"
+      ],
+      "missing": false,
+      "sourceName": "Aerial view of ancient Patara city.png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/patara-150ad.jpg",
+      "width": 1200,
+      "height": 1800
+    },
+    {
+      "id": "turkish-aegean-coastline-route",
+      "title": "Turkish Aegean coastline route",
+      "role": "regional-plate",
+      "focus": [
+        "Cesme",
+        "Izmir",
+        "Ephesus",
+        "Didim",
+        "Bodrum"
+      ],
+      "missing": false,
+      "sourceName": "Turkish Aegean coastline travel map.png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/turkish-aegean-coastline-route.jpg",
+      "width": 1200,
+      "height": 1800
+    },
+    {
+      "id": "turkish-aegean-coastline-beauty",
+      "title": "Turkish Aegean coastal beauty",
+      "role": "regional-plate",
+      "focus": [
+        "Kusadasi",
+        "Ephesus",
+        "Didim",
+        "Bodrum",
+        "olive hills"
+      ],
+      "missing": false,
+      "sourceName": "Turkish Aegean coastal beauty map.png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/turkish-aegean-coastline-beauty.jpg",
+      "width": 1200,
+      "height": 1800
+    },
+    {
+      "id": "turkiye-anatolia-ornate",
+      "title": "Turkiye and Anatolia ornate map",
+      "role": "country-plate",
+      "focus": [
+        "Istanbul",
+        "Ankara",
+        "Cappadocia",
+        "Ephesus",
+        "Antalya"
+      ],
+      "missing": false,
+      "sourceName": "Ornate map of Turkiye and Anatolia.png",
+      "path": "/standalone/assets/handcrafted-guru-selection-v00/turkiye-anatolia-ornate.jpg",
+      "width": 1200,
+      "height": 1800
+    }
+  ],
+  "unmatchedSourceFiles": []
+}

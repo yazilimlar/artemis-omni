@@ -92,6 +92,22 @@ const standaloneLabModules = [
     boundary:
       "This is a lightweight standalone iPhone game prototype with approximate lon/lat projection. It is not a full GIS dataset, navigation product, or production booking engine.",
   },
+  {
+    title: "Artemis Atlas Handcrafted Guru Selection v00",
+    eyebrow: "Mutant Atlas / Guru Route",
+    href: "/labs/artemis-atlas-handcrafted-guru-selection-v00",
+    statusLabel: "Mutant lab",
+    statusTone: "test" as const,
+    Icon: MapIcon,
+    accentIcon: Crown,
+    description:
+      "A curated mutant atlas using handcrafted map plates, a 3D-default game board, guide switching, editable/reorderable destinations, distance/time sorting, undo recall, and a repeatable image-ingestion pipeline.",
+    signals: ["Handcrafted plates", "Route sorting", "Undo recall", "Asset pipeline"],
+    commercialPath:
+      "Best pilot path: premium guided route packs, destination sponsorships, curated historical itineraries, mobile quest funnels, and image-led cultural travel campaigns.",
+    boundary:
+      "Visual/game prototype only. It uses curated public web assets from the attached archive, no Mapbox token, and approximate lon/lat projection over art plates rather than survey-grade navigation.",
+  },
 ];
 
 export const metadata = createMetadata({

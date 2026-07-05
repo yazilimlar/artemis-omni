@@ -145,6 +145,31 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Approximate route prototype only. It does not use Mapbox, does not expose a map token, and should not be treated as a complete GIS, navigation, or booking product. KML points and destinations are projected onto a designed game board.",
   },
   {
+    slug: "artemis-atlas-handcrafted-guru-selection-v00",
+    title: "Artemis Atlas Handcrafted Guru Selection v00",
+    kind: "Showcase",
+    statusLabel: "Mutant lab",
+    statusTone: "test",
+    sourceType: "Attached handcrafted atlas image archive plus generated asset manifest",
+    summary:
+      "A mutant Artemis Atlas branch that turns curated cartographic image plates into a 3D-default game board with real lon/lat route logic, guide switching, route reordering, distance/time sorting, undo recall, and a reproducible asset pipeline.",
+    bestPublicLink: {
+      href: "/labs/artemis-atlas-handcrafted-guru-selection-v00",
+      label: "Handcrafted Guru Selection v00",
+    },
+    tutorialUse:
+      "Use as the repeatable pattern for image-led route packs: ingest curated plates, normalize public assets, attach real geographic anchors, and expose a simplified mobile-friendly command deck.",
+    solutionFit:
+      "Creates a premium route-pack path for cultural travel campaigns, sponsored destination storytelling, mobile quest funnels, and a future marketplace of guided atlas selections.",
+    migrationPath: [
+      "Keep v00 isolated as a mutant lab while testing route controls, guide language, asset quality, mobile frame, and public performance.",
+      "Use the pipeline script to rebuild plates from future curated archives instead of hand-renaming images.",
+      "Promote the route engine into a reusable native module only after two or more route packs validate the pattern.",
+    ],
+    boundary:
+      "Public visual prototype only. It exposes no map token and does not publish local source paths. The geography uses approximate lon/lat projection over curated art plates and must not be treated as survey-grade GIS, navigation, or booking software.",
+  },
+  {
     slug: "sewer-simulator-formula-icons",
     title: "Sewer Construction Formula Tutorial",
     kind: "Tutorial",
