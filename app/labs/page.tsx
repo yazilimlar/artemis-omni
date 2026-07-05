@@ -61,6 +61,22 @@ const standaloneLabModules = [
       "Contains a public Mapbox pk token that must remain URL-restricted before stronger public promotion.",
   },
   {
+    title: "Artemis Time Atlas: Troy",
+    eyebrow: "KML / Archaeology Engine",
+    href: "/labs/troy-time-atlas",
+    statusLabel: "Public lab",
+    statusTone: "test" as const,
+    Icon: Landmark,
+    accentIcon: MapIcon,
+    description:
+      "A KML-driven 3D Time Atlas diorama of Archaic Ilion, with evidence-graded POIs, downloadable Google Earth source data, story mode, scholar controls, animated ships, caravan life, and scroll-driven ghost eras.",
+    signals: ["Runtime KML parser", "Story mode", "Scholar view", "Scene life"],
+    commercialPath:
+      "Best pilot path: history education embeds, archaeology-tech social clips, museum/tour-guide storytelling, classroom modules, and future paid site/era packs.",
+    boundary:
+      "Evidence-graded public prototype only. Coordinates are research anchors in a compressed diorama, not a survey-grade GIS reconstruction or official archaeological map.",
+  },
+  {
     title: "George Aegean Quest",
     eyebrow: "iPhone Atlas Game",
     href: "/labs/george-aegean-quest",

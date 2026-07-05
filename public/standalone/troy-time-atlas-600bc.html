@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Artemis Time Atlas — Troy · Ilion, 600 BC (v2, KML geography)</title>
+<title>Artemis Time Atlas — Troy · Ilion, 600 BC (v2.1, KML engine)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -42,7 +42,11 @@
   #hud-top h1{font-family:var(--serif);font-size:19px;font-weight:500;letter-spacing:.04em;margin-top:2px}
   #hud-top h1 .dot{color:rgba(255,255,255,.4)}
   #hud-top .scale-note{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:rgba(255,255,255,.34);margin-top:4px;max-width:230px;line-height:1.5}
-  #kml-btn{pointer-events:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--gold);border:1px solid rgba(232,179,75,.45);background:rgba(10,8,16,.45);border-radius:999px;padding:6px 11px;text-decoration:none;backdrop-filter:blur(8px)}
+  #hud-actions{pointer-events:auto;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+  #hud-actions .row{display:flex;gap:7px;align-items:center;justify-content:flex-end}
+  .hud-btn,#kml-btn{pointer-events:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--gold);border:1px solid rgba(232,179,75,.45);background:rgba(10,8,16,.45);border-radius:999px;padding:6px 11px;text-decoration:none;backdrop-filter:blur(8px);cursor:pointer}
+  .hud-btn[aria-pressed="true"]{background:rgba(232,179,75,.18);box-shadow:0 0 18px rgba(232,179,75,.18)}
+  #kml-status{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:rgba(255,255,255,.45);max-width:190px;text-align:right;line-height:1.45}
   /* timeline rail */
   #rail{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:20px;align-items:flex-end;z-index:20}
   #rail button{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:2px}
@@ -56,6 +60,24 @@
   #chips.hidden{opacity:0;pointer-events:none}
   #chips button{flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.72);background:rgba(10,8,16,.45);backdrop-filter:blur(8px);cursor:pointer;transition:all .2s}
   #chips button .d{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35)}
+  /* story and scholar overlays */
+  #story-panel,#scholar-panel{position:absolute;left:16px;right:16px;z-index:24;margin:auto;max-width:430px;border:1px solid rgba(255,255,255,.12);background:rgba(13,11,22,.68);backdrop-filter:blur(14px);box-shadow:0 20px 70px -30px rgba(0,0,0,.85);transition:opacity .22s,transform .22s}
+  #story-panel{top:92px;border-radius:14px;padding:13px 14px;opacity:0;pointer-events:none;transform:translateY(-8px)}
+  #story-panel.open{opacity:1;pointer-events:auto;transform:none}
+  #story-panel .meta,#scholar-panel .meta{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+  #story-panel h2,#scholar-panel h2{font-family:var(--serif);font-size:20px;font-weight:500;line-height:1.15;margin-top:3px}
+  #story-panel p,#scholar-panel p{font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.74);margin-top:7px}
+  #story-panel .controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:12px}
+  #story-panel .controls button,#scholar-panel button{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.06);padding:7px 9px;cursor:pointer}
+  #story-panel .controls button.primary{border-color:rgba(232,179,75,.55);color:var(--gold);background:rgba(232,179,75,.12)}
+  #story-progress{height:3px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:11px}
+  #story-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#e8b34b,#7fd4b8);transition:width .25s}
+  #scholar-panel{top:92px;bottom:auto;border-radius:14px;padding:13px 14px;opacity:0;pointer-events:none;transform:translateY(-8px)}
+  #scholar-panel.open{opacity:1;pointer-events:auto;transform:none}
+  #scholar-panel .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  #scholar-panel .cell{border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.05);padding:9px}
+  #scholar-panel .label{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.38)}
+  #scholar-panel .value{font-family:var(--serif);font-size:17px;color:var(--gold);margin-top:2px}
   /* POI sheet */
   #sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:430px;z-index:30;background:rgba(18,16,28,.95);border:1px solid rgba(255,255,255,.12);border-bottom:none;border-radius:18px 18px 0 0;padding:10px 20px max(env(safe-area-inset-bottom),20px);backdrop-filter:blur(16px);box-shadow:0 -18px 60px -18px rgba(0,0,0,.8);transform:translateY(110%);transition:transform .32s cubic-bezier(.32,.72,.33,1)}
   #sheet.open{transform:translateY(0)}
@@ -84,6 +106,18 @@
   #loading .s{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--gold)}
   @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
   @media (prefers-reduced-motion: reduce){ #loading .k{animation:none} }
+  @media (max-width: 520px){
+    #hud-top{display:block;padding-left:10px;padding-right:8px}
+    #cartouche{max-width:212px;padding:8px 9px}
+    #cartouche .homage{font-size:9.2px;line-height:1.25}
+    #hud-top .scale-note{font-size:8px;max-width:185px}
+    #hud-actions{position:absolute;left:min(232px, calc(100vw - 154px));right:auto;top:max(env(safe-area-inset-top),14px);width:146px;align-items:stretch}
+    #hud-actions .row{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%}
+    .hud-btn,#kml-btn{font-size:9px;padding:5px 6px;text-align:center}
+    #kml-status{font-size:8px;max-width:138px}
+    #story-panel,#scholar-panel{top:174px}
+    #story-panel h2,#scholar-panel h2{font-size:18px}
+  }
 </style>
 </head>
 <body>
@@ -98,18 +132,48 @@
   <svg id="carto"></svg>
   <div id="hud-top">
     <div id="cartouche">
-      <div class="kicker">Artemis Time Atlas · Tabvla I</div>
+      <div class="kicker">Artemis Time Atlas · Tabvla I · v2.1</div>
       <h1>Troy <span class="dot">·</span> Ilion</h1>
       <div class="homage">after Eratosthenes · Piri Reis · Waldseemüller · Mercator · Ortelius</div>
-      <div class="scale-note">geography from KML — true scale at the citadel, distances compressed beyond 300&nbsp;m, heights ×5</div>
+      <div class="scale-note">runtime KML engine — true scale at the citadel, distances compressed beyond 300&nbsp;m, heights ×5</div>
     </div>
-    <a id="kml-btn" href="troy-time-atlas-600bc.kml" download>⤓ KML</a>
+    <div id="hud-actions">
+      <div class="row">
+        <button class="hud-btn" id="story-toggle" type="button" aria-pressed="false">Story</button>
+        <button class="hud-btn" id="scholar-toggle" type="button" aria-pressed="false">Scholar</button>
+        <button class="hud-btn" id="sound-toggle" type="button" aria-pressed="false">Sound</button>
+        <a id="kml-btn" href="troy-time-atlas-600bc.kml" download>KML</a>
+      </div>
+      <div id="kml-status">KML parser warming up</div>
+    </div>
   </div>
   <nav id="rail" aria-label="Timeline"></nav>
   <div id="chips" role="group" aria-label="Overlay layers"></div>
   <div id="scalebar" aria-hidden="true">
     <div class="bar"><span></span><span></span><span></span><span></span></div>
     <div class="lbl">0 · 250 · 500 m — 2.7 stadia · true at the citadel</div>
+  </div>
+  <div id="story-panel" aria-live="polite">
+    <div class="meta" id="story-meta">Story mode</div>
+    <h2 id="story-title">A ship waits for the wind</h2>
+    <p id="story-copy">Tap Story to move through the strait, river, citadel, sanctuary and ports.</p>
+    <div id="story-progress"><i></i></div>
+    <div class="controls">
+      <button type="button" id="story-prev">Prev</button>
+      <button type="button" class="primary" id="story-next">Next</button>
+      <button type="button" id="story-exit">Exit</button>
+    </div>
+  </div>
+  <div id="scholar-panel" aria-live="polite">
+    <div class="meta">Scholar view</div>
+    <h2>Evidence-grade KML atlas</h2>
+    <p>The visible diorama is compressed beyond the mound so the Troad can fit a vertical phone frame. This panel keeps the source method explicit.</p>
+    <div class="grid">
+      <div class="cell"><div class="label">Source</div><div class="value" id="sch-source">KML rev. B</div></div>
+      <div class="cell"><div class="label">POIs</div><div class="value" id="sch-pois">16</div></div>
+      <div class="cell"><div class="label">True scale</div><div class="value">300 m</div></div>
+      <div class="cell"><div class="label">Height</div><div class="value">×5</div></div>
+    </div>
   </div>
   <div id="sheet" aria-live="polite">
     <div class="grab"></div>
@@ -129,7 +193,7 @@
 <div id="loading">
   <div class="k">Artemis Time Atlas</div>
   <div class="t">Troy · Ilion</div>
-  <div class="s">Engraving the plate — 600 BC</div>
+  <div class="s">Parsing KML — engraving the plate</div>
 </div>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
@@ -170,7 +234,7 @@ const CONF = {
   probable:    { label: "Probable",    color: "#fbbf24" },
   conjectural: { label: "Conjectural", color: "#94a3b8" },
 };
-const POIS = [
+const FALLBACK_POIS = [
   { id:"citadel", name:"Citadel of Troy", lon:26.238889, lat:39.9575, layer:"citadel", conf:"attested", yOff:1.15,
     summary:"The acropolis on Hisarlık — inhabited from the Bronze Age to Rome. In 600 BC a modest settlement lives among six-century-old ruins, crowned by Athena's sanctuary.",
     evidence:"Continuous occupation layers Troy I–IX are documented on the mound; the Archaic phase is Troy VIII.",
@@ -236,11 +300,133 @@ const POIS = [
     evidence:"Chalcolithic tell stratigraphy documented by excavation; later reuse attested in surveys.",
     src:"Blegen, 1963; Korfmann surveys" },
 ];
+let POIS = FALLBACK_POIS;
 /* KML polygons / linestrings (lon,lat) */
-const WALL_RING = [[26.2375,39.9585],[26.2395,39.9588],[26.2405,39.9578],[26.2398,39.9568],[26.2380,39.9565],[26.2370,39.9570]];
-const LT_RING   = [[26.2370,39.9550],[26.2405,39.9545],[26.2430,39.9560],[26.2420,39.9580],[26.2390,39.9575]];
-const RIVER_LL  = [[26.1780,40.0080],[26.1900,39.9850],[26.1950,39.9770],[26.2000,39.9700],[26.2050,39.9650],[26.2100,39.9600],[26.2150,39.9550],[26.2200,39.9500],[26.2250,39.9450]];
-const GATES_LL  = [[26.2388,39.9567],[26.2400,39.9575]];
+const FALLBACK_WALL_RING = [[26.2375,39.9585],[26.2395,39.9588],[26.2405,39.9578],[26.2398,39.9568],[26.2380,39.9565],[26.2370,39.9570]];
+const FALLBACK_LT_RING   = [[26.2370,39.9550],[26.2405,39.9545],[26.2430,39.9560],[26.2420,39.9580],[26.2390,39.9575]];
+const FALLBACK_RIVER_LL  = [[26.1780,40.0080],[26.1900,39.9850],[26.1950,39.9770],[26.2000,39.9700],[26.2050,39.9650],[26.2100,39.9600],[26.2150,39.9550],[26.2200,39.9500],[26.2250,39.9450]];
+const FALLBACK_GATES_LL  = [[26.2388,39.9567],[26.2400,39.9575]];
+let WALL_RING = FALLBACK_WALL_RING;
+let LT_RING = FALLBACK_LT_RING;
+let RIVER_LL = FALLBACK_RIVER_LL;
+let GATES_LL = FALLBACK_GATES_LL;
+
+const KML_LAYER_BY_STYLE = {
+  citadelStyle: "citadel",
+  religiousStyle: "religion",
+  militaryStyle: "defense",
+  infrastructureStyle: "settlement",
+  naturalStyle: "natural",
+  maritimeStyle: "maritime",
+  polygonStyle: "defense",
+  lineStyle: "natural",
+};
+const KML_LAYER_BY_TYPE = {
+  altar: "religion", temple: "religion", "heroön": "religion", heroon: "religion",
+  gate: "defense", fortification: "defense", infrastructure: "defense",
+  port: "maritime", river: "natural", strait: "natural", plain: "natural",
+  tumulus: "burial", tell: "burial", settlement: "settlement", citadel: "citadel",
+};
+const FALLBACK_BY_KEY = new Map(FALLBACK_POIS.map((p) => [slugify(p.name), p]));
+const KML_INFO = { source: "fallback constants", loaded: false };
+function slugify(value) {
+  return value.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 48);
+}
+function localNodes(node, name) {
+  return Array.from(node.getElementsByTagNameNS("*", name));
+}
+function textOf(node, selector) {
+  if (selector === "Point coordinates") return textOf(localNodes(node, "Point")[0] || node, "coordinates");
+  if (selector === "LineString coordinates") return textOf(localNodes(node, "LineString")[0] || node, "coordinates");
+  if (selector === "Polygon coordinates") return textOf(localNodes(node, "Polygon")[0] || node, "coordinates");
+  return localNodes(node, selector)[0]?.textContent?.trim() || "";
+}
+function extended(node, key) {
+  for (const data of localNodes(node, "Data")) {
+    if (data.getAttribute("name") === key) return textOf(data, "value");
+  }
+  return "";
+}
+function coordsToPairs(text) {
+  return text.trim().split(/\s+/).map((item) => {
+    const [lon, lat] = item.split(",").map(Number);
+    return Number.isFinite(lon) && Number.isFinite(lat) ? [lon, lat] : null;
+  }).filter(Boolean);
+}
+function inferLayer(name, styleUrl, type) {
+  const style = styleUrl.replace("#", "");
+  const k = (type || name).toLowerCase();
+  return KML_LAYER_BY_STYLE[style] || KML_LAYER_BY_TYPE[k] || Object.entries(KML_LAYER_BY_TYPE).find(([needle]) => k.includes(needle))?.[1] || "settlement";
+}
+function matchFallback(name) {
+  const key = slugify(name);
+  if (FALLBACK_BY_KEY.has(key)) return FALLBACK_BY_KEY.get(key);
+  const words = key.split("-").filter((w) => w.length > 3 && !["with", "main", "later", "area", "northern", "harbour", "outpost"].includes(w));
+  return FALLBACK_POIS.find((p) => {
+    const pk = slugify(p.name);
+    const pWords = pk.split("-").filter((w) => w.length > 3 && w !== "the");
+    return words.some((w) => pk.includes(w)) || pWords.some((w) => key.includes(w));
+  });
+}
+async function hydrateKmlData() {
+  const status = document.getElementById("kml-status");
+  try {
+    const res = await fetch("troy-time-atlas-600bc.kml", { cache: "no-store" });
+    if (!res.ok) throw new Error(`KML HTTP ${res.status}`);
+    const xmlText = await res.text();
+    const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+    if (doc.querySelector("parsererror")) throw new Error("KML parse error");
+    const parsedPois = [];
+    const gatePairs = [];
+    for (const pm of localNodes(doc, "Placemark")) {
+      const name = textOf(pm, "name");
+      const desc = textOf(pm, "description");
+      const styleUrl = textOf(pm, "styleUrl");
+      const type = extended(pm, "type");
+      const conf = (extended(pm, "confidence") || "probable").toLowerCase();
+      const source = extended(pm, "source") || "KML source dataset";
+      const era = extended(pm, "era");
+      const layer = inferLayer(name, styleUrl, type);
+      const pointCoords = textOf(pm, "Point coordinates");
+      if (pointCoords) {
+        const pair = coordsToPairs(pointCoords)[0];
+        if (!pair) continue;
+        const fallback = matchFallback(name);
+        const poi = {
+          id: fallback?.id || slugify(name),
+          name: fallback?.name || name,
+          lon: pair[0],
+          lat: pair[1],
+          layer,
+          conf: CONF[conf] ? conf : "probable",
+          yOff: fallback?.yOff || (layer === "maritime" ? 0.58 : layer === "natural" ? 0.4 : 0.52),
+          summary: desc || fallback?.summary || "KML-generated point in the Troy Time Atlas dataset.",
+          evidence: fallback?.evidence || `Generated from KML ExtendedData: ${type || "site"} · ${era || "Archaic context"} · ${conf || "probable"} confidence.`,
+          src: source,
+        };
+        parsedPois.push(poi);
+        if ((type || name).toLowerCase().includes("gate")) gatePairs.push(pair);
+        continue;
+      }
+      const lineCoords = textOf(pm, "LineString coordinates");
+      if (lineCoords && name.toLowerCase().includes("scamander")) RIVER_LL = coordsToPairs(lineCoords);
+      const polyCoords = textOf(pm, "Polygon coordinates");
+      if (polyCoords) {
+        const ring = coordsToPairs(polyCoords);
+        if (name.toLowerCase().includes("citadel walls")) WALL_RING = ring.slice(0, -1);
+        if (name.toLowerCase().includes("lower town")) LT_RING = ring.slice(0, -1);
+      }
+    }
+    if (parsedPois.length >= 10) POIS = parsedPois;
+    if (gatePairs.length >= 2) GATES_LL = gatePairs;
+    KML_INFO.source = "runtime KML rev. B";
+    KML_INFO.loaded = true;
+    if (status) status.textContent = `Loaded ${POIS.length} POIs from runtime KML`;
+  } catch (err) {
+    console.warn("Using fallback Troy constants:", err);
+    if (status) status.textContent = "KML unavailable — using embedded fallback";
+  }
+}
 
 const ERAS = [
   { id:"e1200", year:"1200 BC", title:"City of the Late Bronze Age", status:"ghost", kicker:"Ghost era — teaser", accent:"#d98e5f", tint:"rgba(24,12,26,.55)",
@@ -255,6 +441,16 @@ const ERAS = [
   { id:"e2026", year:"2026 AD", title:"The Excavated Mound", status:"ghost", kicker:"Ghost era — teaser", accent:"#7fd4b8", tint:"rgba(6,20,22,.5)",
     summary:"Hisarlık today: trenches through nine cities, a shelter roof, the visitor ramp — and a silted plain where the bay of Troy used to be.",
     note:"Wireframe teaser only in v2 — the modern site layer is planned next." },
+];
+await hydrateKmlData();
+
+const STORY_BEATS = [
+  { poi:"hellespont", title:"A ship waits for the wind", copy:"The Hellespont is the economic engine: north winds and surface current force crews to wait, trade, repair and pay." },
+  { poi:"sigeion", title:"Sigeion controls the mouth", copy:"At the Aegean entrance, Sigeion turns delay into leverage. Around 600 BC it is contested by Athens and Mytilene." },
+  { poi:"scamander-crossing", title:"Goods cross the Scamander", copy:"The road bends through river and marsh. Timber crossing, ford and caravan traffic tie the ports to the mound." },
+  { poi:"citadel", title:"Hisarlik becomes memory infrastructure", copy:"Archaic Ilion lives on a Bronze Age ruin, using old walls, visible strata and heroic reputation as civic capital." },
+  { poi:"athena-temple", title:"Athena anchors the city", copy:"The sanctuary makes the small town larger than its footprint, drawing sacrifice, story and later imperial attention." },
+  { poi:"rhoeteion", title:"The strait has two doors", copy:"Rhoeteion watches the northeastern side of the route, completing the maritime network around the plain of Troy." },
 ];
 
 /* ================= Terrain ================= */
@@ -316,6 +512,7 @@ mount.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0xdd9a66, 40, 95);
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 2, 160);
+const animatedShips = [], smokePuffs = [], caravanUnits = [];
 
 /* golden hour */
 const sun = new THREE.DirectionalLight(0xffb46b, 2.9);
@@ -601,6 +798,8 @@ function ship(x, z, ry, sail = true) {
     const s = new THREE.Mesh(new THREE.PlaneGeometry(.58,.44), new THREE.MeshStandardMaterial({ color:"#e8dbb8", roughness:.9, side:THREE.DoubleSide }));
     s.position.set(0,.62,0); g.add(s);
   } else add(new THREE.Mesh(new THREE.CylinderGeometry(.028,.028,.6,5), lin), 0,.84,0,Math.PI/2);
+  g.userData.base = { x, z, ry, phase:animatedShips.length * 1.17, speed:sail ? 0.18 : 0.08, drift:sail ? 0.55 : 0.18 };
+  animatedShips.push(g);
   scene.add(g); return g;
 }
 function jetty(x, z, outAngle) {
@@ -643,6 +842,35 @@ function jetty(x, z, outAngle) {
       scene.add(p);
     }
   }
+}
+
+/* ---- life layer: caravan + hearth smoke ---- */
+{
+  const route = [[SIG[0]+.2,SIG[1]+.4],[-12.2,3.5],[-7.2,4.5],geo(26.2050,39.9650),[1.1,.5]];
+  const body = mat("#8b6544", "settlement", .92), cloth = mat("#d2bd89", "settlement", .88);
+  for (let i = 0; i < 4; i++) {
+    const g = new THREE.Group();
+    g.userData = { route, offset:i * 0.055, phase:i * 0.8 };
+    const ox = i * -0.22;
+    const cart = new THREE.Mesh(new THREE.BoxGeometry(.22,.16,.32), body);
+    cart.position.set(ox,.18,0); cart.castShadow = true; g.add(cart);
+    const cover = new THREE.Mesh(new THREE.ConeGeometry(.18,.18,4), cloth);
+    cover.position.set(ox,.36,0); cover.rotation.y = Math.PI/4; cover.castShadow = true; g.add(cover);
+    scene.add(g); caravanUnits.push(g);
+  }
+  const cv = document.createElement("canvas"); cv.width = cv.height = 96;
+  const ctx = cv.getContext("2d"), gr = ctx.createRadialGradient(48,48,2,48,48,48);
+  gr.addColorStop(0,"rgba(245,230,205,.34)"); gr.addColorStop(.45,"rgba(160,145,130,.18)"); gr.addColorStop(1,"rgba(100,90,85,0)");
+  ctx.fillStyle = gr; ctx.fillRect(0,0,96,96);
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+  const smokeSpots = [[0.4,0.2],[-0.75,1.1],[1.25,1.6],[SIG[0]+.45,SIG[1]+.25],[RHOET[0]-.15,RHOET[1]+.2]];
+  smokeSpots.forEach(([x,z], i) => {
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tx, transparent:true, depthWrite:false, opacity:.34, fog:true }));
+    sp.position.set(x, heightAt(x,z)+.8, z);
+    sp.scale.set(.55,.75,1);
+    sp.userData = { x, z, baseY:sp.position.y, phase:i * 1.8 };
+    smokePuffs.push(sp); scene.add(sp);
+  });
 }
 
 /* ---- farms along the river + trees ---- */
@@ -842,7 +1070,35 @@ function buildCarto() {
 
 /* ================= UI ================= */
 const $ = (s) => document.querySelector(s);
-const state = { era: 1, eraF: 1, layers: new Set(), selected: null, parX: 0, parY: 0, reduced: matchMedia("(prefers-reduced-motion: reduce)").matches };
+const state = { era: 1, eraF: 1, layers: new Set(), selected: null, story: false, storyIndex: 0, focusId: null, scholar: false, sound: false, parX: 0, parY: 0, reduced: matchMedia("(prefers-reduced-motion: reduce)").matches };
+$("#sch-source").textContent = KML_INFO.source;
+$("#sch-pois").textContent = String(POIS.length);
+const poiById = new Map(POIS.map((p) => [p.id, p]));
+function getPoi(id) {
+  return poiById.get(id) || POIS.find((p) => slugify(p.name).includes(id) || id.includes(p.id));
+}
+function setStoryBeat(index) {
+  state.storyIndex = (index + STORY_BEATS.length) % STORY_BEATS.length;
+  const beat = STORY_BEATS[state.storyIndex], poi = getPoi(beat.poi);
+  state.focusId = poi?.id || null;
+  $("#story-meta").textContent = `Story ${state.storyIndex + 1} / ${STORY_BEATS.length}`;
+  $("#story-title").textContent = beat.title;
+  $("#story-copy").textContent = beat.copy;
+  $("#story-progress i").style.width = `${((state.storyIndex + 1) / STORY_BEATS.length) * 100}%`;
+  if (poi) openSheet(poi);
+}
+function setStoryMode(on) {
+  state.story = on;
+  $("#story-toggle").setAttribute("aria-pressed", on);
+  $("#story-panel").classList.toggle("open", on);
+  if (on) {
+    scrollTo({ top: innerHeight, behavior: "smooth" });
+    setStoryBeat(state.storyIndex);
+  } else {
+    state.focusId = null;
+    closeSheet();
+  }
+}
 
 /* sections + rail + chips */
 const secWrap = $("#sections");
@@ -884,6 +1140,36 @@ chips.addEventListener("click", (ev) => {
   b.style.background = on ? l.color + "26" : "rgba(10,8,16,.45)";
   b.querySelector(".d").style.background = on ? l.color : "rgba(255,255,255,.35)";
   for (const k in layerGroups) for (const m of layerGroups[k]) m.emissiveIntensity = state.layers.has(k) ? 0.45 : 0;
+});
+$("#story-toggle").addEventListener("click", () => setStoryMode(!state.story));
+$("#story-prev").addEventListener("click", () => setStoryBeat(state.storyIndex - 1));
+$("#story-next").addEventListener("click", () => setStoryBeat(state.storyIndex + 1));
+$("#story-exit").addEventListener("click", () => setStoryMode(false));
+$("#scholar-toggle").addEventListener("click", () => {
+  state.scholar = !state.scholar;
+  $("#scholar-toggle").setAttribute("aria-pressed", state.scholar);
+  $("#scholar-panel").classList.toggle("open", state.scholar);
+});
+let audioCtx = null, audioGain = null;
+function ensureAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  audioGain = audioCtx.createGain(); audioGain.gain.value = 0.035; audioGain.connect(audioCtx.destination);
+  const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length * .18);
+  const noise = audioCtx.createBufferSource(); noise.buffer = noiseBuffer; noise.loop = true;
+  const filter = audioCtx.createBiquadFilter(); filter.type = "lowpass"; filter.frequency.value = 720;
+  noise.connect(filter).connect(audioGain); noise.start();
+  const lyre = audioCtx.createOscillator(); lyre.type = "sine"; lyre.frequency.value = 196;
+  const lyreGain = audioCtx.createGain(); lyreGain.gain.value = 0.006;
+  lyre.connect(lyreGain).connect(audioGain); lyre.start();
+}
+$("#sound-toggle").addEventListener("click", async () => {
+  ensureAudio();
+  state.sound = !state.sound;
+  $("#sound-toggle").setAttribute("aria-pressed", state.sound);
+  if (state.sound) await audioCtx.resume(); else await audioCtx.suspend();
 });
 
 /* sheet */
@@ -927,7 +1213,7 @@ function onScroll() {
   const p = Math.min(1, Math.max(0, scrollY / (innerHeight * (ERAS.length - 1))));
   state.eraF = p * (ERAS.length - 1);
   const era = Math.round(state.eraF);
-  if (era !== state.era) { state.era = era; syncRail(); closeSheet(); }
+  if (era !== state.era) { state.era = era; syncRail(); if (!state.story) closeSheet(); }
   const i = Math.min(ERAS.length - 2, Math.floor(state.eraF)), t = state.eraF - i;
   const a = tints[i], b = tints[i + 1];
   tintEl.style.backgroundColor = `rgba(${Math.round(a[0]+(b[0]-a[0])*t)},${Math.round(a[1]+(b[1]-a[1])*t)},${Math.round(a[2]+(b[2]-a[2])*t)},${(a[3]+(b[3]-a[3])*t).toFixed(3)})`;
@@ -973,7 +1259,24 @@ renderer.domElement.addEventListener("pointermove", (e) => {
 /* ================= camera + frame loop ================= */
 const BASE_TARGET = new THREE.Vector3(-1.9, 0.7, -0.55), OFFSET = new THREE.Vector3(26, 24, 26);
 const RIGHT = new THREE.Vector3(1, 0, -1).normalize();
-const pan = new THREE.Vector3(), want = new THREE.Vector3(), tmp = new THREE.Vector3();
+const pan = new THREE.Vector3(), want = new THREE.Vector3(), tmp = new THREE.Vector3(), focusTarget = BASE_TARGET.clone(), desiredFocus = BASE_TARGET.clone();
+function routePoint(route, t) {
+  const lens = [];
+  let total = 0;
+  for (let i = 0; i < route.length - 1; i++) {
+    const d = Math.hypot(route[i+1][0]-route[i][0], route[i+1][1]-route[i][1]);
+    lens.push(d); total += d;
+  }
+  let dist = (t % 1) * total;
+  for (let i = 0; i < lens.length; i++) {
+    if (dist > lens[i]) { dist -= lens[i]; continue; }
+    const local = lens[i] ? dist / lens[i] : 0;
+    const [ax,az] = route[i], [bx,bz] = route[i+1];
+    return { x: ax+(bx-ax)*local, z: az+(bz-az)*local, heading: Math.atan2(bx-ax, bz-az) };
+  }
+  const [x,z] = route[route.length-1];
+  return { x, z, heading:0 };
+}
 function resize() {
   const w = mount.clientWidth, h = mount.clientHeight;
   renderer.setSize(w, h);
@@ -993,8 +1296,35 @@ renderer.setAnimationLoop(() => {
   else want.copy(RIGHT).multiplyScalar(Math.sin(t * 0.07) * 1.2 + state.parX * 0.9)
            .add(tmp.set(0, Math.sin(t * 0.05) * 0.4 - state.parY * 0.6, 0));
   pan.set(damp(pan.x, want.x, 2.2, dt), damp(pan.y, want.y, 2.2, dt), damp(pan.z, want.z, 2.2, dt));
-  camera.position.copy(BASE_TARGET).add(OFFSET).add(pan);
-  camera.lookAt(tmp.copy(BASE_TARGET).add(pan));
+  const focusPoi = state.focusId ? getPoi(state.focusId) : null;
+  if (focusPoi) {
+    const [fx,fz] = geo(focusPoi.lon, focusPoi.lat);
+    desiredFocus.set(fx * 0.42 + BASE_TARGET.x * 0.58, groundY(fx,fz) + 0.7, fz * 0.42 + BASE_TARGET.z * 0.58);
+  } else desiredFocus.copy(BASE_TARGET);
+  focusTarget.set(damp(focusTarget.x, desiredFocus.x, 1.8, dt), damp(focusTarget.y, desiredFocus.y, 1.8, dt), damp(focusTarget.z, desiredFocus.z, 1.8, dt));
+  camera.position.copy(focusTarget).add(OFFSET).add(pan);
+  camera.lookAt(tmp.copy(focusTarget).add(pan));
+
+  animatedShips.forEach((g) => {
+    const b = g.userData.base, drift = Math.sin(t * b.speed + b.phase) * b.drift;
+    g.position.x = b.x + Math.cos(b.ry + Math.PI/2) * drift;
+    g.position.z = b.z + Math.sin(b.ry + Math.PI/2) * drift;
+    g.position.y = Math.sin(t * 1.2 + b.phase) * 0.035;
+    g.rotation.y = b.ry + Math.sin(t * .35 + b.phase) * .045;
+  });
+  caravanUnits.forEach((g) => {
+    const p = routePoint(g.userData.route, (t * 0.012 + g.userData.offset) % 1);
+    g.position.set(p.x, groundY(p.x,p.z)+0.08+Math.sin(t*3+g.userData.phase)*0.015, p.z);
+    g.rotation.y = p.heading + Math.PI/2;
+  });
+  smokePuffs.forEach((sp) => {
+    const p = sp.userData;
+    const rise = (t * .12 + p.phase) % 1;
+    sp.position.set(p.x + Math.sin(t*.35+p.phase)*.08, p.baseY + rise*.7, p.z + Math.cos(t*.31+p.phase)*.05);
+    const s = .45 + rise*.55;
+    sp.scale.set(s, s*1.25, 1);
+    sp.material.opacity = .3 * (1-rise);
+  });
 
   const eraW = Math.max(0, 1 - Math.abs(state.eraF - 1));         // marker presence at 600 BC
   markers.forEach((g) => {

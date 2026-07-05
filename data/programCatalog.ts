@@ -95,6 +95,31 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Contains a public browser Mapbox pk token. Public pk tokens are not secrets, but they must be URL-restricted to approved domains and never replaced with an sk secret token.",
   },
   {
+    slug: "troy-time-atlas-kml-engine",
+    title: "Artemis Time Atlas: Troy",
+    kind: "Showcase",
+    statusLabel: "Public lab",
+    statusTone: "test",
+    sourceType: "KML-driven standalone Time Atlas engine",
+    summary:
+      "A scroll-guided 3D archaeology-tech lab for Archaic Ilion that now loads its KML source at runtime, exposes evidence-graded POIs, adds story and scholar modes, animates ships/caravan/smoke, and publishes the Google Earth source file alongside the public page.",
+    bestPublicLink: {
+      href: "/labs/troy-time-atlas",
+      label: "Artemis Time Atlas: Troy",
+    },
+    tutorialUse:
+      "Use as the repeatable Time Atlas pattern for KML-authored historical sites, evidence cards, story clips, classroom embeds, and future multi-era cultural geography modules.",
+    solutionFit:
+      "Creates a content and revenue path for archaeology-tech education, museum/tour-guide storytelling, SEO pages, social clip series, and paid site/era packs.",
+    migrationPath: [
+      "Keep the standalone KML engine public while validating story mode, scholar controls, phone performance, and classroom/social framing.",
+      "Author Roman Ilium or a second site as the next KML dataset to prove the engine repeats beyond a single demo.",
+      "Split the standalone file into a Vite module set before adding multiple sites, GLB assets, or user progress storage.",
+    ],
+    boundary:
+      "Evidence-graded prototype only. The map is a compressed interpretive diorama using KML anchors, not a survey-grade GIS model, official archaeology publication, or navigation product.",
+  },
+  {
     slug: "george-aegean-quest",
     title: "George Aegean Quest",
     kind: "Showcase",
