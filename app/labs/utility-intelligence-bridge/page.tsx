@@ -20,9 +20,9 @@ export const metadata = createMetadata({
 });
 
 const relatedProofs = getProofModules([
+  "utility-dual-story-cockpit",
+  "utility-field-claims-command-workbench",
   "forecast-exposure-control-center",
-  "artemis-workbench-shell",
-  "system-graphics-library",
 ]);
 
 export default function UtilityIntelligenceBridgePage() {
@@ -38,6 +38,12 @@ export default function UtilityIntelligenceBridgePage() {
           <StatusBadge tone="private">Private demo protected</StatusBadge>
           <Button href="/library/programs" variant="outline">
             Program Index
+          </Button>
+          <Button href="/labs/utility-intelligence-bridge/field-claims" variant="outline">
+            Field Claims Workbench
+          </Button>
+          <Button href="/labs/utility-intelligence-bridge/dual-story" variant="outline">
+            RC8.4 Dual Story
           </Button>
           <Button href="/contact" variant="outline">
             Request a Pilot
@@ -82,6 +88,11 @@ export default function UtilityIntelligenceBridgePage() {
             eyebrow="Live Dashboard Treatment"
             title="Utility intelligence should feel like a field-to-finance control room"
             description="The animated dashboard is a public-safe visual translation of the private-demo ambition: production pulse, commercial exposure, and review confidence without releasing raw workbench code."
+            actions={
+              <Button href="/labs/utility-intelligence-bridge/dual-story" variant="outline">
+                Open RC8.4 Dual Story
+              </Button>
+            }
           />
           <div className="mt-10">
             <LiveDashboardCard

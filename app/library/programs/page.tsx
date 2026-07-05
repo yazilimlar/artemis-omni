@@ -19,6 +19,12 @@ export const metadata = createMetadata({
 
 const fastLinks = [
   {
+    title: "CivicBid Bridge",
+    href: "/labs/civicbid-intelligence-bridge",
+    description:
+      "RC1 public-safe procurement cockpit for opportunity radar, solicitation joins, compliance review, and pursuit action.",
+  },
+  {
     title: "ArtemisIX19",
     href: "/labs/artemisix19",
     description: "Autonomous prompt/media generator for the protected Artemis reference set.",
@@ -37,6 +43,18 @@ const fastLinks = [
     title: "George Aegean Quest",
     href: "/labs/george-aegean-quest",
     description: "iPhone-first Atlas game with George and a default 17-stop Aegean route.",
+  },
+  {
+    title: "Utility Dual Story",
+    href: "/labs/utility-intelligence-bridge/dual-story",
+    description:
+      "RC8.4 dual-story utility cockpit with Field Claims proof and Cockpit Classic narrative.",
+  },
+  {
+    title: "Utility Field Claims",
+    href: "/labs/utility-intelligence-bridge/field-claims",
+    description:
+      "Synthetic live rebuild of the RC8.3 utility contractor field-to-cash command workbench.",
   },
   {
     title: "Utility Intelligence Bridge",
@@ -224,11 +242,11 @@ export default function ProgramsCatalogPage() {
               then private pilot migration with approved data.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
-              <Button href="/labs/utility-intelligence-bridge" size="lg">
-                Start with Utility Bridge
+              <Button href="/labs/civicbid-intelligence-bridge" size="lg">
+                Start with CivicBid
               </Button>
-              <Button href="/labs/diana-moonshot" variant="outline" size="lg">
-                Open Diana Experience
+              <Button href="/labs/utility-intelligence-bridge/dual-story" variant="outline" size="lg">
+                Compare Utility Execution
               </Button>
             </div>
           </div>

@@ -270,26 +270,76 @@ export const programCatalogItems: ProgramCatalogItem[] = [
       "Public pages should describe the system pattern without agency names, project identifiers, source HTML, or private formulas.",
   },
   {
+    slug: "utility-bridge-dual-story-cockpit",
+    title: "Utility Dual Story Cockpit RC8.4",
+    kind: "Showcase",
+    statusLabel: "Public-safe rebuild live",
+    statusTone: "synthetic",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Dual-story utility contractor cockpit now represented by a sanitized native Artemis route: Field Claims operational proof plus Cockpit Classic Section & Spine narrative.",
+    bestPublicLink: {
+      href: "/labs/utility-intelligence-bridge/dual-story",
+      label: "Dual Story Cockpit",
+    },
+    tutorialUse:
+      "Use as the executive demo path when the room needs both the field-to-cash proof and the polished Cockpit Classic story before discussing a private pilot.",
+    solutionFit:
+      "Strengthens the Utility Intelligence Bridge package by making the RC8.3 to RC8.4 progression visible and comparable on the public website.",
+    migrationPath: [
+      "Keep the raw RC8.4 HTML and exact source context private.",
+      "Publish only the dual-story structure, generic section-and-spine language, and deterministic sample workbench.",
+      "Use approved source systems and review gates before any private pilot write-back.",
+    ],
+    boundary:
+      "Do not publish raw HTML, exact GIS context, coordinates, agency/project names, protected formulas, source records, or payment/certification logic.",
+  },
+  {
+    slug: "civicbid-intelligence-bridge",
+    title: "CivicBid Intelligence Bridge RC1",
+    kind: "Showcase",
+    statusLabel: "Public-safe rebuild live",
+    statusTone: "synthetic",
+    sourceType: "Attached local HTML reference",
+    summary:
+      "Civic procurement cockpit now represented by a sanitized native Artemis route: public award/status market terrain, solicitation join strategy, compliance copilot, lifecycle watch, and executive pursuit review.",
+    bestPublicLink: {
+      href: "/labs/civicbid-intelligence-bridge",
+      label: "CivicBid Bridge",
+    },
+    tutorialUse:
+      "Use as the public contractor-pursuit training path for explaining how award/status data must be joined with due dates, addenda, plan/spec files, requirements, and human review before it becomes bid action.",
+    solutionFit:
+      "Extends Artemis earlier in the contractor lifecycle: opportunity radar and pursuit controls before Utility Bridge handles field-to-cash execution after award.",
+    migrationPath: [
+      "Keep the raw RC1 HTML and embedded contract payload private.",
+      "Publish only representative scoring, generalized pursuit modes, and boundary-checked product modules.",
+      "Join approved live solicitation, addenda, document, and compliance sources before any private bid-room pilot.",
+    ],
+    boundary:
+      "Do not publish raw HTML, embedded record tables, vendor names, contract IDs, EPINs, exact monetary ledger values, source paths, or live procurement decisions.",
+  },
+  {
     slug: "utility-bridge-field-claims-cockpit",
     title: "Utility Field Claims + Actuals Cockpit",
     kind: "Program",
-    statusLabel: "Private reference",
-    statusTone: "private",
+    statusLabel: "Public-safe rebuild live",
+    statusTone: "synthetic",
     sourceType: "Attached local HTML reference",
     summary:
-      "Advanced dual-story cockpit concept for field status, actuals, claim posture, GIS-style presentation, and executive controls.",
+      "Advanced field-to-cash cockpit concept now represented by a sanitized native Artemis route for utility contractors: field status, actuals, claim posture, payment lag, cashflow exposure, and executive controls.",
     bestPublicLink: {
-      href: "/labs/utility-intelligence-bridge",
-      label: "Utility Intelligence Bridge",
+      href: "/labs/utility-intelligence-bridge/field-claims",
+      label: "Field Claims Workbench",
     },
     tutorialUse:
-      "Useful as a source for future training around claims, actuals, field evidence, and review discipline.",
+      "Useful as the primary contractor training path around claims, actuals, field evidence, payment lag, source custody, and review discipline.",
     solutionFit:
-      "Defines the deeper private pilot direction after the public Utility Intelligence Bridge narrative is accepted.",
+      "Defines the deeper private pilot direction after the public Utility Intelligence Bridge narrative is accepted, while giving the public site a synthetic live proof.",
     migrationPath: [
       "Separate public story, private pilot logic, and raw demonstration code.",
       "Sanitize field/claim language and replace program-specific content.",
-      "Promote only generic operating patterns to the website.",
+      "Promote only generic operating patterns and deterministic sample records to the website.",
     ],
     boundary:
       "Do not publish raw GIS, actuals, claims logic, project naming, or source HTML. Use only public-safe narrative and synthetic examples.",
@@ -549,7 +599,10 @@ export const programCatalogItems: ProgramCatalogItem[] = [
 export const programCatalogSummary = {
   liveRoute: "/library/programs",
   publicDestinations: [
+    "/labs/civicbid-intelligence-bridge",
     "/labs/utility-intelligence-bridge",
+    "/labs/utility-intelligence-bridge/dual-story",
+    "/labs/utility-intelligence-bridge/field-claims",
     "/labs/diana-moonshot",
     "/labs/construction-intelligence-workbench",
     "/labs/tax-architecture-2026",

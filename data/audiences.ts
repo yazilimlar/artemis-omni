@@ -44,25 +44,25 @@ export const audiences: AudiencePage[] = [
   {
     slug: "contractors",
     label: "Contractors",
-    headline: "Turn field production into a cash-aware project controls system.",
+    headline: "Turn utility field production into a cash-aware project controls system.",
     summary:
-      "Artemis helps contractors connect estimates, field progress, actual cost, change exposure, and billing so executives can see where projects are moving before month-end reporting catches up.",
+      "Artemis helps utility and heavy-civil contractors connect estimates, field progress, actual cost, change exposure, claims, payment lag, and cashflow so executives can see where projects are moving before month-end reporting catches up.",
     painPoints: [
       "Forecasts lag the field and arrive after corrective action gets expensive.",
-      "Production, cost, and billing data live in separate tools and spreadsheets.",
+      "Production, cost, claim, approval, retainage, and payment data live in separate tools and spreadsheets.",
       "PM judgment is valuable but hard to compare against actuals and system-generated projections.",
     ],
     connects: [
       "Bid estimate and schedule baseline",
       "Field production and installed quantities",
-      "Actual cost, billing revenue, and change exposure",
+      "Actual cost, claim approval, retainage, payment lag, and change exposure",
       "PM forecast, system projections, and executive action logs",
     ],
     pathway: implementationPathway,
     proofModuleSlugs: [
-      "utility-intelligence-bridge",
-      "forecast-exposure-control-center",
-      "artemis-workbench-shell",
+      "civicbid-intelligence-bridge",
+      "utility-dual-story-cockpit",
+      "utility-field-claims-command-workbench",
     ],
     outcomes: [
       "Earlier visibility into margin and cashflow movement.",

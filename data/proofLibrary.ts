@@ -92,6 +92,87 @@ export const proofModules: ProofModule[] = [
       "This public page is narrative only. Real program workbenches stay private until rebuilt with synthetic or approved data.",
   },
   {
+    slug: "civicbid-intelligence-bridge",
+    title: "CivicBid Intelligence Bridge",
+    eyebrow: "Procurement radar",
+    href: "/labs/civicbid-intelligence-bridge",
+    statusLabel: "Synthetic live",
+    statusTone: "synthetic",
+    summary:
+      "A public-safe RC1 rebuild that turns public procurement award/status fragments into contractor opportunity radar, solicitation joins, compliance review, lifecycle watch, and executive pursuit action.",
+    decision:
+      "Which agencies, bid windows, requirements, partners, and lifecycle signals deserve contractor pursuit action this week?",
+    signals: [
+      "Public award/status reference",
+      "Solicitation join",
+      "Addenda and plan/spec custody",
+      "Compliance checklist",
+      "Subcontractor and supplier map",
+      "Executive watchlist",
+    ],
+    outcomes: [
+      "Earlier pursuit targeting",
+      "Cleaner bid-room review",
+      "A safe bridge from public market intelligence to private contractor pilots",
+    ],
+    boundary:
+      "The live page is a sanitized native rebuild. Raw RC1 HTML, embedded record payloads, vendor names, contract IDs, EPINs, row-level amounts, and live procurement decisions remain unpublished.",
+  },
+  {
+    slug: "utility-field-claims-command-workbench",
+    title: "Utility Field Claims Command Workbench",
+    eyebrow: "Contractor controls",
+    href: "/labs/utility-intelligence-bridge/field-claims",
+    statusLabel: "Synthetic live",
+    statusTone: "synthetic",
+    summary:
+      "A public-safe RC8.3 rebuild for utility contractors: one source model feeding quantity, cost code, schedule, actuals, claims, payment lag, cashflow exposure, and executive action.",
+    decision:
+      "Which bottleneck matters now: production, cost, schedule, claim approval, retainage, payment timing, or stale field data?",
+    signals: [
+      "Synthetic utility corridor",
+      "Field completion records",
+      "Actual cost records",
+      "Claim and payment records",
+      "Reconciliation checks",
+      "Executive action register",
+    ],
+    outcomes: [
+      "Clearer field-to-cash traceability",
+      "Faster contractor executive review",
+      "A safer bridge from public demo to private pilot",
+    ],
+    boundary:
+      "The live page is a sanitized native rebuild with deterministic sample records. It does not publish raw RC8.3 HTML, private GIS context, agency identifiers, protected formulas, or live system write-back.",
+  },
+  {
+    slug: "utility-dual-story-cockpit",
+    title: "Utility Dual Story Cockpit",
+    eyebrow: "RC8.4 progression",
+    href: "/labs/utility-intelligence-bridge/dual-story",
+    statusLabel: "Synthetic live",
+    statusTone: "synthetic",
+    summary:
+      "A public-safe RC8.4 route for utility contractors with two guided narratives: Field Claims operational proof and Cockpit Classic Section & Spine.",
+    decision:
+      "Does the room need the operational field-to-cash proof, the executive Cockpit Classic story, or both before approving a private pilot?",
+    signals: [
+      "Dual-story selector",
+      "Section & Spine narrative",
+      "Field claims proof",
+      "Live scenario cockpit",
+      "Launch bay",
+      "Publication QA checks",
+    ],
+    outcomes: [
+      "Cleaner comparison from RC8.3 to RC8.4",
+      "A stronger executive entry point for utility contractors",
+      "Public-safe story without exposing raw source material",
+    ],
+    boundary:
+      "The public page is a native sanitized rebuild. Raw RC8.4 HTML, exact corridor/GIS context, agency/project identifiers, protected formulas, and private records remain unpublished.",
+  },
+  {
     slug: "forecast-exposure-control-center",
     title: "Forecast Exposure Control Center",
     eyebrow: "Executive controls",
@@ -279,10 +360,10 @@ export const proofModules: ProofModule[] = [
 ];
 
 export const homepageProofSlugs = [
-  "utility-intelligence-bridge",
+  "civicbid-intelligence-bridge",
+  "utility-dual-story-cockpit",
+  "utility-field-claims-command-workbench",
   "forecast-exposure-control-center",
-  "geodesic-intelligence-workbench",
-  "artemis-workbench-shell",
 ];
 
 export function getProofModule(slug: string) {

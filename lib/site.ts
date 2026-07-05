@@ -19,6 +19,7 @@ export const siteConfig = {
   creator: "Artemis Omni",
   links: {
     contact: "/contact",
+    pilotEmail: "hello@agoraxai.com",
   },
 } as const;
 

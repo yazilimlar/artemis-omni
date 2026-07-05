@@ -84,8 +84,8 @@ export default function HomePage() {
               <Button href="/labs" variant="outline" size="lg">
                 Explore Proof Library
               </Button>
-              <Button href="/for/executives" variant="ghost" size="lg">
-                Audience Pathways
+              <Button href="/labs/civicbid-intelligence-bridge" variant="ghost" size="lg">
+                CivicBid Demo
               </Button>
             </div>
           </div>
@@ -245,8 +245,8 @@ export default function HomePage() {
               <Button href="/contact" size="lg">
                 Request a Pilot
               </Button>
-              <Button href="/labs/utility-intelligence-bridge" variant="outline" size="lg">
-                View Utility Proof
+              <Button href="/labs/utility-intelligence-bridge/dual-story" variant="outline" size="lg">
+                View RC8.4 Utility Demo
               </Button>
             </div>
           </div>
