@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <name>Artemis Atlas — King's Highway v0 (Aegean Corridor, c. 150 AD)</name>
+    <description>
+      Source dataset for the King's Highway mutant of the Artemis Atlas: five stations of the
+      great road-and-sea corridor of western Asia Minor — Smyrna, Ephesus, Didyma,
+      Halicarnassus, Patara — with their monuments, harbours and landscape, c. 150 AD.
+      "King's Highway" honours the royal roads of Anatolia: the Persian Royal Road of
+      Herodotus 5.52 and the Lycian road network monumentalized in the Stadiasmus
+      Patarensis. The companion app renders this dataset as a ribbon itinerary in the
+      tradition of the Tabula Peutingeriana — scale varies along the road by design.
+    </description>
+    <atom:author><atom:name>Artemis Time Atlas Team</atom:name></atom:author>
+
+    <Folder>
+      <name>1. Stations of the Highway</name>
+      <Placemark><name>Smyrna (İzmir)</name>
+        <description>Station I, Ionia. "The ornament of Asia" — reborn on the slopes of Pagos after Alexander, one of the claimed birthplaces of Homer. Great agora, closed harbour, and the road south.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>City</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Strabo 14.1.37; agora excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.1384,38.4192,10</coordinates></Point></Placemark>
+      <Placemark><name>Ephesus (Selçuk)</name>
+        <description>Station II, Ionia. Capital of Roman Asia and its largest emporium; the Artemision, the Great Theatre, and the Library of Celsus.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>City</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Strabo 14.1.24; Austrian excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.3417,37.9411,15</coordinates></Point></Placemark>
+      <Placemark><name>Didyma (Didim)</name>
+        <description>Station III, Ionia/Caria border. The colossal oracle-temple of Apollo Didymaios, linked to Miletus by the Sacred Way.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>Sanctuary</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Strabo 14.1.5; German excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.2565,37.3851,30</coordinates></Point></Placemark>
+      <Placemark><name>Halicarnassus (Bodrum)</name>
+        <description>Station IV, Caria. Birthplace of Herodotus; the Mausoleum of Maussollos — a wonder of the world — still stands whole above the round harbour.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>City</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Vitruvius 2.8.10; Herodotus 1.1</value></Data></ExtendedData>
+        <Point><coordinates>27.4241,37.0379,10</coordinates></Point></Placemark>
+      <Placemark><name>Patara (Gelemiş)</name>
+        <description>Station V, Lycia. Great harbour of the Lycian League between sea, dunes and stone; lighthouse of Nero, Hadrianic granary, and the Stadiasmus road monument.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>City</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Stadiasmus Patarensis; Turkish excavations</value></Data></ExtendedData>
+        <Point><coordinates>29.3167,36.2645,5</coordinates></Point></Placemark>
+    </Folder>
+
+    <Folder>
+      <name>2. Road &amp; Milestones</name>
+      <Placemark><name>Stadiasmus Patarensis</name>
+        <description>The road monument of Claudius at Patara (45/46 AD): a monumental pillar listing the roads and distances of Lycia — effectively the oldest surviving road itinerary in stone.</description>
+        <ExtendedData><Data name="era"><value>45/46 AD onward</value></Data><Data name="type"><value>Road monument</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>SEG 44-1205; Şahin &amp; Adak, 2007</value></Data></ExtendedData>
+        <Point><coordinates>29.3177,36.2665,6</coordinates></Point></Placemark>
+      <Placemark><name>Curetes Street</name>
+        <description>The marble spine of Ephesus, descending between honorific columns from the upper city to the Library plaza.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>Street</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Ephesus excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.3420,37.9390,20</coordinates></Point></Placemark>
+      <Placemark><name>Maeander Crossing (Magnesia)</name>
+        <description>Where the southern road crosses the winding Maeander — the river that gave every meander its name.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>Crossing</value></Data><Data name="confidence"><value>probable</value></Data><Data name="source"><value>Roman road network of Asia; Strabo 12.8.15</value></Data></ExtendedData>
+        <Point><coordinates>27.5000,37.8600,20</coordinates></Point></Placemark>
+      <Placemark><name>Miletus &amp; the Sacred Way</name>
+        <description>From Miletus the paved Sacred Way runs to Didyma, lined with archaic statues — pilgrims' miles before the oracle.</description>
+        <ExtendedData><Data name="era"><value>Archaic–Roman</value></Data><Data name="type"><value>Sacred road</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Milet excavations; Herodotus 1.157</value></Data></ExtendedData>
+        <Point><coordinates>27.2764,37.5305,10</coordinates></Point></Placemark>
+      <Placemark><name>The King's Highway (route)</name>
+        <description>The corridor Smyrna–Ephesus–Didyma–Halicarnassus–Patara, by road and coastal water. Named for the royal roads of Anatolia (Herodotus 5.52; Stadiasmus).</description>
+        <ExtendedData><Data name="era"><value>Persian–Roman</value></Data><Data name="type"><value>Route</value></Data><Data name="confidence"><value>probable</value></Data><Data name="source"><value>Itinerary reconstruction</value></Data></ExtendedData>
+        <LineString><tessellate>1</tessellate><coordinates>
+          27.1384,38.4192,0 27.25,38.20,0 27.3417,37.9411,0 27.50,37.86,0
+          27.2764,37.5305,0 27.2565,37.3851,0 27.4241,37.0379,0
+          28.30,36.55,0 29.3167,36.2645,0
+        </coordinates></LineString></Placemark>
+    </Folder>
+
+    <Folder>
+      <name>3. Religion &amp; Oracles</name>
+      <Placemark><name>Temple of Artemis (Artemision)</name>
+        <description>The wonder of Ephesus — the great marble house of Artemis, rebuilt after Herostratos, four times the Parthenon's platform.</description>
+        <ExtendedData><Data name="era"><value>Rebuilt from 323 BC</value></Data><Data name="type"><value>Temple / Wonder</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Antipater of Sidon; Wood/Hogarth excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.3639,37.9497,10</coordinates></Point></Placemark>
+      <Placemark><name>Temple of Apollo Didymaios</name>
+        <description>The colossal double-colonnaded oracle temple — never finished, always speaking. Its inner court held the sacred spring and laurel.</description>
+        <ExtendedData><Data name="era"><value>From 313 BC, in use Roman</value></Data><Data name="type"><value>Temple / Oracle</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Strabo 14.1.5; Didyma excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.2565,37.3851,30</coordinates></Point></Placemark>
+      <Placemark><name>Oracle of Apollo at Patara</name>
+        <description>Lycian seat of Apollo's winter oracle — "Patareus" — active in the cold months when Delos fell silent, say the poets.</description>
+        <ExtendedData><Data name="era"><value>Classical–Roman</value></Data><Data name="type"><value>Oracle</value></Data><Data name="confidence"><value>probable</value></Data><Data name="source"><value>Herodotus 1.182; Horace Od. 3.4.64</value></Data></ExtendedData>
+        <Point><coordinates>29.3175,36.2648,6</coordinates></Point></Placemark>
+      <Placemark><name>Spring of Meles (Homer's stream)</name>
+        <description>The stream by Smyrna where tradition places Homer's birth — "Melesigenes", child of the Meles.</description>
+        <ExtendedData><Data name="era"><value>Legendary</value></Data><Data name="type"><value>Sacred spring</value></Data><Data name="confidence"><value>conjectural</value></Data><Data name="source"><value>Ps.-Herodotus, Life of Homer; Pausanias 7.5.12</value></Data></ExtendedData>
+        <Point><coordinates>27.1600,38.4200,15</coordinates></Point></Placemark>
+      <Placemark><name>Lycian Necropolis of Patara</name>
+        <description>House-tombs and sarcophagi with ogival lids on the ridges above the city — the stone ancestors watching the harbour.</description>
+        <ExtendedData><Data name="era"><value>Lycian–Roman</value></Data><Data name="type"><value>Necropolis</value></Data><Data name="confidence"><value>probable</value></Data><Data name="source"><value>Patara excavations</value></Data></ExtendedData>
+        <Point><coordinates>29.3200,36.2680,20</coordinates></Point></Placemark>
+    </Folder>
+
+    <Folder>
+      <name>4. Civic Buildings &amp; Wonders</name>
+      <Placemark><name>Great Theatre of Ephesus</name>
+        <description>24,000 seats cut against Mount Pion, looking straight down the Arcadiane to the harbour — the theatre of the silversmiths' riot in Acts 19.</description>
+        <ExtendedData><Data name="era"><value>Hellenistic, enlarged Roman</value></Data><Data name="type"><value>Theatre</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Acts 19:29; excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.3417,37.9411,20</coordinates></Point></Placemark>
+      <Placemark><name>Library of Celsus</name>
+        <description>Completed c. 120 AD over the tomb of Celsus Polemaeanus: twelve thousand rolls behind the two-storey marble façade.</description>
+        <ExtendedData><Data name="era"><value>c. 110–120 AD</value></Data><Data name="type"><value>Library</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Dedicatory inscriptions; excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.3406,37.9393,18</coordinates></Point></Placemark>
+      <Placemark><name>Smyrna Agora</name>
+        <description>The great commercial heart of Smyrna, rebuilt with imperial help after the earthquake of 178 AD — its basement galleries still stand.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>Agora</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>İzmir Agora excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.1378,38.4189,10</coordinates></Point></Placemark>
+      <Placemark><name>Mausoleum of Maussollos</name>
+        <description>The tomb that named all tombs: podium, colonnade, stepped pyramid and quadriga, whole and gleaming above Halicarnassus until the Middle Ages.</description>
+        <ExtendedData><Data name="era"><value>c. 350 BC, standing 150 AD</value></Data><Data name="type"><value>Wonder</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Vitruvius 2.8; Pliny NH 36.30</value></Data></ExtendedData>
+        <Point><coordinates>27.4241,37.0379,15</coordinates></Point></Placemark>
+      <Placemark><name>Myndos Gate</name>
+        <description>Western gate of Maussollos' circuit wall — Alexander was repulsed here in 334 BC before the city fell.</description>
+        <ExtendedData><Data name="era"><value>4th c. BC, standing Roman</value></Data><Data name="type"><value>Gate</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Arrian 1.20–23; Bodrum excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.4070,37.0380,20</coordinates></Point></Placemark>
+      <Placemark><name>Bouleuterion of Patara</name>
+        <description>Assembly hall of the Lycian League — the federal parliament Montesquieu praised as antiquity's finest confederation.</description>
+        <ExtendedData><Data name="era"><value>Hellenistic–Roman</value></Data><Data name="type"><value>Council house</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Strabo 14.3.3; restored 2012</value></Data></ExtendedData>
+        <Point><coordinates>29.3169,36.2653,6</coordinates></Point></Placemark>
+      <Placemark><name>Theatre of Patara</name>
+        <description>Seaside theatre periodically drowned by the dunes — its dedication names the citizens who dug it free.</description>
+        <ExtendedData><Data name="era"><value>Rebuilt 147 AD</value></Data><Data name="type"><value>Theatre</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Theatre inscriptions; excavations</value></Data></ExtendedData>
+        <Point><coordinates>29.3172,36.2639,6</coordinates></Point></Placemark>
+      <Placemark><name>Granary of Hadrian (Horreum)</name>
+        <description>Eight-chambered imperial granary by the harbour — Lycian grain staged for Rome and the annona fleets.</description>
+        <ExtendedData><Data name="era"><value>c. 130 AD</value></Data><Data name="type"><value>Granary</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Façade inscription; standing remains</value></Data></ExtendedData>
+        <Point><coordinates>29.3065,36.2635,5</coordinates></Point></Placemark>
+      <Placemark><name>Arch of Mettius Modestus</name>
+        <description>Triple triumphal arch at the city entrance, doubling as the aqueduct's final span — governor Modestus' calling card, c. 100 AD.</description>
+        <ExtendedData><Data name="era"><value>c. 100 AD</value></Data><Data name="type"><value>Arch</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Arch inscription; standing remains</value></Data></ExtendedData>
+        <Point><coordinates>29.3186,36.2701,8</coordinates></Point></Placemark>
+    </Folder>
+
+    <Folder>
+      <name>5. Harbours &amp; Maritime</name>
+      <Placemark><name>Harbour of Smyrna</name>
+        <description>The closed harbour under Pagos — Strabo counts it among the city's glories.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>Harbour</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Strabo 14.1.37</value></Data></ExtendedData>
+        <Point><coordinates>27.1300,38.4250,0</coordinates></Point></Placemark>
+      <Placemark><name>Harbour of Ephesus &amp; the Arcadiane</name>
+        <description>The dredged harbour basin and its colonnaded avenue to the theatre — silting even as it gleamed; engineers fought the Cayster for centuries.</description>
+        <ExtendedData><Data name="era"><value>Roman Imperial</value></Data><Data name="type"><value>Harbour</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Tacitus Ann. 16.23; excavations</value></Data></ExtendedData>
+        <Point><coordinates>27.3340,37.9420,2</coordinates></Point></Placemark>
+      <Placemark><name>Panormos (harbour of Didyma)</name>
+        <description>The landing for pilgrims arriving by sea, a short walk from the oracle along the last stretch of the Sacred Way.</description>
+        <ExtendedData><Data name="era"><value>Archaic–Roman</value></Data><Data name="type"><value>Harbour</value></Data><Data name="confidence"><value>probable</value></Data><Data name="source"><value>Didyma studies</value></Data></ExtendedData>
+        <Point><coordinates>27.2400,37.3950,0</coordinates></Point></Placemark>
+      <Placemark><name>Round Harbour of Halicarnassus</name>
+        <description>The sheltered basin below the Mausoleum, flanked by Maussollos' secret dockyards.</description>
+        <ExtendedData><Data name="era"><value>4th c. BC–Roman</value></Data><Data name="type"><value>Harbour</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Vitruvius 2.8.13</value></Data></ExtendedData>
+        <Point><coordinates>27.4280,37.0320,0</coordinates></Point></Placemark>
+      <Placemark><name>Lighthouse of Nero (Patara)</name>
+        <description>Built 64/65 AD at the harbour mouth — among the oldest lighthouses standing anywhere, toppled by tsunami, re-risen in restoration.</description>
+        <ExtendedData><Data name="era"><value>64/65 AD</value></Data><Data name="type"><value>Lighthouse</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Dedicatory inscription; excavations</value></Data></ExtendedData>
+        <Point><coordinates>29.3106,36.2602,4</coordinates></Point></Placemark>
+    </Folder>
+
+    <Folder>
+      <name>6. Landscape &amp; Islands</name>
+      <Placemark><name>Maeander River</name>
+        <description>The wandering river of Caria — so famously crooked that it lent its name to every meander since.</description>
+        <ExtendedData><Data name="era"><value>Holocene</value></Data><Data name="type"><value>River</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Strabo 12.8.15</value></Data></ExtendedData>
+        <LineString><tessellate>1</tessellate><coordinates>27.85,37.90,0 27.65,37.88,0 27.50,37.86,0 27.35,37.87,0 27.20,37.89,0</coordinates></LineString></Placemark>
+      <Placemark><name>Dunes of Patara</name>
+        <description>The wandering sands that buried theatre and street alike — the city's slow golden adversary.</description>
+        <ExtendedData><Data name="era"><value>Holocene</value></Data><Data name="type"><value>Dunes</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>Geomorphology; excavation history</value></Data></ExtendedData>
+        <Point><coordinates>29.3050,36.2570,5</coordinates></Point></Placemark>
+      <Placemark><name>Samos</name>
+        <description>Island of Hera and Pythagoras, on the sea lane abeam Ephesus.</description>
+        <ExtendedData><Data name="era"><value>—</value></Data><Data name="type"><value>Island</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>—</value></Data></ExtendedData>
+        <Point><coordinates>26.9800,37.7400,0</coordinates></Point></Placemark>
+      <Placemark><name>Cos</name>
+        <description>Island of Hippocrates, across the strait from Halicarnassus.</description>
+        <ExtendedData><Data name="era"><value>—</value></Data><Data name="type"><value>Island</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>—</value></Data></ExtendedData>
+        <Point><coordinates>27.2900,36.8900,0</coordinates></Point></Placemark>
+      <Placemark><name>Rhodes</name>
+        <description>The great harbour republic to the south-east, last seamark before Patara.</description>
+        <ExtendedData><Data name="era"><value>—</value></Data><Data name="type"><value>Island</value></Data><Data name="confidence"><value>attested</value></Data><Data name="source"><value>—</value></Data></ExtendedData>
+        <Point><coordinates>28.2200,36.4400,0</coordinates></Point></Placemark>
+    </Folder>
+  </Document>
+</kml>

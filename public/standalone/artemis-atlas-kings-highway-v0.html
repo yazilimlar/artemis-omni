@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Artemis Atlas — King's Highway v0 · Smyrna → Patara, c. 150 AD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --parchment:#f2ead8; --gold:#e8b34b; --bg:#1c1626;
+    --serif:"Cormorant Garamond",Georgia,serif; --sans:Inter,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--parchment);font-family:var(--sans);overscroll-behavior:none}
+  #stage{position:fixed;inset:0;overflow:hidden}
+  #sky{position:absolute;inset:0;background:linear-gradient(180deg,#f4c47d 0%,#eaa76c 24%,#d9986a 40%,#8d5668 64%,#1c1626 100%)}
+  #gl{position:absolute;inset:0;touch-action:pan-y}
+  #vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px 18px rgba(10,6,18,.42)}
+  /* cartographic plate */
+  #labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .maplabel{position:absolute;left:0;top:0;white-space:nowrap;text-align:center;font-family:var(--serif);font-size:11px;letter-spacing:.32em;color:rgba(240,222,185,.74);text-shadow:0 1px 4px rgba(20,12,8,.9);will-change:transform;visibility:hidden}
+  .maplabel .sub{display:block;font-size:8.5px;letter-spacing:.18em;font-style:italic;color:rgba(240,222,185,.5);text-transform:none;margin-top:1px}
+  .maplabel.water{font-style:italic;color:rgba(205,228,232,.8)}
+  .maplabel.big{font-size:14px;letter-spacing:.44em}
+  .maplabel.region{font-size:10px;letter-spacing:.6em;color:rgba(240,222,185,.38)}
+  #grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.4}
+  #carto{position:absolute;inset:0;pointer-events:none}
+  #cartouche{border:1px solid rgba(232,179,75,.5);box-shadow:0 0 0 3px rgba(24,18,14,.5),0 0 0 4px rgba(232,179,75,.28);background:rgba(24,18,14,.5);backdrop-filter:blur(8px);border-radius:4px;padding:9px 12px;max-width:262px}
+  #cartouche .homage{font-family:var(--serif);font-style:italic;font-size:10.5px;color:rgba(240,222,185,.58);margin-top:3px;letter-spacing:.03em}
+  #scalebar{position:absolute;left:16px;bottom:88px;z-index:15;pointer-events:none;max-width:200px}
+  #scalebar .lbl{font-family:var(--mono);font-size:8px;letter-spacing:.08em;line-height:1.6;color:rgba(232,212,170,.55)}
+  /* HUD */
+  #hud-top{position:absolute;left:0;right:0;top:0;padding:max(env(safe-area-inset-top),14px) 16px 0;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-start;z-index:20}
+  #hud-top .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+  #hud-top h1{font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:.04em;margin-top:2px}
+  #hud-top .scale-note{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:rgba(255,255,255,.34);margin-top:4px;line-height:1.5}
+  #kml-btn{pointer-events:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--gold);border:1px solid rgba(232,179,75,.45);background:rgba(10,8,16,.45);border-radius:999px;padding:6px 11px;text-decoration:none;backdrop-filter:blur(8px)}
+  /* station rail */
+  #rail{position:absolute;right:10px;top:23%;display:flex;flex-direction:column;gap:14px;align-items:flex-end;z-index:20}
+  #rail button{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:2px}
+  #rail .yr{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:#fff;opacity:.4;transition:all .3s}
+  #rail .dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(255,255,255,.4);transition:all .3s}
+  #rail button.active .yr{opacity:.95;color:var(--gold)}
+  #rail button.active .dot{transform:scale(1.35);border-color:var(--gold);background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  /* layer chips */
+  #chips{position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;overflow-x:auto;padding:8px 16px max(env(safe-area-inset-bottom),12px);z-index:20;scrollbar-width:none}
+  #chips::-webkit-scrollbar{display:none}
+  #chips button{flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.72);background:rgba(10,8,16,.45);backdrop-filter:blur(8px);cursor:pointer;transition:all .2s}
+  #chips button .d{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35)}
+  /* POI sheet */
+  #sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:430px;z-index:30;background:rgba(18,16,28,.95);border:1px solid rgba(255,255,255,.12);border-bottom:none;border-radius:18px 18px 0 0;padding:10px 20px max(env(safe-area-inset-bottom),20px);backdrop-filter:blur(16px);box-shadow:0 -18px 60px -18px rgba(0,0,0,.8);transform:translateY(110%);transition:transform .32s cubic-bezier(.32,.72,.33,1)}
+  #sheet.open{transform:translateY(0)}
+  #sheet .grab{width:40px;height:4px;border-radius:99px;background:rgba(255,255,255,.25);margin:0 auto 12px}
+  #sheet .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  #sheet .era-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+  #sheet h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.15;margin-top:3px}
+  #sheet .close{border:1px solid rgba(255,255,255,.15);background:none;color:rgba(255,255,255,.6);border-radius:50%;width:28px;height:28px;font-size:13px;cursor:pointer;line-height:1}
+  #sheet .badges{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
+  .pill .d{width:6px;height:6px;border-radius:50%}
+  #sheet .summary{font-size:13.5px;line-height:1.6;color:rgba(255,255,255,.85)}
+  #sheet .evidence{margin-top:10px;padding-left:11px;border-left:2px solid var(--gold);font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.6)}
+  #sheet .src{margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;line-height:1.6;color:rgba(255,255,255,.35)}
+  /* station scroll cards */
+  section{position:relative;height:100svh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 16px 88px;pointer-events:none;z-index:10}
+  .card{width:100%;max-width:430px;border:1px solid rgba(232,179,75,.32);background:rgba(16,12,22,.78);backdrop-filter:blur(10px);border-radius:14px;padding:14px 16px;pointer-events:auto;box-shadow:0 0 0 3px rgba(16,12,22,.4)}
+  .card .tags{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+  .card .kick{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+  .card h2{font-family:var(--serif);font-size:23px;font-weight:500;line-height:1.12}
+  .card h2 .native{font-size:14px;color:rgba(240,222,185,.55);letter-spacing:.14em;margin-left:8px}
+  .card p.sum{margin-top:7px;font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.78)}
+  .card .quote{margin-top:7px;font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.45;color:rgba(240,222,185,.75)}
+  .card .quote .who{font-family:var(--mono);font-style:normal;font-size:8.5px;letter-spacing:.15em;color:rgba(255,255,255,.4);margin-left:6px}
+  .card .facts{margin-top:7px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.42);line-height:1.7}
+  .card .facts b{color:var(--gold);font-weight:500}
+  .guide{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(232,179,75,.2)}
+  .guide .medal{width:38px;height:38px;flex-shrink:0;border-radius:50%;border:1.5px solid rgba(232,179,75,.65);background:radial-gradient(circle at 35% 30%, rgba(232,179,75,.28), rgba(24,18,14,.9));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;color:var(--gold);letter-spacing:.05em}
+  .guide .who{flex:1;min-width:0}
+  .guide .gname{font-family:var(--serif);font-size:14px;letter-spacing:.12em;color:var(--parchment)}
+  .guide .gdom{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+  .guide .consult{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--gold);border:1px solid rgba(232,179,75,.45);background:none;border-radius:999px;padding:5px 11px;cursor:pointer}
+  .card .counsel{margin-top:8px;font-family:var(--serif);font-style:italic;font-size:12.5px;line-height:1.5;color:rgba(205,228,232,.85);min-height:0}
+  #loading{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;transition:opacity .6s}
+  #loading .k{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5);animation:pulse 1.6s ease-in-out infinite}
+  #loading .t{font-family:var(--serif);font-size:25px}
+  #loading .s{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--gold)}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  @media (prefers-reduced-motion: reduce){ #loading .k{animation:none} }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="sky"></div>
+  <div id="gl"></div>
+  <div id="labels"></div>
+  <div id="grain"></div>
+  <div id="vignette"></div>
+  <svg id="carto"></svg>
+  <div id="hud-top">
+    <div id="cartouche">
+      <div class="kicker">Artemis Atlas · King's Highway v0</div>
+      <h1>Via Regia — Smyrna → Patara</h1>
+      <div class="homage">after the Tabula Peutingeriana &amp; the Stadiasmus Patarensis</div>
+      <div class="scale-note">itinerary projection — the road compressed into a ribbon, heights ×5 · one era, c. 150 AD</div>
+    </div>
+    <a id="kml-btn" href="artemis-atlas-kings-highway-v0.kml" download>⤓ KML</a>
+  </div>
+  <nav id="rail" aria-label="Stations"></nav>
+  <div id="chips" role="group" aria-label="Overlay layers"></div>
+  <div id="scalebar" aria-hidden="true">
+    <div class="lbl">scale varies along the road — as on the Roman ribbon maps, the itinerary is true, the geometry is not</div>
+  </div>
+  <div id="sheet" aria-live="polite">
+    <div class="grab"></div>
+    <div class="row">
+      <div><div class="era-tag" id="sh-era">c. 150 AD · Via Regia</div><h2 id="sh-name"></h2></div>
+      <button class="close" id="sh-close" aria-label="Close card">✕</button>
+    </div>
+    <div class="badges" id="sh-badges"></div>
+    <p class="summary" id="sh-summary"></p>
+    <div class="evidence" id="sh-evidence"></div>
+    <p class="src" id="sh-src"></p>
+  </div>
+</div>
+
+<div id="sections"></div>
+
+<div id="loading">
+  <div class="k">Artemis Atlas</div>
+  <div class="t">King's Highway <span style="color:var(--gold)">v0</span></div>
+  <div class="s">Surveying the road — c. 150 AD</div>
+</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from "three";
+
+/* ================= Itinerary frame =================
+   The mutant: scroll travels DISTANCE, not time. Everything is authored in
+   route coordinates (u = along the road, north→south; v = across it, sea
+   to the left / hills to the right) and squeezed into one ribbon, in the
+   tradition of the Tabula Peutingeriana. Real coordinates live in the KML;
+   the scene is an itinerary, not a survey. */
+const S2 = Math.SQRT1_2;
+const K = 1.8;                                              // route-axis stretch: the ribbon unrolled
+const uv = (u, v) => [(u * K + v) * S2, (u * K - v) * S2];  // route → scene xz
+const toUV = (x, z) => [(x + z) * S2 / K, (x - z) * S2];
+
+/* ================= Layers (KML folders) ================= */
+const LAYERS = {
+  road:     { name: "Road",     color: "#e8b34b" },
+  maritime: { name: "Maritime", color: "#5ab6d8" },
+  religion: { name: "Religion", color: "#a887e0" },
+  civic:    { name: "Civic",    color: "#8fbf58" },
+  wonders:  { name: "Wonders",  color: "#e2694a" },
+  natural:  { name: "Natural",  color: "#66c6a3" },
+};
+const CONF = {
+  attested:    { label: "Attested",    color: "#4ade80" },
+  probable:    { label: "Probable",    color: "#fbbf24" },
+  conjectural: { label: "Conjectural", color: "#94a3b8" },
+};
+
+/* ================= Stations ================= */
+const STATIONS = [
+  { id:"via", short:"VIA", name:"The King's Highway", native:"VIA REGIA", region:"Asia · Lycia", u:-29, v:-4,
+    kicker:"Prologue — a mutant branch of the Time Atlas",
+    summary:"Here the scroll travels distance, not time: one era, c. 150 AD, and five hundred years of road beneath it. From Smyrna's gulf to Patara's dunes — the corridor the royal roads made, drawn as the Romans drew their itineraries: a ribbon.",
+    quote:"From Sardis there runs a road… at intervals the royal stations.", who:"HERODOTUS 5.52",
+    facts:"ONE ERA · FIVE STATIONS · 22 SITES — TAP THE MARKERS",
+    next:"Smyrna · the journey begins", guide:"cartographer" },
+  { id:"smyrna", short:"SMY", name:"Smyrna", native:"ΣΜΥΡΝΑ", region:"Ionia", u:-24, v:1,
+    kicker:"Station I — the ornament of Asia",
+    summary:"Reborn on the slopes of Pagos at Alexander's prompting, Smyrna claims Homer for a son and beauty for a title. The agora hums below the acropolis; the closed harbour fills with hulls; the southern road leaves through the olive hills.",
+    quote:"The most beautiful of all cities under the sun.", who:"AELIUS ARISTIDES",
+    facts:"PEOPLE <b>IONIANS · ROMANS</b> · TONGUE <b>GREEK</b> · KNOWN FOR <b>HOMER'S CLAIM · THE AGORA</b>",
+    next:"Ephesus · c. L m.p. south", guide:"homer" },
+  { id:"ephesus", short:"EPH", name:"Ephesus", native:"ΕΦΕΣΟΣ", region:"Ionia", u:-10, v:2,
+    kicker:"Station II — capital of Roman Asia",
+    summary:"The largest emporium this side of the Taurus: the Artemision glowing outside the walls, the theatre cut against Pion for twenty-four thousand, the Library of Celsus new-built, and the harbour avenue blazing with lamps to the sea.",
+    quote:"The largest emporium in Asia within the Taurus.", who:"STRABO 14.1.24",
+    facts:"PEOPLE <b>IONIANS · ROMANS</b> · TONGUE <b>GREEK · LATIN</b> · KNOWN FOR <b>ARTEMISION · LIBRARY · THEATRE</b>",
+    next:"Didyma · c. LX m.p. by the Maeander &amp; Miletus", guide:"artemis" },
+  { id:"didyma", short:"DID", name:"Didyma", native:"ΔΙΔΥΜΑ", region:"Ionia / Caria", u:2, v:-1,
+    kicker:"Station III — the oracle on the cape",
+    summary:"No city — a god's house the size of one. The double colonnade of Apollo Didymaios rises unfinished and immense above the Sacred Way from Miletus, where pilgrims walk the last miles between archaic lions and seated kings.",
+    quote:"The greatest of temples, and it remains without a roof.", who:"STRABO 14.1.5",
+    facts:"PEOPLE <b>MILESIANS</b> · TONGUE <b>GREEK</b> · KNOWN FOR <b>THE ORACLE · THE SACRED WAY</b>",
+    next:"Halicarnassus · c. LXX m.p. round the gulf", guide:"apollo" },
+  { id:"halicarnassus", short:"HAL", name:"Halicarnassus", native:"ΑΛΙΚΑΡΝΑΣΣΟΣ", region:"Caria", u:14, v:0,
+    kicker:"Station IV — the tomb that named all tombs",
+    summary:"Herodotus' birthplace curls around its round harbour, and above the roofline the Mausoleum still stands entire — podium, colonnade, pyramid, chariot — five centuries old and counted among the wonders while men still count.",
+    quote:"This is the display of the inquiry of Herodotus of Halicarnassus…", who:"HERODOTUS 1.1",
+    facts:"PEOPLE <b>CARIANS · DORIANS</b> · TONGUE <b>GREEK</b> · KNOWN FOR <b>THE MAUSOLEUM · HERODOTUS</b>",
+    next:"Patara · c. CXX m.p. by coast and sea", guide:"herodotus" },
+  { id:"patara", short:"PAT", name:"Patara", native:"𐊓𐊗𐊗𐊀𐊕𐊀 · PTTARA", region:"Lycia", u:28, v:3,
+    kicker:"Station V — between sea, dunes and stone",
+    summary:"Harbour of the Lycian League: Nero's lighthouse at the mouth, Hadrian's granary on the shore, the assembly hall of the League at the centre — and by the gate, the Stadiasmus: a pillar carved with every road in Lycia. The map, at the end of the road.",
+    quote:"Great harbour city of Lycia, between sea, dunes, and stone.", who:"PATARA",
+    facts:"PEOPLE <b>LYCIANS · ROMANS</b> · TONGUE <b>LYCIAN · GREEK · LATIN</b> · KNOWN FOR <b>STADIASMUS · LIGHTHOUSE · LEAGUE</b>",
+    next:null, guide:"surveyor" },
+];
+const GUIDES = {
+  cartographer: { init:"✦", name:"THE CARTOGRAPHER", dom:"Ways & Wayfinding", counsel:[
+    "Scroll, and the road carries you south. The rail on the right jumps between stations.",
+    "Tap a glowing marker for its evidence and confidence — the atlas never bluffs.",
+    "The chips below tint the world by theme: road, sea, gods, stone." ] },
+  homer: { init:"Ω", name:"HOMEROS", dom:"Poetry & Memory", counsel:[
+    "Seven cities quarrel over my cradle; Smyrna shouts loudest, and by the Meles I let her.",
+    "Sing the road, traveller — every mile of it was once impossible.",
+    "What is a city but a story that agreed on walls?" ] },
+  artemis: { init:"☾", name:"ARTEMIS", dom:"The Great Goddess", counsel:[
+    "My house has burned and risen; it will burn again. Build what is worth rebuilding.",
+    "The silversmiths riot for me in the theatre — commerce and faith share one street here.",
+    "Great is Artemis of the Ephesians — the city said so itself, for two hours together." ] },
+  apollo: { init:"☉", name:"APOLLON", dom:"Oracles & Light", counsel:[
+    "At Didyma I speak all year; at Patara only in winter. Even a god keeps a road schedule.",
+    "The temple is unfinished on purpose, whatever the accountants say.",
+    "Ask the spring, not the stones — the stones only keep the answers." ] },
+  herodotus: { init:"Ἡ", name:"HERODOTOS", dom:"History & Inquiry", counsel:[
+    "I wrote so that great deeds should not lose their colour — check my sources anyway.",
+    "The royal road has stations and inns all along it; I counted. Count again.",
+    "Custom is king of all — you will cross three customs before Patara." ] },
+  surveyor: { init:"Ⅻ", name:"THE SVRVEYOR", dom:"Miles & Stones", counsel:[
+    "Claudius bade us carve every road of Lycia in one pillar. You are standing on the index.",
+    "A mile is a thousand paces of a legion — the dunes do not respect it.",
+    "Roads end. Itineraries do not; turn the scroll upward and ride back north." ] },
+};
+
+/* ================= POIs (KML placemarks; positions in route coords) ===== */
+const POIS = [
+  { id:"smyrna-agora", name:"Smyrna Agora", st:1, du:.5, dv:1.3, layer:"civic", conf:"attested", lon:27.1378, lat:38.4189, yOff:.5,
+    summary:"The commercial heart of Smyrna — stoas on vaulted basements, rebuilt grander after every earthquake, imperial help arriving with the sympathy.",
+    evidence:"The Roman agora's basement galleries and colonnades survive; rebuilt with Marcus Aurelius' aid after 178 AD.",
+    src:"İzmir Agora excavations" },
+  { id:"meles-spring", name:"Spring of Meles", st:1, du:-1.6, dv:2.9, layer:"religion", conf:"conjectural", lon:27.16, lat:38.42, yOff:.45,
+    summary:"The stream where Smyrna says Homer was born — 'Melesigenes', child of the river. Poets visit; locals charge for directions.",
+    evidence:"The tradition is literary; the spring's identification shifts with the teller.",
+    src:"Ps.-Herodotus, Life of Homer; Pausanias 7.5.12" },
+  { id:"smyrna-harbor", name:"Closed Harbour", st:1, du:.2, dv:-1.5, layer:"maritime", conf:"attested", lon:27.13, lat:38.425, yOff:.5,
+    summary:"Strabo lists the harbour that can be closed among Smyrna's glories — grain, wine and marble move through it daily.",
+    evidence:"Strabo 14.1.37 names the kleistos limen; the silted basin lies under the modern bazaar.",
+    src:"Strabo 14.1.37; urban excavations" },
+  { id:"artemision", name:"Temple of Artemis", st:2, du:-3.4, dv:1.2, layer:"wonders", conf:"attested", lon:27.3639, lat:37.9497, yOff:.8,
+    summary:"The wonder of Ionia outside the walls — 127 columns, a forest of marble around the goddess. Pilgrims, bankers and asylum-seekers share the precinct.",
+    evidence:"Foundations and column drums excavated since 1869; ancient lists count it among the Seven Wonders.",
+    src:"Antipater of Sidon; Wood & Hogarth excavations" },
+  { id:"great-theatre", name:"Great Theatre", st:2, du:.8, dv:1.7, layer:"civic", conf:"attested", lon:27.3417, lat:37.9411, yOff:.6,
+    summary:"Twenty-four thousand seats against Mount Pion, looking down the harbour avenue — the theatre where the silversmiths howled for Artemis for two hours.",
+    evidence:"Standing structure; the riot is recorded in Acts 19.",
+    src:"Acts 19:23–41; Austrian excavations" },
+  { id:"celsus-library", name:"Library of Celsus", st:2, du:.3, dv:.7, layer:"civic", conf:"attested", lon:27.3406, lat:37.9393, yOff:.55,
+    summary:"Twelve thousand rolls behind a two-storey façade of niches and statues — wisdom, virtue, insight, knowledge — over the founder's tomb.",
+    evidence:"Completed c. 120 AD per its inscriptions; the façade re-erected 1978.",
+    src:"Dedicatory inscriptions; excavations" },
+  { id:"curetes-street", name:"Curetes Street", st:2, du:1.3, dv:1.1, layer:"road", conf:"attested", lon:27.342, lat:37.939, yOff:.5,
+    summary:"The marble spine of the city, descending between honorific columns and fountains from the state agora to the Library plaza.",
+    evidence:"Paved street with monument rows excavated in situ.",
+    src:"Ephesus excavations" },
+  { id:"ephesus-harbor", name:"Harbour & Arcadiane", st:2, du:-.4, dv:-1.5, layer:"maritime", conf:"probable", lon:27.334, lat:37.942, yOff:.5,
+    summary:"The dredged basin and its colonnaded avenue to the theatre, lamp-lit at night — while the Cayster quietly carries in the mud that will one day win.",
+    evidence:"Harbour works and the Arcadiane are excavated; ancient sources record repeated dredging.",
+    src:"Tacitus Ann. 16.23; excavations" },
+  { id:"meander-crossing", name:"Maeander Crossing", st:0, du:0, dv:0, u:-3.6, v:4.1, layer:"natural", conf:"probable", lon:27.50, lat:37.86, yOff:.45,
+    summary:"The southern road crosses the river that named every meander since — slow, brown, and utterly unhurried about reaching the sea.",
+    evidence:"The Roman road south crossed the Maeander near Magnesia; the river's wandering is proverbial in antiquity.",
+    src:"Strabo 12.8.15; road network studies" },
+  { id:"sacred-way", name:"Miletus & the Sacred Way", st:0, du:0, dv:0, u:-1.5, v:-2.6, layer:"road", conf:"attested", lon:27.2764, lat:37.5305, yOff:.45,
+    summary:"From Miletus the paved way runs to the oracle, lined with archaic lions and seated ancestors — pilgrims' miles, older than the Persian roads.",
+    evidence:"Paved course and statue rows excavated; the Branchidae statues now largely in the British Museum.",
+    src:"Milet excavations; Herodotus 1.157" },
+  { id:"didymaion", name:"Temple of Apollo", st:3, du:0, dv:.4, layer:"religion", conf:"attested", lon:27.2565, lat:37.3851, yOff:.85,
+    summary:"The colossal oracle-house: a double colonnade around an open court holding the sacred spring — begun for eternity, never finished, always speaking.",
+    evidence:"Standing columns and adyton; construction accounts inscribed on its own walls.",
+    src:"Strabo 14.1.5; Didyma excavations" },
+  { id:"panormos", name:"Panormos Landing", st:3, du:-.9, dv:-1.7, layer:"maritime", conf:"probable", lon:27.24, lat:37.395, yOff:.45,
+    summary:"The pilgrim harbour below the cape — sails furl here, and the last miles to the god go on foot.",
+    evidence:"The landing is inferred from the Sacred Way's course and anchorage studies.",
+    src:"Didyma studies" },
+  { id:"mausoleum", name:"Mausoleum of Maussollos", st:4, du:.3, dv:1.5, layer:"wonders", conf:"attested", lon:27.4241, lat:37.0379, yOff:1.0,
+    summary:"Podium, colonnade, stepped pyramid, and the marble chariot against the sky — the satrap's tomb, five hundred years old and still whole, still the measure of all mausoleums.",
+    evidence:"Described whole by Roman authors; foundations and friezes excavated (largely in the British Museum).",
+    src:"Vitruvius 2.8; Pliny NH 36.30" },
+  { id:"myndos-gate", name:"Myndos Gate", st:4, du:-1.7, dv:1.3, layer:"civic", conf:"attested", lon:27.407, lat:37.038, yOff:.5,
+    summary:"The western gate of Maussollos' great circuit — Alexander bled here before the city fell; the moat that stopped him is still open ground.",
+    evidence:"Towers and moat excavated; the siege is in Arrian.",
+    src:"Arrian 1.20–23; Bodrum excavations" },
+  { id:"round-harbor", name:"Round Harbour", st:4, du:.3, dv:-1.4, layer:"maritime", conf:"attested", lon:27.428, lat:37.032, yOff:.5,
+    summary:"The sheltered basin below the Mausoleum, with the kings' secret dockyards cut into its western arm.",
+    evidence:"Harbour form survives in the modern bay; secret shipyards per Vitruvius.",
+    src:"Vitruvius 2.8.13" },
+  { id:"stadiasmus", name:"Stadiasmus Patarensis", st:5, du:.7, dv:1.3, layer:"road", conf:"attested", lon:29.3177, lat:36.2665, yOff:.6,
+    summary:"Claudius' road monument: a pillar carved with the roads and miles of all Lycia — the oldest itinerary in stone, and this atlas's patron saint.",
+    evidence:"Recovered in the harbour excavations; text published as SEG 44-1205.",
+    src:"Şahin & Adak 2007; SEG 44-1205" },
+  { id:"nero-lighthouse", name:"Lighthouse of Nero", st:5, du:-2.0, dv:-.9, layer:"maritime", conf:"attested", lon:29.3106, lat:36.2602, yOff:.7,
+    summary:"Built 64/65 AD at the harbour mouth — among the oldest lighthouses of the world, its fire the last thing Lycia shows a departing ship.",
+    evidence:"Dedicatory inscription names Nero; tower re-erected from its own blocks in 2020s restoration.",
+    src:"Patara excavations" },
+  { id:"bouleuterion", name:"Bouleuterion of the League", st:5, du:.4, dv:.4, layer:"civic", conf:"attested", lon:29.3169, lat:36.2653, yOff:.55,
+    summary:"The assembly of the Lycian League sat here — the federation later praised as the finest confederate government of the ancient world.",
+    evidence:"Standing hall, restored 2012; the League's constitution described by Strabo.",
+    src:"Strabo 14.3.3; Montesquieu, Esprit des lois 9.3" },
+  { id:"patara-theatre", name:"Theatre of Patara", st:5, du:1.2, dv:1.0, layer:"civic", conf:"attested", lon:29.3172, lat:36.2639, yOff:.5,
+    summary:"The seaside theatre the dunes keep trying to swallow — an inscription thanks the citizens who dug it out, again.",
+    evidence:"Rebuilt 147 AD per its dedication; excavated from the sand in the modern era.",
+    src:"Theatre inscriptions; excavations" },
+  { id:"granary", name:"Granary of Hadrian", st:5, du:-1.3, dv:.2, layer:"civic", conf:"attested", lon:29.3065, lat:36.2635, yOff:.5,
+    summary:"Eight stone chambers by the harbour, holding Lycian grain for Rome — the annona's southern shelf.",
+    evidence:"Standing horreum with façade inscription of Hadrian's reign.",
+    src:"Façade inscription; standing remains" },
+  { id:"necropolis", name:"Lycian Necropolis", st:5, du:2.3, dv:1.9, layer:"religion", conf:"probable", lon:29.32, lat:36.268, yOff:.5,
+    summary:"House-tombs with ogival lids on the ridge — the stone ancestors of Lycia, watching the harbour work.",
+    evidence:"Lycian-type tombs recorded around the city; chronology spans Lycian to Roman.",
+    src:"Patara excavations" },
+  { id:"dunes", name:"The Wandering Dunes", st:5, du:-2.6, dv:1.6, layer:"natural", conf:"attested", lon:29.305, lat:36.257, yOff:.45,
+    summary:"Golden sand on the move — the city's slow adversary, burying streets a hand's width a year and preserving everything it defeats.",
+    evidence:"Dune migration documented geomorphologically; the excavations dig out of it still.",
+    src:"Geomorphology; excavation history" },
+];
+
+/* ================= Terrain ================= */
+const BOUNDS = { minX:-58, maxX:66, minZ:-58, maxZ:66 };
+const gU = (u, c, s) => Math.exp(-((u - c) * (u - c)) / (s * s));
+const g2 = (u, v, cu, cv, r) => Math.exp(-(((u - cu) ** 2) + ((v - cv) ** 2)) / (r * r));
+function smoothstep(e0, e1, x) { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); }
+function coastV(u) {
+  return -3 + 0.6 * Math.sin(u * 0.55)
+    + 2.0 * gU(u, -24, 2.6) + 1.4 * gU(u, -10, 2.2) - 1.8 * gU(u, 2, 3.0)
+    + 1.8 * gU(u, 14, 2.0) + 1.5 * gU(u, 28, 2.6)
+    - 1.0 * gU(u, -17, 2.5) - 0.8 * gU(u, 21, 2.5);
+}
+const RIDGES = [[-18,11,5,2.0],[-4,12,6,2.4],[10,12,5,2.2],[22,10,5,3.2],[31,12,6,4.2],[38,8,5,3.4],[-28,10,5,2.2]];
+const RIVER_UV = [[-0.6,13],[-2.2,8],[-3.4,4.4],[-4.2,1],[-4.7,-2.5],[-5.2,-5.5]];
+const RIVER = RIVER_UV.map(([u, v]) => uv(u, v));
+function distToRiver(x, z) {
+  let min = Infinity;
+  for (let i = 0; i < RIVER.length - 1; i++) {
+    const [ax, az] = RIVER[i], [bx, bz] = RIVER[i + 1];
+    const abx = bx - ax, abz = bz - az;
+    const t = Math.max(0, Math.min(1, ((x - ax) * abx + (z - az) * abz) / (abx * abx + abz * abz)));
+    min = Math.min(min, Math.hypot(x - (ax + abx * t), z - (az + abz * t)));
+  }
+  return min;
+}
+const ST_FLAT = STATIONS.slice(1).map((s) => [s.u, s.v]);
+function heightAt(x, z) {
+  const [u, v] = toUV(x, z);
+  const d = v - coastV(u);
+  let h = -1.8 + 2.3 * smoothstep(-1.3, 1.5, d);
+  h += 0.12 * Math.sin(u * 0.8) * Math.cos(v * 0.9) + 0.06 * Math.sin(u * 1.7 + 2) * Math.sin(v * 1.9);
+  h += Math.max(0, v - 6.5) * 0.22;
+  for (const [cu, cv2, r, hh] of RIDGES) h += hh * g2(u, v, cu, cv2, r);
+  h += 1.1 * g2(u, v, -23, 4.2, 2.0);                    // Pagos above Smyrna
+  h += 0.9 * g2(u, v, -9, 4.6, 1.6);                     // Pion above Ephesus
+  h += Math.max(0, Math.sin(u * 3.1) * Math.sin(v * 2.1)) * 0.32 * g2(u, v, 25.6, 1.3, 2.4);  // Patara dunes
+  if (h > 0.05) for (const [su, sv] of ST_FLAT) {
+    const w = g2(u, v, su, sv, 3.0) * 0.85;
+    h = h * (1 - w) + 0.55 * w;
+  }
+  const cut = 1 - smoothstep(0.6, 1.5, distToRiver(x, z));
+  if (cut > 0 && h < 1.8) h = h * (1 - cut) + -0.5 * cut;
+  return h;
+}
+const groundY = (x, z) => Math.max(heightAt(x, z), 0);
+const Y = (u, v) => { const [x, z] = uv(u, v); return heightAt(x, z); };
+
+/* ================= three.js ================= */
+const mount = document.getElementById("gl");
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:"high-performance" });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+renderer.shadowMap.enabled = true;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+mount.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xdd9a66, 40, 95);
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 2, 200);
+
+/* golden hour off the Aegean (sun follows the traveller down the coast) */
+const sun = new THREE.DirectionalLight(0xffb46b, 2.9);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); sun.shadow.bias = -0.0004;
+Object.assign(sun.shadow.camera, { left:-16, right:16, top:16, bottom:-16, near:2, far:110 });
+scene.add(sun, sun.target);
+scene.add(new THREE.DirectionalLight(0x8d9bd8, 0.5).translateX(24).translateY(12).translateZ(-14));
+scene.add(new THREE.HemisphereLight(0xffd9ad, 0x4a3c60, 1.2));
+const SUN_OFF = new THREE.Vector3(-22, 15, 20);          // from the sea (west)
+
+/* ---- terrain + water ---- */
+const SEABED=new THREE.Color("#3a6a72"), SAND=new THREE.Color("#c9ae7f"), GRASS_A=new THREE.Color("#7c9a54"),
+      GRASS_B=new THREE.Color("#a8a05e"), LUSH=new THREE.Color("#659155"), ROCK=new THREE.Color("#8b7d6b"),
+      PINEHILL=new THREE.Color("#5c7248"), PLAZA=new THREE.Color("#b3a488"), DUNE=new THREE.Color("#d9bd85");
+{
+  const W = BOUNDS.maxX - BOUNDS.minX, D = BOUNDS.maxZ - BOUNDS.minZ;
+  const g = new THREE.PlaneGeometry(W, D, 215, 210);
+  g.rotateX(-Math.PI / 2);
+  g.translate((BOUNDS.minX + BOUNDS.maxX) / 2, 0, (BOUNDS.minZ + BOUNDS.maxZ) / 2);
+  const pos = g.attributes.position, col = new Float32Array(pos.count * 3), c = new THREE.Color();
+  let seed = 1453;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), z = pos.getZ(i), h = heightAt(x, z);
+    pos.setY(i, h);
+    const [u, v] = toUV(x, z);
+    if (h < -0.45) c.copy(SEABED);
+    else if (h < 0.16) c.copy(SAND);
+    else {
+      c.copy(GRASS_A).lerp(GRASS_B, (0.5 + 0.5 * Math.sin(u * 0.9 + v * 0.7)) * 0.7);
+      if (distToRiver(x, z) < 2.6) c.lerp(LUSH, 1 - distToRiver(x, z) / 2.6);
+      const duneW = g2(u, v, 25.6, 1.3, 2.4);
+      if (duneW > 0.25 && h < 1.2) c.lerp(DUNE, Math.min(1, duneW * 1.4));
+      for (const [su, sv] of ST_FLAT) {
+        const w = g2(u, v, su, sv, 2.6);
+        if (w > 0.45) c.lerp(PLAZA, (w - 0.45) * 1.2);
+      }
+      if (h > 1.4) c.lerp(PINEHILL, Math.min(1, (h - 1.4) / 1.6));
+      if (h > 3.4) c.lerp(ROCK, Math.min(1, (h - 3.4) / 2.4));
+    }
+    const vr = 0.94 + rnd() * 0.12;
+    col[i*3] = c.r * vr; col[i*3+1] = c.g * vr; col[i*3+2] = c.b * vr;
+  }
+  g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  g.computeVertexNormals();
+  const terrain = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ vertexColors:true, flatShading:true, roughness:.95 }));
+  terrain.receiveShadow = true;
+  scene.add(terrain);
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(360, 360),
+    new THREE.MeshStandardMaterial({ color:0x3d7e96, roughness:.22, metalness:.08, transparent:true, opacity:.94 }));
+  water.rotation.x = -Math.PI / 2; water.position.set(2, 0, 2);
+  scene.add(water);
+}
+
+/* ---- atmosphere & islands ---- */
+function glowSprite(stops, sx, sy, x, y, z, additive) {
+  const cv = document.createElement("canvas"); cv.width = cv.height = 128;
+  const ctx = cv.getContext("2d"), gr = ctx.createRadialGradient(64,64,2,64,64,64);
+  for (const [o, cl] of stops) gr.addColorStop(o, cl);
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, 128, 128);
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tx, transparent:true, depthWrite:false,
+    blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending, fog:false }));
+  sp.scale.set(sx, sy, 1); sp.position.set(x, y, z);
+  scene.add(sp); return sp;
+}
+const sunGlow = glowSprite([[0,"rgba(255,236,200,1)"],[0.25,"rgba(255,190,120,.85)"],[1,"rgba(255,160,90,0)"]], 16,16, -28,7,4, true);
+glowSprite([[0,"rgba(255,205,150,.4)"],[1,"rgba(255,185,130,0)"]], 50,7, -6,1.2,10, false);
+const ISLANDS = [[-6,-11,4,1.7,"#655370","SAMOS"],[16,-10,3.2,1.3,"#6f5a68","COS"],[36,-9.5,5,2.1,"#71617e","RHODOS"]];
+for (const [iu, iv, r, h, cl] of ISLANDS) {
+  const [x, z] = uv(iu, iv);
+  const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 9), new THREE.MeshStandardMaterial({ color:cl, roughness:1 }));
+  m.scale.x = 1.6; m.position.set(x, 0, z); scene.add(m);
+}
+{ /* hic svnt dracones */
+  const cv = document.createElement("canvas"); cv.width = 160; cv.height = 80;
+  const c2 = cv.getContext("2d");
+  c2.strokeStyle = "rgba(14,42,46,.9)"; c2.fillStyle = "rgba(14,42,46,.9)";
+  c2.lineWidth = 7; c2.lineCap = "round";
+  for (const hx of [38, 74, 110]) { c2.beginPath(); c2.arc(hx, 50, 16, Math.PI, 0); c2.stroke(); }
+  c2.beginPath(); c2.arc(128, 40, 12, Math.PI*0.95, Math.PI*1.62); c2.stroke();
+  c2.beginPath(); c2.arc(139, 27, 5.5, 0, Math.PI*2); c2.fill();
+  c2.beginPath(); c2.moveTo(20,46); c2.lineTo(7,33); c2.moveTo(20,46); c2.lineTo(5,48); c2.stroke();
+  const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tx, transparent:true, opacity:.55, depthWrite:false }));
+  const [x, z] = uv(-14, -11);
+  sp.scale.set(3, 1.5, 1); sp.position.set(x, 0.55, z);
+  scene.add(sp);
+}
+
+/* ---- shared builders ---- */
+const layerMats = {}; for (const k in LAYERS) layerMats[k] = [];
+function mat(color, layer, rough = 0.92) {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: rough });
+  if (layer) { m.emissive = new THREE.Color(LAYERS[layer].color); m.emissiveIntensity = 0; layerMats[layer].push(m); }
+  return m;
+}
+function box(w, h, d, material, x, y, z, ry = 0, cast = true) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  m.position.set(x, y, z); m.rotation.y = ry; m.castShadow = cast;
+  scene.add(m); return m;
+}
+const AXIS = Math.PI / 4;                                  // route axis yaw
+const COLS = [];                                           // global column instancing
+function col(u, v, y, s = 1) { const [x, z] = uv(u, v); COLS.push([x, y, z, s]); }
+const marbleM = mat("#ddd2b6", null, .85);
+
+function gable(len, half, hgt, material, x, y, z, ry) {
+  const shape = new THREE.Shape();
+  shape.moveTo(-half, 0); shape.lineTo(half, 0); shape.lineTo(0, hgt); shape.closePath();
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: len, bevelEnabled: false });
+  geo.translate(0, 0, -len / 2); geo.rotateY(Math.PI / 2);
+  const m = new THREE.Mesh(geo, material);
+  m.position.set(x, y, z); m.rotation.y = ry; m.castShadow = true;
+  scene.add(m); return m;
+}
+function temple(u, v, L, Wd, nL, nW, layer, roofC = "#b3674f", ry = AXIS) {
+  const [x, z] = uv(u, v), y = Y(u, v);
+  const white = mat("#ddd2b6", layer, .85);
+  box(L * 1.15, .1, Wd * 1.15, mat("#cfc2a4", null, .85), x, y + .05, z, ry);
+  box(L, .09, Wd, white, x, y + .15, z, ry);
+  const ca = Math.cos(ry), sa = Math.sin(ry);
+  for (let i = 0; i < nL; i++) for (const side of [-1, 1]) {
+    const lx = -L/2 + .12 + (i * (L - .24)) / (nL - 1), lz = side * (Wd/2 - .1);
+    const wx = x + lx * sa + lz * ca, wz = lx * ca - lz * sa + z;   // rotate local→world (yaw)
+    COLS.push([wx, y + .34, wz, 1]);
+  }
+  for (let i = 1; i < nW - 1; i++) for (const end of [-1, 1]) {
+    const lx = end * (L/2 - .12), lz = -Wd/2 + .1 + (i * (Wd - .2)) / (nW - 1);
+    const wx = x + lx * sa + lz * ca, wz = lx * ca - lz * sa + z;
+    COLS.push([wx, y + .34, wz, 1]);
+  }
+  box(L - .1, .07, Wd - .06, white, x, y + .56, z, ry);
+  gable(L, Wd / 2 + .06, Wd * .3, mat(roofC, layer), x, y + .6, z, ry);
+}
+function theatre(u, v, scale, faceRy, layer = "civic") {
+  const [x, z] = uv(u, v), y = Y(u, v);
+  const m = mat("#c3b493", layer, .9);
+  for (let i = 0; i < 4; i++) {
+    const t = new THREE.Mesh(new THREE.TorusGeometry((.3 + i * .14) * scale, .06 * scale, 5, 22, Math.PI), m);
+    t.rotation.x = -Math.PI / 2; t.rotation.z = faceRy;
+    t.position.set(x, y + .05 + i * .07 * scale, z);
+    t.castShadow = true; scene.add(t);
+  }
+  const sx = Math.sin(faceRy + Math.PI / 2), sz = Math.cos(faceRy + Math.PI / 2);
+  box(.7 * scale, .14, .16 * scale, m, x - sx * .25 * scale, y + .1, z - sz * .25 * scale, -faceRy);
+}
+function lighthouse(u, v) {
+  const [x, z] = uv(u, v);
+  const stone = mat("#cfc2a4", "maritime", .85);
+  const c1 = new THREE.Mesh(new THREE.CylinderGeometry(.16, .2, .6, 8), stone);
+  c1.position.set(x, .3, z); c1.castShadow = true; scene.add(c1);
+  const c2 = new THREE.Mesh(new THREE.CylinderGeometry(.1, .13, .35, 8), stone);
+  c2.position.set(x, .77, z); scene.add(c2);
+  const f = new THREE.Mesh(new THREE.ConeGeometry(.12, .16, 8), mat("#e8b34b", "maritime"));
+  f.position.set(x, 1.02, z); scene.add(f);
+}
+function jetty(u, v, outRy) {
+  const wood = mat("#8a6f4d", "maritime", .9);
+  const [x0, z0] = uv(u, v);
+  for (let i = 0; i < 3; i++) {
+    const px = x0 + Math.sin(outRy) * (0.4 + i * 0.75), pz = z0 + Math.cos(outRy) * (0.4 + i * 0.75);
+    box(0.5, 0.06, 0.8, wood, px, 0.16, pz, -outRy);
+  }
+}
+function ship(u, v, ry, sail = true) {
+  const [x, z] = uv(u, v);
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry;
+  const hull = mat("#6d4f33", "maritime", .85);
+  const add = (m, px, py, pz, rz = 0) => { m.position.set(px, py, pz); m.rotation.z = rz; m.castShadow = true; g.add(m); };
+  add(new THREE.Mesh(new THREE.BoxGeometry(.9, .15, .26), hull), 0, .04, 0);
+  add(new THREE.Mesh(new THREE.BoxGeometry(.22, .08, .2), hull), .44, .13, 0, -.5);
+  add(new THREE.Mesh(new THREE.BoxGeometry(.22, .08, .2), hull), -.44, .13, 0, .5);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(.017, .022, .7, 5), hull), 0, .42, 0);
+  if (sail) {
+    const s = new THREE.Mesh(new THREE.PlaneGeometry(.48, .38), new THREE.MeshStandardMaterial({ color:"#e8dbb8", roughness:.9, side:THREE.DoubleSide }));
+    s.position.set(0, .52, 0); g.add(s);
+  }
+  scene.add(g);
+}
+const SEAWARD = -Math.PI / 4;                              // yaw facing -v (open water)
+
+/* ---- the road itself ---- */
+const ROAD_UV = [[-31,.5],[-27,1],[-24,1],[-21,2.6],[-17,3.2],[-13,3.2],[-10,2],[-7,3.6],[-3.6,4.1],[-1,2.6],[2,-1],[4,1.6],[8,3],[11,2.2],[14,0],[17,2.6],[20,4],[24,4],[28,3],[31,4.2],[35,5]];
+{
+  const rMat = new THREE.MeshStandardMaterial({ color:"#c0a980", roughness:1, transparent:true, opacity:.9, polygonOffset:true, polygonOffsetFactor:-2 });
+  rMat.emissive = new THREE.Color(LAYERS.road.color); rMat.emissiveIntensity = 0; layerMats.road.push(rMat);
+  const mile = mat("#d8cdb0", "road", .85);
+  let mileAcc = 0;
+  for (let i = 0; i < ROAD_UV.length - 1; i++) {
+    const [au, av] = ROAD_UV[i], [bu, bv] = ROAD_UV[i + 1];
+    const [ax, az] = uv(au, av), [bx, bz] = uv(bu, bv);
+    const dist = Math.hypot(bx - ax, bz - az), steps = Math.max(1, Math.round(dist / 0.7));
+    for (let s = 0; s < steps; s++) {
+      const x0 = ax + (bx - ax) * s / steps, z0 = az + (bz - az) * s / steps;
+      const x1 = ax + (bx - ax) * (s + 1) / steps, z1 = az + (bz - az) * (s + 1) / steps;
+      const mx = (x0 + x1) / 2, mz = (z0 + z1) / 2;
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(0.24, Math.hypot(x1 - x0, z1 - z0) + 0.12), rMat);
+      p.rotation.x = -Math.PI / 2; p.rotation.z = -Math.atan2(x1 - x0, z1 - z0);
+      p.position.set(mx, groundY(mx, mz) + 0.06, mz);
+      scene.add(p);
+      mileAcc += dist / steps;
+      if (mileAcc > 3.4) {                                 // a milestone
+        mileAcc = 0;
+        if (!ST_FLAT.some(([su, sv]) => { const [sx, sz2] = uv(su, sv); return Math.hypot(mx - sx, mz - sz2) < 2.6; })) {
+          const ms = new THREE.Mesh(new THREE.CylinderGeometry(.05, .06, .3, 6), mile);
+          ms.position.set(mx + .18, groundY(mx, mz) + .15, mz); ms.castShadow = true; scene.add(ms);
+        }
+      }
+    }
+  }
+  /* bridge over the Maeander */
+  const wood = mat("#8a6f4d", "road", .9);
+  const [bx, bz] = uv(-3.6, 4.1);
+  box(0.26, 0.06, 2.0, wood, bx, 0.26, bz, AXIS + Math.PI / 2);
+}
+
+/* ---- stations ---- */
+let houseSpots = [];
+let seedH = 909; const rndH = () => (seedH = (seedH * 16807) % 2147483647) / 2147483647;
+function housing(u0, v0, count, spread) {
+  let guard = 0;
+  while (count > 0 && guard++ < 400) {
+    const du = (rndH() - .5) * spread * 2, dv = (rndH() - .5) * spread * 1.6;
+    const u = u0 + du, v = v0 + dv;
+    const [x, z] = uv(u, v);
+    const h = heightAt(x, z);
+    if (h < 0.2 || h > 1.6) continue;
+    if (houseSpots.some(([sx,,sz]) => Math.hypot(x - sx, z - sz) < 0.32)) continue;
+    houseSpots.push([x, h, z, 0.15 + rndH() * 0.1, rndH() * Math.PI]);
+    count--;
+  }
+}
+/* SMYRNA */
+{
+  const S = STATIONS[1];
+  const [ax, az] = uv(S.u + .5, S.v + 1.3); const ay = Y(S.u + .5, S.v + 1.3);
+  box(1.0, .12, .5, mat("#cfc2a4", "civic", .85), ax, ay + .06, az, AXIS);   // agora platform
+  for (let i = 0; i < 7; i++) { COLS.push([ax - .42 + i * .14, ay + .3, az - .18, .9]); COLS.push([ax - .42 + i * .14, ay + .3, az + .18, .9]); }
+  theatre(S.u - .9, S.v + 2.6, .8, AXIS + Math.PI, "civic");
+  jetty(S.u + .1, coastV(S.u) + .3, SEAWARD);
+  ship(S.u - .6, coastV(S.u) - 1.2, 1.2, false);
+  housing(S.u, S.v + .6, 16, 2.2);
+}
+/* EPHESUS */
+{
+  const S = STATIONS[2];
+  temple(S.u - 3.4, S.v + 1.2, 1.7, .9, 8, 4, "wonders", "#b3674f", AXIS + .2);   // Artemision
+  theatre(S.u + .8, S.v + 1.7, 1.0, AXIS + Math.PI * .95, "civic");
+  { /* Library of Celsus: two-tier façade */
+    const [x, z] = uv(S.u + .3, S.v + .7), y = Y(S.u + .3, S.v + .7);
+    const white = mat("#ddd2b6", "civic", .85);
+    box(.5, .34, .4, mat("#cfc2a4", null, .85), x, y + .17, z, AXIS);
+    box(.56, .05, .1, white, x - Math.sin(AXIS) * 0 + Math.cos(AXIS) * .22, y + .4, z - Math.sin(AXIS) * .22, AXIS);
+    for (let i = 0; i < 4; i++) {
+      const lx = -.18 + i * .12;
+      const wx = x + lx * Math.sin(AXIS) + .24 * Math.cos(AXIS), wz = z + lx * Math.cos(AXIS) - .24 * Math.sin(AXIS);
+      COLS.push([wx, y + .14, wz, .8]); COLS.push([wx, y + .4, wz, .65]);
+    }
+  }
+  { /* Arcadiane: colonnaded avenue harbor→theatre */
+    for (let i = 0; i < 6; i++) {
+      const t = i / 5, au = S.u + .6 - t * 1.0, av = S.v - 1.2 + t * 2.6;
+      col(au + .12, av, Y(au + .12, av) + .3, .8); col(au - .12, av, Y(au - .12, av) + .3, .8);
+    }
+  }
+  jetty(S.u - .3, coastV(S.u) + .3, SEAWARD);
+  lighthouse(S.u - 1.1, coastV(S.u) - .6);
+  ship(S.u - .9, coastV(S.u) - 1.4, .9, false);
+  housing(S.u + .6, S.v + .8, 22, 2.4);
+}
+/* Sacred Way statue bases */
+for (let i = 0; i < 7; i++) {
+  const t = i / 6, su = -1.5 + t * 3.2, sv = -2.6 + t * 2.0;
+  const [x, z] = uv(su, sv);
+  box(.1, .16, .1, marbleM, x, groundY(x, z) + .08, z, AXIS, false);
+}
+/* DIDYMA */
+{
+  const S = STATIONS[3];
+  temple(S.u, S.v + .4, 2.3, 1.2, 10, 5, "religion", "#c3b493");
+  jetty(S.u - .9, coastV(S.u) + .2, SEAWARD);
+  housing(S.u + .6, S.v + 1.4, 6, 1.4);
+}
+/* HALICARNASSUS */
+{
+  const S = STATIONS[4];
+  { /* Mausoleum */
+    const [x, z] = uv(S.u + .3, S.v + 1.5), y = Y(S.u + .3, S.v + 1.5);
+    const white = mat("#e6dcc0", "wonders", .8);
+    box(1.0, .4, 1.0, mat("#cfc2a4", "wonders", .85), x, y + .2, z, AXIS);
+    box(.8, .3, .8, white, x, y + .55, z, AXIS);
+    for (let i = 0; i < 4; i++) for (const s of [-1, 1]) {
+      const lx = -.27 + i * .18;
+      COLS.push([x + lx, y + .82, z + s * .27, .85]);
+      COLS.push([x + s * .27, y + .82, z + lx, .85]);
+    }
+    box(.72, .06, .72, white, x, y + 1.02, z, AXIS);
+    const pyr = new THREE.Mesh(new THREE.ConeGeometry(.52, .42, 4), white);
+    pyr.position.set(x, y + 1.26, z); pyr.rotation.y = AXIS + Math.PI / 4; pyr.castShadow = true; scene.add(pyr);
+    box(.14, .12, .14, mat("#e8b34b", "wonders"), x, y + 1.52, z, AXIS);
+  }
+  { /* Myndos gate + wall arc */
+    const wallM = mat("#98876e", "civic");
+    for (let i = 0; i < 6; i++) {
+      const a = Math.PI * (0.15 + i * 0.12);
+      const wu = S.u + Math.cos(a) * 2.6, wv = S.v + 1.0 + Math.sin(a) * 1.6;
+      const [x, z] = uv(wu, wv);
+      box(.5, .3, .14, wallM, x, groundY(x, z) + .14, z, AXIS + a);
+    }
+    const [gx, gz] = uv(S.u - 1.7, S.v + 1.3);
+    box(.2, .5, .2, wallM, gx - .18, groundY(gx, gz) + .22, gz);
+    box(.2, .5, .2, wallM, gx + .18, groundY(gx, gz) + .22, gz);
+  }
+  jetty(S.u + .3, coastV(S.u) + .25, SEAWARD);
+  ship(S.u + .8, coastV(S.u) - 1.1, 2.1, false);
+  ship(S.u - .5, coastV(S.u) - 1.6, .4, false);
+  housing(S.u + .4, S.v + .7, 14, 2.0);
+}
+/* PATARA */
+{
+  const S = STATIONS[5];
+  theatre(S.u + 1.2, S.v + 1.0, .9, AXIS - Math.PI * .5, "civic");
+  { /* bouleuterion: hall + apse */
+    const [x, z] = uv(S.u + .4, S.v + .4), y = Y(S.u + .4, S.v + .4);
+    const m = mat("#cfc2a4", "civic", .85);
+    box(.55, .3, .4, m, x, y + .15, z, AXIS);
+    const apse = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .3, 10, 1, false, 0, Math.PI), m);
+    apse.position.set(x + Math.sin(AXIS) * .27, y + .15, z + Math.cos(AXIS) * .27);
+    apse.rotation.y = AXIS; apse.castShadow = true; scene.add(apse);
+  }
+  { /* granary: long horreum, two gables */
+    const [x, z] = uv(S.u - 1.3, S.v + .2), y = Y(S.u - 1.3, S.v + .2);
+    const m = mat("#b09877", "civic", .9);
+    box(.9, .26, .42, m, x, y + .13, z, AXIS);
+    gable(.9, .22, .14, mat("#8a7355", null, .95), x, y + .26, z, AXIS);
+  }
+  { /* arch of Modestus */
+    const [x, z] = uv(S.u + .9, S.v + 2.1), y = Y(S.u + .9, S.v + 2.1);
+    const m = mat("#cfc2a4", "civic", .85);
+    box(.1, .34, .14, m, x - .16, y + .17, z, AXIS); box(.1, .34, .14, m, x + .16, y + .17, z, AXIS);
+    box(.48, .1, .16, m, x, y + .4, z, AXIS);
+  }
+  { /* the Stadiasmus */
+    const [x, z] = uv(S.u + .7, S.v + 1.3), y = Y(S.u + .7, S.v + 1.3);
+    box(.16, .08, .16, marbleM, x, y + .04, z, AXIS);
+    box(.09, .5, .12, mat("#e8d4a4", "road", .8), x, y + .33, z, AXIS);
+  }
+  { /* lycian necropolis: ogival tombs */
+    const m = mat("#a89a7c", "religion", .9);
+    for (let i = 0; i < 5; i++) {
+      const tu = S.u + 2.0 + (i % 3) * .5, tv = S.v + 1.6 + Math.floor(i / 3) * .5 + (i % 2) * .2;
+      const [x, z] = uv(tu, tv), y = groundY(x, z);
+      box(.16, .18, .12, m, x, y + .09, z, AXIS + (i * .3));
+      const lid = new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, .16, 3), m);
+      lid.position.set(x, y + .24, z); lid.rotation.z = Math.PI / 2; lid.rotation.y = AXIS + (i * .3);
+      lid.castShadow = true; scene.add(lid);
+    }
+  }
+  /* colonnaded street toward the harbour */
+  for (let i = 0; i < 6; i++) {
+    const t = i / 5, cu = S.u + .2 - t * 1.2, cv2 = S.v + .1 - t * 1.2;
+    col(cu + .12, cv2 - .12, Y(cu + .12, cv2 - .12) + .3, .8);
+    col(cu - .12, cv2 + .12, Y(cu - .12, cv2 + .12) + .3, .8);
+  }
+  lighthouse(S.u - 2.0, coastV(S.u) - .4);
+  jetty(S.u - .6, coastV(S.u) + .3, SEAWARD);
+  ship(S.u - 1.2, coastV(S.u) - 1.3, 1.7, false);
+  housing(S.u + .3, S.v + .8, 16, 2.0);
+}
+/* houses (one instanced pair for the whole highway) */
+{
+  const baseI = new THREE.InstancedMesh(new THREE.BoxGeometry(1, .62, .78), new THREE.MeshStandardMaterial({ roughness:.95 }), houseSpots.length);
+  const roofI = new THREE.InstancedMesh(new THREE.ConeGeometry(.62, .36, 4), new THREE.MeshStandardMaterial({ roughness:.95 }), houseSpots.length);
+  baseI.castShadow = true;
+  const d = new THREE.Object3D(), c = new THREE.Color();
+  const walls = ["#b3a07f","#c0ad8a","#a8916f","#cbb896"], roofs = ["#a0522d","#b3674f","#8f5a40"];
+  houseSpots.forEach(([x, y, z, s, ry], i) => {
+    d.position.set(x, y + .31 * s, z); d.rotation.y = ry; d.scale.setScalar(s); d.updateMatrix();
+    baseI.setMatrixAt(i, d.matrix); baseI.setColorAt(i, c.set(walls[i % 4]));
+    d.position.y = y + .8 * s; d.rotation.y = ry + Math.PI / 4; d.updateMatrix();
+    roofI.setMatrixAt(i, d.matrix); roofI.setColorAt(i, c.set(roofs[i % 3]));
+  });
+  scene.add(baseI, roofI);
+}
+/* all columns */
+{
+  const colI = new THREE.InstancedMesh(new THREE.CylinderGeometry(.03, .037, .3, 6), new THREE.MeshStandardMaterial({ color:"#e6dcc0", roughness:.8 }), COLS.length);
+  colI.castShadow = true;
+  const d = new THREE.Object3D();
+  COLS.forEach(([x, y, z, s], i) => {
+    d.position.set(x, y, z); d.scale.setScalar(s); d.rotation.set(0, 0, 0); d.updateMatrix();
+    colI.setMatrixAt(i, d.matrix);
+  });
+  scene.add(colI);
+}
+/* sailing ships along the corridor */
+for (const [su, sv, ry] of [[-20,-6,.5],[-14,-7.5,-.2],[-6,-6,.8],[4,-7,.2],[10,-5,1.1],[21,-7,.4],[32,-6.5,.7]]) ship(su, sv, ry, true);
+
+/* olives, pines, groves */
+{
+  let seed = 4242; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const d = new THREE.Object3D(), c = new THREE.Color();
+  const pMat = new THREE.MeshStandardMaterial({ roughness:1, side:THREE.DoubleSide, polygonOffset:true, polygonOffsetFactor:-1 });
+  pMat.emissive = new THREE.Color(LAYERS.natural.color); pMat.emissiveIntensity = 0; layerMats.natural.push(pMat);
+  const patchG = new THREE.PlaneGeometry(1, 1); patchG.rotateX(-Math.PI / 2);
+  const patches = new THREE.InstancedMesh(patchG, pMat, 34);
+  let placed = 0, guard = 0;
+  while (placed < 34 && guard++ < 900) {
+    const st = STATIONS[1 + Math.floor(rnd() * 5)];
+    const u = st.u + (rnd() - .5) * 9, v = st.v + 1.5 + rnd() * 4;
+    const [x, z] = uv(u, v), h = heightAt(x, z);
+    if (h < 0.25 || h > 1.6 || distToRiver(x, z) < 1.4) continue;
+    if (g2(u, v, st.u, st.v, 2.2) > 0.5) continue;
+    d.position.set(x, h + .04, z); d.rotation.y = AXIS + (rnd() - .5) * .5;
+    d.scale.set(.9 + rnd() * .9, 1, .6 + rnd() * .6); d.updateMatrix();
+    patches.setMatrixAt(placed, d.matrix);
+    patches.setColorAt(placed, c.set(["#96a24e","#b3a453","#7f9448","#c0ab5c"][placed % 4]));
+    placed++;
+  }
+  patches.count = placed; scene.add(patches);
+
+  const trees = [];
+  guard = 0;
+  while (trees.length < 140 && guard++ < 4000) {
+    const u = -32 + rnd() * 70, v = -1 + rnd() * 9;
+    const [x, z] = uv(u, v), h = heightAt(x, z);
+    if (h < 0.22 || h > 1.7 || distToRiver(x, z) < 1.0) continue;
+    if (ST_FLAT.some(([su, sv]) => g2(u, v, su, sv, 1.9) > 0.5)) continue;
+    trees.push([x, h, z, .7 + rnd() * .6, 0]);
+  }
+  guard = 0; let pines = 0;
+  while (pines < 60 && guard++ < 1500) {
+    const u = -32 + rnd() * 72, v = 6 + rnd() * 8;
+    const [x, z] = uv(u, v), h = heightAt(x, z);
+    if (h < 1.2 || h > 6) continue;
+    trees.push([x, h, z, .8 + rnd() * .7, 1]); pines++;
+  }
+  const trunkI = new THREE.InstancedMesh(new THREE.CylinderGeometry(.03, .045, .26, 5), new THREE.MeshStandardMaterial({ color:"#6b5138", roughness:.95 }), trees.length);
+  const oliveI = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.2, 0), new THREE.MeshStandardMaterial({ roughness:.95, flatShading:true }), trees.length);
+  const pineI = new THREE.InstancedMesh(new THREE.ConeGeometry(.18, .5, 6), new THREE.MeshStandardMaterial({ roughness:.95, flatShading:true }), trees.length);
+  let oi = 0, pi = 0;
+  trees.forEach(([x, h, z, s, kind], i) => {
+    d.rotation.set(0, 0, 0);
+    d.position.set(x, h + .12 * s, z); d.scale.setScalar(s); d.updateMatrix();
+    trunkI.setMatrixAt(i, d.matrix);
+    if (kind === 0) {
+      d.position.y = h + .36 * s; d.rotation.y = i * 1.7; d.scale.set(s, s * .8, s); d.updateMatrix();
+      oliveI.setMatrixAt(oi, d.matrix); oliveI.setColorAt(oi, c.set(["#7d8f57","#6e874d","#8a9a62","#5f7a44"][i % 4])); oi++;
+    } else {
+      d.position.y = h + .48 * s; d.updateMatrix();
+      pineI.setMatrixAt(pi, d.matrix); pineI.setColorAt(pi, c.set(["#3d5a3a","#466345","#35503a"][i % 3])); pi++;
+    }
+  });
+  oliveI.count = oi; pineI.count = pi;
+  scene.add(trunkI, oliveI, pineI);
+}
+
+/* ---- POI markers ---- */
+const markers = [], markerRoot = new THREE.Group();
+scene.add(markerRoot);
+for (const poi of POIS) {
+  const su = poi.u ?? (STATIONS[poi.st].u + poi.du);
+  const sv = poi.v ?? (STATIONS[poi.st].v + poi.dv);
+  const [x, z] = uv(su, sv);
+  poi._u = su;
+  const baseY = groundY(x, z) + poi.yOff * 0.6 + 0.4;
+  const color = new THREE.Color(LAYERS[poi.layer].color);
+  const g = new THREE.Group(); g.position.set(x, baseY, z);
+  const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.2, 0),
+    new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.9, transparent: true }));
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.02, 6, 24),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.75 }));
+  ring.rotation.x = Math.PI / 2;
+  const hit = new THREE.Mesh(new THREE.SphereGeometry(0.75, 8, 8),
+    new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
+  g.add(core, ring, hit);
+  g.userData = { poi, baseY, phase: markers.length * 1.31 };
+  markerRoot.add(g); markers.push(g);
+}
+
+/* ================= Cartographic plate ================= */
+const MAP_LABELS = [
+  { t:"MARE AEGAEVM", uv:[-17,-8.5], cls:"water big", rot:-6 },
+  { t:"MARE LYCIVM", uv:[26,-8], cls:"water", rot:-6 },
+  { t:"SMYRNA", sub:"İzmir · statio I", uv:[-24,1] },
+  { t:"EPHESVS", sub:"Selçuk · statio II", uv:[-10,2] },
+  { t:"DIDYMA", sub:"Didim · statio III", uv:[2,-1] },
+  { t:"HALICARNASSVS", sub:"Bodrum · statio IV", uv:[14,0] },
+  { t:"PATARA", sub:"Gelemiş · statio V", uv:[28,3] },
+  { t:"MAEANDER FL.", sub:"Büyük Menderes", uv:[-2.6,7.5], cls:"water", rot:11 },
+  { t:"VIA REGIA", sub:"the King's Highway", uv:[-16.5,5.5] },
+  { t:"SAMOS", uv:[-6,-11], cls:"water" },
+  { t:"COS", uv:[16,-10], cls:"water" },
+  { t:"RHODOS", uv:[36,-9.5], cls:"water" },
+  { t:"IONIA", uv:[-16,9], cls:"region" },
+  { t:"CARIA", uv:[8,9.5], cls:"region" },
+  { t:"LYCIA", uv:[25,9], cls:"region" },
+];
+const labelsEl = document.getElementById("labels");
+const labelObjs = MAP_LABELS.map((l) => {
+  const d = document.createElement("div");
+  d.className = "maplabel " + (l.cls || "");
+  d.innerHTML = l.t + (l.sub ? `<span class="sub">${l.sub}</span>` : "");
+  labelsEl.appendChild(d);
+  const [x, z] = uv(l.uv[0], l.uv[1]);
+  const y = groundY(x, z) + ((l.cls || "").includes("water") ? 0.5 : 0.9);
+  return { d, rot: l.rot || 0, pos: new THREE.Vector3(x, y, z) };
+});
+const pv = new THREE.Vector3();
+function updateLabels() {
+  const w = mount.clientWidth, h = mount.clientHeight;
+  for (const { d, rot, pos } of labelObjs) {
+    pv.copy(pos).project(camera);
+    if (Math.abs(pv.x) > 1.08 || Math.abs(pv.y) > 1.08) { d.style.visibility = "hidden"; continue; }
+    d.style.visibility = "visible";
+    d.style.transform = `translate(-50%,-50%) translate(${((pv.x+1)/2*w).toFixed(1)}px,${((1-(pv.y+1)/2)*h).toFixed(1)}px) rotate(${rot}deg)`;
+  }
+}
+const carto = document.getElementById("carto");
+function buildCarto() {
+  const w = mount.clientWidth, h = mount.clientHeight;
+  carto.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  const ink = "rgba(232,212,170,";
+  const cx = 60, cy = Math.min(330, h * 0.42);
+  let s = "";
+  for (let i = 0; i < 16; i++) {
+    const a = i * Math.PI / 8;
+    s += `<line x1="${cx}" y1="${cy}" x2="${(cx+Math.cos(a)*600).toFixed(0)}" y2="${(cy+Math.sin(a)*600).toFixed(0)}" stroke="${ink}.05)" stroke-width="0.7"/>`;
+  }
+  s += `<rect x="8" y="8" width="${w-16}" height="${h-16}" fill="none" stroke="${ink}.5)" stroke-width="1.4"/>`;
+  s += `<rect x="14" y="14" width="${w-28}" height="${h-28}" fill="none" stroke="${ink}.3)" stroke-width="0.6"/>`;
+  for (let x = 32; x < w - 20; x += 48)
+    s += `<line x1="${x}" y1="8" x2="${x}" y2="14" stroke="${ink}.4)" stroke-width="0.8"/><line x1="${x}" y1="${h-14}" x2="${x}" y2="${h-8}" stroke="${ink}.4)" stroke-width="0.8"/>`;
+  for (let y = 32; y < h - 20; y += 48)
+    s += `<line x1="8" y1="${y}" x2="14" y2="${y}" stroke="${ink}.4)" stroke-width="0.8"/><line x1="${w-14}" y1="${y}" x2="${w-8}" y2="${y}" stroke="${ink}.4)" stroke-width="0.8"/>`;
+  for (const [px, py] of [[8,8],[w-8,8],[8,h-8],[w-8,h-8]])
+    s += `<rect x="${px-4}" y="${py-4}" width="8" height="8" transform="rotate(45 ${px} ${py})" fill="${ink}.35)"/>`;
+  s += `<g transform="translate(${cx} ${cy}) rotate(-24)">`;   // approx. true north in the itinerary frame
+  s += `<circle r="28" fill="none" stroke="${ink}.5)" stroke-width="0.8"/><circle r="21" fill="none" stroke="${ink}.22)" stroke-width="0.5"/><circle r="2.2" fill="${ink}.8)"/>`;
+  for (let i = 0; i < 8; i++) {
+    const L = i % 2 ? 14 : 25;
+    s += `<g transform="rotate(${i*45})"><path d="M0,-${L} L3.2,-3 L0,0 Z" fill="${ink}.75)"/><path d="M0,-${L} L-3.2,-3 L0,0 Z" fill="none" stroke="${ink}.55)" stroke-width="0.6"/></g>`;
+  }
+  s += `<text y="-34" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="12" fill="${ink}.85)">N</text></g>`;
+  carto.innerHTML = s;
+}
+{
+  const c = document.createElement("canvas"); c.width = c.height = 128;
+  const g = c.getContext("2d"), img = g.createImageData(128, 128);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 110 + Math.random() * 70;
+    img.data[i] = img.data[i+1] = img.data[i+2] = v; img.data[i+3] = 26;
+  }
+  g.putImageData(img, 0, 0);
+  document.getElementById("grain").style.backgroundImage = `url(${c.toDataURL()})`;
+}
+
+/* ================= UI ================= */
+const $ = (s) => document.querySelector(s);
+const state = { st: 0, stF: 0, layers: new Set(), selected: null, parX: 0, parY: 0,
+  reduced: matchMedia("(prefers-reduced-motion: reduce)").matches };
+
+const secWrap = $("#sections");
+secWrap.innerHTML = STATIONS.map((s, i) => {
+  const g = GUIDES[s.guide];
+  return `<section aria-label="${s.name}"><div class="card">
+    <div class="tags"><span class="pill" style="border-color:#e8b34b88;color:#e8b34b;background:#e8b34b1a"><span class="d" style="background:#e8b34b"></span>${i === 0 ? "Prologue" : "Statio " + "I II III IV V".split(" ")[i-1]}</span>
+    <span class="kick">${s.region}</span></div>
+    <h2><span style="color:var(--gold)">${s.name}</span><span class="native">${s.native}</span></h2>
+    <p class="sum">${s.summary}</p>
+    <div class="quote">“${s.quote}”<span class="who">— ${s.who}</span></div>
+    <div class="facts">${s.facts}${s.next ? ` · NEXT <b>${s.next}</b>` : " · TERMINVS VIAE"}</div>
+    <div class="guide">
+      <div class="medal">${g.init}</div>
+      <div class="who"><div class="gname">${g.name}</div><div class="gdom">${g.dom}</div></div>
+      <button class="consult" data-st="${i}">CONSVLT</button>
+    </div>
+    <div class="counsel" id="counsel-${i}"></div>
+  </div></section>`;
+}).join("");
+secWrap.addEventListener("click", (e) => {
+  const b = e.target.closest(".consult"); if (!b) return;
+  const i = +b.dataset.st, g = GUIDES[STATIONS[i].guide];
+  const el = document.getElementById("counsel-" + i);
+  const n = ((+el.dataset.n || 0) % g.counsel.length);
+  el.textContent = "“" + g.counsel[n] + "”";
+  el.dataset.n = n + 1;
+});
+const rail = $("#rail");
+rail.innerHTML = STATIONS.map((s, i) => `<button data-i="${i}" aria-label="${s.name}"><span class="yr">${s.short}</span><span class="dot"></span></button>`).join("");
+rail.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button");
+  if (b) scrollTo({ top: (+b.dataset.i) * innerHeight, behavior: "smooth" });
+});
+function syncRail() {
+  rail.querySelectorAll("button").forEach((b, i) => b.classList.toggle("active", i === state.st));
+}
+const chips = $("#chips");
+chips.innerHTML = Object.entries(LAYERS).map(([id, l]) =>
+  `<button data-id="${id}" aria-pressed="false" title="${l.name}"><span class="d"></span>${l.name}</button>`).join("");
+chips.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button"); if (!b) return;
+  const id = b.dataset.id;
+  state.layers.has(id) ? state.layers.delete(id) : state.layers.add(id);
+  const on = state.layers.has(id), l = LAYERS[id];
+  b.setAttribute("aria-pressed", on);
+  b.style.borderColor = on ? l.color : "rgba(255,255,255,.18)";
+  b.style.color = on ? l.color : "rgba(255,255,255,.72)";
+  b.style.background = on ? l.color + "26" : "rgba(10,8,16,.45)";
+  b.querySelector(".d").style.background = on ? l.color : "rgba(255,255,255,.35)";
+  for (const k in layerMats) for (const m of layerMats[k]) m.emissiveIntensity = state.layers.has(k) ? 0.45 : 0;
+});
+
+const sheet = $("#sheet");
+function openSheet(poi) {
+  state.selected = poi.id;
+  $("#sh-era").textContent = "c. 150 AD · " + (poi.st ? STATIONS[poi.st].name : "the road");
+  $("#sh-name").textContent = poi.name;
+  const l = LAYERS[poi.layer], cf = CONF[poi.conf];
+  $("#sh-badges").innerHTML =
+    `<span class="pill" style="border-color:${cf.color}66;color:${cf.color};background:${cf.color}14"><span class="d" style="background:${cf.color}"></span>${cf.label}</span>` +
+    `<span class="pill" style="border-color:${l.color}66;color:${l.color};background:${l.color}14"><span class="d" style="background:${l.color}"></span>${l.name}</span>` +
+    `<span class="pill" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5)">${poi.lon.toFixed(4)}°E ${poi.lat.toFixed(4)}°N</span>`;
+  $("#sh-summary").textContent = poi.summary;
+  $("#sh-evidence").textContent = poi.evidence;
+  $("#sh-evidence").style.borderColor = l.color;
+  $("#sh-src").textContent = "SOURCE — " + poi.src;
+  sheet.classList.add("open");
+}
+function closeSheet() { state.selected = null; sheet.classList.remove("open"); }
+$("#sh-close").addEventListener("click", closeSheet);
+{
+  let y0 = null, dy = 0;
+  sheet.addEventListener("touchstart", (e) => { y0 = e.touches[0].clientY; sheet.style.transition = "none"; }, { passive: true });
+  sheet.addEventListener("touchmove", (e) => {
+    if (y0 == null) return;
+    dy = Math.max(0, e.touches[0].clientY - y0);
+    sheet.style.transform = `translateY(${dy}px)`;
+  }, { passive: true });
+  sheet.addEventListener("touchend", () => {
+    sheet.style.transition = ""; sheet.style.transform = "";
+    if (dy > 80) closeSheet();
+    y0 = null; dy = 0;
+  });
+}
+
+function onScroll() {
+  const p = Math.min(1, Math.max(0, scrollY / (innerHeight * (STATIONS.length - 1))));
+  state.stF = p * (STATIONS.length - 1);
+  const st = Math.round(state.stF);
+  if (st !== state.st) { state.st = st; syncRail(); closeSheet(); }
+}
+addEventListener("scroll", onScroll, { passive: true });
+addEventListener("pointermove", (e) => {
+  state.parX = (e.clientX / innerWidth - 0.5) * 2;
+  state.parY = (e.clientY / innerHeight - 0.5) * 2;
+}, { passive: true });
+addEventListener("deviceorientation", (e) => {
+  if (e.gamma == null || e.beta == null) return;
+  state.parX = Math.max(-1, Math.min(1, e.gamma / 28));
+  state.parY = Math.max(-1, Math.min(1, (e.beta - 42) / 28));
+}, true);
+
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let downAt = null;
+renderer.domElement.addEventListener("pointerdown", (e) => { downAt = [e.clientX, e.clientY]; }, { passive: true });
+renderer.domElement.addEventListener("pointerup", (e) => {
+  if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 9) { downAt = null; return; }
+  downAt = null;
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hits = ray.intersectObjects(markerRoot.children, true);
+  if (hits.length) {
+    let g = hits[0].object; while (g.parent !== markerRoot) g = g.parent;
+    openSheet(g.userData.poi);
+  } else closeSheet();
+});
+renderer.domElement.addEventListener("pointermove", (e) => {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  document.body.style.cursor = ray.intersectObjects(markerRoot.children, true).length ? "pointer" : "auto";
+}, { passive: true });
+
+/* ================= camera: the road carries you ================= */
+const TARGETS = STATIONS.map((s) => { const [x, z] = uv(s.u, s.v); return new THREE.Vector3(x, 0.7, z); });
+const OFFSET = new THREE.Vector3(26, 24, 26);
+const RIGHT = new THREE.Vector3(1, 0, -1).normalize();
+const follow = TARGETS[0].clone(), pan = new THREE.Vector3(), want = new THREE.Vector3(), tmp = new THREE.Vector3();
+function resize() {
+  const w = mount.clientWidth, h = mount.clientHeight;
+  renderer.setSize(w, h);
+  const zoom = Math.max(9, Math.min(w / 25, h / 37));
+  camera.left = -w/2/zoom; camera.right = w/2/zoom;
+  camera.top = h/2/zoom; camera.bottom = -h/2/zoom;
+  camera.updateProjectionMatrix();
+  buildCarto();
+}
+addEventListener("resize", resize); resize();
+const clock = new THREE.Clock();
+const damp = (c, t, l, dt) => THREE.MathUtils.damp(c, t, l, dt);
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  const i = Math.min(STATIONS.length - 2, Math.floor(state.stF));
+  const f = smoothstep(0, 1, state.stF - i);
+  tmp.lerpVectors(TARGETS[i], TARGETS[i + 1], f);
+  follow.x = damp(follow.x, tmp.x, 3, dt);
+  follow.y = damp(follow.y, tmp.y, 3, dt);
+  follow.z = damp(follow.z, tmp.z, 3, dt);
+  if (state.reduced) want.set(0, 0, 0);
+  else want.copy(RIGHT).multiplyScalar(Math.sin(t * 0.07) * 1.1 + state.parX * 0.9)
+           .add(new THREE.Vector3(0, Math.sin(t * 0.05) * 0.35 - state.parY * 0.55, 0));
+  pan.set(damp(pan.x, want.x, 2.2, dt), damp(pan.y, want.y, 2.2, dt), damp(pan.z, want.z, 2.2, dt));
+  camera.position.copy(follow).add(OFFSET).add(pan);
+  camera.lookAt(tmp.copy(follow).add(pan));
+  sun.position.copy(follow).add(SUN_OFF);
+  sun.target.position.copy(follow);
+  sun.target.updateMatrixWorld();
+  sunGlow.position.set(follow.x - 24, 7, follow.z + 20);
+
+  const curU = toUV(follow.x, follow.z)[0];
+  markers.forEach((g) => {
+    const { poi, baseY, phase } = g.userData;
+    const near = Math.max(0, 1 - Math.abs(poi._u - curU) / 12);
+    const dim = state.layers.size > 0 && !state.layers.has(poi.layer);
+    const sel = state.selected === poi.id;
+    const target = (0.35 + 0.65 * near) * (sel ? 1.5 : dim ? 0.4 : 1);
+    const s = damp(g.scale.x, target, 6, dt);
+    g.scale.setScalar(Math.max(s, 0.0001));
+    g.position.y = baseY + Math.sin(t * 1.7 + phase) * 0.08;
+    g.rotation.y = t * 0.7 + phase;
+  });
+  updateLabels();
+  renderer.render(scene, camera);
+});
+
+/* begin at the prologue, reveal via timers (throttle-proof) */
+syncRail(); onScroll();
+setTimeout(() => {
+  scrollTo(0, 0);
+  onScroll();
+  setTimeout(() => { const l = $("#loading"); if (l) { l.style.opacity = "0"; setTimeout(() => l.remove(), 650); } }, 300);
+}, 60);
+</script>
+</body>
+</html>
