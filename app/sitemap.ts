@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/case-studies",
     "/about",
     "/contact",
+    "/artemis-evolution-console-claude-code",
   ].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,

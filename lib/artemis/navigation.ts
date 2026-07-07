@@ -52,6 +52,7 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
     links: [
       { title: "About", href: "/about" },
       { title: "Brand", href: "/brand" },
+      { title: "Evolution Console", href: "/artemis-evolution-console-claude-code" },
       { title: "Departments", href: "/departments" },
       { title: "Contact", href: "/contact" },
     ],
