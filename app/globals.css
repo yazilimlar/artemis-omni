@@ -6,6 +6,8 @@
   Artemis Omni design tokens.
   HSL channels (no hsl() wrapper) so Tailwind's <alpha-value> works on semantic tokens.
   Brand hue families: navy, lunar black, silver, warm gold, parchment.
+
+  The `:root` block is the default dark theme. `.light` overrides for day mode.
 */
 @layer base {
   :root {
@@ -34,6 +36,27 @@
     --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-serif: "Cormorant Garamond", "Georgia", "Cambria", serif;
     --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+
+  .light {
+    --background: 40 30% 96%;
+    --foreground: 222 47% 14%;
+
+    --muted: 40 20% 88%;
+    --muted-foreground: 222 15% 40%;
+
+    --border: 40 20% 80%;
+    --ring: 41 55% 45%;
+
+    --navy: 222 30% 92%;
+    --navy-deep: 222 25% 96%;
+    --lunar: 40 20% 90%;
+    --silver: 210 10% 30%;
+    --blueprint: 195 65% 40%;
+    --blueprint-soft: 195 50% 55%;
+    --gold: 41 55% 45%;
+    --gold-soft: 41 45% 55%;
+    --parchment: 222 47% 14%;
   }
 }
 
