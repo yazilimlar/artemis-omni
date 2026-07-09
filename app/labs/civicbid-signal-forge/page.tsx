@@ -7,7 +7,7 @@ import CivicBidSignalForge from "@/components/labs/civicbid/CivicBidSignalForge"
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
-  title: "CivicBid Signal Forge",
+  title: "CivicBid Signal Forge v00",
   path: "/labs/civicbid-signal-forge",
   description:
     "Public procurement signals from NYC agencies — sample cockpit with source trust matrix, bid readiness scoring, and compliance friction mapping. Not a certified live bid feed.",
@@ -17,8 +17,8 @@ export default function CivicBidSignalForgePage() {
   return (
     <>
       <PageHero
-        eyebrow="Labs · Experimental"
-        title="CivicBid Signal Forge"
+        eyebrow="Labs · Experimental · v00"
+        title="CivicBid Signal Forge v00"
         description="NYC public procurement signals, translated into bid-room action."
       >
         <div className="flex flex-wrap items-center gap-3">
@@ -43,7 +43,7 @@ export default function CivicBidSignalForgePage() {
       <section className="border-t border-border/60 py-8">
         <Container>
           <p className="text-center text-xs text-muted-foreground">
-            CivicBid Signal Forge — experimental variant built on Artemis. The production CivicBid
+            CivicBid Signal Forge v00 — experimental variant built on Artemis. The production CivicBid
             Intelligence Bridge remains unchanged at{" "}
             <a
               href="https://artemis.agoraxai.com/labs/civicbid-intelligence-bridge"
