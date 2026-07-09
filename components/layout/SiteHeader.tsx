@@ -3,17 +3,19 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { primaryNav, ctaNav } from "@/lib/artemis/navigation";
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { ArtemisMark } from "@/components/layout/ArtemisMark";
+import { useTheme } from "@/components/layout/ThemeProvider";
 
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
+  const { theme, toggle } = useTheme();
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -60,7 +62,20 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-3 md:flex">
+          <button
+            type="button"
+            onClick={toggle}
+            className="flex h-9 w-9 items-center justify-center rounded-md text-foreground/60 transition-colors hover:text-gold"
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </button>
           <Button href={ctaNav.href} size="sm">
             {ctaNav.title}
           </Button>
@@ -89,6 +104,21 @@ export function SiteHeader() {
                 {item.title}
               </Link>
             ))}
+            <div className="flex items-center justify-between border-b border-border/40 py-3">
+              <span className="text-xs text-foreground/60">Theme</span>
+              <button
+                type="button"
+                onClick={toggle}
+                className="flex h-8 w-8 items-center justify-center rounded-md text-foreground/60 transition-colors hover:text-gold"
+                aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             <Button href={ctaNav.href} className="mt-4 w-full">
               {ctaNav.title}
             </Button>

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { createMetadata, organizationJsonLd } from "@/lib/seo/metadata";
 import { siteConfig } from "@/lib/site";
 
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#070a14",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#070a14" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f2ed" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
@@ -24,8 +28,18 @@ export default function RootLayout({
     // "text mode" tools) mutate these top-level attributes before React hydrates, which
     // would otherwise log a benign hydration mismatch. It does NOT hide real mismatches
     // in our own components — only attribute noise on <html>/<body>.
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/*
+          Prevent flash of wrong theme: apply saved or preferred scheme before any
+          React hydration runs. Reads localStorage (if safe) and falls back to
+          prefers-color-scheme. Sets class="dark" or class="light" on <html>.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("artemis-theme");if(t==="light"||t==="dark"){document.documentElement.className=t;return}}catch(e){}var m=window.matchMedia("(prefers-color-scheme: light)");document.documentElement.className=m.matches?"light":"dark"})()`,
+          }}
+        />
         {/*
           Fonts are loaded via Google Fonts links (not next/font) so the build
           never depends on network font fetching. If offline, the CSS variable
@@ -50,9 +64,11 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main">{children}</main>
-        <SiteFooter />
+        <ThemeProvider>
+          <SiteHeader />
+          <main id="main">{children}</main>
+          <SiteFooter />
+        </ThemeProvider>
       </body>
     </html>
   );
