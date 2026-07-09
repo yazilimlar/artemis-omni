@@ -1,4 +1,5 @@
 <!-- Artemis AI Engineering Operating System — PR template. Governed by ENGINEERING/AI_AGENT_RULES.md -->
+<!-- Release status dashboard: /ops/deck -->
 
 ## Summary
 

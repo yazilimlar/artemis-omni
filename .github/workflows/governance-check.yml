@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 0
       - name: Verify governance docs exist
         run: |
-          for f in ENGINEERING/AI_AGENT_RULES.md ENGINEERING/ARCHITECTURE.md decisions/ADR-INDEX.md; do
+          for f in ENGINEERING/AI_AGENT_RULES.md ENGINEERING/ARCHITECTURE.md decisions/ADR-INDEX.md docs/operations/release-workflow.md; do
             if [ ! -f "$f" ]; then echo "::warning::Missing governance doc $f"; fi
           done
       - name: Remind ADR citation for architecture-relevant changes
