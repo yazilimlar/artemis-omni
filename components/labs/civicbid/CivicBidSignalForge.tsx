@@ -16,6 +16,8 @@ const PANELS: { id: Panel; label: string; icon: string; blurb: string }[] = [
   { id: "lifecycle", label: "Lifecycle Watch", icon: "⏳", blurb: "From pursuit to execution — CivicBid to Artemis" },
 ];
 
+const VARIANT_LABEL = "v00";
+
 export default function CivicBidSignalForge() {
   const [activePanel, setActivePanel] = useState<Panel>("radar");
   const active = PANELS.find((panel) => panel.id === activePanel)!;
@@ -63,7 +65,7 @@ export default function CivicBidSignalForge() {
           <div className="space-y-4">
             <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6">
               <p className="mb-4 text-sm leading-relaxed text-slate-300">
-                CivicBid Signal Forge is the upstream pursuit-intelligence layer. It surfaces,
+                CivicBid Signal Forge v00 is the upstream pursuit-intelligence layer. It surfaces,
                 scores, and tracks public procurement signals. The next layer — <strong className="text-white">Artemis execution,
                 cost, forecast, and cashflow controls</strong> — takes over after bid submission and
                 award.
