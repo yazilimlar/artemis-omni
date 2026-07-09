@@ -17,6 +17,20 @@ const SEVERITY_DOT: Record<FrictionSeverity, string> = {
   low: "bg-emerald-400",
 };
 
+const PURSUIT_CHECKS: { label: string; description: string }[] = [
+  { label: "M/WBE", description: "M/WBE participation goals / subcontracting plan required" },
+  { label: "PLA", description: "Project labor agreement may apply" },
+  { label: "Bonding", description: "Bid bond, performance bond, and/or payment bond required" },
+  { label: "Insurance", description: "Minimum insurance coverage requirements" },
+  { label: "Pre-bid meeting", description: "Mandatory or recommended pre-bid conference" },
+  { label: "Site visit", description: "Site visit scheduled or required" },
+  { label: "Addenda", description: "Addenda may be issued during solicitation period" },
+  { label: "Q&A deadline", description: "Deadline for written questions / RFIs" },
+  { label: "PASSPort submission", description: "Submission via PASSPort portal required" },
+  { label: "Prequalification", description: "Vendor prequalification required before bid" },
+  { label: "Executive go/no-go", description: "Internal go/no-go gate before bid submission" },
+];
+
 export default function ComplianceFrictionMap() {
   const sorted = [...frictionFlags].sort(
     (a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity],
@@ -83,6 +97,30 @@ export default function ComplianceFrictionMap() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          Pursuit checklist — human-reviewed
+        </h4>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {PURSUIT_CHECKS.map((check) => (
+            <div
+              key={check.label}
+              className="flex items-start gap-2 rounded-lg border border-slate-800/60 bg-slate-900/30 px-3 py-2"
+            >
+              <span className="mt-0.5 shrink-0 text-slate-600">⬡</span>
+              <div>
+                <p className="text-[11px] font-medium text-slate-300">{check.label}</p>
+                <p className="text-[10px] leading-snug text-slate-500">{check.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[10px] text-slate-600">
+          Each opportunity must be independently reviewed against these criteria. Signal Forge flags
+          known friction patterns but does not substitute for full pursuit due diligence.
+        </p>
       </div>
     </div>
   );

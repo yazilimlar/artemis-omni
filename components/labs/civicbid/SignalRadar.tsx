@@ -1,18 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { CivicBidOpportunity } from "@/lib/civicbid/normalizeOpportunity";
+import { getSampleOpportunities, sourceHealthSnapshot } from "@/lib/civicbid/signalForgeData";
 import { getSourceById } from "@/lib/civicbid/sourceRegistry";
-import { sourceHealthSnapshot } from "@/lib/civicbid/signalForgeData";
-
-interface RadarResponse {
-  sourceName: string;
-  count: number;
-  fromLive: boolean;
-  retrievedAt: string;
-  warning?: string;
-  data: CivicBidOpportunity[];
-}
+import { scoreOpportunity } from "@/lib/civicbid/signalForgeScoring";
 
 function formatDate(value: string | null | undefined): string {
   if (!value) return "TBD";
@@ -27,81 +17,67 @@ const HEALTH_STYLES: Record<string, string> = {
   manual: "bg-slate-500/10 text-slate-300 border-slate-500/30",
 };
 
+const FRICTION_TAGS: Record<string, string> = {
+  "nyc-open-data-current-solicitations": "Public API — automatable",
+  "nyc-open-data-city-record": "Public API — automatable",
+  "checkbook-nyc-contracts": "XML POST — needs integration",
+  "passport-public": "Manual deep link",
+  "passport-procurement-navigator": "Manual deep link",
+  "nyscr": "Email alerts + manual",
+  "mta-current-opportunities": "Manual deep link",
+  "mta-cd-current-opportunities": "Manual deep link",
+  "panynj-construction": "Manual deep link",
+  "panynj-bonfire-open": "Login required",
+  "ddc-construction-contracts": "Manual deep link",
+  "dasny-rfps-bids": "Manual deep link",
+  "bidexpress": "Login required",
+};
+
 export default function SignalRadar() {
-  const [response, setResponse] = useState<RadarResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/civicbid/signal-forge?view=opportunities")
-      .then((res) => res.json())
-      .then((json: RadarResponse) => setResponse(json))
-      .catch(() => setResponse(null))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center">
-        <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-cyan-400" />
-        <p className="mt-3 text-sm text-slate-400">Scanning public bid signals…</p>
-      </div>
-    );
-  }
-
-  if (!response) {
-    return (
-      <div className="rounded-2xl border border-rose-900/40 bg-rose-950/10 p-6">
-        <p className="text-sm text-rose-300">
-          Signal Radar could not reach the API route. Reload the page to retry.
-        </p>
-      </div>
-    );
-  }
+  const opportunities = getSampleOpportunities();
+  const scored = opportunities.map((opp) => ({
+    opp,
+    score: scoreOpportunity(opp),
+  }));
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-        <span
-          className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${
-            response.fromLive
-              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-              : "border-amber-500/30 bg-amber-500/10 text-amber-300"
-          }`}
-        >
-          {response.fromLive ? "● Live public data" : "● Sample mode"}
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-950/10 px-4 py-3">
+        <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-300">
+          ● Sample mode
         </span>
         <span className="text-xs text-slate-400">
-          {response.count} signals · {response.sourceName}
+          {opportunities.length} signals · Representative sample data
         </span>
         <span className="ml-auto text-[10px] text-slate-500">
-          Retrieved {new Date(response.retrievedAt).toLocaleTimeString()}
+          Not a certified live bid feed
         </span>
       </div>
 
-      {response.warning ? (
-        <div className="rounded-xl border border-amber-900/30 bg-amber-950/20 px-4 py-3">
-          <p className="text-xs text-amber-300/80">⚠️ {response.warning}</p>
-        </div>
-      ) : null}
-
       <div className="grid gap-3 md:grid-cols-2">
-        {response.data.map((opp) => (
+        {scored.map(({ opp, score }) => (
           <div
             key={opp.id}
             className="rounded-xl border border-slate-800/80 bg-slate-950 p-4 transition-all hover:border-slate-600"
           >
             <div className="flex items-start justify-between gap-3">
-              <h4 className="text-sm font-semibold leading-snug text-slate-200">{opp.title}</h4>
+              <div className="min-w-0 flex-1">
+                <h4 className="text-sm font-semibold leading-snug text-slate-200">
+                  {opp.title}
+                </h4>
+                <p className="mt-0.5 text-xs text-slate-400">{opp.agency}</p>
+              </div>
               <span className="shrink-0 rounded-lg border border-slate-700 bg-slate-900 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate-400">
                 {opp.jurisdiction}
               </span>
             </div>
-            <p className="mt-1 text-xs text-slate-400">{opp.agency}</p>
+
             {opp.description ? (
               <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-500">
                 {opp.description}
               </p>
             ) : null}
+
             <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
               <span className="rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5">
                 Due: <span className="text-slate-300">{formatDate(opp.dueDate)}</span>
@@ -116,16 +92,51 @@ export default function SignalRadar() {
                   {opp.procurementMethod}
                 </span>
               ) : null}
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-slate-800/50 pt-3">
+              <span
+                className={`rounded px-2 py-0.5 text-[10px] font-semibold ${
+                  score.compositeScore >= 75
+                    ? "bg-emerald-500/10 text-emerald-300"
+                    : score.compositeScore >= 55
+                      ? "bg-amber-500/10 text-amber-300"
+                      : "bg-slate-500/10 text-slate-300"
+                }`}
+              >
+                Score: {score.compositeScore}/100
+              </span>
+              <span className="text-[10px] text-slate-500">
+                Confidence: {score.confidenceScore}/100
+              </span>
+              <span className="text-[10px] italic text-slate-600">
+                {score.rationale[0]}
+              </span>
+            </div>
+
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               {opp.sourceUrl ? (
                 <a
                   href={opp.sourceUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="ml-auto text-cyan-400 hover:text-cyan-300"
+                  className="text-[10px] text-cyan-400 hover:text-cyan-300"
                 >
                   Official source →
                 </a>
               ) : null}
+              <span className="ml-auto text-[9px] uppercase tracking-wider text-amber-600/70">
+                {FRICTION_TAGS[opp.id.replace(/^SF-SAMPLE-\d+\s*/, "").toLowerCase()] ||
+                  "Manual deep link"}
+              </span>
+            </div>
+
+            <div className="mt-2 rounded bg-slate-900/60 px-2 py-1.5">
+              <p className="text-[10px] leading-snug text-slate-500">
+                <span className="font-medium text-slate-400">Why this score: </span>
+                {score.rationale.slice(0, 2).join("; ")}
+                {score.rationale.length > 2 ? `; +${score.rationale.length - 2} more factors` : ""}
+              </p>
             </div>
           </div>
         ))}

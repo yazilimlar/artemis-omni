@@ -10,20 +10,20 @@ export const metadata = createMetadata({
   title: "CivicBid Signal Forge",
   path: "/labs/civicbid-signal-forge",
   description:
-    "Experimental signal-intelligence cockpit for public procurement — live NYC Open Data feed with sample fallback, source trust matrix, bid readiness scoring, and compliance friction mapping. Variant of the CivicBid Intelligence Bridge.",
+    "Public procurement signals from NYC agencies — sample cockpit with source trust matrix, bid readiness scoring, and compliance friction mapping. Not a certified live bid feed.",
 });
 
 export default function CivicBidSignalForgePage() {
   return (
     <>
       <PageHero
-        eyebrow="Labs · Experimental Variant"
+        eyebrow="Labs · Experimental"
         title="CivicBid Signal Forge"
-        description="A signal-intelligence cockpit for public procurement in the NYC region. Polls official public datasets where an API exists, deep-links everywhere else, and scores every opportunity by urgency, readiness, and source confidence. Falls back to clearly-labeled sample data when live feeds are unreachable."
+        description="NYC public procurement signals, translated into bid-room action."
       >
         <div className="flex flex-wrap items-center gap-3">
-          <Badge>Preview variant</Badge>
-          <Badge>Public-safe data</Badge>
+          <Badge>Public-safe demo</Badge>
+          <Badge>Sample data</Badge>
           <Link
             href="/labs"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-gold"
