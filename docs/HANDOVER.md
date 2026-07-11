@@ -1,4 +1,4 @@
-# Handover: Session 2026-07-11 — CivicBid Live Cockpit Rescue v1
+# Handover: Session 2026-07-11 — CivicBid Canonical Bridge Integration
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/`.
 
@@ -8,36 +8,32 @@ Standardized, parse-friendly handover. Historical states remain available throug
 - Canonical integration branch: `main`
 - GitHub default branch: `main`
 - PR #9 merged to `main`: `8a5435ee82da774fa0e9255289de09c04730b64d`
-- Public Evolution & Structure route is live at `https://artemis.agoraxai.com/evolution`
-- PR #9 production deployment was verified READY on Vercel with the custom domain assigned and no alias error
-- Current work branch: `rescue/civicbid-live-cockpit-v1`
-- Rescue baseline: exact post-PR-#9 `main` commit `8a5435ee82da774fa0e9255289de09c04730b64d`
+- PR #12 merged to `main`: `7b0cd8b72be908b66ea648a1ac3791db87292306`
+- PR #12 production deployment is READY on Vercel with `artemis.agoraxai.com` assigned and no alias error
+- Permanent production review route: `https://artemis.agoraxai.com/labs/civicbid-signal-forge`
+- Permanent production API: `https://artemis.agoraxai.com/api/civicbid/signal-forge`
+- Current work branch: `feature/civicbid-canonical-bridge-integration-v1`
+- Current draft PR: GitHub PR #13
+- PR #13 baseline: exact production `main` commit `7b0cd8b72be908b66ea648a1ac3791db87292306`
 - Tracking issue: GitHub Issue #11
-- Draft implementation PR: GitHub PR #12
 
 ## Division and Product Ownership
 
 - Division: Infrastructure & Construction
 - Product family: civicbid
 - Product: CivicBid
-- Change class: selective rescue, public API, and no-index review cockpit
-- Lifecycle: rescue
-- Visibility: noindex_review
+- Change class: canonical public-route integration
+- Lifecycle: rescue moving toward active lab
+- Visibility: public canonical route plus no-index review route
 - Data mode: mixed_explicit
 - Governing ADRs: ADR-005 and ADR-006
 - Feature passport: `ENGINEERING/FEATURE_PASSPORTS/CIVICBID_LIVE_COCKPIT_V1.md`
 
-## Completed Before This Branch
+## Non-Negotiable Rescue Rule
 
-PR #8 established the multi-division AIEOS v2 governance and registries.
+Do not merge any historical CivicBid donor branch wholesale.
 
-PR #9 published the public-safe Artemis Evolution & Structure record, branch-lifecycle explanation, public JSON projection, and memorialization policy.
-
-## Rescue Rule
-
-Do not merge any CivicBid donor branch wholesale.
-
-Allowed selective donors:
+Preserved donor branches:
 
 - `test/civicbid-signal-forge`
 - `fix/civicbid-signal-forge-cockpit`
@@ -53,93 +49,111 @@ Explicitly excluded donor concerns:
 - unrelated package changes
 - standalone HTML libraries
 
-## What PR #12 Adds
+## What PR #12 Established on Main
 
 ### CivicBid data contract
 
-- `types/civicbid.ts` declares explicit live/sample record modes without breaking existing product records
+- `types/civicbid.ts` declares explicit live/sample record modes
 - `lib/civicbid/normalizeOpportunity.ts` normalizes official public rows, timestamps dates, labels official API confidence, and retains raw evidence only internally
-- `lib/civicbid/connectors/socrata.ts` adds bounded row limits, an eight-second timeout, response-shape validation, publication-date ordering, and a credential-free official-source connector
+- `lib/civicbid/connectors/socrata.ts` applies bounded row limits, an eight-second timeout, response-shape validation, and a credential-free official-source connector
+- An unverified upstream ordering clause was removed after deployed testing showed it could cause avoidable fallback
 
-### Canonical scoring and relevance
+### Canonical scoring and contractor relevance
 
-- `lib/civicbid/signalForgeScoring.ts` defines one executable five-factor model:
+- Five-factor model:
   - due-date urgency: 30%
   - document availability: 25%
   - source confidence: 20%
   - construction fit: 15%
   - compliance clarity: 10%
 - Runtime invariant requires weights to total exactly 100%
-- Queue responses carry the model used for computation so presentation code cannot maintain a separate contradictory formula
-- Composite pursuit score and contractor relevance are separate
-- Default contractor scope omits rows without detected construction signals; `scope=all` preserves the complete retrieved procurement view
-- The response reports source count, excluded count, returned count, scope, and relevance threshold
+- Queue responses carry the model used for computation
+- Composite pursuit score and contractor relevance remain separate
+- Current contractor-relevance threshold: 43
+- Default `scope=construction` filters the reviewed source pool
+- `scope=all` preserves the complete retrieved procurement view
+- Responses report source count, excluded count, returned count, scope, and relevance threshold
 
-### Explicit sample behavior
+### Explicit source states
 
-- `lib/civicbid/signalForgeSamples.ts` contains synthetic records only
-- Every sample has a `CIVICBID-SAMPLE-*` ID, a `SAMPLE —` title, `sample_data` confidence, and `recordMode: sample`
-- No sample record may impersonate a current solicitation
+- `live_official`
+- `sample_fallback`
+- `source_unavailable`
 
-### API foundation
+Controls:
 
-- `/api/civicbid/signal-forge`
-- Supported response modes:
-  - `live_official`
-  - `sample_fallback`
-  - `source_unavailable`
-- Supported views and controls:
-  - `view=queue`
-  - `scope=construction` default
-  - `scope=all`
-  - bounded `limit`
-  - `fallback=none`
-- Default behavior may use clearly labeled sample fallback
-- `fallback=none` returns HTTP 503 with `source_unavailable` and no fabricated records when the source fails
-- Raw upstream rows are omitted from the public response
+- `view=queue`
+- `scope=construction` default
+- `scope=all`
+- bounded `limit`
+- `fallback=none`
 
-### Live review cockpit
+`fallback=none` returns HTTP 503 with zero fabricated records when the source is unavailable. Raw upstream rows are omitted from public responses.
 
-- `components/labs/civicbid/CivicBidLiveCockpit.tsx`
-- `/labs/civicbid-signal-forge`
-- Route is no-index during rescue review
-- Displays source mode, retrieval time, official dataset link, reviewed/excluded/returned counts, contractor/all-procurement controls, ranked opportunity cards, score components, and human-review boundary
-- The UI reads scoring weights from the API response rather than restating them independently
-- The canonical `/labs/civicbid-intelligence-bridge` remains unchanged until the live route passes review
+### Production review cockpit
 
-### Governance records
+- Component: `components/labs/civicbid/CivicBidLiveCockpit.tsx`
+- Route: `/labs/civicbid-signal-forge`
+- Route remains no-index
+- Displays source mode, retrieval time, official dataset link, reviewed/excluded/returned counts, contractor/all-procurement controls, ranked opportunities, score components, and human-review boundary
+- UI reads scoring weights from the API response
 
-- Product Registry records the active rescue branch, Issue #11, donor scope, blockers, and next gate
-- Feature passport records provenance, product boundaries, source scope, scoring truth, security boundary, validation gates, and roadmap
+## PR #12 Validation Completed
 
-## Verification Completed Before Final UI Commit
+- GitHub Actions typecheck: passed
+- GitHub Actions lint: passed
+- GitHub Actions build: passed
+- Governance checks: passed
+- Vercel production deployment: READY
+- Permanent-domain review route: HTTP 200 with no-index metadata
+- Permanent-domain strict live API: HTTP 200, `mode: live_official`, `fallbackUsed: false`
+- Validated production request reviewed 40 official rows, excluded 26, and returned 10 contractor-ranked records
+- `scope=all` preserves the wider source feed
+- Raw upstream payload omission verified
+- Natural source outage verified explicit `sample_fallback`
+- Natural source outage with `fallback=none` verified HTTP 503 `source_unavailable` with zero fabricated records
+- Threshold 43 removed weak tire-retreading, hardware-only, and material-only false positives while retaining construction, renovation, sewer, façade, elevator, floor-tile installation, and design-build records
 
-A deployed preview of the API returned:
+## What PR #13 Changes
 
-- HTTP 200
-- `mode: live_official`
-- real current records from NYC Open Data
-- official source and retrieval metadata
-- no raw upstream payload
-- queue response with the canonical 30/25/20/15/10 model
+PR #13 changes the indexed canonical route `/labs/civicbid-intelligence-bridge` only, plus governance records.
 
-That review identified and corrected a product defect: non-construction opportunities could rank highly because urgency and source confidence were strong. The final branch now separates contractor relevance from composite score and defaults to the contractor scope.
+The route now:
 
-## Final Verification Required
+- makes `CivicBidLiveCockpit` the primary live contractor surface
+- preserves the existing product narrative, source registry, product modules, discipline translation, related proof, and pilot pathway
+- retains `CivicBidWorkbench` as an explicitly synthetic deterministic scenario lab
+- replaces obsolete no-live-feed claims with explicit live/sample/unavailable source-state language
+- uses new local metric and publication-boundary statements aligned with the validated API
+- keeps official agency records and bid documents controlling
+- does not change the API, connector, normalization, scoring, or threshold
 
-Run against the final PR #12 head:
+## PR #13 Scope
 
-- `npm run typecheck`
-- `npm run lint`
-- `npm run build`
-- inspect `/labs/civicbid-signal-forge` on desktop and mobile
-- inspect default contractor queue
-- inspect `scope=all`
-- inspect API response metadata and raw-payload omission
-- confirm the live source reports `live_official` when reachable
-- confirm scoring weights total 100 and UI labels come from the API response
-- confirm route metadata remains no-index during review
-- confirm fallback and unavailable code paths remain unmistakably labeled and do not fabricate live records
+Expected changed paths:
+
+- `app/labs/civicbid-intelligence-bridge/page.tsx`
+- `ENGINEERING/FEATURE_PASSPORTS/CIVICBID_LIVE_COCKPIT_V1.md`
+- `ENGINEERING/PRODUCT_REGISTRY.yaml`
+- `docs/HANDOVER.md`
+
+No other product or global platform path belongs in this PR.
+
+## PR #13 Validation Required
+
+- exact-head typecheck
+- exact-head lint
+- exact-head build
+- Vercel preview READY
+- canonical route renders the live cockpit
+- live contractor request remains `live_official`
+- all-procurement control remains available
+- synthetic scenario lab remains clearly labeled
+- obsolete no-live-feed language is absent from the canonical route
+- source-state, official-record, and human-review boundaries remain visible
+- desktop and mobile layout review
+- public-route metadata and indexability review
+- changed-file scope review
 
 ## Known Review Points
 
@@ -148,13 +162,15 @@ Run against the final PR #12 head:
 - Keyword relevance can produce false positives or false negatives and is not a certified trade classification
 - Compliance scoring detects published signals, not legal sufficiency
 - No unit-test runner is currently configured; this slice relies on strict TypeScript, runtime invariants, CI, deployed integration review, and human review
-- The canonical CivicBid product route still contains earlier public-safe language stating that it is not a live feed; do not revise that route until the new cockpit is approved and promoted
+- The canonical route is indexed, so PR #13 must not merge with contradictory or overstated source claims
+- The no-index `/labs/civicbid-signal-forge` route should remain available as a focused review/reference surface after canonical integration
 
 ## Next Recommended Tasks
 
-1. Complete final CI and preview validation for PR #12.
-2. Correct any type, lint, build, visual, source-state, or disclosure defect.
-3. Review the no-index live cockpit from contractor-president and chief-estimator perspectives.
-4. Mark PR #12 ready only after the review route is accepted.
-5. Merge the validated rescue to `main`.
-6. In a later scoped PR, promote the live cockpit into `/labs/civicbid-intelligence-bridge` and revise obsolete no-live-feed language.
+1. Complete exact-head CI and Vercel preview validation for PR #13.
+2. Correct any type, lint, build, visual, source-state, metadata, or disclosure defect.
+3. Review the canonical route from contractor-president and chief-estimator perspectives.
+4. Confirm the final PR contains only the four expected paths.
+5. Mark PR #13 ready only after the indexed route is accepted.
+6. Merge PR #13 to `main` and verify the production custom domain.
+7. After an observation period, review whether CivicBid can move from `rescue` to `active_lab` and whether donor branches can receive final dispositions.
