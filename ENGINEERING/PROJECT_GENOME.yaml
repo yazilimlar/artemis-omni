@@ -1,10 +1,26 @@
-project:
+schema_version: 2
+last_reviewed: 2026-07-10
+
+organization:
+  id: artemis
   name: Artemis
-  philosophy:
-    - engineering-first
-    - AI-native
-    - documentation-driven
-    - public-safe by default
+  type: multi_division_ai_native_platform
+  rule: >-
+    Artemis is the umbrella organization. No single division, industry,
+    product, route, branch, or testbed defines the complete Artemis identity.
+
+philosophy:
+  - engineering-first
+  - AI-native
+  - documentation-driven
+  - public-safe by default
+  - evidence before classification
+  - human review before production
+
+repository:
+  full_name: yazilimlar/artemis-omni
+  canonical_branch: main
+  branch_policy: pull_request_only_for_main
 
 frontend:
   framework: Next.js
@@ -18,6 +34,10 @@ deployment:
   platform: Vercel
   preview_first: true
   custom_domain: artemis.agoraxai.com
+  production_branch_target: main
+  rule: >-
+    GitHub default branch and Vercel production branch are separate controls.
+    Production lineage must be recorded by exact commit and deployment identity.
 
 content:
   system: MDX plus typed registries
@@ -33,23 +53,101 @@ mapping:
 governance:
   adr_required_for_architecture: true
   ai_agent_rules: ENGINEERING/AI_AGENT_RULES.md
+  session_protocol: ENGINEERING/AI_SESSION_START_PROTOCOL.md
+  architecture_authority: ENGINEERING/ARCHITECTURE.md
   adr_index: decisions/ADR-INDEX.md
+  division_registry: ENGINEERING/DIVISION_REGISTRY.yaml
+  product_registry: ENGINEERING/PRODUCT_REGISTRY.yaml
+  testbed_registry: ENGINEERING/TESTBED_MIGRATION_REGISTRY.yaml
   authority_order:
-    - source_code_and_tests
+    - source_code_tests_verified_build
     - accepted_adrs
     - engineering_architecture
-    - standards_and_security
-    - feature_passports
-    - prompts_and_handovers
+    - standards_security_deployment
+    - registries_feature_passports
+    - prompts_handovers
     - conversations
 
-domains:
-  - labs
-  - atlas
-  - tax_finance_architecture
-  - construction_intelligence
-  - utility_intelligence
-  - knowledge_os
+organizational_layers:
+  - organization
+  - division
+  - product_family
+  - product
+  - shared_capability
+  - lab
+  - testbed
+  - route
+  - branch
+
+divisions:
+  - core-platform
+  - infrastructure-construction
+  - atlas-places
+  - studio-media
+  - knowledge-academy
+  - finance-decision-systems
+  - natural-systems
+
+incubation:
+  name: Artemis Labs
+  id: artemis-labs
+  production_authority: false
+  artifact_types:
+    - experiment
+    - testbed
+    - prototype
+    - public_safe_demo
+    - product_comparison
+    - capability_trial
+
+shared_capabilities:
+  - provenance
+  - data-normalization
+  - scenario-simulation
+  - forecasting
+  - mapping
+  - visualization
+  - ai-orchestration
+  - export
+  - identity-and-permissions
+  - audit-trails
+  - human-review-gates
+
+product_truth:
+  visibility_classes:
+    - public
+    - public_safe_demo
+    - noindex_review
+    - authenticated
+    - private_pilot
+    - internal_operations
+  data_modes:
+    - live_official
+    - live_derived
+    - synthetic
+    - sample
+    - sample_fallback
+    - private_approved
+    - mixed_explicit
+  rules:
+    - a_route_is_not_automatically_a_product
+    - branch_status_does_not_determine_product_status
+    - sample_data_must_not_impersonate_live_data
+    - one_product_has_one_canonical_implementation
+    - donor_branches_require_selective_review
+    - internal_operations_do_not_belong_on_public_product_routes
+
+testbed_policy:
+  artemisix19:
+    role: cross_division_capability_donor
+    migration_required: true
+    retirement_allowed_before_inventory: false
+  allowed_dispositions:
+    - migrate
+    - repair_then_migrate
+    - retain_as_test_fixture
+    - reject
+    - archive_after_evidence
 
 validation:
   standard_commands:
@@ -59,6 +157,9 @@ validation:
   future_checks:
     - architecture_validation
     - security_validation
+    - product_registry_validation
+    - cross_product_import_validation
+    - data_mode_claim_validation
     - performance_validation
     - accessibility_validation
     - documentation_validation
