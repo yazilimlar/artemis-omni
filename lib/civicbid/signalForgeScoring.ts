@@ -11,7 +11,7 @@ export type SignalScoreComponentKey =
   | "constructionFit"
   | "complianceClarity";
 
-export const CONSTRUCTION_RELEVANCE_THRESHOLD = 35;
+export const CONSTRUCTION_RELEVANCE_THRESHOLD = 43;
 
 export const SIGNAL_FORGE_SCORING_MODEL = [
   {
