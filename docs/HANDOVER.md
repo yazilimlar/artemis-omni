@@ -1,104 +1,127 @@
-# Handover: Session 2026-07-11 — Public Evolution & Structure v1
+# Handover: Session 2026-07-11 — CivicBid Live Cockpit Rescue v1
 
-Standardized, parse-friendly handover. Historical states remain available through Git and dated files under `docs/evolution/`.
+Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/`.
 
 ## Current State
 
 - Repo: `yazilimlar/artemis-omni`
 - Canonical integration branch: `main`
-- AIEOS v2 governance merge on `main`: `989d468f71385f39c97c40574ec934ed9a8edddc`
-- Current work branch: `product/public-evolution-structure-v1`
-- GitHub default branch still requires manual correction from `feature/artemisix19-autonomous-generator` to `main`
-- Vercel Production Branch remains a separate setting and was not changed in this session
-- Production deployment was not changed in this session
+- GitHub default branch: `main`
+- PR #9 merged to `main`: `8a5435ee82da774fa0e9255289de09c04730b64d`
+- Public Evolution & Structure route is now part of `main`
+- Current work branch: `rescue/civicbid-live-cockpit-v1`
+- Rescue baseline: exact post-PR-#9 `main` commit `8a5435ee82da774fa0e9255289de09c04730b64d`
+- Tracking issue: GitHub Issue #11
+- Vercel production deployment for PR #9 was triggered from `main`; verify READY state and custom-domain alias before closing the publication step
 
 ## Division and Product Ownership
 
-- Division: Artemis Core Platform / Knowledge & Academy
-- Product family: public institutional memory and company architecture
-- Change class: public product surface plus documentation
-- Visibility: public
-- Data mode: curated repository evidence
-- Governing ADRs: ADR-003, ADR-005, ADR-006
+- Division: Infrastructure & Construction
+- Product family: civicbid
+- Product: CivicBid
+- Change class: selective rescue and public API foundation
+- Lifecycle: rescue
+- Visibility: public-safe demo
+- Data mode: mixed_explicit
+- Governing ADRs: ADR-005 and ADR-006
+- Feature passport: `ENGINEERING/FEATURE_PASSPORTS/CIVICBID_LIVE_COCKPIT_V1.md`
 
 ## Completed Before This Branch
 
-PR #8 was validated and squash-merged into `main`.
+PR #8 established the multi-division AIEOS v2 governance and registries.
 
-The merge established:
+PR #9 published the public-safe Artemis Evolution & Structure record, branch-lifecycle explanation, public JSON projection, and memorialization policy.
 
-- Artemis as a multi-division umbrella organization and product platform
-- Division, Product, and Testbed Migration registries
-- ArtemisIX19 as a testbed and cross-division capability donor
-- separation of branch lifecycle from product lifecycle
-- explicit maturity, visibility, and data-mode requirements
-- selective rescue requirements for contaminated donor branches
+## Rescue Rule
+
+Do not merge any CivicBid donor branch wholesale.
+
+Allowed selective donors:
+
+- `test/civicbid-signal-forge`
+- `fix/civicbid-signal-forge-cockpit`
+- `feature/civicbid-sourceledger-command-deck`
+
+Explicitly excluded donor concerns:
+
+- ArtemisIX19
+- Studio or generation systems
+- Time Atlas or Troy
+- Evolution Console
+- global brand or navigation redesign
+- unrelated package changes
+- standalone HTML libraries
 
 ## What This Branch Adds
 
-### Public surfaces
+### CivicBid data contract
 
-- `/evolution` — human-readable Artemis Evolution & Structure page
-- `/api/public/artemis-structure` — read-only machine-readable public structure record
-- `data/artemisPublicStructure.ts` — shared typed source model for both public surfaces
+- `types/civicbid.ts` now declares explicit live/sample record modes without breaking existing product records
+- `lib/civicbid/normalizeOpportunity.ts` normalizes official public rows, timestamps dates, labels official API confidence, and retains raw evidence only internally
+- `lib/civicbid/connectors/socrata.ts` adds bounded row limits, an eight-second timeout, response-shape validation, and a credential-free official-source connector
 
-### Public record content
+### Canonical scoring
 
-- multi-division Artemis structure
-- current, directional, and historical interpretation labels
-- controlled change and approval loop
-- revised public branch-lifecycle explanation
-- internal-vs-public record layers
-- dated evolution milestones
-- publication and withholding boundary
-- distinction between Artemis divisions and the client departments Artemis serves
+- `lib/civicbid/signalForgeScoring.ts` defines one executable five-factor model:
+  - due-date urgency: 30%
+  - document availability: 25%
+  - source confidence: 20%
+  - construction fit: 15%
+  - compliance clarity: 10%
+- Runtime invariant requires weights to total exactly 100%
+- Queue responses carry the scoring model used for computation so future UI cannot maintain a separate contradictory formula
 
-### Public memorialization policy
+### Explicit sample behavior
 
-- `docs/evolution/PUBLIC_EVOLUTION_POLICY.md`
-- `docs/evolution/2026-07-11-multidivision-aieos-v2.md`
+- `lib/civicbid/signalForgeSamples.ts` contains synthetic records only
+- Every sample has a `CIVICBID-SAMPLE-*` ID, a `SAMPLE —` title, `sample_data` confidence, and `recordMode: sample`
+- No sample record may impersonate a current solicitation
 
-### Site-shell integration
+### API foundation
 
-- Adds `Evolution & Structure` under the footer Company navigation
-- Adds `/evolution` to the sitemap
-- Broadens global footer and site-description language so construction remains a flagship focus without defining all of Artemis
+- `/api/civicbid/signal-forge`
+- Supported response modes:
+  - `live_official`
+  - `sample_fallback`
+  - `source_unavailable`
+- Default behavior may use clearly labeled sample fallback
+- `fallback=none` returns HTTP 503 with `source_unavailable` and no fabricated records
+- `view=queue` returns deterministic scores and the canonical scoring-model definition
+- Raw upstream rows are omitted from the public response
 
-## Public Record Rules
+### Governance records
 
-1. Internal engineering truth remains authoritative over the public projection.
-2. Public statements must be labeled current, directional, or historical.
-3. Division labels are not automatic claims of separate legal entities or staffed business units.
-4. Prototype, testbed, sample, synthetic, fallback, and live states remain explicit.
-5. Earlier milestones are retained and may be marked superseded rather than silently erased.
-6. Public transparency does not include credentials, private records, security-sensitive configuration, confidential strategy, or unnecessary emergency-operation detail.
-7. Documentation must support revision and future growth rather than freeze temporary names or implementations.
+- Product Registry records the active rescue branch, Issue #11, donor scope, blockers, and next gate
+- Feature passport records provenance, product boundaries, data truth, security boundary, validation gates, and roadmap
 
 ## Verification Required
 
-Run on the branch through CI or a clean worktree:
+Run through GitHub Actions and Vercel preview:
 
 - `npm run typecheck`
 - `npm run lint`
 - `npm run build`
-- inspect `/evolution` at desktop and mobile widths
-- inspect `/api/public/artemis-structure` for valid, public-safe JSON
-- verify footer navigation and sitemap
-- confirm no private paths, credentials, client records, or security-sensitive values are exposed
+- inspect default API response
+- inspect `?view=queue`
+- inspect `?fallback=none`
+- confirm the live source reports `live_official` when reachable
+- confirm fallback records report `sample_fallback` and remain unmistakably synthetic
+- confirm unavailable mode returns HTTP 503 and no sample data
+- confirm no raw upstream payload, credentials, private records, or unrelated donor code is exposed
 
 ## Known Review Points
 
-- Division names remain architectural working categories and may be renamed through a later accepted decision.
-- The public record intentionally summarizes branch classes without publishing private branch inventory or rollback coordinates.
-- The public structure record must be reviewed whenever ADR-006 or the internal registries materially change.
-- Product-by-product public maturity remains governed by the Product Registry and verified behavior.
+- Upstream Socrata schema may change and requires schema-drift monitoring before production maturity
+- A published due date can still be stale or amended; official bid documents remain controlling
+- Compliance scoring detects published signals, not legal sufficiency
+- No unit-test runner is currently configured; the first slice relies on strict TypeScript, runtime invariants, CI, and deployed integration checks
+- The public cockpit UI is intentionally deferred until the API contract passes validation
 
 ## Next Recommended Tasks
 
-1. Open a draft PR from `product/public-evolution-structure-v1` to `main`.
-2. Allow GitHub Actions and Vercel preview checks to complete.
-3. Review public language and disclosure boundaries in the deployed preview.
-4. Merge only after human review.
-5. Manually change the GitHub default branch to `main` in repository Settings.
-6. Verify Vercel Production Branch separately.
-7. Start the next product-specific branch from the updated `main`, likely CivicBid selective rescue or ArtemisIX19 capability inventory.
+1. Open a draft PR from `rescue/civicbid-live-cockpit-v1` to `main`.
+2. Complete CI and deployed API verification.
+3. Correct any type, lint, build, source-state, or disclosure defect before UI work.
+4. Add a CivicBid-owned cockpit component that imports `SIGNAL_FORGE_SCORING_MODEL` directly.
+5. Connect the canonical CivicBid public route to explicit live/sample/unavailable states.
+6. Review contractor-president and chief-estimator usability before merge to production.
