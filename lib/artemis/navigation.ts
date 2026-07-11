@@ -1,8 +1,7 @@
 /**
  * Public navigation model for the Artemis app shell.
- * Primary (header) nav reflects the new public architecture. Existing routes
- * (Labs, Academy, Tools, Case Studies, About) remain reachable via the footer so
- * nothing is orphaned by the new structure.
+ * Primary (header) nav reflects the public product architecture. Existing routes
+ * remain reachable via the footer so nothing is orphaned by structural changes.
  */
 export type NavLink = { title: string; href: string };
 
@@ -46,7 +45,8 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
     heading: "Company",
     links: [
       { title: "About", href: "/about" },
-      { title: "Departments", href: "/departments" },
+      { title: "Evolution & Structure", href: "/evolution" },
+      { title: "Departments Artemis Serves", href: "/departments" },
       { title: "Contact", href: "/contact" },
     ],
   },

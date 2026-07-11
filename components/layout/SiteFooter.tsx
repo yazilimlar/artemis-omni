@@ -16,8 +16,9 @@ export function SiteFooter() {
               <ArtemisLogo />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              {siteConfig.tagline}. Linking field production and actual cost to live
-              cashflow forecasts for heavy civil, infrastructure, and project controls.
+              {siteConfig.tagline}. An AI-native, multi-division product platform with a
+              flagship focus on infrastructure and construction intelligence—and room for
+              Atlas, knowledge, finance, media, natural systems, and future domains.
             </p>
           </div>
 
@@ -42,9 +43,9 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-border/50 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
           <p>
-            © {year} {siteConfig.name}. Early-stage prototype.
+            © {year} {siteConfig.name}. Early-stage, public-safe platform.
           </p>
-          <p className="font-mono tracking-wide">5D Construction Intelligence Bridge</p>
+          <p className="font-mono tracking-wide">AI-Native Multi-Division Product Platform</p>
         </div>
       </Container>
     </footer>

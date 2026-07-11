@@ -7,7 +7,7 @@ export const siteConfig = {
   shortName: "Artemis",
   tagline: "AI-Enabled Execution Bridge",
   description:
-    "Artemis turns project fundamentals into AI-enabled execution by connecting design, geometry, quantities, schedule, field production, actual cost, billing revenue, PM forecast, system-generated projections, cashflow, risk, and executive action.",
+    "Artemis is an AI-native, multi-division product platform. Current public work spans infrastructure and construction intelligence, Atlas and places, knowledge systems, finance and decision tools, media, natural systems, and controlled Labs.",
   // Canonical site URL. Override per environment with NEXT_PUBLIC_SITE_URL.
   // artemis.agoraxai.com is the verified Vercel production subdomain as of 2026-06-30.
   // Keep the apex/root agoraxai.com domain on Squarespace unless ownership explicitly changes.
@@ -38,12 +38,12 @@ export const mainNav: NavItem[] = [
   {
     title: "Labs",
     href: "/labs",
-    description: "Experimental forecasting, digital-twin, and project-controls prototypes.",
+    description: "Controlled experiments and public-safe prototypes across Artemis domains.",
   },
   {
     title: "Academy",
     href: "/academy",
-    description: "Tutorials, explainers, and executive reporting frameworks.",
+    description: "Tutorials, explainers, research, and executive reporting frameworks.",
   },
   {
     title: "Tools",
@@ -53,12 +53,12 @@ export const mainNav: NavItem[] = [
   {
     title: "Case Studies",
     href: "/case-studies",
-    description: "Outcomes from 5D construction intelligence on real programs.",
+    description: "Verified outcomes and public-safe implementation evidence.",
   },
   {
     title: "About",
     href: "/about",
-    description: "The team, the method, the mission.",
+    description: "The organization, method, mission, and operating principles.",
   },
 ];
 
