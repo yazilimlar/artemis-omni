@@ -23,12 +23,18 @@ and Day/Night/Auto theme behavior while retaining Artemis provenance and officia
 
 - Canonical product route: `/labs/civicbid-intelligence-bridge`
 - No-index interface review route: `/labs/civicbid-signal-forge`
-- Controlled static artifact: `/civicbid/the-bid-room-v2-1.html`
+- Full-screen artifact loader: `/civicbid/the-bid-room-v2-1.html`
+- Generated payload chunks: `/civicbid/the-bid-room-v2-1.payload.0.txt` through `.3.txt`
 - Existing governed queue API: `/api/civicbid/signal-forge`
 
-The static review artifact is not yet the canonical data adapter. It runs the donor file's public
-City Record queries client-side so visual and workflow parity can be reviewed before server-side
-migration.
+The review artifact contains the complete patched user-provided HTML. To keep repository writes
+reviewable through the connected GitHub interface, the 84,768-byte document is stored as four
+gzip/base64 payload chunks and reconstructed by a same-origin loader. The loader verifies the
+expected decompressed byte length and fails visibly if any chunk is missing or corrupt.
+
+The reconstructed interface still runs the donor file's public City Record queries client-side.
+It is not yet the canonical server-side data adapter. The governed same-origin CivicBid adapter
+remains the production migration path.
 
 ## Donor Capabilities Retained
 
@@ -38,9 +44,10 @@ migration.
 - Browser-local shortlist, notes, profile, watchlists, and pursuit planning
 - Award Wire and agency notice-activity summaries
 - PIN-family similarity review with confidence labels
-- CSV formula-injection protection
+- CSV and JSON exports, briefing copy, and formula-injection protection
 - RFC-oriented calendar export
-- Per-feed source-health states and refresh cooldown
+- Probability-weighted pursuit scenario math with explicit disclaimer
+- Per-feed source-health states, last-good data handling, and refresh cooldown
 - Accessible tab semantics, focus management, skip link, and reduced-motion behavior
 - Day → Night → Auto appearance cycle with no-flash initialization
 
@@ -63,22 +70,27 @@ migration.
 - Contractor planning milestones are not agency dates.
 - No production secret or private record is used.
 - No sample data may impersonate a live record.
+- The review artifact is explicitly no-index and states its client-side source posture.
 
 ## Migration Plan
 
-1. Review exact visual parity and theme behavior on the no-index route.
-2. Complete desktop and mobile day/night validation.
+1. Review visual parity and theme behavior on the no-index route.
+2. Complete desktop and mobile Day/Night/Auto validation.
 3. Map the donor solicitation and award fields to governed same-origin adapters.
 4. Add automated contract tests and source-health monitoring under Issue #14.
 5. Decide whether the Bid Room replaces the current canonical cockpit or becomes its primary
    workflow surface with the scoring cockpit retained as an analytical subview.
+6. Add a canonical-page entry point only after the review build is accepted.
 
 ## Validation
 
+- Complete patched artifact: 84,768 UTF-8 bytes / 1,165 source lines.
+- SHA-256 of reconstructed HTML: `529b55561173cd235796831939560ab73423fcbd0662804a1368ded49dc4937f`.
 - Donor HTML parsed successfully.
 - Both inline script blocks pass `node --check`.
 - Contrast corrections were calculated against day paper/sheet and night paper/sheet backgrounds.
-- Typecheck, lint, build, Vercel preview, and browser screenshot review remain required on the branch.
+- Prior adapted-preview head passed typecheck, lint, build, governance, and Vercel deployment.
+- The new full-payload head must independently pass those gates and browser execution review.
 
 ## Explicit Exclusions
 
