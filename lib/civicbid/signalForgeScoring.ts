@@ -11,6 +11,8 @@ export type SignalScoreComponentKey =
   | "constructionFit"
   | "complianceClarity";
 
+export const CONSTRUCTION_RELEVANCE_THRESHOLD = 35;
+
 export const SIGNAL_FORGE_SCORING_MODEL = [
   {
     key: "urgency",
@@ -83,6 +85,7 @@ export interface SignalForgeScore {
   dueDate: string | null;
   compositeScore: number;
   tier: SignalTier;
+  constructionRelevant: boolean;
   components: SignalScoreComponent[];
   rationale: string[];
 }
@@ -140,7 +143,9 @@ function sourceConfidenceScore(opportunity: CivicBidOpportunity): { score: numbe
   return { score, note };
 }
 
-function constructionFitScore(opportunity: CivicBidOpportunity): { score: number; note: string } {
+export function assessConstructionFit(
+  opportunity: CivicBidOpportunity,
+): { score: number; note: string; matches: string[] } {
   const text = [opportunity.title, opportunity.category, opportunity.description]
     .filter(Boolean)
     .join(" ")
@@ -149,6 +154,8 @@ function constructionFitScore(opportunity: CivicBidOpportunity): { score: number
   const strongTerms = [
     "construction",
     "reconstruction",
+    "renovation",
+    "rehabilitation",
     "infrastructure",
     "utility",
     "sewer",
@@ -158,21 +165,53 @@ function constructionFitScore(opportunity: CivicBidOpportunity): { score: number
     "transit",
     "station",
     "engineering",
-    "rehabilitation",
-    "capital",
+    "excavation",
+    "concrete",
+    "façade",
+    "facade",
+    "roofing",
+    "site work",
+    "drainage",
+    "capital improvement",
   ];
-  const mediumTerms = ["repair", "installation", "inspection", "design-build", "mechanical", "electrical"];
+  const mediumTerms = [
+    "repair",
+    "maintenance",
+    "installation",
+    "replacement",
+    "inspection",
+    "design-build",
+    "mechanical",
+    "electrical",
+    "plumbing",
+    "flooring",
+    "floor tile",
+    "window",
+    "door",
+    "demolition",
+    "remediation",
+    "restoration",
+    "upgrade",
+    "alteration",
+    "hvac",
+  ];
   const strongMatches = strongTerms.filter((term) => text.includes(term));
   const mediumMatches = mediumTerms.filter((term) => text.includes(term));
+  const matches = [...strongMatches, ...mediumMatches];
   const score = Math.min(100, 25 + strongMatches.length * 18 + mediumMatches.length * 10);
 
   return {
     score,
+    matches,
     note:
-      strongMatches.length + mediumMatches.length > 0
-        ? `Construction-fit signals: ${[...strongMatches, ...mediumMatches].slice(0, 4).join(", ")}.`
+      matches.length > 0
+        ? `Construction-fit signals: ${matches.slice(0, 4).join(", ")}.`
         : "No strong construction or infrastructure terms detected in the published text.",
   };
+}
+
+export function isConstructionRelevant(opportunity: CivicBidOpportunity): boolean {
+  return assessConstructionFit(opportunity).score >= CONSTRUCTION_RELEVANCE_THRESHOLD;
 }
 
 function complianceClarityScore(opportunity: CivicBidOpportunity): { score: number; note: string } {
@@ -211,7 +250,7 @@ const COMPONENT_SCORERS: Record<
   urgency: urgencyScore,
   documentation: (opportunity) => documentationScore(opportunity),
   sourceConfidence: (opportunity) => sourceConfidenceScore(opportunity),
-  constructionFit: (opportunity) => constructionFitScore(opportunity),
+  constructionFit: (opportunity) => assessConstructionFit(opportunity),
   complianceClarity: (opportunity) => complianceClarityScore(opportunity),
 };
 
@@ -233,6 +272,7 @@ export function scoreOpportunity(
     components.reduce((sum, component) => sum + component.weightedScore, 0),
   );
   const tier: SignalTier = compositeScore >= 75 ? "A" : compositeScore >= 55 ? "B" : "C";
+  const constructionFit = components.find((component) => component.key === "constructionFit")?.score ?? 0;
 
   return {
     opportunityId: opportunity.id,
@@ -242,6 +282,7 @@ export function scoreOpportunity(
     dueDate: opportunity.dueDate ?? null,
     compositeScore,
     tier,
+    constructionRelevant: constructionFit >= CONSTRUCTION_RELEVANCE_THRESHOLD,
     components,
     rationale: components.map((component) => component.note),
   };
