@@ -1,0 +1,145 @@
+schema_version: 1
+registry_status: architectural_working_model
+last_reviewed: 2026-07-10
+
+organization:
+  id: artemis
+  name: Artemis
+  type: multi_division_ai_native_platform
+  note: >-
+    Artemis is the umbrella organization. No single division, industry, product,
+    testbed, or route defines the full Artemis identity.
+
+divisions:
+  - id: core-platform
+    name: Artemis Core Platform
+    status: active
+    mission: Provide reusable technical and governance capabilities across divisions.
+    product_families:
+      - platform-governance
+      - provenance
+      - data-normalization
+      - scenario-engines
+      - visualization
+      - ai-orchestration
+      - export-and-audit
+    public_routes: []
+    data_classification: mixed_by_consuming_product
+    commercial_stage: internal_platform
+
+  - id: infrastructure-construction
+    name: Artemis Infrastructure and Construction
+    status: active
+    mission: >-
+      Turn public procurement, engineering, field, cost, schedule, forecast,
+      cashflow, claims, and risk signals into controlled decisions.
+    product_families:
+      - civicbid
+      - construction-intelligence
+      - utility-intelligence
+      - project-controls
+      - five-dimensional-cost
+      - forecasting
+      - cashflow
+      - claims-and-risk
+    public_routes:
+      - /labs/civicbid-intelligence-bridge
+      - /labs/construction-intelligence-workbench
+      - /labs/utility-intelligence-bridge
+      - /labs/utility-intelligence-bridge/field-claims
+    data_classification: public_safe_or_private_approved
+    commercial_stage: flagship_incubation
+
+  - id: atlas-places
+    name: Artemis Atlas and Places
+    status: incubating
+    mission: >-
+      Build place, route, geography, cultural, historical, and destination
+      intelligence experiences.
+    product_families:
+      - atlas
+      - time-atlas
+      - historical-reconstruction
+      - cultural-routes
+      - destination-intelligence
+      - mapping
+    public_routes:
+      - /labs/turkiye-atlas
+      - /labs/troy-time-atlas
+      - /labs/george-aegean-quest
+    data_classification: public_safe_with_source_and_accuracy_boundaries
+    commercial_stage: public_labs
+
+  - id: studio-media
+    name: Artemis Studio and Media
+    status: incubating
+    mission: >-
+      Create governed visual, narrative, audio, media, brand, and product
+      communication systems.
+    product_families:
+      - media-generation
+      - visual-systems
+      - storytelling
+      - brand-systems
+      - product-visualization
+    public_routes: []
+    data_classification: public_safe_or_private_source_protected
+    commercial_stage: candidate
+
+  - id: knowledge-academy
+    name: Artemis Knowledge and Academy
+    status: incubating
+    mission: Build research, educational, documentation, and knowledge systems.
+    product_families:
+      - academy
+      - research
+      - documentation
+      - knowledge-os
+    public_routes:
+      - /academy
+      - /library
+      - /insights
+    data_classification: public_or_controlled_research
+    commercial_stage: platform_content
+
+  - id: finance-decision-systems
+    name: Artemis Finance and Decision Systems
+    status: experimental
+    mission: Build financial architecture, modeling, and decision-support systems.
+    product_families:
+      - tax-architecture
+      - financial-modeling
+      - decision-support
+    public_routes:
+      - /labs/tax-architecture-2026
+    data_classification: educational_or_private_approved
+    commercial_stage: public_prototype
+
+  - id: natural-systems
+    name: Artemis Natural Systems
+    status: experimental
+    mission: Build botanical, ecological, environmental, and living-system knowledge products.
+    product_families:
+      - rainbow-botanics
+      - ecological-knowledge
+      - environmental-intelligence
+    public_routes:
+      - /rainbowbotanics/hemerocallis-fulva
+    data_classification: noindex_review_or_public_approved
+    commercial_stage: draft
+
+incubation:
+  id: artemis-labs
+  name: Artemis Labs
+  type: cross_division_incubator
+  production_authority: false
+  allowed_artifact_types:
+    - experiment
+    - testbed
+    - prototype
+    - public_safe_demo
+    - product_comparison
+    - capability_trial
+  rule: >-
+    A Labs route is not automatically a supported product. Its Product Registry
+    entry determines maturity, visibility, data mode, and migration state.
