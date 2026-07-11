@@ -57,25 +57,33 @@ products:
     product_family: civicbid
     lifecycle: rescue
     maturity: public_safe_demo
-    visibility: public_safe_demo
+    visibility: public
     data_mode: mixed_explicit
     canonical_route: /labs/civicbid-intelligence-bridge
+    review_route: /labs/civicbid-signal-forge
+    api_route: /api/civicbid/signal-forge
     canonical_branch: main
-    active_rescue_branch: rescue/civicbid-live-cockpit-v1
+    validated_rescue_commit: 7b0cd8b72be908b66ea648a1ac3791db87292306
+    active_integration_branch: feature/civicbid-canonical-bridge-integration-v1
     rescue_issue: 11
+    related_prs:
+      - 12
+      - 13
     donor_branches:
       - feature/civicbid-sourceledger-command-deck
       - test/civicbid-signal-forge
       - fix/civicbid-signal-forge-cockpit
     status_evidence: >-
-      Main contains the public-safe product architecture. The active main-based rescue
-      branch selectively reimplements the official Socrata connector, normalization,
-      a single five-factor scoring contract, and explicit live/sample/unavailable modes.
+      PR #12 merged the selectively rescued official Socrata connector, normalization,
+      one five-factor scoring contract, explicit live/sample/unavailable modes, and a
+      no-index contractor cockpit to main. PR #13 integrates that validated live cockpit
+      into the canonical public bridge while retaining the old deterministic workbench as
+      an explicitly synthetic scenario lab.
     known_blockers:
-      - public cockpit is not yet connected to the rescued API contract
-      - rescued API and scoring contract require CI and deployed-preview verification
+      - canonical integration requires exact-head CI and deployed public-route review
+      - schema-drift monitoring and automated integration tests remain future production gates
       - donor branches contain unrelated product work and must not be merged wholesale
-    next_gate: validate_rescue_api_then_connect_cockpit
+    next_gate: validate_canonical_integration_then_active_lab_review
 
   - id: construction-intelligence
     name: Construction Intelligence Workbench
