@@ -1,6 +1,6 @@
 schema_version: 1
 registry_status: provisional_evidence_based
-last_reviewed: 2026-07-10
+last_reviewed: 2026-07-11
 
 status_definitions:
   lifecycle:
@@ -61,18 +61,21 @@ products:
     data_mode: mixed_explicit
     canonical_route: /labs/civicbid-intelligence-bridge
     canonical_branch: main
+    active_rescue_branch: rescue/civicbid-live-cockpit-v1
+    rescue_issue: 11
     donor_branches:
       - feature/civicbid-sourceledger-command-deck
       - test/civicbid-signal-forge
       - fix/civicbid-signal-forge-cockpit
     status_evidence: >-
-      Main contains the public-safe product architecture. Divergent branches contain
-      live Socrata ingestion, normalization, scoring, and sample cockpit variants.
+      Main contains the public-safe product architecture. The active main-based rescue
+      branch selectively reimplements the official Socrata connector, normalization,
+      a single five-factor scoring contract, and explicit live/sample/unavailable modes.
     known_blockers:
-      - visible cockpit is not canonically connected to the live API
-      - scoring explanation and implementation must be reconciled
+      - public cockpit is not yet connected to the rescued API contract
+      - rescued API and scoring contract require CI and deployed-preview verification
       - donor branches contain unrelated product work and must not be merged wholesale
-    next_gate: selective_main_based_rescue
+    next_gate: validate_rescue_api_then_connect_cockpit
 
   - id: construction-intelligence
     name: Construction Intelligence Workbench

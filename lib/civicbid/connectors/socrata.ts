@@ -5,6 +5,7 @@ export type SocrataFetchOptions = {
   order?: string;
   select?: string;
   revalidateSeconds?: number;
+  timeoutMs?: number;
 };
 
 export const NYC_OPEN_DATA_ENDPOINTS = {
@@ -18,11 +19,12 @@ export async function fetchSocrataRows<T = Record<string, unknown>>({
   where,
   order,
   select,
-  revalidateSeconds = 3600,
+  revalidateSeconds = 900,
+  timeoutMs = 8_000,
 }: SocrataFetchOptions): Promise<T[]> {
   const url = new URL(endpoint);
 
-  url.searchParams.set("$limit", String(limit));
+  url.searchParams.set("$limit", String(Math.max(1, Math.min(limit, 200))));
   if (where) url.searchParams.set("$where", where);
   if (order) url.searchParams.set("$order", order);
   if (select) url.searchParams.set("$select", select);
@@ -30,15 +32,22 @@ export async function fetchSocrataRows<T = Record<string, unknown>>({
   const init: RequestInit & { next?: { revalidate: number } } = {
     headers: {
       Accept: "application/json",
+      "User-Agent": "Artemis-CivicBid/1.0",
     },
     next: { revalidate: revalidateSeconds },
+    signal: AbortSignal.timeout(timeoutMs),
   };
 
   const response = await fetch(url.toString(), init);
 
   if (!response.ok) {
-    throw new Error(`Socrata fetch failed: ${response.status} ${response.statusText}`);
+    throw new Error(`Socrata fetch failed with HTTP ${response.status}`);
   }
 
-  return response.json() as Promise<T[]>;
+  const payload: unknown = await response.json();
+  if (!Array.isArray(payload)) {
+    throw new Error("Socrata response was not an array");
+  }
+
+  return payload as T[];
 }

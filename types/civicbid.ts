@@ -9,6 +9,8 @@ export type CivicBidSourceConfidence =
   | "manual_entry"
   | "sample_data";
 
+export type CivicBidRecordMode = "live_official" | "sample";
+
 export type CivicBidConnectorStatus =
   | "official_public_api"
   | "official_public_portal"
@@ -76,6 +78,9 @@ export type CivicBidOpportunity = {
   description?: string | null;
   requirements?: CivicBidRequirement[];
   sourceConfidence: CivicBidSourceConfidence;
+  /** Explicit at the record level for rescued live/sample cockpit data. */
+  recordMode?: CivicBidRecordMode;
   retrievedAt: string;
+  /** Internal connector evidence; public API routes should omit this field. */
   raw?: unknown;
 };
