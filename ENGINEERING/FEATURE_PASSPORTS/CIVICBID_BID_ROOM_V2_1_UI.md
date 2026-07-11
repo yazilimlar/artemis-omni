@@ -8,9 +8,11 @@
 - Lifecycle status: public lab release candidate
 - Visibility: public route with `noindex,nofollow` metadata
 - Data mode: live public direct-browser queries with explicit source-health states
-- Tracking issue: #15
+- Primary tracking issue: #15
+- Deadline-sanity hotfix: #17
 - Target branch: `main`
 - Release branch: `feature/civicbid-bid-room-v2-1-ui`
+- Hotfix branch: `hotfix/civicbid-deadline-sanity-v1`
 
 ## Purpose
 
@@ -67,6 +69,32 @@ After the Today badge first resolves from its loading state to a numeric value:
 The rule is injected by the verified artifact loader, so the complete payload and its checksum remain
 unchanged.
 
+## Deadline Sanity Rule
+
+City Record records can contain far-future placeholder or open-ended dates that are not ordinary bid
+deadlines. A visible value such as `26793 days left` maps from July 11, 2026 to November 18, 2099 and
+must not be presented as a normal contractor countdown.
+
+The runtime adapter therefore classifies a due date as `deadline_needs_verification` when any of the
+following is true:
+
+- the date cannot be parsed into a valid calendar date;
+- the source year is 2090 or later; or
+- the calculated due date is more than 730 calendar days ahead.
+
+For these records:
+
+- the countdown displays `VERIFY` and `placeholder date` or `date issue`;
+- the official source date remains visible in the descriptive date text;
+- `days` is set to `null` for derived workflow logic;
+- the record is excluded from closing-soon KPIs, estimating-runway tests, readiness milestones, and
+  calendar exports;
+- CivicBid does not invent or silently substitute a replacement deadline;
+- the contractor must verify the actual deadline in the controlling official notice and bid documents.
+
+This correction is injected by the loader so the verified application payload and checksum remain
+unchanged.
+
 ## Theme and Visibility Corrections
 
 - Day secondary/faint text changed from `#8b93a0` to `#596472`.
@@ -95,6 +123,8 @@ unchanged.
 - Loader-injected initial-tab behavior passed an in-memory Chromium test with empty live feeds.
 - The test confirmed Open Bids becomes selected when Today is zero.
 - A subsequent manual selection remained selected after `renderAll()`, proving the rule is one-time.
+- Deadline-sanity examples must confirm a normal 2026 date retains numeric countdown behavior and a
+  2099 placeholder returns `VERIFY`, `days: null`, and `date: null`.
 - Contrast corrections were reviewed against day and night principal surfaces.
 - Release gate: exact-head typecheck, lint, build, governance, Vercel deployment, and public-domain
   verification must pass before merge.
