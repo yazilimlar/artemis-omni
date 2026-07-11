@@ -56,7 +56,6 @@ export async function GET(request: Request) {
     const rows = await fetchSocrataRows<Record<string, unknown>>({
       endpoint: LIVE_SOURCE.apiUrl,
       limit: upstreamLimit,
-      order: "publication_date DESC",
       revalidateSeconds: 900,
       timeoutMs: 8_000,
     });
