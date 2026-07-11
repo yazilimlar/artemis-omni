@@ -8,20 +8,21 @@ Standardized, parse-friendly handover. Historical states remain available throug
 - Canonical integration branch: `main`
 - GitHub default branch: `main`
 - PR #9 merged to `main`: `8a5435ee82da774fa0e9255289de09c04730b64d`
-- Public Evolution & Structure route is now part of `main`
+- Public Evolution & Structure route is live at `https://artemis.agoraxai.com/evolution`
+- PR #9 production deployment was verified READY on Vercel with the custom domain assigned and no alias error
 - Current work branch: `rescue/civicbid-live-cockpit-v1`
 - Rescue baseline: exact post-PR-#9 `main` commit `8a5435ee82da774fa0e9255289de09c04730b64d`
 - Tracking issue: GitHub Issue #11
-- Vercel production deployment for PR #9 was triggered from `main`; verify READY state and custom-domain alias before closing the publication step
+- Draft implementation PR: GitHub PR #12
 
 ## Division and Product Ownership
 
 - Division: Infrastructure & Construction
 - Product family: civicbid
 - Product: CivicBid
-- Change class: selective rescue and public API foundation
+- Change class: selective rescue, public API, and no-index review cockpit
 - Lifecycle: rescue
-- Visibility: public-safe demo
+- Visibility: noindex_review
 - Data mode: mixed_explicit
 - Governing ADRs: ADR-005 and ADR-006
 - Feature passport: `ENGINEERING/FEATURE_PASSPORTS/CIVICBID_LIVE_COCKPIT_V1.md`
@@ -52,15 +53,15 @@ Explicitly excluded donor concerns:
 - unrelated package changes
 - standalone HTML libraries
 
-## What This Branch Adds
+## What PR #12 Adds
 
 ### CivicBid data contract
 
-- `types/civicbid.ts` now declares explicit live/sample record modes without breaking existing product records
+- `types/civicbid.ts` declares explicit live/sample record modes without breaking existing product records
 - `lib/civicbid/normalizeOpportunity.ts` normalizes official public rows, timestamps dates, labels official API confidence, and retains raw evidence only internally
-- `lib/civicbid/connectors/socrata.ts` adds bounded row limits, an eight-second timeout, response-shape validation, and a credential-free official-source connector
+- `lib/civicbid/connectors/socrata.ts` adds bounded row limits, an eight-second timeout, response-shape validation, publication-date ordering, and a credential-free official-source connector
 
-### Canonical scoring
+### Canonical scoring and relevance
 
 - `lib/civicbid/signalForgeScoring.ts` defines one executable five-factor model:
   - due-date urgency: 30%
@@ -69,7 +70,10 @@ Explicitly excluded donor concerns:
   - construction fit: 15%
   - compliance clarity: 10%
 - Runtime invariant requires weights to total exactly 100%
-- Queue responses carry the scoring model used for computation so future UI cannot maintain a separate contradictory formula
+- Queue responses carry the model used for computation so presentation code cannot maintain a separate contradictory formula
+- Composite pursuit score and contractor relevance are separate
+- Default contractor scope omits rows without detected construction signals; `scope=all` preserves the complete retrieved procurement view
+- The response reports source count, excluded count, returned count, scope, and relevance threshold
 
 ### Explicit sample behavior
 
@@ -84,44 +88,73 @@ Explicitly excluded donor concerns:
   - `live_official`
   - `sample_fallback`
   - `source_unavailable`
+- Supported views and controls:
+  - `view=queue`
+  - `scope=construction` default
+  - `scope=all`
+  - bounded `limit`
+  - `fallback=none`
 - Default behavior may use clearly labeled sample fallback
-- `fallback=none` returns HTTP 503 with `source_unavailable` and no fabricated records
-- `view=queue` returns deterministic scores and the canonical scoring-model definition
+- `fallback=none` returns HTTP 503 with `source_unavailable` and no fabricated records when the source fails
 - Raw upstream rows are omitted from the public response
+
+### Live review cockpit
+
+- `components/labs/civicbid/CivicBidLiveCockpit.tsx`
+- `/labs/civicbid-signal-forge`
+- Route is no-index during rescue review
+- Displays source mode, retrieval time, official dataset link, reviewed/excluded/returned counts, contractor/all-procurement controls, ranked opportunity cards, score components, and human-review boundary
+- The UI reads scoring weights from the API response rather than restating them independently
+- The canonical `/labs/civicbid-intelligence-bridge` remains unchanged until the live route passes review
 
 ### Governance records
 
 - Product Registry records the active rescue branch, Issue #11, donor scope, blockers, and next gate
-- Feature passport records provenance, product boundaries, data truth, security boundary, validation gates, and roadmap
+- Feature passport records provenance, product boundaries, source scope, scoring truth, security boundary, validation gates, and roadmap
 
-## Verification Required
+## Verification Completed Before Final UI Commit
 
-Run through GitHub Actions and Vercel preview:
+A deployed preview of the API returned:
+
+- HTTP 200
+- `mode: live_official`
+- real current records from NYC Open Data
+- official source and retrieval metadata
+- no raw upstream payload
+- queue response with the canonical 30/25/20/15/10 model
+
+That review identified and corrected a product defect: non-construction opportunities could rank highly because urgency and source confidence were strong. The final branch now separates contractor relevance from composite score and defaults to the contractor scope.
+
+## Final Verification Required
+
+Run against the final PR #12 head:
 
 - `npm run typecheck`
 - `npm run lint`
 - `npm run build`
-- inspect default API response
-- inspect `?view=queue`
-- inspect `?fallback=none`
+- inspect `/labs/civicbid-signal-forge` on desktop and mobile
+- inspect default contractor queue
+- inspect `scope=all`
+- inspect API response metadata and raw-payload omission
 - confirm the live source reports `live_official` when reachable
-- confirm fallback records report `sample_fallback` and remain unmistakably synthetic
-- confirm unavailable mode returns HTTP 503 and no sample data
-- confirm no raw upstream payload, credentials, private records, or unrelated donor code is exposed
+- confirm scoring weights total 100 and UI labels come from the API response
+- confirm route metadata remains no-index during review
+- confirm fallback and unavailable code paths remain unmistakably labeled and do not fabricate live records
 
 ## Known Review Points
 
 - Upstream Socrata schema may change and requires schema-drift monitoring before production maturity
 - A published due date can still be stale or amended; official bid documents remain controlling
+- Keyword relevance can produce false positives or false negatives and is not a certified trade classification
 - Compliance scoring detects published signals, not legal sufficiency
-- No unit-test runner is currently configured; the first slice relies on strict TypeScript, runtime invariants, CI, and deployed integration checks
-- The public cockpit UI is intentionally deferred until the API contract passes validation
+- No unit-test runner is currently configured; this slice relies on strict TypeScript, runtime invariants, CI, deployed integration review, and human review
+- The canonical CivicBid product route still contains earlier public-safe language stating that it is not a live feed; do not revise that route until the new cockpit is approved and promoted
 
 ## Next Recommended Tasks
 
-1. Open a draft PR from `rescue/civicbid-live-cockpit-v1` to `main`.
-2. Complete CI and deployed API verification.
-3. Correct any type, lint, build, source-state, or disclosure defect before UI work.
-4. Add a CivicBid-owned cockpit component that imports `SIGNAL_FORGE_SCORING_MODEL` directly.
-5. Connect the canonical CivicBid public route to explicit live/sample/unavailable states.
-6. Review contractor-president and chief-estimator usability before merge to production.
+1. Complete final CI and preview validation for PR #12.
+2. Correct any type, lint, build, visual, source-state, or disclosure defect.
+3. Review the no-index live cockpit from contractor-president and chief-estimator perspectives.
+4. Mark PR #12 ready only after the review route is accepted.
+5. Merge the validated rescue to `main`.
+6. In a later scoped PR, promote the live cockpit into `/labs/civicbid-intelligence-bridge` and revise obsolete no-live-feed language.
