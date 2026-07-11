@@ -1,0 +1,200 @@
+schema_version: 1
+registry_status: provisional_evidence_based
+last_reviewed: 2026-07-10
+
+status_definitions:
+  lifecycle:
+    - concept
+    - prototype
+    - testbed
+    - rescue
+    - active_lab
+    - active_product
+    - noindex_draft
+    - private_pilot
+    - retired
+  maturity:
+    - internal_experiment
+    - public_safe_demo
+    - public_lab
+    - pilot_ready
+    - production
+  visibility:
+    - public
+    - public_safe_demo
+    - noindex_review
+    - authenticated
+    - private_pilot
+    - internal_operations
+  data_mode:
+    - live_official
+    - live_derived
+    - synthetic
+    - sample
+    - sample_fallback
+    - private_approved
+    - mixed_explicit
+
+products:
+  - id: utility-field-claims
+    name: Utility Field Claims Command Workbench
+    division: infrastructure-construction
+    product_family: utility-intelligence
+    lifecycle: active_lab
+    maturity: public_safe_demo
+    visibility: public_safe_demo
+    data_mode: synthetic
+    canonical_route: /labs/utility-intelligence-bridge/field-claims
+    canonical_branch: main
+    status_evidence: >-
+      Interactive deterministic scenario controls recompute representative cost,
+      schedule, labor, exposure, and executive-action outputs.
+    next_gate: calculation_tests_and_product_manifest
+
+  - id: civicbid
+    name: CivicBid
+    division: infrastructure-construction
+    product_family: civicbid
+    lifecycle: rescue
+    maturity: public_safe_demo
+    visibility: public_safe_demo
+    data_mode: mixed_explicit
+    canonical_route: /labs/civicbid-intelligence-bridge
+    canonical_branch: main
+    donor_branches:
+      - feature/civicbid-sourceledger-command-deck
+      - test/civicbid-signal-forge
+      - fix/civicbid-signal-forge-cockpit
+    status_evidence: >-
+      Main contains the public-safe product architecture. Divergent branches contain
+      live Socrata ingestion, normalization, scoring, and sample cockpit variants.
+    known_blockers:
+      - visible cockpit is not canonically connected to the live API
+      - scoring explanation and implementation must be reconciled
+      - donor branches contain unrelated product work and must not be merged wholesale
+    next_gate: selective_main_based_rescue
+
+  - id: construction-intelligence
+    name: Construction Intelligence Workbench
+    division: infrastructure-construction
+    product_family: construction-intelligence
+    lifecycle: active_lab
+    maturity: public_safe_demo
+    visibility: public_safe_demo
+    data_mode: synthetic
+    canonical_route: /labs/construction-intelligence-workbench
+    canonical_branch: main
+    next_gate: product_owner_review
+
+  - id: artemisix19
+    name: ArtemisIX19
+    division: artemis-labs
+    product_family: cross_division_testbed
+    lifecycle: testbed
+    maturity: public_safe_demo
+    visibility: public_safe_demo
+    data_mode: synthetic
+    canonical_route: /labs/artemisix19
+    canonical_branch: main
+    historical_branch: feature/artemisix19-autonomous-generator
+    migration_required: true
+    status_evidence: >-
+      ArtemisIX19 was used to test and integrate deterministic generation,
+      provenance, source-family, and export concepts. Working capabilities may
+      migrate into Artemis Core, Studio, Knowledge, or other products.
+    retirement_condition: >-
+      Do not retire the route or historical branch until the Testbed Migration
+      Registry records a disposition for every verified capability.
+    next_gate: capability_inventory
+
+  - id: time-atlas-troy
+    name: Artemis Time Atlas - Troy
+    division: atlas-places
+    product_family: time-atlas
+    lifecycle: active_lab
+    maturity: public_lab
+    visibility: public
+    data_mode: mixed_explicit
+    canonical_route: /labs/troy-time-atlas
+    canonical_branch: main
+    donor_branches:
+      - feature/priam-lens-a0-3
+      - claude/troy-time-atlas
+    next_gate: donor_feature_parity_review
+
+  - id: turkiye-atlas
+    name: ARTEMIS Turkiye Atlas
+    division: atlas-places
+    product_family: atlas
+    lifecycle: active_lab
+    maturity: public_lab
+    visibility: public
+    data_mode: mixed_explicit
+    canonical_route: /labs/turkiye-atlas
+    canonical_branch: main
+    known_boundary: public_map_tokens_must_be_url_restricted
+    next_gate: security_and_data_review
+
+  - id: atlas-handcrafted-guru-selection
+    name: Artemis Atlas Handcrafted Guru Selection
+    division: atlas-places
+    product_family: atlas
+    lifecycle: rescue
+    maturity: public_safe_demo
+    visibility: public_safe_demo
+    data_mode: sample
+    canonical_route: null
+    donor_branches:
+      - feature/artemis-atlas-handcrafted-guru-selection-v00
+    known_blockers:
+      - user_controlled_values_are_inserted_through_innerHTML
+      - asset_provenance_requires_review
+    next_gate: secure_selective_rescue
+
+  - id: rainbow-botanics
+    name: Rainbow Botanics
+    division: natural-systems
+    product_family: rainbow-botanics
+    lifecycle: noindex_draft
+    maturity: internal_experiment
+    visibility: noindex_review
+    data_mode: sample
+    canonical_route: /rainbowbotanics/hemerocallis-fulva
+    canonical_branch: main
+    next_gate: resolve_publication_blockers
+
+  - id: tax-architecture-2026
+    name: 1040 Finance Architecture
+    division: finance-decision-systems
+    product_family: tax-architecture
+    lifecycle: active_lab
+    maturity: public_lab
+    visibility: public_safe_demo
+    data_mode: synthetic
+    canonical_route: /labs/tax-architecture-2026
+    canonical_branch: main
+    known_boundary: educational_only_not_tax_advice
+    next_gate: product_owner_review
+
+  - id: artemis-evolution-console
+    name: Artemis Evolution Console
+    division: knowledge-academy
+    product_family: company-history
+    lifecycle: concept
+    maturity: internal_experiment
+    visibility: noindex_review
+    data_mode: sample
+    canonical_route: null
+    donor_branches:
+      - claude/evolution-console
+    known_blockers:
+      - operational_claims_require_factual_review
+      - public_tool_and_workflow_disclosure_requires_owner_approval
+    next_gate: factual_and_commercial_review
+
+registry_rules:
+  - A branch status must never be used as the sole evidence for product retirement.
+  - A public route must declare maturity, visibility, and data mode.
+  - A product may have multiple donor branches but only one canonical implementation.
+  - A donor branch must be selectively reviewed; branch-wide merges are not implied.
+  - New major products require a Product Registry entry and feature passport before production.
