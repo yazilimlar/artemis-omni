@@ -36,8 +36,10 @@ p{line-height:1.55;color:#596472}
     const html=await new Response(stream).text();
     const byteLength=new TextEncoder().encode(html).byteLength;
     if(byteLength!==84768)throw new Error(`Payload verification failed: expected 84768 bytes, received ${byteLength}`);
+    const initialTabPatch='<script>(function(){let applied=false;const badge=document.getElementById("n-today");if(!badge)return;const apply=function(){if(applied)return;const count=Number.parseInt(badge.textContent.trim(),10);if(!Number.isFinite(count))return;applied=true;if(count===0&&typeof selectTab==="function")selectTab("board");};new MutationObserver(apply).observe(badge,{childList:true,subtree:true,characterData:true});queueMicrotask(apply);})();<\/script>';
+    const patchedHtml=html.replace("</body>",initialTabPatch+"</body>");
     document.open();
-    document.write(html);
+    document.write(patchedHtml);
     document.close();
   }catch(error){
     console.error("Bid Room payload failed",error);
