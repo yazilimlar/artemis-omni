@@ -1,0 +1,108 @@
+schema_version: 1
+registry_status: active
+last_reviewed: 2026-07-10
+
+disposition_definitions:
+  - review_required
+  - migrate
+  - repair_then_migrate
+  - retain_as_test_fixture
+  - reject
+  - archive_after_evidence
+
+rules:
+  - A testbed is not automatically a permanent product.
+  - Working capabilities may migrate into different divisions or products.
+  - Do not delete or retire a testbed until every verified capability has a recorded disposition.
+  - Migration must originate from a fresh main-based branch and use selective extraction.
+  - A migrated capability must record its target path, validation evidence, and source provenance.
+  - Broken, duplicate, or misleading behavior must not be migrated merely to preserve branch content.
+
+testbeds:
+  - id: artemisix19
+    name: ArtemisIX19
+    route: /labs/artemisix19
+    canonical_branch: main
+    historical_branch: feature/artemisix19-autonomous-generator
+    state: inventory_required
+    product_role: cross_division_capability_donor
+    retirement_allowed: false
+    capabilities:
+      - id: deterministic-package-generation
+        description: Browser-generated structured solution and media packages.
+        evidence_state: repository_route_verified
+        disposition: review_required
+        candidate_targets:
+          - studio-media
+          - knowledge-academy
+          - core-platform
+        target_product: null
+        target_paths: []
+        validation: []
+
+      - id: source-family-provenance
+        description: Public-safe source-family and provenance boundary concepts.
+        evidence_state: repository_route_verified
+        disposition: review_required
+        candidate_targets:
+          - core-platform
+          - studio-media
+        target_product: null
+        target_paths: []
+        validation: []
+
+      - id: export-and-handoff
+        description: Copy, local-save, Markdown, JSON, and review-package concepts.
+        evidence_state: implementation_review_required
+        disposition: review_required
+        candidate_targets:
+          - core-platform
+          - studio-media
+          - knowledge-academy
+        target_product: null
+        target_paths: []
+        validation: []
+
+      - id: purpose-terrain-convergence
+        description: Decision-path controls for purpose, terrain, and solution convergence.
+        evidence_state: repository_route_verified
+        disposition: review_required
+        candidate_targets:
+          - core-platform
+          - infrastructure-construction
+          - studio-media
+        target_product: null
+        target_paths: []
+        validation: []
+
+      - id: legacy-testbed-page
+        description: The combined public ArtemisIX19 Labs route.
+        evidence_state: repository_route_verified
+        disposition: retain_as_test_fixture
+        candidate_targets:
+          - artemis-labs
+        target_product: artemisix19
+        target_paths:
+          - app/labs/artemisix19
+        validation:
+          - Retain until all other verified capabilities receive final dispositions.
+
+migration_record_template:
+  source_testbed:
+  capability_id:
+  source_paths: []
+  source_commit:
+  disposition:
+  target_division:
+  target_product:
+  target_branch:
+  target_paths: []
+  validation:
+    typecheck:
+    lint:
+    build:
+    tests:
+    browser_qa:
+  reviewer:
+  decision_date:
+  notes:
