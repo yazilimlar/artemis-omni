@@ -1,4 +1,5 @@
 import { ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -14,13 +15,13 @@ export default function CivicBidSignalForgePage() {
     <main className="min-h-screen bg-[#e9eae5] text-[#15202e]">
       <header className="border-b-2 border-[#15202e] bg-white">
         <div className="mx-auto flex max-w-[1260px] flex-wrap items-center gap-3 px-5 py-3">
-          <a
+          <Link
             href="/labs/civicbid-intelligence-bridge"
             className="inline-flex items-center gap-2 rounded-sm border border-[#15202e] px-3 py-2 font-mono text-[0.7rem] font-semibold uppercase tracking-wide transition-colors hover:bg-[#15202e] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1d5fbf] focus-visible:ring-offset-2"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             CivicBid bridge
-          </a>
+          </Link>
 
           <div className="min-w-0 flex-1">
             <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-[#596472]">
@@ -31,7 +32,7 @@ export default function CivicBidSignalForgePage() {
             </p>
           </div>
 
-          <a
+          <Link
             href="/civicbid/the-bid-room-v2-1.html"
             target="_blank"
             rel="noreferrer"
@@ -39,7 +40,7 @@ export default function CivicBidSignalForgePage() {
           >
             Open full screen
             <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-          </a>
+          </Link>
         </div>
       </header>
 
