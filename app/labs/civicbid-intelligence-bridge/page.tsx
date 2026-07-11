@@ -15,17 +15,16 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
 import { CivicBidWorkbench } from "@/components/labs/CivicBidWorkbench";
+import { CivicBidLiveCockpit } from "@/components/labs/civicbid/CivicBidLiveCockpit";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { ProofCard } from "@/components/showcase/ProofCard";
 import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import {
-  civicBidBoundaryChecks,
-  civicBidMetricStrip,
   civicBidPipeline,
   civicBidProductPillars,
   civicBidRoles,
@@ -44,8 +43,43 @@ export const metadata = createMetadata({
   title: "CivicBid Intelligence Bridge",
   path: "/labs/civicbid-intelligence-bridge",
   description:
-    "A public-safe Artemis CivicBid route that turns public procurement award/status intelligence into contractor opportunity radar, solicitation joins, compliance review, lifecycle watch, and executive pursuit action.",
+    "A public Artemis CivicBid route that connects an official NYC solicitation source to transparent contractor triage, source-state controls, pursuit scenarios, compliance review, and executive action.",
 });
+
+const civicBidMetricStrip = [
+  {
+    label: "Live source",
+    value: "NYC Current Solicitations",
+    detail: "Official public Socrata records are normalized server-side with retrieval timestamps.",
+  },
+  {
+    label: "Source states",
+    value: "Live · sample · unavailable",
+    detail: "Every response declares whether the source is official, synthetic fallback, or unavailable.",
+  },
+  {
+    label: "Contractor scope",
+    value: "Construction-first triage",
+    detail: "The default queue filters for declared construction relevance; the full feed remains available.",
+  },
+  {
+    label: "Decision method",
+    value: "Deterministic scoring",
+    detail: "Five published factors total 100%; scores support triage and never certify a bid decision.",
+  },
+  {
+    label: "Controlling record",
+    value: "Official agency documents",
+    detail: "Notices, addenda, plans, specifications, eligibility, and submission rules remain controlling.",
+  },
+] as const;
+
+const civicBidBoundaryChecks = [
+  "Live, synthetic-fallback, and source-unavailable states are visibly separated.",
+  "Raw upstream payloads, private records, credentials, and unrelated donor code are not published.",
+  "The contractor relevance filter is heuristic, disclosed, and reversible through the all-procurement view.",
+  "Scores support pursuit triage only; official agency notices and bid documents remain controlling.",
+] as const;
 
 const relatedProofs = getProofModules([
   "civicbid-intelligence-bridge",
@@ -55,10 +89,10 @@ const relatedProofs = getProofModules([
 
 function CivicBidTerrainVisual() {
   const lanes = [
-    ["Awards / status", "Public fragments identify terrain, not final bid action."],
-    ["Solicitations", "Due dates, addenda, pre-bid meetings, and plan/spec files."],
-    ["Requirements", "Bonding, insurance, prequalification, forms, and M/WBE rules."],
-    ["Pursuit room", "Fit score, action owner, confidence, limitation, and next move."],
+    ["Official solicitations", "Open public records establish the current opportunity field."],
+    ["Contractor relevance", "Declared construction signals separate pursuit candidates from the wider feed."],
+    ["Requirements", "Bonding, insurance, prequalification, forms, and M/WBE rules require document review."],
+    ["Pursuit room", "Fit score, action owner, confidence, limitation, and next move become reviewable."],
   ] as const;
 
   return (
@@ -73,7 +107,7 @@ function CivicBidTerrainVisual() {
             CivicBid · Opportunity Terrain
           </p>
           <h2 className="display-serif mt-2 text-2xl text-parchment">
-            Procurement fragments become pursuit action
+            Public source truth becomes pursuit action
           </h2>
         </div>
         <Landmark className="h-6 w-6 text-gold-soft" aria-hidden />
@@ -99,8 +133,8 @@ function CivicBidTerrainVisual() {
       </div>
 
       <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-        This is a rebuilt diagram concept. It does not include raw RC1 payload rows, vendor lists,
-        contract identifiers, exact ledger values, private source paths, or live bid-deadline data.
+        The diagram is explanatory. Live opportunities appear only in the governed cockpit below;
+        raw upstream rows, private source paths, and certified bid instructions are not exposed.
       </p>
     </div>
   );
@@ -118,7 +152,8 @@ export default function CivicBidIntelligenceBridgePage() {
         <Container className="grid gap-10 py-16 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:py-20">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
-              <StatusBadge tone="synthetic">RC1 public-safe rebuild</StatusBadge>
+              <StatusBadge tone="public">Live official source</StatusBadge>
+              <StatusBadge tone="synthetic">Explicit sample fallback</StatusBadge>
               <StatusBadge tone="private">Raw payload protected</StatusBadge>
               <span className="eyebrow">Artemis CivicBid Intelligence Bridge</span>
             </div>
@@ -126,13 +161,13 @@ export default function CivicBidIntelligenceBridgePage() {
               Civic procurement intelligence, translated into bid-room action.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              CivicBid upgrades the attached RC1 concept into a public Artemis product route:
-              public award/status fragments become market terrain, solicitation joins, compliance
-              checklists, subcontractor maps, lifecycle watchlists, and executive pursuit decisions.
+              CivicBid connects an official NYC solicitation source to construction-focused
+              opportunity triage, transparent scoring, explicit fallback states, compliance review,
+              lifecycle watchlists, and executive pursuit decisions.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button href="#civicbid-workbench" size="lg">
-                Open CivicBid Cockpit
+              <Button href="#live-signal-forge" size="lg">
+                Open Live CivicBid Cockpit
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Button>
               <Button href="/for/contractors" variant="outline" size="lg">
@@ -169,17 +204,17 @@ export default function CivicBidIntelligenceBridgePage() {
 
       <section className="border-b border-border/60 py-12 lg:py-16">
         <Container className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-          <ConfidenceNote title="Public-safe RC1 posture">
-            This route publishes the CivicBid product story as a native Artemis page with
-            representative indices and deterministic interactions. It does not publish the
-            attached HTML, embedded record payload, vendor table, contract IDs, EPINs, row-level
-            amounts, private source paths, or a live procurement feed.
+          <ConfidenceNote title="Mixed-explicit public source posture">
+            This route uses the official NYC Current Solicitations public API when reachable.
+            A synthetic fallback is shown only with explicit sample labels, while strict
+            live-only requests return an unavailable state rather than fabricated records.
+            Every opportunity and score still requires review against the official agency record.
           </ConfidenceNote>
           <WhatItIsNotBox
             items={[
-              "Not a live bid calendar, award system, compliance decision, legal advice, or certified procurement record.",
-              "Not an iframe around the single-file RC1 cockpit.",
-              "Not a public export of row-level agency, vendor, contract, payment, or status records.",
+              "Not a certified bid calendar, award system, compliance decision, legal opinion, or agency system of record.",
+              "Not a silent blend of live and sample records; the current source state is always declared.",
+              "Not a public export of raw upstream fields, private records, credentials, or automated bid instructions.",
             ]}
           />
         </Container>
@@ -190,7 +225,7 @@ export default function CivicBidIntelligenceBridgePage() {
           <ExecutiveSectionHeader
             eyebrow="Public Data Spine"
             title="Connector registry for Artemis Bid Atlas"
-            description="This layer makes the next CivicBid build concrete without turning the public page into a live bid system. Sources are classified by connector method, public/API posture, confidence, and manual-review priority."
+            description="The registry places the live official connector inside a broader, governed source map. Each source retains its connector method, access posture, confidence, and human-review priority."
           />
 
           <div className="mt-10 grid gap-3 md:grid-cols-4">
@@ -222,8 +257,8 @@ export default function CivicBidIntelligenceBridgePage() {
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-signal-soft" aria-hidden />
               <p className="text-sm leading-relaxed text-foreground/86">
                 Official portals and official bid documents remain the source of truth. CivicBid /
-                Artemis Bid Atlas organizes, summarizes, and monitors bid operations. AI-extracted
-                checklists require human review before submission.
+                Artemis Bid Atlas organizes, filters, summarizes, and monitors bid operations.
+                AI-extracted or keyword-detected signals require human review before submission.
               </p>
             </div>
           </div>
@@ -316,12 +351,12 @@ export default function CivicBidIntelligenceBridgePage() {
       <section id="live-cockpit" className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
-            eyebrow="Live Cockpit"
-            title="Run the CivicBid pursuit intelligence modes"
-            description="The enhanced route focuses on the strongest product move from RC1: move from public market terrain into a bid-room operating system with due dates, addenda, requirements, partner maps, and executive review."
+            eyebrow="Live Official Cockpit"
+            title="Rank current public opportunities for contractor review"
+            description="The canonical CivicBid route now consumes the validated source-state API. Contractor view filters the official citywide feed for declared construction relevance, while all-procurement view preserves source completeness."
           />
           <div className="mt-10">
-            <CivicBidWorkbench />
+            <CivicBidLiveCockpit />
           </div>
         </Container>
       </section>
@@ -329,9 +364,22 @@ export default function CivicBidIntelligenceBridgePage() {
       <section className="border-y border-border/60 py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
+            eyebrow="Deterministic Scenario Lab"
+            title="Explore the broader pursuit operating modes"
+            description="These scenario modes remain explicitly synthetic. They demonstrate how live opportunity discovery can connect to solicitation joins, compliance controls, subcontractor strategy, lifecycle watch, and executive review."
+          />
+          <div className="mt-10">
+            <CivicBidWorkbench />
+          </div>
+        </Container>
+      </section>
+
+      <section className="py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
             eyebrow="Source-to-Action Pipeline"
-            title="The right next join is solicitations, not more raw table publishing"
-            description="RC1 already proves market intelligence value. The public route makes the next product step explicit: join live bid data and documents, then route it through reviewable pursuit controls."
+            title="Discovery becomes useful only when it reaches the bid room"
+            description="The live public source establishes current opportunity terrain. The next product layers join official documents, requirements, partner intelligence, and accountable pursuit controls."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-5">
             {civicBidPipeline.map((item) => (
@@ -352,12 +400,12 @@ export default function CivicBidIntelligenceBridgePage() {
         </Container>
       </section>
 
-      <section className="py-16 lg:py-20">
+      <section className="border-y border-border/60 py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Product System"
-            title="Six CivicBid modules that turn RC1 into a contractor product"
-            description="The attached cockpit points to a full product family: radar, matchmaker, lifecycle monitor, compliance copilot, data lake, and briefing engine."
+            title="Six CivicBid modules extend the live opportunity front door"
+            description="The validated cockpit is the discovery layer. The wider product family adds matchmaker, lifecycle, compliance, data custody, and executive briefing capabilities."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {civicBidProductPillars.map((pillar, index) => {
@@ -389,12 +437,12 @@ export default function CivicBidIntelligenceBridgePage() {
         </Container>
       </section>
 
-      <section className="border-y border-border/60 py-16 lg:py-20">
+      <section className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Discipline Translation"
             title="Every pursuit owner reads the same source chain differently"
-            description="CivicBid is useful only if public procurement fragments become the working language of business development, estimating, compliance, and executive review."
+            description="CivicBid is useful only if public procurement records become the working language of business development, estimating, compliance, and executive review."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {civicBidRoles.map((item) => (
@@ -417,12 +465,12 @@ export default function CivicBidIntelligenceBridgePage() {
         </Container>
       </section>
 
-      <section className="py-16 lg:py-20">
+      <section className="border-y border-border/60 py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Publication QA"
-            title="What changed for the public route and what stayed protected"
-            description="These checks are visible because CivicBid must make the public/private boundary as clear as the product promise."
+            title="What is live, what is synthetic, and what remains protected"
+            description="The public route keeps source state, relevance filtering, scoring limitations, and the official-record boundary visible."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {civicBidBoundaryChecks.map((check) => (
@@ -438,7 +486,7 @@ export default function CivicBidIntelligenceBridgePage() {
         </Container>
       </section>
 
-      <section className="border-y border-border/60 py-16 lg:py-20">
+      <section className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Related Proof"
@@ -453,7 +501,7 @@ export default function CivicBidIntelligenceBridgePage() {
         </Container>
       </section>
 
-      <section className="py-16 lg:py-24">
+      <section className="border-t border-border/60 py-16 lg:py-24">
         <Container>
           <div className="rounded-2xl border border-gold/25 bg-navy-deep/60 p-8 text-center lg:p-12">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md border border-gold/30 bg-gold/10 text-gold-soft">
@@ -464,8 +512,8 @@ export default function CivicBidIntelligenceBridgePage() {
               Use CivicBid when the contractor team needs opportunity radar before execution control.
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              The right pilot starts with approved public-source connectors, live solicitation
-              joins, document custody, human-reviewed compliance extraction, and no silent
+              The right pilot extends the official public connector with document custody,
+              human-reviewed compliance extraction, accountable pursuit ownership, and no silent
               procurement or CRM write-back.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-4">
@@ -486,11 +534,11 @@ export default function CivicBidIntelligenceBridgePage() {
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/30 px-3 py-1">
                 <FileSearch className="h-3.5 w-3.5 text-gold-soft" aria-hidden />
-                Solicitation join next
+                Live official source
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/30 px-3 py-1">
                 <CalendarClock className="h-3.5 w-3.5 text-gold-soft" aria-hidden />
-                Not a live deadline feed
+                Human review required
               </span>
             </div>
           </div>

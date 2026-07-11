@@ -9,28 +9,29 @@
 - Product: CivicBid
 - Owner / review authority: Artemis product owner
 - Lifecycle status: rescue
-- Commercial maturity: public-safe demo under review
-- Visibility class: noindex_review
+- Commercial maturity: public-safe demo moving into the canonical product route
+- Visibility class: public canonical route plus noindex review route
 - Data mode: mixed_explicit
-- Version: 0.2.0-rescue
+- Version: 0.3.0-canonical-integration
 - Created: 2026-07-11
 - Modified: 2026-07-11
 
 ## Canonical Implementation
 
-- Canonical product route: `/labs/civicbid-intelligence-bridge` remains the current public product narrative
-- No-index rescue review route: `/labs/civicbid-signal-forge`
-- Rescue API route: `/api/civicbid/signal-forge`
+- Canonical product route: `/labs/civicbid-intelligence-bridge`
+- No-index review route: `/labs/civicbid-signal-forge`
+- Public API route: `/api/civicbid/signal-forge`
 - Canonical branch: `main`
-- Active rescue branch: `rescue/civicbid-live-cockpit-v1`
-- Canonical commit or release tag: pending reviewed merge
+- Validated API/cockpit merge: PR #12, commit `7b0cd8b72be908b66ea648a1ac3791db87292306`
+- Active canonical-integration branch: `feature/civicbid-canonical-bridge-integration-v1`
+- Active canonical-integration PR: #13
 - Product Registry entry: `civicbid`
 - Division Registry entry: `infrastructure-construction`
 - Source-of-truth data/system: official agency records and bid documents; NYC Open Data is the first machine-readable discovery source
 
 ## Purpose
 
-Create a contractor-facing opportunity triage system that can ingest an official public source, preserve the full feed truth, identify contractor-relevant records, rank them deterministically, and state clearly whether the response is live, sample fallback, or unavailable.
+Create a contractor-facing opportunity triage system that can ingest an official public source, preserve the full feed truth, identify contractor-relevant records, rank them deterministically, and state clearly whether the response is live, sample fallback, or unavailable. The canonical bridge must connect that live discovery layer to explicitly synthetic pursuit scenarios without confusing the two data modes.
 
 ## Scope
 
@@ -42,7 +43,9 @@ In scope:
 - Explicit live, sample-fallback, and source-unavailable API states
 - Explicit `construction` and `all` source scopes
 - Public-safe source provenance and retrieval timestamps
-- A CivicBid-owned live review cockpit consuming the API contract
+- CivicBid-owned live cockpit consuming the API contract
+- Canonical route integration
+- Retention of the deterministic scenario workbench with explicit synthetic labeling
 
 Out of scope:
 
@@ -76,12 +79,12 @@ Out of scope:
   - bid-readiness presentation patterns
 - Excluded donor concerns: all non-CivicBid routes, packages, branding, standalone libraries, and product code
 - Migration disposition: selectively reimplemented and hardened from current `main`; no donor branch merge
-- Migration record: GitHub Issue #11 and PR #12
+- Migration record: GitHub Issue #11, PR #12, and PR #13
 - Retirement/deprecation condition: donor branches remain preserved until CivicBid-only capability parity and disposition are documented
 
 ## Dependencies
 
-- Code: Next.js route handlers, React client component, and TypeScript
+- Code: Next.js route handlers, React client components, and TypeScript
 - Data: NYC Open Data Current Solicitations Socrata endpoint
 - Third-party services: public Socrata API only
 - Environment variables: none
@@ -98,6 +101,10 @@ Out of scope:
   - default `scope=construction` filters the reviewed source pool by an exported contractor-relevance threshold
   - `scope=all` preserves access to all retrieved procurement categories
   - responses report source, excluded, and returned counts
+- Canonical-page behavior:
+  - the live cockpit consumes the API contract
+  - the retained pursuit-mode workbench is explicitly synthetic
+  - live and synthetic content must never share an unlabeled state
 - Timestamp/freshness behavior: every response and record carries retrieval time; server connector revalidation is bounded
 - Human-review boundary: all opportunities, scores, compliance signals, dates, and documents require independent review against the official record
 - Official source-of-truth statement: CivicBid assists discovery and triage; the official agency record and bid documents remain controlling
@@ -110,8 +117,9 @@ Out of scope:
 - Construction fit: 15%
 - Compliance clarity: 10%
 - Runtime invariant: weights must total exactly 100%
-- Presentation rule: UI reads the model from the API response and must not maintain a separate scoring formula
+- Presentation rule: live UI reads the model from the API response and must not maintain a separate scoring formula
 - Relevance rule: composite score and contractor relevance are separate; non-construction urgency cannot silently become contractor fit
+- Current contractor-relevance threshold: 43
 
 ## Architecture Links
 
@@ -119,7 +127,7 @@ Out of scope:
 - Related docs: `ENGINEERING/PRODUCT_REGISTRY.yaml`, `ENGINEERING/BRANCH_LIFECYCLE.md`, `docs/HANDOVER.md`
 - Related milestone: multi-division AIEOS v2 and CivicBid selective rescue
 - Related issue: #11
-- Related PR: #12
+- Related PRs: #12 and #13
 
 ## Security and Privacy
 
@@ -127,32 +135,38 @@ Out of scope:
 - Public/private data boundary: public official data and clearly synthetic samples only
 - User data handling: none in this slice
 - Internal operational information exposed: none
-- Authentication/authorization: public read-only API and no-index review page
+- Authentication/authorization: public read-only API, public canonical route, and no-index review route
 - Known risks: upstream schema drift, date ambiguity, stale public records, keyword false positives/negatives, scoring overconfidence, and future UI label drift
 
 ## Validation
 
-- Live official API preview: verified on the first deployed API slice
-- Raw upstream payload omission: verified on the first deployed API slice
-- Canonical scoring-model response: verified on the first deployed API slice
-- Contractor filtering and review route: pending final branch CI and preview verification
-- Typecheck: pending final branch CI
-- Lint: pending final branch CI
-- Build: pending final branch CI
-- Unit tests: no test runner currently configured; scoring has a runtime 100-percent weight invariant
-- Unavailable and fallback branches: code-path review complete; live source availability prevented an external outage-path execution during this session
-- Browser QA: pending deployed desktop/mobile review
-- Accessibility: keyboard controls, semantic buttons, status text, and native links implemented; visual review pending
-- Performance: bounded source pool, 1–100 returned records, eight-second timeout, no raw rows returned publicly
+PR #12 / production foundation:
+
+- Typecheck, lint, build, and governance checks: passed
+- Vercel production deployment: READY on `main` commit `7b0cd8b72be908b66ea648a1ac3791db87292306`
+- Permanent-domain API: verified HTTP 200 `live_official` with `fallback=none`
+- Permanent-domain review route: verified HTTP 200 with no-index metadata
+- Raw upstream payload omission: verified
+- Canonical scoring-model response and 100-percent invariant: verified
+- Contractor relevance threshold 43: verified against deployed live records
+- Natural outage paths: explicit `sample_fallback` and HTTP 503 `source_unavailable` verified
+
+PR #13 / canonical integration:
+
+- Typecheck: pending exact-head CI
+- Lint: pending exact-head CI
+- Build: pending exact-head CI
+- Vercel preview: pending
+- Indexed canonical-route language review: pending
+- Live/synthetic visual separation: pending deployed review
+- Desktop/mobile review: pending
 - Security/secret scan: pending final CI/review
-- Data-mode claim verification: required before merge
-- Function-parity verification: live-source and scoring capability only; donor branch-wide UI parity is not a goal
 
 ## Lifecycle and Commercial Path
 
-- Current lifecycle: rescue
-- Current maturity: no-index public-safe review
-- Next maturity gate: validated live cockpit preview and contractor workflow review
+- Current lifecycle: rescue moving toward active lab
+- Current maturity: public-safe live discovery capability with canonical integration under review
+- Next maturity gate: validated canonical-route preview and contractor workflow review
 - Pilot requirements: source-state visibility, source links, scoring explanation, human-review disclaimer, source-health behavior, and contractor usability review
 - Production requirements: monitoring, schema-drift handling, tests, source health, accessibility, and product-owner approval
 - Subscription/auth requirements: none for this public demonstration slice
@@ -160,11 +174,11 @@ Out of scope:
 
 ## Roadmap
 
-- Next: validate PR #12 and the deployed `/labs/civicbid-signal-forge` route; correct defects before promotion
-- Then: connect the reviewed live cockpit into the canonical CivicBid product bridge
+- Next: validate PR #13 on the canonical route and correct any claim, layout, or data-mode defect before merge
+- Then: merge the canonical integration and update lifecycle from rescue to active lab when product-owner review is complete
 - Later: add vetted official sources, saved pursuits, authenticated contractor workflows, document custody, and source-health monitoring
 - Not planned: brittle scraping, automated bid submission, or silent inference presented as certified fact
 
 ## AI Notes
 
-Before modifying this feature, read the Product Registry, ADR-006, this passport, Issue #11, and the exact donor-path exclusions. Do not merge donor branches wholesale, recreate scoring text separately from `SIGNAL_FORGE_SCORING_MODEL`, or represent keyword relevance as a certified construction classification.
+Before modifying this feature, read the Product Registry, ADR-006, this passport, Issue #11, and the exact donor-path exclusions. Do not merge donor branches wholesale, recreate live scoring text separately from `SIGNAL_FORGE_SCORING_MODEL`, represent keyword relevance as a certified construction classification, or blur the retained synthetic scenario lab with the live official cockpit.
