@@ -1,53 +1,93 @@
-# Handover: Session 2026-06-30 — Governance foundation + WIP reconciliation
+# Handover: Session 2026-07-10 — Multi-Division AIEOS v2
 
-Standardized, parse-friendly handover (AIEOS Level 8). Update this at the end of every
-substantial session. Keep the newest handover at the top.
+Standardized, parse-friendly handover. Keep the newest handover at the top or replace this
+file when the previous state is no longer operationally current. Historical versions remain
+available through Git.
 
 ## Current State
 
-- Repo: `yazilimlar/artemis-omni` (SSH remote; HTTPS push 400s on large packs)
-- Vercel: `gokmen1313-3041s-projects/artemis-omni` — LIVE at https://artemis-omni.vercel.app
-- Branch (this work): `governance/aieos-foundation`
-- Build baseline: `main` @ `339a6af` — typecheck/lint/build green as of last check
+- Repo: `yazilimlar/artemis-omni`
+- Canonical target branch: `main`
+- Governance branch: `governance/aieos-multidivision-v2`
+- Current GitHub default branch at session start: `feature/artemisix19-autonomous-generator`
+- Default-branch correction required: set GitHub default to `main` through repository Settings
+- Deployment: not changed during this session
+- Product code: not changed during this session
 
-## What this session did
+## Division and Product Ownership
 
-Filled the AIEOS governance gaps on top of Codex's existing `ENGINEERING/` foundation:
-- Added `CAPABILITY_REGISTRY.md`, `RECOVERY_MATRIX.md`, `BRANCH_LIFECYCLE.md`,
-  `ENGINEERING_DNA.md`, `SYSTEM_INDEX.md` under `ENGINEERING/`.
-- Added `.github/PULL_REQUEST_TEMPLATE.md` (AI safety checklist) and
-  `.github/workflows/governance-check.yml` (typecheck/lint/build + advisory checks).
-- Rescued Codex's previously-uncommitted `ENGINEERING/` files into version control.
+- Division: Artemis Core Platform / governance
+- Product family: AIEOS
+- Change class: governance and architecture
+- Visibility: internal repository governance
+- Data mode: repository evidence
+- Governing ADRs: ADR-005 and ADR-006
 
-## ⚠️ Uncommitted work still in the tree (do NOT lose)
+## What This Session Did
 
-The working tree currently holds three intermixed, previously-uncommitted concerns.
-Governance was committed by explicit path; the rest remain and must each go to their own
-branch (see BRANCH_LIFECYCLE.md):
+Created a governance-only branch from `main` and extended the existing AIEOS rather than
+adopting the parallel OpenCode operations model.
 
-1. **Atlas feature (Codex):** `app/labs/artemis-atlas-all-countries/`, and modified
-   `app/labs/page.tsx`, `app/sitemap.ts`, `data/programCatalog.ts`, `docs/AIWorkflow.md`.
-   → belongs on `feature/artemis-atlas-all-countries`.
-2. **Monetization + social (Claude Code):** `app/pricing/`, `data/pricing.ts`,
-   `app/insights/social/`, `components/social/SocialStudio.tsx`, `data/socialEngine.ts`.
-   → belongs on `feature/monetization-social-engine`. Adds `/pricing` (tiers + training)
-   and `/insights/social` (audience×pillar daily-post engine). Needs nav links +
-   typecheck before PR.
+Added:
 
-## Active Objectives
+- `decisions/ADR-006-artemis-multidivision-product-architecture.md`
+- `ENGINEERING/DIVISION_REGISTRY.yaml`
+- `ENGINEERING/PRODUCT_REGISTRY.yaml`
+- `ENGINEERING/TESTBED_MIGRATION_REGISTRY.yaml`
 
-- [ ] Reconcile the two WIP concerns above onto their branches, one PR each.
-- [ ] Consolidate the divergent Desktop repo (`/studio`, `/artemisix`, `/artemisix/modules`)
-      into this canonical repo, or formally retire it.
-- [ ] Wire nav for `/pricing` and `/insights/social`; typecheck; verify; PR.
+Updated:
 
-## Known Issues
+- `ENGINEERING/ARCHITECTURE.md`
+- `ENGINEERING/PROJECT_GENOME.yaml`
+- `ENGINEERING/AI_AGENT_RULES.md`
+- `ENGINEERING/AI_SESSION_START_PROTOCOL.md`
+- `ENGINEERING/BRANCH_LIFECYCLE.md`
+- `ENGINEERING/FEATURE_PASSPORT_TEMPLATE.md`
+- `ENGINEERING/SYSTEM_INDEX.md`
+- `decisions/ADR-INDEX.md`
+- `docs/HANDOVER.md`
 
-- Branch list has drifted: several branches sit at the same commit `339a6af`.
-- Mapbox atlas routes need `NEXT_PUBLIC_MAPBOX_TOKEN` (URL-restricted public token).
+## Decisions Established
+
+1. Artemis is the umbrella organization and multi-division platform.
+2. Infrastructure, construction, CivicBid, 5D, forecasting, utilities, cashflow, claims,
+   and project controls are flagship work within one major division, not the full Artemis boundary.
+3. Artemis Labs is an incubator, not automatic production or commercial status.
+4. ArtemisIX19 is a testbed and cross-division capability donor.
+5. Working ArtemisIX19 capabilities may migrate into appropriate products; broken,
+   duplicate, or misleading behavior must not migrate merely for preservation.
+6. Branch status and product status are separate.
+7. Products require canonical implementations, visibility classes, and explicit data modes.
+8. Sample or synthetic data must never silently impersonate live data.
+9. Donor and contaminated branches require selective rescue from fresh `main`-based branches.
+10. Internal branch, deployment, rollback, and approval information does not belong on ordinary public product routes.
+
+## Verification
+
+- Branch was created directly from `main`.
+- Only governance, ADR, registry, and handover files were changed.
+- No application routes, components, data engines, environment variables, deployment settings,
+  or product implementations were changed.
+- GitHub-connected edit session cannot independently run local `npm run typecheck`, `npm run lint`,
+  or `npm run build`; the draft PR must run repository CI before merge.
+- YAML and Markdown require clean-checkout validation through CI or a local worktree.
+
+## Known Risks and Review Points
+
+- Division names are architectural working categories, not final public brand commitments.
+- Product Registry entries are evidence-based but provisional and require product-owner review.
+- The GitHub default branch remains incorrect until changed manually to `main`.
+- Vercel Production Branch is a separate setting and was not changed.
+- No branch should be deleted during the current recovery phase.
+- ArtemisIX19 migration dispositions remain `review_required` except the legacy route retained as a test fixture.
 
 ## Next Recommended Task
 
-Check out `feature/monetization-social-engine`, `git add` only the monetization/social
-paths, add nav links, run `npm run typecheck && npm run build`, open PR. Then repeat for
-the atlas branch.
+1. Review and merge this governance PR after CI passes.
+2. Change the GitHub default branch to `main`.
+3. Verify Vercel Production Branch separately; do not infer it from GitHub.
+4. Create `rescue/civicbid-live-cockpit-v1` from current `main`.
+5. Extract CivicBid-only API, normalization, registry, and scoring code.
+6. Reconcile the visible CivicBid scoring explanation with the implemented formula.
+7. Connect the cockpit to explicit live/sample/source-unavailable states.
+8. Begin the ArtemisIX19 capability inventory only after the registries are accepted.
