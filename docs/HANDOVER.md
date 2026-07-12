@@ -165,12 +165,48 @@ No other product or global platform path belongs in this PR.
 - The canonical route is indexed, so PR #13 must not merge with contradictory or overstated source claims
 - The no-index `/labs/civicbid-signal-forge` route should remain available as a focused review/reference surface after canonical integration
 
-## Next Recommended Tasks
+## PR #19 — CivicBid Public Visibility Release (2026-07-12)
 
-1. Complete exact-head CI and Vercel preview validation for PR #13.
-2. Correct any type, lint, build, visual, source-state, metadata, or disclosure defect.
-3. Review the canonical route from contractor-president and chief-estimator perspectives.
-4. Confirm the final PR contains only the four expected paths.
-5. Mark PR #13 ready only after the indexed route is accepted.
-6. Merge PR #13 to `main` and verify the production custom domain.
-7. After an observation period, review whether CivicBid can move from `rescue` to `active_lab` and whether donor branches can receive final dispositions.
+### Purpose
+Remove private build attribution from the public Bid Room v2.1 artifact, finalize public-visibility configuration, and validate the release safety gates.
+
+### Release Branch
+`release/civicbid-bid-room-v2-1-public-visibility`
+
+### Head SHA
+`7db80fa8148c430fad181b3cd515d21a98b4de64`
+
+### Changes
+1. **Private attribution removed**: `<!-- internal build stamp: George Oktem · New York · 2026 · IPC Resiliency Partners -->` — stripped from the reconstructed HTML payload (87 bytes)
+2. **Payload regenerated**: All 4 gzip/base64 payload chunks replaced with cleaned versions
+3. **Loader byte-length updated**: 84768 → 84678
+4. **Feature passport updated**: New SHA `fde9db8802d701af14908aa7290f381ef71309a75638ba5a96cb78d3ec65a51c` with attribution-removal record
+5. **Product registry updated**: Added PRs #16, #18 and `full_screen_route` field
+6. **Signal-forge page**: Changed "donor-layout preview" → "public contractor demonstration"
+
+### Route Visibility Matrix
+| Route | Status | Indexing |
+|---|---|---|
+| `/labs/civicbid-intelligence-bridge` | Public, indexed | `index, follow` |
+| `/labs/civicbid-signal-forge` | Public, no-index review | `noindex,nofollow` |
+| `/civicbid/the-bid-room-v2-1.html` | Public, unlisted | `noindex,nofollow` |
+| `/api/civicbid/signal-forge` | Public API | N/A |
+
+### Validation
+- Typecheck: passed
+- Lint: passed
+- Build: passed
+- Governance checks: passed
+- Secret/public-safety scan: no secrets or private attribution in public payload
+- Vercel preview: READY at `https://artemis-omni-git-release-civic-c17e5f-gokmen1313-3041s-projects.vercel.app`
+- All four CivicBid routes: HTTP 200
+- Build stamp absent from delivered artifact
+- Correct `noindex` metadata on review/fullscreen routes
+
+### Next Recommended Tasks
+
+1. Review and approve PR #19.
+2. Squash-merge to `main`.
+3. Verify production deployment from `main`.
+4. After an observation period, review whether CivicBid can move from `rescue` to `active_lab`.
+5. Consider whether donor branches (`feature/civicbid-sourceledger-command-deck`, `test/civicbid-signal-forge`, `fix/civicbid-signal-forge-cockpit`) can receive final dispositions.
