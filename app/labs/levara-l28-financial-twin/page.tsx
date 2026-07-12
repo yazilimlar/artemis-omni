@@ -11,7 +11,7 @@ export default function LevaraL28FinancialTwinPage() {
   return (
     <iframe
       title="LEVARA L28 Financial Twin"
-      src="/standalone/levara-l28-financial-twin/index.html"
+      src="/standalone/levara-l28-financial-twin/runtime.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#fffaf4]"
       allow="fullscreen; clipboard-write"
       allowFullScreen
