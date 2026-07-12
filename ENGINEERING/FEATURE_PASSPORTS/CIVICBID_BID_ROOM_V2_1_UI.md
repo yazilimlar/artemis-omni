@@ -39,8 +39,9 @@ The complete patched HTML is stored as four gzip/base64 payload chunks and recon
 same-origin loader. The loader verifies the expected decompressed byte length and fails visibly if a
 chunk is missing or corrupt.
 
-- Reconstructed artifact: 84,768 UTF-8 bytes / 1,165 source lines
-- SHA-256: `529b55561173cd235796831939560ab73423fcbd0662804a1368ded49dc4937f`
+- Reconstructed artifact: 84,678 UTF-8 bytes / 1,165 source lines
+- SHA-256: `fde9db8802d701af14908aa7290f381ef71309a75638ba5a96cb78d3ec65a51c`
+- Private build attribution (George Oktem · IPC Resiliency Partners) removed in release v2.1
 
 ## Donor Capabilities Retained
 

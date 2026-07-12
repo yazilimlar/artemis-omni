@@ -28,7 +28,7 @@ export default function CivicBidSignalForgePage() {
               CivicBid · No-index interface review
             </p>
             <p className="mt-1 text-sm font-semibold">
-              The Bid Room v2.1 — exact donor-layout preview
+              The Bid Room v2.1 — public contractor demonstration
             </p>
           </div>
 

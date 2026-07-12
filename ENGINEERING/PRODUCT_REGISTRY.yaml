@@ -62,6 +62,7 @@ products:
     canonical_route: /labs/civicbid-intelligence-bridge
     review_route: /labs/civicbid-signal-forge
     api_route: /api/civicbid/signal-forge
+    full_screen_route: /civicbid/the-bid-room-v2-1.html
     canonical_branch: main
     validated_rescue_commit: 7b0cd8b72be908b66ea648a1ac3791db87292306
     active_integration_branch: feature/civicbid-canonical-bridge-integration-v1
@@ -69,6 +70,8 @@ products:
     related_prs:
       - 12
       - 13
+      - 16
+      - 18
     donor_branches:
       - feature/civicbid-sourceledger-command-deck
       - test/civicbid-signal-forge
@@ -78,7 +81,9 @@ products:
       one five-factor scoring contract, explicit live/sample/unavailable modes, and a
       no-index contractor cockpit to main. PR #13 integrates that validated live cockpit
       into the canonical public bridge while retaining the old deterministic workbench as
-      an explicitly synthetic scenario lab.
+      an explicitly synthetic scenario lab. PR #16 published The Bid Room v2.1 full-screen
+      artifact at /civicbid/the-bid-room-v2-1.html with gzip/base64 payload chunks and
+      same-origin loader. PR #18 corrected far-future placeholder deadline handling.
     known_blockers:
       - canonical integration requires exact-head CI and deployed public-route review
       - schema-drift monitoring and automated integration tests remain future production gates
