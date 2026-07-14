@@ -1,0 +1,94 @@
+.atlasiq-force-light {
+  color-scheme: light;
+  background: #f6f8fa;
+}
+
+/*
+  Route-scoped defensive color layer.
+  Some browser/extension combinations apply -webkit-text-fill-color or a
+  high-specificity dark-mode foreground after Tailwind utilities. This layer
+  deliberately controls both properties for the AtlasIQ route only.
+*/
+.atlasiq-force-light :where(h1, h2, h3, h4, h5, h6, p, span, div, label, dt, dd, li, b, strong, input, select, option) {
+  color: #0b1728 !important;
+  -webkit-text-fill-color: #0b1728 !important;
+}
+
+.atlasiq-force-light :where(input, select, option) {
+  background-color: #ffffff !important;
+  color: #0b1728 !important;
+  -webkit-text-fill-color: #0b1728 !important;
+  opacity: 1 !important;
+}
+
+.atlasiq-force-light input::placeholder {
+  color: #536b7d !important;
+  -webkit-text-fill-color: #536b7d !important;
+  opacity: 1 !important;
+}
+
+/* Dark hero, KPI, status, and portal surfaces. */
+.atlasiq-force-light [class*="bg-[#06182b]"] :where(h1, h2, h3, p, span, div, b, strong),
+.atlasiq-force-light [class*="bg-[#103352]"] :where(h1, h2, h3, p, span, div, b, strong, a),
+.atlasiq-force-light [class*="bg-[#06182b]"] > :where(h1, h2, h3, p, span, div),
+.atlasiq-force-light [class*="bg-[#103352]"] > :where(h1, h2, h3, p, span, div) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Restore visible Artemis accent text on dark surfaces. */
+.atlasiq-force-light [class*="text-[#7ee7ff]"] {
+  color: #7ee7ff !important;
+  -webkit-text-fill-color: #7ee7ff !important;
+}
+
+.atlasiq-force-light [class*="text-[#ffd86b]"] {
+  color: #ffd86b !important;
+  -webkit-text-fill-color: #ffd86b !important;
+}
+
+.atlasiq-force-light [class*="text-[#eef6fb]"],
+.atlasiq-force-light [class*="text-[#f3f7fa]"] {
+  color: #eef6fb !important;
+  -webkit-text-fill-color: #eef6fb !important;
+}
+
+/* Restore semantic accent colors on light surfaces. */
+.atlasiq-force-light [class*="text-[#005f7a]"] {
+  color: #005f7a !important;
+  -webkit-text-fill-color: #005f7a !important;
+}
+
+.atlasiq-force-light [class*="text-[#33495d]"],
+.atlasiq-force-light [class*="text-[#40576b]"] {
+  color: #33495d !important;
+  -webkit-text-fill-color: #33495d !important;
+}
+
+.atlasiq-force-light [class*="text-[#087f5b]"],
+.atlasiq-force-light [class*="text-[#064f3b]"] {
+  color: #064f3b !important;
+  -webkit-text-fill-color: #064f3b !important;
+}
+
+.atlasiq-force-light [class*="text-[#00556f]"] {
+  color: #00556f !important;
+  -webkit-text-fill-color: #00556f !important;
+}
+
+/* A visible build marker for cache/debug verification. */
+.atlasiq-force-light::before {
+  content: "AtlasIQ style diagnostic v2";
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 9999;
+  padding: 4px 7px;
+  border: 1px solid #005f7a;
+  background: #ffffff;
+  color: #005f7a;
+  -webkit-text-fill-color: #005f7a;
+  font: 700 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
