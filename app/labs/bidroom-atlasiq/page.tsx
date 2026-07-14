@@ -1,5 +1,6 @@
 import { createMetadata } from "@/lib/seo/metadata";
 import BidRoomAtlasIQ from "../../../src/app/labs/bidroom-atlasiq/BidRoomAtlasIQ";
+import "./atlasiq-force-colors.css";
 
 export const metadata = createMetadata({
   title: "BidRoom AtlasIQ",
@@ -9,5 +10,9 @@ export const metadata = createMetadata({
 });
 
 export default function BidRoomAtlasIQPage() {
-  return <BidRoomAtlasIQ />;
+  return (
+    <div className="atlasiq-force-light" data-atlasiq-css="force-colors-v2">
+      <BidRoomAtlasIQ />
+    </div>
+  );
 }
