@@ -65,6 +65,8 @@ export type CivicBidRequirement = {
 
 export type CivicBidOpportunity = {
   id: string;
+  /** Whether the id came from a published source field or was generated order-dependently. */
+  idProvenance?: "published" | "generated";
   title: string;
   agency: string;
   sourceName: string;
