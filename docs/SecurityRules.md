@@ -33,7 +33,9 @@ Non-negotiable rules for secrets and configuration in this project.
   `NEXT_PUBLIC_ANALYTICS_ID`, `NEXT_PUBLIC_SUPABASE_URL`,
   `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - **Server-only** (never `NEXT_PUBLIC_`): `SUPABASE_SERVICE_ROLE_KEY`,
-  `RESEND_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `CONTACT_EMAIL_TO`.
+  `RESEND_API_KEY`, `SQUARESPACE_API_KEY`, `TWILIO_ACCOUNT_SID`,
+  `TWILIO_AUTH_TOKEN`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`,
+  `CONTACT_EMAIL_TO`, and `CONTACT_PHONE_TO`.
 
 ## Verify before committing
 
@@ -43,8 +45,11 @@ git check-ignore .env.local        # should print: .env.local
 git status                         # .env.local must NOT appear
 ```
 
-## This phase
+## Pilot intake
 
-No backend, auth, or database is implemented. The pilot form does not transmit data.
-When wiring these up later, follow the table above and keep every key out of source
-control.
+The public pilot form transmits private-approved contact and project details to a
+server-only route. That route syncs the submitter's name and email to Squarespace and,
+when all notification variables are configured, sends the complete request to the
+approved email recipients plus at least one approved Twilio phone channel. Provider
+credentials and notification destinations must remain in Vercel environment variables
+or a gitignored local environment file; they must never be committed.

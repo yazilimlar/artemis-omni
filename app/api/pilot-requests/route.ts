@@ -1,19 +1,18 @@
 import { NextResponse } from "next/server";
+import {
+  hasPhoneNotificationChannel,
+  loadPilotNotificationConfig,
+  sendEmailNotification,
+  sendPhoneNotifications,
+} from "@/lib/pilot-intake/notifications";
+import {
+  hasHoneypot,
+  parsePilotRequest,
+  pilotRequestId,
+  type PilotRequestPayload,
+} from "@/lib/pilot-intake/payload";
 
 export const runtime = "nodejs";
-
-type PilotRequestPayload = {
-  name: string;
-  company: string;
-  email: string;
-  industry: string;
-  currentSystems: string;
-  painPoint: string;
-  module: string;
-  timeline: string;
-  message: string;
-  sourcePage: string;
-};
 
 type SquarespaceContact = {
   id?: string;
@@ -33,19 +32,6 @@ type SquarespaceQueryResponse = {
 };
 
 const maxBodyBytes = 12_000;
-const maxFieldLength = 1_200;
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const requiredFields: Array<keyof PilotRequestPayload> = [
-  "name",
-  "company",
-  "email",
-  "industry",
-  "currentSystems",
-  "painPoint",
-  "module",
-  "timeline",
-];
 
 export async function POST(request: Request) {
   const contentLength = Number(request.headers.get("content-length") ?? 0);
@@ -53,8 +39,9 @@ export async function POST(request: Request) {
     return jsonError("Pilot request is too large.", 413);
   }
 
-  const apiKey = process.env.SQUARESPACE_API_KEY;
-  if (!apiKey) {
+  const squarespaceApiKey = process.env.SQUARESPACE_API_KEY;
+  const notificationConfig = loadPilotNotificationConfig();
+  if (!squarespaceApiKey || !notificationConfig.email || !hasPhoneNotificationChannel(notificationConfig)) {
     return jsonError("Pilot intake backend is not configured yet.", 503);
   }
 
@@ -75,75 +62,60 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await syncSquarespaceContact(parsed.payload, apiKey);
+    const requestId = pilotRequestId(parsed.payload);
+    const receivedAt = new Date().toISOString();
+    const contact = await syncSquarespaceContact(parsed.payload, squarespaceApiKey, requestId);
+
+    await sendEmailNotification(
+      parsed.payload,
+      requestId,
+      receivedAt,
+      notificationConfig.email,
+    );
+
+    const phoneNotifications = await sendPhoneNotifications(
+      parsed.payload,
+      requestId,
+      notificationConfig.twilio!,
+    );
+    if (phoneNotifications.sent.length === 0) {
+      throw new NotificationError("All configured phone notification channels failed.", {
+        failed: phoneNotifications.failed,
+      });
+    }
+    if (phoneNotifications.failed.length > 0) {
+      console.warn("pilot_intake_partial_phone_notification", {
+        requestId,
+        failed: phoneNotifications.failed,
+      });
+    }
 
     return NextResponse.json({
       ok: true,
-      requestId: result.contactId,
-      status: result.status,
+      requestId,
+      status: contact.status,
+      notifications: {
+        email: "sent",
+        phone: phoneNotifications.sent,
+      },
     });
   } catch (error) {
     const status = error instanceof SquarespaceError ? error.status : 502;
-    console.error("pilot_intake_squarespace_error", {
+    console.error("pilot_intake_submission_error", {
       status,
       message: error instanceof Error ? error.message : "Unknown Squarespace error",
+      detail: error instanceof NotificationError ? error.detail : undefined,
     });
 
-    return jsonError("Pilot intake could not save the request. Please try again.", status);
+    return jsonError("Pilot intake could not save and notify the team. Please try again.", status);
   }
 }
 
-function parsePilotRequest(body: unknown):
-  | { ok: true; payload: PilotRequestPayload }
-  | { ok: false; error: string } {
-  if (!body || typeof body !== "object") {
-    return { ok: false, error: "Submit a valid pilot request." };
-  }
-
-  const source = body as Record<string, unknown>;
-  const payload: PilotRequestPayload = {
-    name: cleanField(source.name),
-    company: cleanField(source.company),
-    email: cleanField(source.email).toLowerCase(),
-    industry: cleanField(source.industry),
-    currentSystems: cleanField(source.currentSystems),
-    painPoint: cleanField(source.painPoint),
-    module: cleanField(source.module),
-    timeline: cleanField(source.timeline),
-    message: cleanField(source.message),
-    sourcePage: cleanField(source.sourcePage),
-  };
-
-  const missing = requiredFields.find((field) => !payload[field]);
-  if (missing) {
-    return { ok: false, error: "Complete all required fields." };
-  }
-
-  if (!emailPattern.test(payload.email)) {
-    return { ok: false, error: "Enter a valid email address." };
-  }
-
-  return { ok: true, payload };
-}
-
-function cleanField(value: unknown) {
-  if (typeof value !== "string") {
-    return "";
-  }
-
-  return value.replace(/\s+/g, " ").trim().slice(0, maxFieldLength);
-}
-
-function hasHoneypot(body: unknown) {
-  return Boolean(
-    body &&
-      typeof body === "object" &&
-      "website" in body &&
-      cleanField((body as Record<string, unknown>).website),
-  );
-}
-
-async function syncSquarespaceContact(payload: PilotRequestPayload, apiKey: string) {
+async function syncSquarespaceContact(
+  payload: PilotRequestPayload,
+  apiKey: string,
+  requestId: string,
+) {
   const { firstName, lastName } = splitName(payload.name, payload.company);
   const contactBody = {
     firstName,
@@ -162,7 +134,7 @@ async function syncSquarespaceContact(payload: PilotRequestPayload, apiKey: stri
       method: "POST",
       body: JSON.stringify(contactBody),
     },
-    payload,
+    requestId,
   );
 
   if (createResponse.status === 201) {
@@ -174,7 +146,7 @@ async function syncSquarespaceContact(payload: PilotRequestPayload, apiKey: stri
   }
 
   if (createResponse.status === 409) {
-    const existing = await findSquarespaceContact(payload.email, apiKey, payload);
+    const existing = await findSquarespaceContact(payload.email, apiKey, requestId);
     return {
       contactId: existing?.id ?? "existing",
       status: "existing",
@@ -187,7 +159,7 @@ async function syncSquarespaceContact(payload: PilotRequestPayload, apiKey: stri
 async function findSquarespaceContact(
   email: string,
   apiKey: string,
-  payload: PilotRequestPayload,
+  requestId: string,
 ) {
   const queryResponse = await squarespaceRequest(
     "/v1/contacts/query",
@@ -201,7 +173,7 @@ async function findSquarespaceContact(
         sortDirection: "ASCENDING",
       }),
     },
-    payload,
+    requestId,
   );
 
   if (!queryResponse.ok) {
@@ -218,14 +190,14 @@ async function squarespaceRequest(
   path: string,
   apiKey: string,
   init: RequestInit,
-  payload: PilotRequestPayload,
+  requestId: string,
 ) {
   return fetch(`https://api.squarespace.com${path}`, {
     ...init,
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "Idempotency-Key": idempotencyKey(payload),
+      "Idempotency-Key": requestId,
       "User-Agent": "Artemis Omni pilot intake (artemis.agoraxai.com)",
       ...init.headers,
     },
@@ -255,22 +227,6 @@ function splitName(name: string, company: string) {
   };
 }
 
-function idempotencyKey(payload: PilotRequestPayload) {
-  const source = [
-    payload.email.toLowerCase(),
-    payload.company.toLowerCase(),
-    payload.module.toLowerCase(),
-    new Date().toISOString().slice(0, 10),
-  ].join(":");
-
-  let hash = 0;
-  for (let index = 0; index < source.length; index += 1) {
-    hash = Math.imul(31, hash) + source.charCodeAt(index);
-  }
-
-  return `pilot-${Math.abs(hash)}`;
-}
-
 function jsonError(error: string, status: number) {
   return NextResponse.json({ ok: false, error }, { status });
 }
@@ -282,5 +238,15 @@ class SquarespaceError extends Error {
   ) {
     super(message);
     this.name = "SquarespaceError";
+  }
+}
+
+class NotificationError extends Error {
+  constructor(
+    message: string,
+    readonly detail: unknown,
+  ) {
+    super(message);
+    this.name = "NotificationError";
   }
 }
