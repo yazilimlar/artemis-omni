@@ -90,6 +90,10 @@ export interface SignalForgeScore {
   rationale: string[];
 }
 
+export function classifySignalTier(compositeScore: number): SignalTier {
+  return compositeScore >= 75 ? "A" : compositeScore >= 55 ? "B" : "C";
+}
+
 function daysUntil(dateInput: string | null | undefined, now: Date): number | null {
   if (!dateInput) return null;
   const due = new Date(dateInput);
@@ -271,7 +275,7 @@ export function scoreOpportunity(
   const compositeScore = Math.round(
     components.reduce((sum, component) => sum + component.weightedScore, 0),
   );
-  const tier: SignalTier = compositeScore >= 75 ? "A" : compositeScore >= 55 ? "B" : "C";
+  const tier = classifySignalTier(compositeScore);
   const constructionFit = components.find((component) => component.key === "constructionFit")?.score ?? 0;
 
   return {

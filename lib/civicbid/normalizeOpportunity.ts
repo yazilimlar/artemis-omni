@@ -26,8 +26,56 @@ function stripHtml(value: string | null): string | null {
   return text === "" ? null : text;
 }
 
-function normalizeDate(value: string | null): string | null {
+const easternOffsetFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/New_York",
+  timeZoneName: "longOffset",
+  hour: "2-digit",
+});
+
+function easternOffsetMilliseconds(instant: Date): number {
+  const offset = easternOffsetFormatter
+    .formatToParts(instant)
+    .find((part) => part.type === "timeZoneName")?.value;
+  const match = offset?.match(/^GMT([+-])(\d{2}):(\d{2})$/);
+  if (!match) {
+    throw new Error(`Unable to determine America/New_York offset for ${instant.toISOString()}`);
+  }
+  const direction = match[1] === "+" ? 1 : -1;
+  return direction * (Number(match[2]) * 60 + Number(match[3])) * 60_000;
+}
+
+/**
+ * Socrata publishes NYC solicitation dates as floating timestamps: the clock
+ * value is New York local time, with no offset. Convert those values to a real
+ * UTC instant explicitly so behavior does not depend on the server's timezone.
+ */
+export function normalizeNycDate(value: string | null): string | null {
   if (!value) return null;
+
+  const floating = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,3}))?)?$/,
+  );
+  if (floating) {
+    const [, year, month, day, hour, minute, second = "0", milliseconds = "0"] = floating;
+    const wallClockAsUtc = Date.UTC(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      Number(hour),
+      Number(minute),
+      Number(second),
+      Number(milliseconds.padEnd(3, "0")),
+    );
+
+    // Resolve the timezone offset iteratively because the applicable Eastern
+    // offset is a property of the resulting instant, including DST.
+    let instant = wallClockAsUtc;
+    for (let iteration = 0; iteration < 3; iteration += 1) {
+      instant = wallClockAsUtc - easternOffsetMilliseconds(new Date(instant));
+    }
+    return new Date(instant).toISOString();
+  }
+
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
 }
@@ -40,7 +88,7 @@ export function normalizeOpenDataOpportunity(
     sourceUrl: string;
     jurisdiction?: string;
     retrievedAt: string;
-    /** Template for a per-record official page; `{requestId}` is replaced with the row's request_id. */
+    /** Template for a per-record City Record Online page; `{requestId}` is replaced with request_id. */
     recordUrlTemplate?: string;
   },
   index = 0,
@@ -59,6 +107,7 @@ export function normalizeOpenDataOpportunity(
     id,
     idProvenance: publishedId ? "published" : "generated",
     recordUrl,
+    recordUrlProvenance: recordUrl ? "derived" : null,
     title:
       pick(row, [
         "title",
@@ -74,10 +123,10 @@ export function normalizeOpenDataOpportunity(
     apiUrl: context.apiUrl,
     jurisdiction: context.jurisdiction ?? "NYC",
     category: pick(row, ["category", "category_description", "procurement_type", "notice_type", "type"]),
-    publishedDate: normalizeDate(
+    publishedDate: normalizeNycDate(
       pick(row, ["publication_date", "published_date", "start_date", "release_date", "record_date"]),
     ),
-    dueDate: normalizeDate(
+    dueDate: normalizeNycDate(
       pick(row, [
         "due_date",
         "proposal_due_date",

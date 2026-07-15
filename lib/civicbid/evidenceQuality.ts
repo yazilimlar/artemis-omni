@@ -194,6 +194,8 @@ export function assessEvidenceQuality(opportunity: CivicBidOpportunity): Evidenc
   );
 
   const recordLink = opportunity.recordUrl ?? null;
+  const recordLinkState: EvidenceFieldState =
+    opportunity.recordUrlProvenance === "published" ? "published" : "normalized";
   const datasetLink = opportunity.sourceUrl ?? opportunity.apiUrl ?? null;
   const link = recordLink ?? datasetLink;
   fields.push(
@@ -201,10 +203,12 @@ export function assessEvidenceQuality(opportunity: CivicBidOpportunity): Evidenc
       "sourceLink",
       "Evidence link",
       10,
-      recordLink ? "published" : datasetLink ? "normalized" : "missing",
+      recordLink ? recordLinkState : datasetLink ? "normalized" : "missing",
       link,
       recordLink
-        ? "Record-level official notice page (City Record Online). Controlling bid documents remain in the agency's procurement system."
+        ? opportunity.recordUrlProvenance === "published"
+          ? "Record-level City Record Online destination published by the source. The scoring pipeline does not fetch or content-verify the destination."
+          : "Record-level City Record Online destination derived from the published request_id. The scoring pipeline does not fetch or content-verify the destination."
         : datasetLink
           ? "Dataset-level link only; the dataset is a discovery source, and the controlling record remains the official agency notice."
           : "No verification destination is available for this record.",

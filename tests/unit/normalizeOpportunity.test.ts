@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { normalizeOpenDataOpportunity } from "@/lib/civicbid/normalizeOpportunity";
+import {
+  normalizeNycDate,
+  normalizeOpenDataOpportunity,
+} from "@/lib/civicbid/normalizeOpportunity";
+import { scoreOpportunity } from "@/lib/civicbid/signalForgeScoring";
 
 const CONTEXT = {
   sourceName: "NYC Open Data — Current Solicitations",
@@ -28,8 +32,9 @@ describe("normalizeOpenDataOpportunity — golden fixture (real captured City Re
     expect(opportunity.procurementMethod).toBe("Competitive Sealed Bids");
     expect(opportunity.category).toBe("Construction Related Services");
     expect(opportunity.recordUrl).toBe("https://a856-cityrecord.nyc.gov/RequestDetail/20021211011");
+    expect(opportunity.recordUrlProvenance).toBe("derived");
     expect(opportunity.sourceConfidence).toBe("official_public_dataset");
-    expect(opportunity.dueDate).toBe(new Date("2003-01-23T10:30:00.000").toISOString());
+    expect(opportunity.dueDate).toBe("2003-01-23T15:30:00.000Z");
   });
 
   it("normalizes every snapshot row without throwing and keeps ids published", () => {
@@ -40,6 +45,35 @@ describe("normalizeOpenDataOpportunity — golden fixture (real captured City Re
       expect(opportunity.procurementMethod).toBeTruthy();
       expect(opportunity.category).toBeTruthy();
     }
+  });
+
+  it("pins the golden fixture's scoring output", () => {
+    const opportunity = normalizeOpenDataOpportunity(fixtureRows[0], CONTEXT, 0);
+    const score = scoreOpportunity(opportunity, new Date("2026-07-15T12:00:00.000Z"));
+
+    expect(score.components.map(({ key, score: componentScore }) => [key, componentScore])).toEqual([
+      ["urgency", 5],
+      ["documentation", 100],
+      ["sourceConfidence", 92],
+      ["constructionFit", 43],
+      ["complianceClarity", 30],
+    ]);
+    expect(score.compositeScore).toBe(54);
+    expect(score.tier).toBe("C");
+  });
+});
+
+describe("normalizeNycDate — floating Eastern timestamps", () => {
+  it("converts summer daylight time independently of the server timezone", () => {
+    expect(normalizeNycDate("2026-08-27T14:00:00.000")).toBe("2026-08-27T18:00:00.000Z");
+  });
+
+  it("converts winter standard time independently of the server timezone", () => {
+    expect(normalizeNycDate("2003-01-23T10:30:00.000")).toBe("2003-01-23T15:30:00.000Z");
+  });
+
+  it("preserves explicitly zoned instants", () => {
+    expect(normalizeNycDate("2026-08-27T14:00:00.000Z")).toBe("2026-08-27T14:00:00.000Z");
   });
 });
 
@@ -73,6 +107,7 @@ describe("normalizeOpenDataOpportunity — field mapping rules", () => {
   it("omits recordUrl when the row has no request_id or no template is configured", () => {
     const noRequestId = normalizeOpenDataOpportunity({ pin: "TEST-3" }, CONTEXT);
     expect(noRequestId.recordUrl).toBeNull();
+    expect(noRequestId.recordUrlProvenance).toBeNull();
 
     const { recordUrlTemplate: _omitted, ...contextWithoutTemplate } = CONTEXT;
     const noTemplate = normalizeOpenDataOpportunity(

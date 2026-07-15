@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  classifySignalTier,
   CONSTRUCTION_RELEVANCE_THRESHOLD,
   isConstructionRelevant,
   scoreOpportunity,
@@ -44,12 +45,17 @@ describe("scoring model shape", () => {
 
 describe("urgency brackets (characterization)", () => {
   const cases: Array<[number, number]> = [
-    [2, 100],
+    [0, 100],
+    [3, 100],
+    [4, 92],
     [7, 92],
+    [8, 82],
     [14, 82],
+    [15, 68],
     [30, 68],
+    [31, 52],
     [60, 52],
-    [90, 38],
+    [61, 38],
   ];
   for (const [days, expected] of cases) {
     it(`due in ${days} day(s) scores ${expected}`, () => {
@@ -70,16 +76,14 @@ describe("urgency brackets (characterization)", () => {
 });
 
 describe("tier boundaries", () => {
-  it("assigns tiers at the documented 75/55 composite boundaries", () => {
-    // Boundaries are defined on the rounded composite.
-    for (const [composite, tier] of [
+  it("calls the production classifier at both sides of the documented 75/55 boundaries", () => {
+    for (const [composite, expected] of [
       [75, "A"],
       [74, "B"],
       [55, "B"],
       [54, "C"],
     ] as const) {
-      const t = composite >= 75 ? "A" : composite >= 55 ? "B" : "C";
-      expect(t).toBe(tier);
+      expect(classifySignalTier(composite)).toBe(expected);
     }
   });
 
@@ -106,9 +110,29 @@ describe("tier boundaries", () => {
 });
 
 describe("source confidence component", () => {
-  it("scores official_public_dataset at 92 (Socrata classification fix)", () => {
-    const score = scoreOpportunity(opportunity(), NOW);
-    expect(score.components.find((c) => c.key === "sourceConfidence")?.score).toBe(92);
+  it("pins every source-confidence classification", () => {
+    const cases = {
+      official_api: 100,
+      official_public_dataset: 92,
+      official_public_portal: 80,
+      official_login_portal: 65,
+      commercial_platform: 58,
+      user_forwarded_email: 50,
+      user_uploaded_document: 54,
+      manual_entry: 42,
+      sample_data: 35,
+    } as const;
+
+    for (const [sourceConfidence, expected] of Object.entries(cases)) {
+      const score = scoreOpportunity(
+        opportunity({
+          sourceConfidence: sourceConfidence as keyof typeof cases,
+          recordMode: sourceConfidence === "sample_data" ? "sample" : "live_official",
+        }),
+        NOW,
+      );
+      expect(score.components.find((c) => c.key === "sourceConfidence")?.score).toBe(expected);
+    }
   });
 
   it("scores sample_data at 35 and flags it in the note", () => {

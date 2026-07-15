@@ -12,6 +12,7 @@ function opportunity(overrides: Partial<CivicBidOpportunity> = {}): CivicBidOppo
     sourceUrl: "https://data.cityofnewyork.us/City-Government/Current-Solicitations/3khw-qi8f",
     apiUrl: "https://data.cityofnewyork.us/resource/3khw-qi8f.json",
     recordUrl: "https://a856-cityrecord.nyc.gov/RequestDetail/20021211011",
+    recordUrlProvenance: "derived",
     jurisdiction: "NYC",
     category: "Construction Related Services",
     publishedDate: "2026-07-01T00:00:00.000Z",
@@ -41,6 +42,14 @@ describe("safety gates (non-compensating)", () => {
     expect(evidence.score).not.toBeNull();
     expect(evidence.score!).toBeGreaterThan(65);
     expect(evidence.gatesApplied).toHaveLength(0);
+    const sourceLink = evidence.fields.find((entry) => entry.key === "sourceLink");
+    expect(sourceLink?.state).toBe("normalized");
+    expect(sourceLink?.note).toContain("does not fetch or content-verify");
+  });
+
+  it("credits a genuinely source-published record URL as published", () => {
+    const evidence = assessEvidenceQuality(opportunity({ recordUrlProvenance: "published" }));
+    expect(evidence.fields.find((entry) => entry.key === "sourceLink")?.state).toBe("published");
   });
 
   it("dataset-level-only linkage caps the score at 65", () => {
@@ -95,38 +104,60 @@ describe("coverage is reported independently of the score", () => {
   });
 });
 
-describe("monotonicity property: adding evidence never lowers score or coverage", () => {
-  const removals: Array<Partial<CivicBidOpportunity>> = [
-    { description: null },
-    { procurementMethod: null },
-    { category: null },
-    { publishedDate: null },
-    { recordUrl: null },
-    { idProvenance: "generated" },
+describe("monotonicity property across every material-field presence combination", () => {
+  const dimensions: Array<{ remove: Partial<CivicBidOpportunity> }> = [
+    { remove: { idProvenance: "generated" } },
+    { remove: { title: "Untitled public opportunity" } },
+    { remove: { agency: "Agency not published" } },
+    { remove: { dueDate: null } },
+    { remove: { publishedDate: null } },
+    { remove: { procurementMethod: null } },
+    { remove: { description: null } },
+    { remove: { category: null } },
+    { remove: { recordUrl: null, recordUrlProvenance: null } },
+    { remove: { jurisdiction: "" } },
   ];
 
-  it("the full record dominates every single-field-removed variant", () => {
-    const full = assessEvidenceQuality(opportunity());
-    for (const removal of removals) {
-      const reduced = assessEvidenceQuality(opportunity(removal));
-      expect(full.score!).toBeGreaterThanOrEqual(reduced.score!);
-      expect(full.fieldsPresent).toBeGreaterThanOrEqual(reduced.fieldsPresent);
+  function variant(mask: number): CivicBidOpportunity {
+    const removals: Partial<CivicBidOpportunity> = {};
+    for (const [index, dimension] of dimensions.entries()) {
+      if ((mask & (1 << index)) === 0) Object.assign(removals, dimension.remove);
     }
-  });
+    return opportunity(removals);
+  }
 
-  it("scores always stay within 0–100 when present", () => {
-    for (const removal of removals) {
-      const evidence = assessEvidenceQuality(opportunity(removal));
-      expect(evidence.score!).toBeGreaterThanOrEqual(0);
-      expect(evidence.score!).toBeLessThanOrEqual(100);
+  it("adding any one missing material field never lowers score or coverage", () => {
+    const combinations = 1 << dimensions.length;
+    for (let mask = 0; mask < combinations; mask += 1) {
+      const base = assessEvidenceQuality(variant(mask));
+      expect(base.score!).toBeGreaterThanOrEqual(0);
+      expect(base.score!).toBeLessThanOrEqual(100);
+
+      for (let index = 0; index < dimensions.length; index += 1) {
+        if ((mask & (1 << index)) !== 0) continue;
+        const added = assessEvidenceQuality(variant(mask | (1 << index)));
+        expect(added.score!).toBeGreaterThanOrEqual(base.score!);
+        expect(added.fieldsPresent).toBeGreaterThanOrEqual(base.fieldsPresent);
+      }
     }
   });
 });
 
 describe("independence: evidence quality ignores source-quality-independent factors", () => {
-  it("changing source confidence classification (non-synthetic) does not change the evidence score", () => {
-    const dataset = assessEvidenceQuality(opportunity({ sourceConfidence: "official_public_dataset" }));
-    const api = assessEvidenceQuality(opportunity({ sourceConfidence: "official_api" }));
-    expect(dataset.score).toBe(api.score);
+  it("every non-synthetic source classification produces the same evidence score", () => {
+    const classifications = [
+      "official_api",
+      "official_public_dataset",
+      "official_public_portal",
+      "official_login_portal",
+      "commercial_platform",
+      "user_forwarded_email",
+      "user_uploaded_document",
+      "manual_entry",
+    ] as const;
+    const expected = assessEvidenceQuality(opportunity()).score;
+    for (const sourceConfidence of classifications) {
+      expect(assessEvidenceQuality(opportunity({ sourceConfidence })).score).toBe(expected);
+    }
   });
 });

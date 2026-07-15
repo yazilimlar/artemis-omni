@@ -72,8 +72,10 @@ export type CivicBidOpportunity = {
   sourceName: string;
   sourceUrl?: string | null;
   apiUrl?: string | null;
-  /** Per-record official destination (e.g. the City Record Online notice page), when derivable. */
+  /** Per-record source destination (e.g. a City Record Online notice page), when available. */
   recordUrl?: string | null;
+  /** Whether the URL was source-published or deterministically derived from a source identifier. */
+  recordUrlProvenance?: "published" | "derived" | null;
   jurisdiction: string;
   category?: string | null;
   publishedDate?: string | null;
