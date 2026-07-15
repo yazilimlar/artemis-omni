@@ -86,6 +86,7 @@ impact, verification, and status.
   that instant in Eastern displayed 10:00 AM instead of the published 2:00 PM.
 - **Correction**: Interpret floating source timestamps explicitly in
   `America/New_York`, including daylight-saving offsets, before storing UTC ISO.
-- **Verification**: Fixed summer and winter conversion tests, explicit-zone
-  preservation test, golden fixture expectation, typecheck, and production build.
-- **Owner / status**: Codex / **Implemented; deployment verification required**.
+- **Verification**: Fixed summer and winter conversion tests under multiple process
+  timezones, explicit-zone preservation test, golden fixture expectation, typecheck,
+  lint, production build, and live production API check against City Record PIN 521210.
+- **Owner / status**: Codex / **Accepted, shipped**.
