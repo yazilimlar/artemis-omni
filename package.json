@@ -2,13 +2,14 @@
   "name": "artemis-omni",
   "version": "0.1.0",
   "private": true,
-  "description": "Artemis Omni — AI-first intelligence platform for engineering, construction, and project controls.",
+  "description": "Artemis Omni \u2014 AI-first intelligence platform for engineering, construction, and project controls.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
@@ -36,6 +37,7 @@
     "eslint-config-next": "^15.5.19",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.10"
   }
 }

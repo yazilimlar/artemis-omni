@@ -577,23 +577,37 @@ export function BidRoomVerityClient() {
                           </p>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                          {opportunity.sourceUrl ? (
-                            <a
-                              href={opportunity.sourceUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-2 rounded-md border border-emerald-600/50 bg-emerald-600/10 px-3 py-2 font-mono text-[0.66rem] font-semibold uppercase tracking-wide text-emerald-700 transition hover:bg-emerald-600/20 dark:text-emerald-400"
-                            >
-                              <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
-                              Verify at source
-                              <ExternalLink className="h-3 w-3" aria-hidden />
-                            </a>
-                          ) : null}
-                          <span className="text-[0.68rem] text-muted-foreground">
-                            Dataset-level destination; locate record id {opportunity.id} in the official
-                            dataset. Retrieved {formatEastern(opportunity.retrievedAt) ?? opportunity.retrievedAt}.
-                          </span>
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            {opportunity.recordUrl ? (
+                              <a
+                                href={opportunity.recordUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-2 rounded-md border border-emerald-600/50 bg-emerald-600/10 px-3 py-2 font-mono text-[0.66rem] font-semibold uppercase tracking-wide text-emerald-700 transition hover:bg-emerald-600/20 dark:text-emerald-400"
+                              >
+                                <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
+                                Official notice (City Record)
+                                <ExternalLink className="h-3 w-3" aria-hidden />
+                              </a>
+                            ) : null}
+                            {opportunity.sourceUrl ? (
+                              <a
+                                href={opportunity.sourceUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 font-mono text-[0.66rem] font-semibold uppercase tracking-wide text-foreground/80 transition hover:border-gold/60 hover:text-gold"
+                              >
+                                Discovery dataset
+                                <ExternalLink className="h-3 w-3" aria-hidden />
+                              </a>
+                            ) : null}
+                          </div>
+                          <p className="text-[0.68rem] text-muted-foreground">
+                            Source chain: NYC Open Data mirror → City Record Online notice → PASSPort
+                            (nyc.gov/passport), where controlling RFx documents and response submission
+                            live. Retrieved {formatEastern(opportunity.retrievedAt) ?? opportunity.retrievedAt}.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -632,16 +646,18 @@ export function BidRoomVerityClient() {
                 Ten material fields are weighted by materiality (deadline 20, scope 15, identity /
                 agency / title / method / evidence link 10 each, published date / category /
                 jurisdiction 5 each). Field states earn credit — published 100%, normalized 85%,
-                generated 30%, missing 0% — and non-compensating gates cap the total: dataset-level
+                generated 30%, missing 0% — and non-compensating gates cap the total: record-level
+                evidence (an official City Record notice page) is uncapped, dataset-level-only
                 evidence caps at 65, no evidence at 40, a missing deadline at 49, and synthetic sample
                 records receive N/A instead of a score. Coverage is always shown separately so a high
                 score cannot conceal missing critical fields.
               </p>
               <p className="mt-2 text-xs text-muted-foreground">
-                Known limitations: the source dataset is a discovery feed, not the controlling
-                solicitation record; source timestamps carry no explicit timezone (Eastern Time is
-                assumed); and opportunity monetary scale is not displayed anywhere on this page because
-                the source publishes no estimate — no illustrative bands are substituted.
+                Known limitations: the source dataset mirrors City Record procurement notices — the
+                controlling RFx documents live in PASSPort and are not read by this console; source
+                timestamps carry no explicit timezone (Eastern Time is assumed); and opportunity
+                monetary scale is not displayed anywhere on this page because the source publishes no
+                estimate — no illustrative bands are substituted.
               </p>
             </div>
           </div>

@@ -40,6 +40,8 @@ export function normalizeOpenDataOpportunity(
     sourceUrl: string;
     jurisdiction?: string;
     retrievedAt: string;
+    /** Template for a per-record official page; `{requestId}` is replaced with the row's request_id. */
+    recordUrlTemplate?: string;
   },
   index = 0,
 ): CivicBidOpportunity {
@@ -47,9 +49,16 @@ export function normalizeOpenDataOpportunity(
   const id =
     publishedId ?? `${context.sourceName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${index + 1}`;
 
+  const requestId = pick(row, ["request_id"]);
+  const recordUrl =
+    context.recordUrlTemplate && requestId
+      ? context.recordUrlTemplate.replace("{requestId}", encodeURIComponent(requestId))
+      : null;
+
   return {
     id,
     idProvenance: publishedId ? "published" : "generated",
+    recordUrl,
     title:
       pick(row, [
         "title",
@@ -64,7 +73,7 @@ export function normalizeOpenDataOpportunity(
     sourceUrl: context.sourceUrl,
     apiUrl: context.apiUrl,
     jurisdiction: context.jurisdiction ?? "NYC",
-    category: pick(row, ["category", "procurement_type", "notice_type", "type"]),
+    category: pick(row, ["category", "category_description", "procurement_type", "notice_type", "type"]),
     publishedDate: normalizeDate(
       pick(row, ["publication_date", "published_date", "start_date", "release_date", "record_date"]),
     ),
@@ -78,7 +87,12 @@ export function normalizeOpenDataOpportunity(
         "close_date",
       ]),
     ),
-    procurementMethod: pick(row, ["procurement_method", "method", "selection_method"]),
+    procurementMethod: pick(row, [
+      "procurement_method",
+      "selection_method_description",
+      "method",
+      "selection_method",
+    ]),
     description: stripHtml(
       pick(row, [
         "description",

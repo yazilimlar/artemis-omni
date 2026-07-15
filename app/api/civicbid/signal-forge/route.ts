@@ -19,6 +19,9 @@ const LIVE_SOURCE = {
   apiUrl: NYC_OPEN_DATA_ENDPOINTS.currentSolicitations,
   jurisdiction: "NYC",
   sourceOfTruth: "Official NYC Open Data Socrata dataset",
+  // Each row's request_id resolves to its City Record Online notice — the official
+  // published record. Controlling RFx documents and responses live in PASSPort.
+  recordUrlTemplate: "https://a856-cityrecord.nyc.gov/RequestDetail/{requestId}",
 } as const;
 
 type CivicBidResponseMode = "live_official" | "sample_fallback" | "source_unavailable";
@@ -73,6 +76,7 @@ export async function GET(request: Request) {
           sourceUrl: LIVE_SOURCE.url,
           jurisdiction: LIVE_SOURCE.jurisdiction,
           retrievedAt,
+          recordUrlTemplate: LIVE_SOURCE.recordUrlTemplate,
         },
         index,
       ),

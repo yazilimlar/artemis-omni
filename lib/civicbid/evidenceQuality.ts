@@ -193,17 +193,21 @@ export function assessEvidenceQuality(opportunity: CivicBidOpportunity): Evidenc
     ),
   );
 
-  const link = opportunity.sourceUrl ?? opportunity.apiUrl ?? null;
+  const recordLink = opportunity.recordUrl ?? null;
+  const datasetLink = opportunity.sourceUrl ?? opportunity.apiUrl ?? null;
+  const link = recordLink ?? datasetLink;
   fields.push(
     field(
       "sourceLink",
       "Evidence link",
       10,
-      link ? "normalized" : "missing",
+      recordLink ? "published" : datasetLink ? "normalized" : "missing",
       link,
-      link
-        ? "Dataset-level link only; the dataset is a discovery source, and the controlling record remains the official agency notice."
-        : "No verification destination is available for this record.",
+      recordLink
+        ? "Record-level official notice page (City Record Online). Controlling bid documents remain in the agency's procurement system."
+        : datasetLink
+          ? "Dataset-level link only; the dataset is a discovery source, and the controlling record remains the official agency notice."
+          : "No verification destination is available for this record.",
     ),
   );
 
@@ -248,9 +252,7 @@ export function assessEvidenceQuality(opportunity: CivicBidOpportunity): Evidenc
   );
   let score = Math.round((100 * weighted) / totalWeight);
 
-  // The current pipeline never has record-level pages, so linkage is dataset
-  // when any link exists. Revisit when per-record destinations are added.
-  const linkage: EvidenceLinkage = link ? "dataset" : "none";
+  const linkage: EvidenceLinkage = recordLink ? "record" : datasetLink ? "dataset" : "none";
   if (score > LINKAGE_CAP[linkage]) {
     score = LINKAGE_CAP[linkage];
     gatesApplied.push(
