@@ -9,6 +9,7 @@ import { primaryNav, ctaNav } from "@/lib/artemis/navigation";
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { ArtemisLogo } from "@/components/layout/ArtemisLogo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -57,7 +58,8 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           <Button href={ctaNav.href} size="sm">
             {ctaNav.title}
           </Button>
@@ -86,6 +88,7 @@ export function SiteHeader() {
                 {item.title}
               </Link>
             ))}
+            <ThemeToggle className="mt-4 w-full justify-center" />
             <Button href={ctaNav.href} className="mt-4 w-full">
               {ctaNav.title}
             </Button>

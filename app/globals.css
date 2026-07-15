@@ -36,6 +36,28 @@
     --font-serif: var(--font-artemis-serif), "Georgia", "Cambria", serif;
     --font-mono: var(--font-artemis-mono), ui-monospace, SFMono-Regular, monospace;
   }
+
+  html[data-theme="day"] {
+    --background: 44 33% 94%;
+    --foreground: 218 36% 14%;
+
+    --muted: 42 24% 88%;
+    --muted-foreground: 218 16% 36%;
+
+    --border: 214 18% 72%;
+    --ring: 207 76% 39%;
+
+    --navy: 42 28% 90%;
+    --navy-deep: 42 34% 96%;
+    --lunar: 42 34% 98%;
+    --silver: 215 22% 24%;
+    --gold: 37 66% 39%;
+    --gold-soft: 35 62% 32%;
+    --parchment: 220 34% 12%;
+    --signal-blue: 205 82% 34%;
+    --crescent-blue: 193 88% 31%;
+    --platinum: 215 24% 22%;
+  }
 }
 
 @layer base {
@@ -53,12 +75,62 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    transition: background-color 180ms ease, color 180ms ease;
   }
 
   ::selection {
     background-color: hsl(var(--gold) / 0.3);
     color: hsl(var(--parchment));
   }
+}
+
+/*
+  Day-view compatibility layer for older Artemis surfaces that predate semantic
+  color tokens. Attribute selectors target exact Tailwind utility tokens, so
+  media, diagrams, and embedded donor artifacts retain their intended colors.
+*/
+html[data-theme="day"] [class~="bg-[#071426]"],
+html[data-theme="day"] [class~="bg-[#06182b]"],
+html[data-theme="day"] [class~="bg-[#050813]"],
+html[data-theme="day"] [class~="bg-[#060a15]"],
+html[data-theme="day"] [class~="bg-[#071016]"] {
+  background-color: #f4f1e8 !important;
+}
+
+html[data-theme="day"] [class~="bg-[#091b2e]"],
+html[data-theme="day"] [class~="bg-[#0b2239]"],
+html[data-theme="day"] [class~="bg-[#0c2944]"],
+html[data-theme="day"] [class~="bg-[#0b2944]"],
+html[data-theme="day"] [class~="bg-[#103352]"],
+html[data-theme="day"] [class~="bg-[#17456d]"] {
+  background-color: #e5ebeb !important;
+}
+
+html[data-theme="day"] [class~="border-[#2b5275]"],
+html[data-theme="day"] [class~="border-[#2d5477]"],
+html[data-theme="day"] [class~="border-[#315a7e]"],
+html[data-theme="day"] [class~="border-[#3e6b91]"] {
+  border-color: #91a5ad !important;
+}
+
+html[data-theme="day"] main[class~="text-white"],
+html[data-theme="day"] section[class~="text-white"],
+html[data-theme="day"] [class~="text-[#dce9f3]"],
+html[data-theme="day"] [class~="text-[#e8f1f7]"],
+html[data-theme="day"] [class~="text-[#c9d8e3]"],
+html[data-theme="day"] [class~="text-[#b9cbd9]"],
+html[data-theme="day"] [class~="text-[#a8bfd0]"],
+html[data-theme="day"] [class~="text-[#cbd4dd]"] {
+  color: #15202e !important;
+}
+
+html[data-theme="day"] [class~="text-[#7ee7ff]"],
+html[data-theme="day"] [class~="text-[#9edff0]"] {
+  color: #005f7a !important;
+}
+
+html[data-theme="day"] iframe {
+  color-scheme: light dark;
 }
 
 @layer components {
