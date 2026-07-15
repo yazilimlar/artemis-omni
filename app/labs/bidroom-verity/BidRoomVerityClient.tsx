@@ -350,12 +350,12 @@ export function BidRoomVerityClient() {
               className="rounded-md border border-border bg-background px-3 py-2 text-sm outline-none transition focus:border-gold/60"
             />
           </label>
-          <label className="flex flex-col gap-1">
+          <label className="flex max-w-full flex-col gap-1">
             <SectionLabel>Agency</SectionLabel>
             <select
               value={agency}
               onChange={(event) => setAgency(event.target.value)}
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm outline-none transition focus:border-gold/60"
+              className="max-w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none transition focus:border-gold/60"
             >
               <option value="all">All agencies</option>
               {agencies.map((name) => (
@@ -495,7 +495,7 @@ export function BidRoomVerityClient() {
                     ) : null}
 
                     <div className="grid gap-5 lg:grid-cols-2">
-                      <div>
+                      <div className="min-w-0">
                         <SectionLabel>Field provenance</SectionLabel>
                         <div className="mt-2 overflow-x-auto">
                           <table className="w-full text-left text-xs">
@@ -539,7 +539,7 @@ export function BidRoomVerityClient() {
                         ) : null}
                       </div>
 
-                      <div className="space-y-5">
+                      <div className="min-w-0 space-y-5">
                         <div>
                           <SectionLabel>Signal score breakdown (computed)</SectionLabel>
                           <div className="mt-2 space-y-2">
