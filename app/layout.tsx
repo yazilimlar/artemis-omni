@@ -27,6 +27,16 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+const themeBootScript = `
+  try {
+    var savedTheme = localStorage.getItem("artemis-color-theme");
+    var theme = savedTheme === "day" ? "day" : "night";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("dark", theme === "night");
+    document.documentElement.style.colorScheme = theme === "day" ? "light" : "dark";
+  } catch (_) {}
+`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   ...createMetadata(),
@@ -46,8 +56,14 @@ export default function RootLayout({
     // "text mode" tools) mutate these top-level attributes before React hydrates, which
     // would otherwise log a benign hydration mismatch. It does NOT hide real mismatches
     // in our own components — only attribute noise on <html>/<body>.
-    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable} dark`} suppressHydrationWarning>
+    <html
+      lang="en"
+      data-theme="night"
+      className={`${sans.variable} ${serif.variable} ${mono.variable} dark`}
+      suppressHydrationWarning
+    >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
