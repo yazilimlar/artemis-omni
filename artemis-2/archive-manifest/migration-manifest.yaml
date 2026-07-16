@@ -1,0 +1,33 @@
+version: 1
+source_repository: yazilimlar/artemis-omni
+target_workspace: artemis-2
+classifications:
+  - KEEP
+  - REWRITE
+  - REFERENCE
+  - QUARANTINE
+  - RETIRE
+components: []
+required_fields:
+  - name
+  - legacy_path
+  - product_or_department
+  - classification
+  - business_value
+  - security_status
+  - test_status
+  - dependencies
+  - active_deployment
+  - data_dependency
+  - secrets_detected
+  - migration_decision
+  - target_path
+  - verification
+  - rollback_reference
+rules:
+  - Do not copy environment files, credentials, caches, dependency folders, or build output.
+  - Do not transfer code before ownership, deployment status, and dependencies are known.
+  - KEEP requires passing tests, acceptable security review, and target-architecture compatibility.
+  - REWRITE preserves business intent but not implementation.
+  - QUARANTINE content may not execute in Artemis 2.
+  - Every migrated route requires accessibility, responsive, SEO, performance, and link validation.
