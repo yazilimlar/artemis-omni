@@ -223,7 +223,7 @@ export default function WorkbenchProductPage() {
               href="/labs/geometric-workbench/v5-8"
               className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-gold"
             >
-              Labs embed (v5.8 archive)
+              Open in Labs
             </Link>
           </div>
         </Container>
