@@ -2,7 +2,7 @@
   "name": "artemis-omni",
   "version": "0.1.0",
   "private": true,
-  "description": "Artemis Omni \u2014 AI-first intelligence platform for engineering, construction, and project controls.",
+  "description": "Artemis Omni — AI-first intelligence platform for engineering, construction, and project controls.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,6 +15,7 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.1.6",
+    "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
