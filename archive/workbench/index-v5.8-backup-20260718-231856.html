@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ARTEMIS Geometric Workbench v5.9 — Platonic & Archimedean Solid Library</title>
+<title>ARTEMIS Geometric Workbench v5.8 — Platonic & Archimedean Solid Library</title>
 <style>
 :root{
   --bg:#0a1222;--panel:#101e30;--ink:#ffffff;--muted:#b8cde0;--line:#3a5c7a;
@@ -433,40 +433,6 @@ body.layout-bottom-focus .bottomResizeHandle::after{content:'bottom focus · dra
 .glossary-term-link{color:#ffe49a;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:help}
 @media(max-width:1250px){.glossary-wrap{grid-template-columns:1fr}.glossary-statgrid{grid-template-columns:1fr 1fr}}
 
-
-/* =====================================================================
-   ARTEMIS v5.9 — Simplified Executive + Immersive Presentation Layer
-   Additive UI layer; geometry algorithms and legacy exports remain intact.
-   ===================================================================== */
-:root{--v59-gold:#d6ad67;--v59-panel:rgba(8,14,24,.94);--v59-left:268px;--v59-right:292px}
-body.v59-ready{overflow:hidden}
-body.v59-ready #app{grid-template-columns:var(--v59-left) minmax(520px,1fr) var(--v59-right)!important;grid-template-rows:minmax(0,1fr) 0!important;gap:8px!important;padding:58px 8px 8px!important}
-body.v59-ready #left{grid-column:1!important;grid-row:1!important;min-width:0}
-body.v59-ready #stage{grid-column:2!important;grid-row:1!important;min-width:0;border-radius:22px}
-body.v59-ready #right{grid-column:3!important;grid-row:1!important;min-width:0}
-body.v59-ready #bottom{display:none!important}
-body.v59-ready #left .header{padding:10px 12px}
-body.v59-ready #left .brandHero{grid-template-columns:46px 1fr;gap:9px}
-body.v59-ready #left .brandMark{width:46px;height:54px}
-body.v59-ready #left .brandTitle{font-size:15px;line-height:1.08}
-body.v59-ready #left .brandSub{font-size:10px;line-height:1.25}
-body.v59-ready #left .controls{padding:10px;gap:8px;height:calc(100% - 86px);overflow:auto}
-body.v59-ready #right .header{padding:11px 13px}
-body.v59-ready #right .kpis{padding:10px;gap:7px}
-body.v59-ready #right .inspector{padding:10px;gap:7px;overflow:auto}
-body.v59-ready .layoutBox,body.v59-ready #constructorDeck{display:none}
-body.v59-ready .overlay.hud{max-width:380px;padding:9px 11px;font-size:11px;opacity:.92}
-body.v59-ready .overlay.legend{display:none}
-body.v59-ready .overlay.caption{font-size:10px;padding:7px 9px;bottom:72px;opacity:.7}
-.v59-topbar{position:fixed;left:8px;right:8px;top:8px;height:42px;z-index:10030;border:1px solid rgba(214,173,103,.36);border-radius:14px;background:rgba(5,9,16,.90);backdrop-filter:blur(18px);display:flex;align-items:center;gap:8px;padding:0 10px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
-.v59-brand{font-weight:900;letter-spacing:.12em;color:var(--v59-gold);white-space:nowrap}.v59-version{font-size:10px;border:1px solid rgba(214,173,103,.35);border-radius:999px;padding:4px 7px;color:#e6d5b5}.v59-spacer{flex:1}.v59-topbar button,.v59-topbar a{border:0;background:transparent;color:#eaf2fb;padding:7px 9px;font:700 11px system-ui;text-decoration:none;border-radius:9px}.v59-topbar button:hover,.v59-topbar a:hover{background:rgba(255,255,255,.08)}.v59-topbar .support{background:linear-gradient(135deg,#e3bd76,#a9762c);color:#101012}
-.v59-splitter{position:fixed;top:58px;bottom:8px;width:10px;z-index:10020;cursor:col-resize;display:flex;align-items:center;justify-content:center;touch-action:none}.v59-splitter::before{content:"";width:3px;height:64px;border-radius:9px;background:rgba(214,173,103,.25);transition:.2s}.v59-splitter:hover::before,.v59-splitter.dragging::before{background:#e5bd72;box-shadow:0 0 18px rgba(229,189,114,.55);height:96px}.v59-splitter.left{left:calc(8px + var(--v59-left) - 5px)}.v59-splitter.right{right:calc(8px + var(--v59-right) - 5px)}
-.v59-quickbar{position:absolute;z-index:10010;left:50%;bottom:15px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:7px;border:1px solid rgba(214,173,103,.34);border-radius:16px;background:rgba(5,9,16,.86);backdrop-filter:blur(16px);box-shadow:0 16px 46px rgba(0,0,0,.45);max-width:calc(100% - 24px)}.v59-quickbar select,.v59-quickbar button,.v59-quickbar input{height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.15);background:#121d2b;color:#f7fbff;padding:0 8px;font:700 11px system-ui}.v59-quickbar select{max-width:190px}.v59-quickbar input[type=color]{width:38px;padding:3px}.v59-quickbar button.primary{background:linear-gradient(135deg,#e3bd76,#a9762c);color:#111}
-.v59-modal{position:fixed;inset:0;z-index:12000;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:18px}.v59-modal.open{display:flex}.v59-card{width:min(620px,100%);max-height:90vh;overflow:auto;border:1px solid rgba(214,173,103,.4);border-radius:22px;background:linear-gradient(145deg,#111d2d,#070b12);box-shadow:0 30px 100px rgba(0,0,0,.68);padding:22px;color:#eef6ff}.v59-card.wide{width:min(960px,100%)}.v59-card h2{margin:0 0 7px;font:800 25px Georgia,serif;color:#f0cf8e}.v59-card p{color:#bbcada;line-height:1.5}.v59-close{float:right;background:transparent!important;border:0!important;font-size:20px!important}.v59-choice{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}.v59-choice button{min-width:72px}.v59-choice button.active{background:#e2b96e;color:#111;border-color:#e2b96e}.v59-amount{display:grid;grid-template-columns:1fr 1fr;gap:10px}.v59-amount label{display:grid;gap:5px;color:#b9c8d7;font-size:12px}.v59-amount input,.v59-amount select{height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.17);background:#101a28;color:#fff;padding:0 12px;font-size:15px}.v59-donate-go{width:100%;margin-top:14px;background:linear-gradient(135deg,#e4bf78,#aa762a)!important;color:#111!important;font-size:15px!important}.v59-checkout{display:none;margin-top:14px;height:520px;border:1px solid rgba(255,255,255,.12);border-radius:14px;overflow:hidden}.v59-checkout iframe{width:100%;height:100%;border:0;background:#fff}.v59-note{font-size:10px;color:#91a5b8;margin-top:8px}.v59-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.v59-shortcuts div{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.03)}.v59-shortcuts kbd{color:#f0cf8e;font-weight:900}.v59-command input{width:100%;height:44px;border-radius:12px;border:1px solid rgba(214,173,103,.38);background:#0b1420;color:#fff;padding:0 14px;font-size:15px}.v59-command-list{display:grid;gap:5px;margin-top:10px}.v59-command-list button{text-align:left;display:flex;justify-content:space-between}.v59-toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(15px);z-index:13000;padding:10px 14px;border-radius:999px;background:#0b1420;border:1px solid rgba(214,173,103,.4);color:#f5e7ca;font:700 12px system-ui;opacity:0;pointer-events:none;transition:.22s}.v59-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-splitter,body.v59-immersive .overlay.hud,body.v59-immersive .overlay.caption{display:none!important}body.v59-immersive #app{grid-template-columns:1fr!important;padding:50px 0 0!important;gap:0!important}body.v59-immersive #stage{grid-column:1!important;border-radius:0!important;border:0!important}body.v59-immersive .v59-quickbar{bottom:22px}body.v59-gallery #stage{background:radial-gradient(circle at 50% 35%,#223044 0,#0b111a 48%,#030508 100%)}body.v59-blueprint #stage{filter:saturate(.3) hue-rotate(165deg);background:#071b36}body.v59-transparent #stage{background:repeating-conic-gradient(#18222f 0 25%,#111923 0 50%) 50%/28px 28px}
-.v59-simple-group{border:1px solid rgba(255,255,255,.10);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.12)}.v59-simple-group>button{width:100%;border:0;border-radius:0;text-align:left;display:flex;justify-content:space-between;background:transparent;padding:10px 11px}.v59-simple-group .content{padding:0 10px 10px;display:grid;gap:8px}.v59-simple-group.collapsed .content{display:none}.v59-simple-group .chev{transition:.2s}.v59-simple-group.collapsed .chev{transform:rotate(-90deg)}
-@media(max-width:900px){body.v59-ready{overflow:auto}body.v59-ready #app{display:block!important;padding:56px 6px 8px!important}body.v59-ready #left,body.v59-ready #right{position:fixed;top:56px;bottom:6px;width:min(88vw,360px);z-index:11000;transition:transform .25s;display:block!important}body.v59-ready #left{left:6px;transform:translateX(-110%)}body.v59-ready #right{right:6px;transform:translateX(110%)}body.v59-ready.v59-left-open #left,body.v59-ready.v59-right-open #right{transform:translateX(0)}body.v59-ready #stage{height:calc(100vh - 64px)}.v59-splitter{display:none}.v59-quickbar{overflow:auto;justify-content:flex-start;left:8px;right:8px;transform:none}.v59-quickbar select{min-width:145px}.v59-topbar .desktop-only{display:none}.v59-shortcuts{grid-template-columns:1fr}.v59-amount{grid-template-columns:1fr}}
-
 </style>
 </head>
 <body>
@@ -478,22 +444,6 @@ body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-split
     <div class="splashLoader"><span></span></div>
   </div>
 </div>
-
-<div class="v59-topbar" id="v59Topbar">
-  <button id="v59LeftToggle" aria-label="Open model controls">☰</button>
-  <div class="v59-brand">ARTEMIS</div><div class="v59-version">Workbench v5.9 · Executive</div>
-  <button class="desktop-only" data-v59-action="executive">Executive</button>
-  <button class="desktop-only" data-v59-action="immersive">Immersive</button>
-  <button class="desktop-only" data-v59-action="command">⌘K</button>
-  <div class="v59-spacer"></div>
-  <a href="https://artemis.agoraxai.com/workbench" target="_blank" rel="noopener">Product</a>
-  <button id="v59Support" class="support">Support $1</button>
-  <button id="v59RightToggle" aria-label="Open inspector">Inspect</button>
-</div>
-<div id="v59LeftSplitter" class="v59-splitter left" title="Drag to resize controls · double-click to reset"></div>
-<div id="v59RightSplitter" class="v59-splitter right" title="Drag to resize inspector · double-click to reset"></div>
-<div id="v59Toast" class="v59-toast"></div>
-
 <div id="app">
   <aside id="left" class="panel">
     <div class="header brandHeader">
@@ -540,8 +490,8 @@ body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-split
           </label>
           <label class="control">Cell labels
             <select id="cellLabelMode">
-              <option value="off" selected>Off</option>
-              <option value="id">ID</option>
+              <option value="off">Off</option>
+              <option value="id" selected>ID</option>
               <option value="level">Level</option>
               <option value="sequence">Sequence</option>
               <option value="panel">Panel mark</option>
@@ -665,16 +615,6 @@ body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-split
   <main id="stage" class="panel">
     <div id="canvasWrap"></div>
     <div id="labelOverlay" class="labelOverlay" aria-hidden="true"></div>
-
-    
-<div class="v59-quickbar" id="v59Quickbar" aria-label="Quick model controls">
-  <select id="v59Model" title="Model / geometry"></select>
-  <select id="v59Scale" title="Geometry scale"><option value="100">Compact · R100</option><option value="150" selected>Balanced · R150</option><option value="200">Monumental · R200</option><option value="250">XL · R250</option></select>
-  <select id="v59Material" title="Presentation material"><option value="bronze">Brushed Bronze</option><option value="steel">Blackened Steel</option><option value="technical">Technical White</option><option value="glass">Smoked Glass</option><option value="original">Construction Colors</option></select>
-  <input id="v59Color" type="color" value="#d6ad67" title="Accent color">
-  <button data-v59-action="fit">Fit</button><button data-v59-action="reset">Reset</button>
-  <button class="primary" data-v59-action="immersive">Gallery</button>
-</div>
 
     <div class="viewportTools" id="viewportTools" aria-label="Viewport controls">
       <button id="viewIso" class="hot" type="button">Iso</button>
@@ -2189,59 +2129,5 @@ try {
 }
 })();
 </script>
-
-<div class="v59-modal" id="v59DonationModal" role="dialog" aria-modal="true" aria-label="Support ARTEMIS">
- <div class="v59-card wide"><button class="v59-close" data-v59-close>×</button><h2>Support ARTEMIS</h2><p>Help sustain accessible geometry, design, and fabrication intelligence.</p>
-  <div class="v59-choice" id="v59AmountPresets"><button data-amount="1" class="active">$1</button><button data-amount="5">$5</button><button data-amount="25">$25</button><button data-amount="100">$100</button><button data-amount="custom">Other</button></div>
-  <div class="v59-amount"><label>Amount, USD<input id="v59DonationAmount" type="number" min="1" step="1" value="1"></label><label>Frequency<select id="v59DonationFrequency"><option value="once" selected>One time</option><option value="monthly">Monthly</option></select></label></div>
-  <button class="v59-donate-go" id="v59DonateContinue">Continue securely with $1 once</button>
-  <div class="v59-checkout" id="v59Checkout"><iframe id="v59CheckoutFrame" title="Secure AGOraXAI donation checkout" loading="lazy"></iframe></div>
-  <div class="v59-note">Payments are completed through the AGOraXAI Squarespace checkout. No card information is collected by this Workbench. If embedding is restricted by Squarespace, checkout opens securely in the current tab.</div>
- </div>
-</div>
-<div class="v59-modal" id="v59ShortcutModal" role="dialog" aria-modal="true"><div class="v59-card"><button class="v59-close" data-v59-close>×</button><h2>Keyboard shortcuts</h2><div class="v59-shortcuts">
-<div><span>Executive view</span><kbd>1</kbd></div><div><span>Engineering view</span><kbd>2</kbd></div><div><span>Diagram workspace</span><kbd>3</kbd></div><div><span>Model selector</span><kbd>M</kbd></div><div><span>Geometry scale</span><kbd>G</kbd></div><div><span>Material / color</span><kbd>C</kbd></div><div><span>Cell labels</span><kbd>L</kbd></div><div><span>Wire / edges</span><kbd>W</kbd></div><div><span>Fit model</span><kbd>F</kbd></div><div><span>Reset camera</span><kbd>R</kbd></div><div><span>Diagrams</span><kbd>D</kbd></div><div><span>Schedule</span><kbd>S</kbd></div><div><span>Glossary search</span><kbd>/</kbd></div><div><span>Command palette</span><kbd>⌘/Ctrl K</kbd></div><div><span>Save project</span><kbd>⌘/Ctrl S</kbd></div><div><span>Load project</span><kbd>⌘/Ctrl O</kbd></div><div><span>Close overlay</span><kbd>Esc</kbd></div></div></div></div>
-<div class="v59-modal" id="v59CommandModal" role="dialog" aria-modal="true"><div class="v59-card v59-command"><button class="v59-close" data-v59-close>×</button><h2>Command palette</h2><input id="v59CommandSearch" placeholder="Search actions…"><div id="v59CommandList" class="v59-command-list"></div></div></div>
-<input id="v59ProjectFile" type="file" accept="application/json,.json" hidden>
-
-
-<script>
-(()=>{
-'use strict';
-const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
-const V59={left:268,right:292,material:'bronze',immersive:false,donationUrl:'https://agoraxai.com/support-artemis'};
-function toast(msg){const el=q('#v59Toast');if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1800)}
-function dispatch(el,type='change'){if(!el)return;el.dispatchEvent(new Event(type,{bubbles:true}))}
-function value(id,v){const el=document.getElementById(id);if(!el)return false;el.value=v;dispatch(el);return true}
-function click(id){const el=document.getElementById(id);if(el){el.click();return true}return false}
-function openModal(id){qa('.v59-modal.open').forEach(x=>x.classList.remove('open'));q(id)?.classList.add('open')}
-function closeModals(){qa('.v59-modal.open').forEach(x=>x.classList.remove('open'))}
-function setWidths(l,r,persist=true){V59.left=Math.max(220,Math.min(420,l));V59.right=Math.max(260,Math.min(520,r));document.documentElement.style.setProperty('--v59-left',V59.left+'px');document.documentElement.style.setProperty('--v59-right',V59.right+'px');if(persist)try{localStorage.setItem('artemis_v59_widths',JSON.stringify({left:V59.left,right:V59.right}))}catch(e){};requestAnimationFrame(()=>{try{resize()}catch(e){window.dispatchEvent(new Event('resize'))}})}
-function splitter(el,side){let startX,start;const move=e=>{const x=e.touches?e.touches[0].clientX:e.clientX;const delta=x-startX;setWidths(side==='left'?start+delta:V59.left,side==='right'?start-delta:V59.right,false)};const up=()=>{el.classList.remove('dragging');window.removeEventListener('mousemove',move);window.removeEventListener('mouseup',up);window.removeEventListener('touchmove',move);window.removeEventListener('touchend',up);setWidths(V59.left,V59.right,true)};const down=e=>{e.preventDefault();startX=e.touches?e.touches[0].clientX:e.clientX;start=side==='left'?V59.left:V59.right;el.classList.add('dragging');window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',up)};el.addEventListener('mousedown',down);el.addEventListener('touchstart',down,{passive:false});el.addEventListener('dblclick',()=>setWidths(268,292,true))}
-function applyExecutive(){document.body.classList.add('v59-ready');document.body.classList.remove('v59-immersive','v59-left-open','v59-right-open','layout-bottom-focus','layout-fullscreen-stage');try{applyLayout({leftCollapsed:false,rightCollapsed:false,bottomCollapsed:true,fullscreen:false,bottomFocus:false},false)}catch(e){};value('cellLabelMode','off');value('edgeLabelMode','off');q('.v59-version').textContent='Workbench v5.9 · Executive';toast('Executive view')}
-function applyEngineering(){document.body.classList.add('v59-ready');document.body.classList.remove('v59-immersive');try{applyLayout({bottomCollapsed:false},false)}catch(e){};document.getElementById('bottom')?.style.setProperty('display','block','important');q('.v59-version').textContent='Workbench v5.9 · Engineering';toast('Engineering view')}
-function applyDiagram(tab='diagrams'){applyEngineering();const btn=q(`.tab[data-tab="${tab}"]`);btn?.click();try{layoutState.bottomCollapsed=false;layoutState.bottomFocus=true;applyLayout(layoutState,false)}catch(e){};toast(tab==='schedule'?'Schedule workspace':'Diagram workspace')}
-function applyImmersive(){V59.immersive=!document.body.classList.contains('v59-immersive');document.body.classList.toggle('v59-immersive',V59.immersive);document.body.classList.toggle('v59-gallery',V59.immersive);if(V59.immersive){q('.v59-version').textContent='Workbench v5.9 · Immersive Gallery';try{controls.autoRotate=true;controls.autoRotateSpeed=.55}catch(e){};click('viewFit')}else{q('.v59-version').textContent='Workbench v5.9 · Executive';try{controls.autoRotate=false}catch(e){}};requestAnimationFrame(()=>{try{resize()}catch(e){}})}
-function populateModel(){const src=document.getElementById('geoPolyhedron'),dst=q('#v59Model');if(!src||!dst)return;dst.innerHTML=src.innerHTML;dst.value=src.value;dst.onchange=()=>{src.value=dst.value;dispatch(src);toast(dst.options[dst.selectedIndex]?.text||'Model changed')};src.addEventListener('change',()=>dst.value=src.value)}
-function applyMaterial(name){V59.material=name;const mode=document.getElementById('cellColorMode');if(mode){const candidates={original:['type','panel','level'],bronze:['type'],steel:['level'],technical:['regularity'],glass:['type']};const found=(candidates[name]||[]).find(v=>[...mode.options].some(o=>o.value===v));if(found){mode.value=found;dispatch(mode)}}document.body.dataset.v59Material=name;const canvas=q('#stage canvas');if(canvas)canvas.style.filter=name==='technical'?'grayscale(1) brightness(1.35)':name==='steel'?'saturate(.25) brightness(.78)':name==='glass'?'saturate(.65) contrast(1.1)':name==='bronze'?'sepia(.28) saturate(1.25)':'none';toast(q('#v59Material').selectedOptions[0].text)}
-function toggleLabels(){const el=document.getElementById('cellLabelMode');if(!el)return;el.value=el.value==='off'?'id':'off';dispatch(el);toast(el.value==='off'?'Labels off':'Labels on')}
-function toggleEdges(){const el=document.getElementById('edgeColorMode');if(!el)return;const opts=[...el.options].map(o=>o.value);el.value=el.value==='none'?(opts.includes('length')?'length':opts[0]):(opts.includes('none')?'none':opts[0]);dispatch(el);toast(el.value==='none'?'Edge display reduced':'Edge display on')}
-function screenshot(){try{const a=document.createElement('a');a.download='artemis-workbench-v5-9.png';a.href=renderer.domElement.toDataURL('image/png');a.click();toast('Screenshot saved')}catch(e){toast('Screenshot unavailable')}}
-function saveProject(){const payload={app:'ARTEMIS Geometric Workbench',version:'5.9',savedAt:new Date().toISOString(),params:typeof params==='function'?params():{},ui:{left:V59.left,right:V59.right,material:V59.material,cellLabels:document.getElementById('cellLabelMode')?.value||'off'}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='artemis-project-v5-9.json';a.click();URL.revokeObjectURL(a.href);toast('Project JSON saved')}
-function loadProjectFile(file){const rd=new FileReader();rd.onload=()=>{try{const p=JSON.parse(rd.result);const x=p.params||{};Object.entries(x).forEach(([k,v])=>{const el=document.getElementById(k);if(el&&['string','number'].includes(typeof v)){el.value=v;dispatch(el)}});if(p.ui){setWidths(p.ui.left||268,p.ui.right||292,true);if(p.ui.material){q('#v59Material').value=p.ui.material;applyMaterial(p.ui.material)};value('cellLabelMode',p.ui.cellLabels||'off')}try{update()}catch(e){};toast('Project loaded')}catch(e){alert('This project JSON could not be loaded.')}};rd.readAsText(file)}
-const commands=[
-['Executive view','1',applyExecutive],['Engineering view','2',applyEngineering],['Diagram workspace','3',()=>applyDiagram('diagrams')],['Immersive Gallery','I',applyImmersive],['Fit model','F',()=>click('viewFit')],['Reset camera','R',()=>click('viewIso')],['Toggle labels','L',toggleLabels],['Toggle edges','W',toggleEdges],['Schedule','S',()=>applyDiagram('schedule')],['Glossary','/',()=>applyDiagram('glossary')],['Save project JSON','⌘S',saveProject],['Load project JSON','⌘O',()=>q('#v59ProjectFile').click()],['Save screenshot','',screenshot],['Support ARTEMIS','$1',()=>openModal('#v59DonationModal')],['Keyboard shortcuts','?',()=>openModal('#v59ShortcutModal')]
-];
-function commandPalette(){openModal('#v59CommandModal');const input=q('#v59CommandSearch'),list=q('#v59CommandList');const draw=()=>{const term=input.value.toLowerCase();list.innerHTML='';commands.filter(c=>c[0].toLowerCase().includes(term)).forEach(c=>{const b=document.createElement('button');b.innerHTML=`<span>${c[0]}</span><kbd>${c[1]}</kbd>`;b.onclick=()=>{closeModals();c[2]()};list.appendChild(b)})};input.oninput=draw;draw();setTimeout(()=>input.focus(),50)}
-function action(name){({executive:applyExecutive,engineering:applyEngineering,immersive:applyImmersive,command:commandPalette,fit:()=>click('viewFit'),reset:()=>click('viewIso'),screenshot,donate:()=>openModal('#v59DonationModal')})[name]?.()}
-function donationText(){const amount=Math.max(1,Number(q('#v59DonationAmount').value)||1),freq=q('#v59DonationFrequency').value;q('#v59DonateContinue').textContent=`Continue securely with $${amount} ${freq==='monthly'?'monthly':'once'}`;return{amount,freq}}
-function setupDonation(){qa('#v59AmountPresets button').forEach(b=>b.onclick=()=>{qa('#v59AmountPresets button').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(b.dataset.amount!=='custom')q('#v59DonationAmount').value=b.dataset.amount;donationText()});q('#v59DonationAmount').oninput=donationText;q('#v59DonationFrequency').onchange=donationText;q('#v59DonateContinue').onclick=()=>{const {amount,freq}=donationText();const url=new URL(V59.donationUrl);url.searchParams.set('amount',String(amount));url.searchParams.set('frequency',freq);url.searchParams.set('source','artemis-geometric-workbench');const box=q('#v59Checkout'),frame=q('#v59CheckoutFrame');box.style.display='block';frame.src=url.toString();q('#v59DonateContinue').textContent='Checkout opened below · open directly if needed';q('#v59DonateContinue').onclick=()=>window.location.href=url.toString();setTimeout(()=>{toast('Secure Squarespace checkout loaded below')},500)}}
-function simplifyControls(){const controls=q('#left .controls');if(!controls)return;const children=[...controls.children];if(children.some(x=>x.classList.contains('v59-simple-group')))return;const buckets=[['Model & Geometry',[]],['Appearance',[]],['View',[]],['Output & Advanced',[]]];children.forEach((el,i)=>{const t=el.textContent.toLowerCase();let b=3;if(/frequency|radius|thickness|dome cut|view mode|cell drawing/.test(t))b=0;else if(/color|label|sequence/.test(t))b=1;else if(/layout|camera|view/.test(t))b=2;buckets[b][1].push(el)});controls.innerHTML='';buckets.forEach(([name,els],idx)=>{if(!els.length)return;const g=document.createElement('section');g.className='v59-simple-group'+(idx>1?' collapsed':'');const head=document.createElement('button');head.type='button';head.innerHTML=`<span>${name}</span><span class="chev">⌄</span>`;const c=document.createElement('div');c.className='content';els.forEach(e=>c.appendChild(e));head.onclick=()=>g.classList.toggle('collapsed');g.append(head,c);controls.appendChild(g)})}
-function onKey(e){const tag=(e.target.tagName||'').toLowerCase();if(['input','textarea','select'].includes(tag)||e.target.isContentEditable){if(e.key==='Escape')e.target.blur();return}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();return commandPalette()}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='s'){e.preventDefault();return saveProject()}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='o'){e.preventDefault();return q('#v59ProjectFile').click()}if(e.key==='Escape'){closeModals();document.body.classList.remove('v59-left-open','v59-right-open');return}const k=e.key.toLowerCase();if(k==='1')applyExecutive();else if(k==='2')applyEngineering();else if(k==='3')applyDiagram('diagrams');else if(k==='m')q('#v59Model').focus();else if(k==='g')q('#v59Scale').focus();else if(k==='c')q('#v59Material').focus();else if(k==='l')toggleLabels();else if(k==='w')toggleEdges();else if(k==='f')click('viewFit');else if(k==='r')click('viewIso');else if(k==='d')applyDiagram('diagrams');else if(k==='s')applyDiagram('schedule');else if(k==='/'){e.preventDefault();applyDiagram('glossary');setTimeout(()=>document.getElementById('glossarySearchBox')?.focus(),80)}else if(k==='?')openModal('#v59ShortcutModal')}
-function init(){try{const saved=JSON.parse(localStorage.getItem('artemis_v59_widths')||'{}');V59.left=saved.left||268;V59.right=saved.right||292}catch(e){};setWidths(V59.left,V59.right,false);document.body.classList.add('v59-ready');populateModel();simplifyControls();splitter(q('#v59LeftSplitter'),'left');splitter(q('#v59RightSplitter'),'right');qa('[data-v59-action]').forEach(b=>b.onclick=()=>action(b.dataset.v59Action));qa('[data-v59-close]').forEach(b=>b.onclick=closeModals);qa('.v59-modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals()}));q('#v59Support').onclick=()=>openModal('#v59DonationModal');q('#v59LeftToggle').onclick=()=>document.body.classList.toggle('v59-left-open');q('#v59RightToggle').onclick=()=>document.body.classList.toggle('v59-right-open');q('#v59Scale').onchange=e=>{value('radius',e.target.value);const n=document.getElementById('radiusN');if(n){n.value=e.target.value;dispatch(n)};toast(e.target.selectedOptions[0].text)};q('#v59Material').onchange=e=>applyMaterial(e.target.value);q('#v59Color').oninput=e=>document.documentElement.style.setProperty('--v59-gold',e.target.value);q('#v59ProjectFile').onchange=e=>e.target.files[0]&&loadProjectFile(e.target.files[0]);setupDonation();document.addEventListener('keydown',onKey);applyExecutive();setTimeout(()=>{try{q('#artemisSplash')?.remove()}catch(e){};click('viewFit')},650)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,20));else setTimeout(init,20);
-})();
-</script>
-
 </body>
 </html>

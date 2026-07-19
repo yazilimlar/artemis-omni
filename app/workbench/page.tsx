@@ -14,7 +14,7 @@ export const metadata = createMetadata({
     "Parametric geometry and fabrication intelligence — geodesic Goldberg domes, all Platonic & Archimedean solids, Catalan duals, verified topology, and preliminary fabrication data. Public Technical Preview.",
 });
 
-const WORKBENCH_URL = "https://workbench.artemis.agoraxai.com";
+const WORKBENCH_URL = "https://artemis-geometric-workbench.vercel.app";
 const WORKBENCH_MIRROR = "https://artemis-geometric-workbench.vercel.app";
 const CONTACT = "/contact?product=geometric-workbench";
 
