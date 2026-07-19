@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,6 @@ export const metadata = createMetadata({
 });
 
 const WORKBENCH_URL = "https://artemis-geometric-workbench.vercel.app";
-const WORKBENCH_MIRROR = "https://artemis-geometric-workbench.vercel.app";
 const CONTACT = "/contact?product=geometric-workbench";
 
 const features = [
@@ -81,7 +80,7 @@ export default function WorkbenchProductPage() {
   return (
     <>
       <PageHero
-        eyebrow="Product · Public Technical Preview · v5.8"
+        eyebrow="Product · Public Technical Preview · v5.9"
         title="ARTEMIS Geometric Workbench"
         description="Parametric geometry and fabrication intelligence — geodesic Goldberg domes, the complete Platonic and Archimedean families, Catalan duals, and classified fabrication data, running entirely in your browser."
       >
@@ -94,13 +93,6 @@ export default function WorkbenchProductPage() {
           >
             Launch the Workbench
             <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            href={WORKBENCH_MIRROR}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-gold"
-          >
-            Mirror URL
-            <ExternalLink className="h-4 w-4" />
           </Link>
         </div>
       </PageHero>
