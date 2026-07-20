@@ -29,6 +29,22 @@ import { createMetadata } from "@/lib/seo/metadata";
 
 const standaloneLabModules = [
   {
+    title: "ARTEMIS Geometric Workbench",
+    eyebrow: "Geometry / Fabrication Intelligence",
+    href: "/labs/geometric-workbench/v5-8",
+    statusLabel: "v6 Alpha",
+    statusTone: "test" as const,
+    Icon: Globe2,
+    accentIcon: Landmark,
+    description:
+      "An interactive geometric-design environment for topology validation, constructor configuration, configuration fingerprints, and preliminary fabrication and BOM intelligence.",
+    signals: ["Three.js", "Topology validation", "Configuration fingerprints", "Preliminary BOM"],
+    commercialPath:
+      "Best pilot path: geometric design studies, geometry education, fabrication-feasibility exploration, and qualified professional project review.",
+    boundary:
+      "All fabrication, quantity, connection, material, and BOM outputs are preliminary and require qualified engineering and fabrication review before construction or manufacturing.",
+  },
+  {
     title: "1040 Finance Architecture",
     eyebrow: "Finance Architecture",
     href: "/labs/tax-architecture-2026",
