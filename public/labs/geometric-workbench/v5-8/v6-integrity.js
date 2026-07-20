@@ -14,6 +14,7 @@
     memberLengthGroupingToleranceMm:1,
     bevelGroupingToleranceDeg:0.1,
     maxConnectionDeductionFraction:0.45,
+    defaultWasteFactorPercent:10,
     topologyKeyMethod:'shared_source_index',
     topologyQuantizationTolerance:null
   });
