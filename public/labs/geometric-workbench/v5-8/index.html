@@ -440,34 +440,150 @@ body.layout-bottom-focus .bottomResizeHandle::after{content:'bottom focus · dra
    ARTEMIS v6.0.0-alpha — Simplified Executive + Immersive Presentation Layer
    Additive UI layer; geometry algorithms and legacy exports remain intact.
    ===================================================================== */
-:root{--v59-gold:#d6ad67;--v59-panel:rgba(8,14,24,.94);--v59-left:268px;--v59-right:292px}
+:root{
+  --v59-gold:#d6ad67;--v59-panel:rgba(8,14,24,.94);--v59-left:268px;--v59-right:292px;
+  --palette-page:#07101c;--palette-panel:#0d1928;--palette-panel-border:#77613a;
+  --palette-text:#f4f7fb;--palette-muted:#aebdcb;--palette-accent:#d6ad67;
+  --palette-warning:#ff9a62;--palette-control:#15283d;--palette-control-text:#f6fbff;
+}
 body.v59-ready{overflow:hidden}
+body.v59-ready{background:var(--palette-page);color:var(--palette-text)}
+body.v59-ready .panel{background:var(--palette-panel);border-color:var(--palette-panel-border);color:var(--palette-text)}
+body.v59-ready .sub,body.v59-ready .small,body.v59-ready .tagline-note{color:var(--palette-muted)}
 body.v59-ready #app{grid-template-columns:var(--v59-left) minmax(520px,1fr) var(--v59-right)!important;grid-template-rows:minmax(0,1fr) 0!important;gap:8px!important;padding:58px 8px 8px!important}
-body.v59-ready #left{grid-column:1!important;grid-row:1!important;min-width:0}
+body.v59-ready #left{
+  grid-column:1!important;
+  grid-row:1!important;
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
 body.v59-ready #stage{grid-column:2!important;grid-row:1!important;min-width:0;border-radius:22px}
 body.v59-ready #right{grid-column:3!important;grid-row:1!important;min-width:0}
 body.v59-ready #bottom{display:none!important}
-body.v59-ready #left .header{padding:10px 12px}
+body.v59-ready #left .header{
+  flex:0 0 auto;
+  padding:10px 12px;
+}
 body.v59-ready #left .brandHero{grid-template-columns:46px 1fr;gap:9px}
 body.v59-ready #left .brandMark{width:46px;height:54px}
 body.v59-ready #left .brandTitle{font-size:15px;line-height:1.08}
 body.v59-ready #left .brandSub{font-size:10px;line-height:1.25}
-body.v59-ready #left .controls{padding:10px;gap:8px;height:calc(100% - 86px);overflow:auto}
+body.v59-ready #left .controls{
+  display:grid;
+  align-content:start;
+  flex:1 1 auto;
+  min-height:0;
+  padding:10px 10px 28px;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable both-edges;
+  -webkit-overflow-scrolling:touch;
+}
+body.v59-ready #left .controls>*{
+  margin-bottom:8px;
+}
+body.v59-ready #left .controls>*:last-child{
+  margin-bottom:0;
+}
+body.v59-ready #left>.note{
+  flex:0 0 auto;
+  margin:0;
+  max-height:min(96px,15vh);
+  overflow:auto;
+  border-top:1px solid rgba(214,173,103,.28);
+  border-radius:0 0 18px 18px;
+  padding:12px 14px 14px;
+  line-height:1.45;
+  background:var(--palette-panel);
+  color:var(--palette-muted);
+  font-size:11px;
+}
+body.v59-ready #left .controls button,
+body.v59-ready #left .controls select,
+body.v59-ready #left .controls input{
+  min-width:0;
+  max-width:100%;
+}
+body.v59-ready #left .controls .actions{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+body.v59-ready #left .controls .actions button{
+  width:100%;
+  white-space:normal;
+  min-height:38px;
+}
+body.v59-ready #left .v59-simple-group .content{
+  min-width:0;
+}
+body.v59-ready #left input[type="range"]{
+  width:100%;
+  height:24px;
+  padding:0;
+  background:transparent;
+  accent-color:var(--palette-accent);
+  cursor:pointer;
+}
+body.v59-ready #left input[type="range"]::-webkit-slider-runnable-track{
+  height:7px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--palette-accent),#7cd3ff);
+  border:1px solid rgba(255,255,255,.28);
+}
+body.v59-ready #left input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:18px;
+  height:18px;
+  margin-top:-6px;
+  border-radius:50%;
+  background:#fff4cf;
+  border:2px solid var(--palette-accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--palette-accent) 22%,transparent);
+}
+body.v59-ready #left input[type="number"],
+body.v59-ready #left input[type="text"],
+body.v59-ready #left select{
+  background:var(--palette-control);
+  color:var(--palette-control-text);
+  border:1px solid color-mix(in srgb,var(--palette-accent) 55%,#7cd3ff);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+body.v59-ready #left input[type="number"]:focus,
+body.v59-ready #left input[type="text"]:focus,
+body.v59-ready #left select:focus{
+  outline:3px solid var(--palette-accent);
+  outline-offset:1px;
+  border-color:var(--palette-accent);
+}
+body.v59-ready #left .control{
+  color:var(--palette-text);
+}
+body.v59-ready #left .control small{
+  color:var(--palette-muted);
+}
+body.v59-ready button:focus-visible,body.v59-ready a:focus-visible,body.v59-ready input:focus-visible,body.v59-ready select:focus-visible{
+  outline:3px solid var(--palette-accent)!important;
+  outline-offset:2px;
+}
 body.v59-ready #right .header{padding:11px 13px}
 body.v59-ready #right .kpis{padding:10px;gap:7px}
 body.v59-ready #right .inspector{padding:10px;gap:7px;overflow:auto}
 body.v59-ready .layoutBox,body.v59-ready #constructorDeck{display:none}
+body.v59-ready.v59-engineering #constructorDeck{display:block}
 body.v59-ready .overlay.hud{max-width:380px;padding:9px 11px;font-size:11px;opacity:.92}
 body.v59-ready .overlay.legend{display:none}
 body.v59-ready .overlay.caption{font-size:10px;padding:7px 9px;bottom:72px;opacity:.7}
-.v59-topbar{position:fixed;left:8px;right:8px;top:8px;height:42px;z-index:10030;border:1px solid rgba(214,173,103,.36);border-radius:14px;background:rgba(5,9,16,.90);backdrop-filter:blur(18px);display:flex;align-items:center;gap:8px;padding:0 10px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.v59-topbar{position:fixed;left:8px;right:8px;top:8px;height:42px;z-index:10030;border:1px solid var(--palette-panel-border);border-radius:14px;background:var(--palette-panel);backdrop-filter:blur(18px);display:flex;align-items:center;gap:8px;padding:0 10px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
 .v59-brand{font-weight:900;letter-spacing:.12em;color:var(--v59-gold);white-space:nowrap}.v59-version{font-size:10px;border:1px solid rgba(214,173,103,.35);border-radius:999px;padding:4px 7px;color:#e6d5b5}.v59-spacer{flex:1}.v59-topbar button,.v59-topbar a{border:0;background:transparent;color:#eaf2fb;padding:7px 9px;font:700 11px system-ui;text-decoration:none;border-radius:9px}.v59-topbar button:hover,.v59-topbar a:hover{background:rgba(255,255,255,.08)}.v59-topbar .support{background:linear-gradient(135deg,#e3bd76,#a9762c);color:#101012}
 .v59-splitter{position:fixed;top:58px;bottom:8px;width:10px;z-index:10020;cursor:col-resize;display:flex;align-items:center;justify-content:center;touch-action:none}.v59-splitter::before{content:"";width:3px;height:64px;border-radius:9px;background:rgba(214,173,103,.25);transition:.2s}.v59-splitter:hover::before,.v59-splitter.dragging::before{background:#e5bd72;box-shadow:0 0 18px rgba(229,189,114,.55);height:96px}.v59-splitter.left{left:calc(8px + var(--v59-left) - 5px)}.v59-splitter.right{right:calc(8px + var(--v59-right) - 5px)}
-.v59-quickbar{position:absolute;z-index:10010;left:50%;bottom:15px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:7px;border:1px solid rgba(214,173,103,.34);border-radius:16px;background:rgba(5,9,16,.86);backdrop-filter:blur(16px);box-shadow:0 16px 46px rgba(0,0,0,.45);max-width:calc(100% - 24px)}.v59-quickbar select,.v59-quickbar button,.v59-quickbar input{height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.15);background:#121d2b;color:#f7fbff;padding:0 8px;font:700 11px system-ui}.v59-quickbar select{max-width:190px}.v59-quickbar input[type=color]{width:38px;padding:3px}.v59-quickbar button.primary{background:linear-gradient(135deg,#e3bd76,#a9762c);color:#111}
+.v59-quickbar{position:absolute;z-index:10010;left:50%;bottom:15px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:7px;border:1px solid var(--palette-panel-border);border-radius:16px;background:var(--palette-panel);backdrop-filter:blur(16px);box-shadow:0 16px 46px rgba(0,0,0,.45);max-width:calc(100% - 24px)}.v59-quickbar select,.v59-quickbar button,.v59-quickbar input{height:32px;border-radius:9px;border:1px solid var(--palette-panel-border);background:var(--palette-control);color:var(--palette-control-text);padding:0 8px;font:700 11px system-ui}.v59-quickbar select{max-width:190px}.v59-quickbar input[type=color]{width:38px;padding:3px}.v59-quickbar button.primary{background:var(--palette-accent);color:#111}
 .v59-modal{position:fixed;inset:0;z-index:12000;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:18px}.v59-modal.open{display:flex}.v59-card{width:min(620px,100%);max-height:90vh;overflow:auto;border:1px solid rgba(214,173,103,.4);border-radius:22px;background:linear-gradient(145deg,#111d2d,#070b12);box-shadow:0 30px 100px rgba(0,0,0,.68);padding:22px;color:#eef6ff}.v59-card.wide{width:min(960px,100%)}.v59-card h2{margin:0 0 7px;font:800 25px Georgia,serif;color:#f0cf8e}.v59-card p{color:#bbcada;line-height:1.5}.v59-close{float:right;background:transparent!important;border:0!important;font-size:20px!important}.v59-choice{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}.v59-choice button{min-width:72px}.v59-choice button.active{background:#e2b96e;color:#111;border-color:#e2b96e}.v59-amount{display:grid;grid-template-columns:1fr 1fr;gap:10px}.v59-amount label{display:grid;gap:5px;color:#b9c8d7;font-size:12px}.v59-amount input,.v59-amount select{height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.17);background:#101a28;color:#fff;padding:0 12px;font-size:15px}.v59-donate-go{width:100%;margin-top:14px;background:linear-gradient(135deg,#e4bf78,#aa762a)!important;color:#111!important;font-size:15px!important}.v59-note{font-size:10px;color:#91a5b8;margin-top:8px}.v59-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.v59-shortcuts div{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.03)}.v59-shortcuts kbd{color:#f0cf8e;font-weight:900}.v59-command input{width:100%;height:44px;border-radius:12px;border:1px solid rgba(214,173,103,.38);background:#0b1420;color:#fff;padding:0 14px;font-size:15px}.v59-command-list{display:grid;gap:5px;margin-top:10px}.v59-command-list button{text-align:left;display:flex;justify-content:space-between}.v59-toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(15px);z-index:13000;padding:10px 14px;border-radius:999px;background:#0b1420;border:1px solid rgba(214,173,103,.4);color:#f5e7ca;font:700 12px system-ui;opacity:0;pointer-events:none;transition:.22s}.v59-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-splitter,body.v59-immersive .overlay.hud,body.v59-immersive .overlay.caption{display:none!important}body.v59-immersive #app{grid-template-columns:1fr!important;padding:50px 0 0!important;gap:0!important}body.v59-immersive #stage{grid-column:1!important;border-radius:0!important;border:0!important}body.v59-immersive .v59-quickbar{bottom:22px}body.v59-gallery #stage{background:radial-gradient(circle at 50% 35%,#223044 0,#0b111a 48%,#030508 100%)}body.v59-blueprint #stage{filter:saturate(.3) hue-rotate(165deg);background:#071b36}body.v59-transparent #stage{background:repeating-conic-gradient(#18222f 0 25%,#111923 0 50%) 50%/28px 28px}
-.v59-simple-group{border:1px solid rgba(255,255,255,.10);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.12)}.v59-simple-group>button{width:100%;border:0;border-radius:0;text-align:left;display:flex;justify-content:space-between;background:transparent;padding:10px 11px}.v59-simple-group .content{padding:0 10px 10px;display:grid;gap:8px}.v59-simple-group.collapsed .content{display:none}.v59-simple-group .chev{transition:.2s}.v59-simple-group.collapsed .chev{transform:rotate(-90deg)}
-@media(max-width:900px){body.v59-ready{overflow:auto}body.v59-ready #app{display:block!important;padding:56px 6px 8px!important}body.v59-ready #left,body.v59-ready #right{position:fixed;top:56px;bottom:6px;width:min(88vw,360px);z-index:11000;transition:transform .25s;display:block!important}body.v59-ready #left{left:6px;transform:translateX(-110%)}body.v59-ready #right{right:6px;transform:translateX(110%)}body.v59-ready.v59-left-open #left,body.v59-ready.v59-right-open #right{transform:translateX(0)}body.v59-ready #stage{height:calc(100vh - 64px)}.v59-splitter{display:none}.v59-quickbar{overflow:auto;justify-content:flex-start;left:8px;right:8px;transform:none}.v59-quickbar select{min-width:145px}.v59-topbar .desktop-only{display:none}.v59-shortcuts{grid-template-columns:1fr}.v59-amount{grid-template-columns:1fr}}
+.v59-simple-group{min-width:0;border:1px solid var(--palette-panel-border);border-radius:12px;overflow:hidden;background:color-mix(in srgb,var(--palette-panel) 88%,var(--palette-text) 12%)}.v59-simple-group>button{width:100%;border:0;border-radius:0;text-align:left;display:flex;justify-content:space-between;background:transparent;color:var(--palette-text);padding:10px 11px}.v59-simple-group .content{min-width:0;padding:0 10px 10px;display:grid;gap:8px}.v59-simple-group.collapsed .content{display:none}.v59-simple-group .chev{transition:.2s}.v59-simple-group.collapsed .chev{transform:rotate(-90deg)}
+@media(max-width:900px){body.v59-ready{overflow:auto}body.v59-ready #app{display:block!important;padding:56px 6px 8px!important}body.v59-ready #left,body.v59-ready #right{position:fixed;top:56px;bottom:6px;width:min(88vw,360px);z-index:11000;transition:transform .25s}body.v59-ready #left{left:6px;transform:translateX(-110%);display:flex!important;flex-direction:column}body.v59-ready #right{right:6px;transform:translateX(110%);display:block!important}body.v59-ready.v59-left-open #left,body.v59-ready.v59-right-open #right{transform:translateX(0)}body.v59-ready #left .controls{flex:1 1 auto;min-height:0;overflow-y:auto!important}body.v59-ready #left>.note{max-height:80px}body.v59-ready #stage{height:calc(100vh - 64px)}.v59-splitter{display:none}.v59-quickbar{overflow:auto;justify-content:flex-start;left:8px;right:8px;transform:none}.v59-quickbar select{min-width:145px}.v59-topbar .desktop-only{display:none}.v59-shortcuts{grid-template-columns:1fr}.v59-amount{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -488,7 +604,7 @@ body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-split
   <button class="desktop-only" data-v59-action="immersive">Immersive</button>
   <button class="desktop-only" data-v59-action="command">⌘K</button>
   <div class="v59-spacer"></div>
-  <a href="https://artemis.agoraxai.com/workbench" target="_blank" rel="noopener">Product</a>
+  <a href="/workbench" target="_blank" rel="noopener" title="Open the Geometric Workbench product home">Product Home</a>
   <button id="v59Support" class="support">Support $1</button>
   <button id="v59RightToggle" aria-label="Open inspector">Inspect</button>
 </div>
@@ -594,7 +710,9 @@ body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-split
         <small>Non-regression layout layer: drag the gold handle above the lower tabs or use Bottom XL / Bottom Focus to enlarge diagrams, schedules, and 2D manufacturing without touching geodesic generation, manufacturing data, or Three.js startup.</small>
         <div class="layoutStatus" id="layoutStatus">Layout: 320 / 320 / 320 · Camera ×1.00</div>
       </div>
-      <label class="control">Build timeline <div class="row"><input id="timeline" type="range" min="0" max="1" step="0.001" value="1"><input id="timelineN" type="number" min="0" max="1" step="0.001" value="1"></div></label>
+      <label class="control">Time Slicer <div class="row"><input id="timeline" type="range" min="0" max="1" step="0.001" value="1" aria-label="Time Slicer"><input id="timelineN" type="number" min="0" max="1" step="0.001" value="1" aria-label="Time Slicer value"></div><small>Scrub the visible construction sequence from 0% to 100%.</small></label>
+      <label class="control">Animation Speed <div class="row"><input id="animationSpeed" type="range" min="0.25" max="3" step="0.25" value="1" aria-label="Animation Speed"><input id="animationSpeedN" type="number" min="0.25" max="3" step="0.25" value="1" aria-label="Animation Speed multiplier"></div><small>Playback multiplier for Animate Build.</small></label>
+      <label class="control">Preliminary BOM waste factor % <input id="geoWaste" type="number" value="10" min="0" max="100" step="0.5"><small>Explicit editable allowance applied to net member length and mass.</small></label>
       <div class="constructorBox" id="constructorDeck">
         <h3>Constructor Configuration Parser</h3>
         <div class="tagline-note">Imports common dome-construction notation and converts it into an Artemis project configuration.</div>
@@ -680,7 +798,7 @@ body.v59-immersive #left,body.v59-immersive #right,body.v59-immersive .v59-split
 <div class="v59-quickbar" id="v59Quickbar" aria-label="Quick model controls">
   <select id="v59Model" title="Model / geometry"></select>
   <select id="v59Scale" title="Geometry scale"><option value="100">Compact · R100</option><option value="150" selected>Balanced · R150</option><option value="200">Monumental · R200</option><option value="250">XL · R250</option></select>
-  <select id="v59Material" title="Presentation material"><option value="bronze">Brushed Bronze</option><option value="steel">Blackened Steel</option><option value="technical">Technical White</option><option value="glass">Smoked Glass</option><option value="original">Construction Colors</option></select>
+  <select id="v59Material" title="Coordinated visual palette" aria-label="Visual palette"><option value="obsidian_brass" selected>Obsidian &amp; Brass</option><option value="executive_ivory">Executive Ivory</option><option value="blueprint_cyan">Blueprint Cyan</option><option value="fabrication_contrast">High-Contrast Fabrication</option><option value="survey_white">Survey White</option><option value="night_inspection">Night Inspection</option></select>
   <input id="v59Color" type="color" value="#d6ad67" title="Accent color">
   <button data-v59-action="fit">Fit</button><button data-v59-action="reset">Reset</button>
   <button class="primary" data-v59-action="immersive">Gallery</button>
@@ -898,6 +1016,7 @@ function fitCameraToModel(){
 
 const pairIds=['freq','radius','thick','cut','timeline'];
 pairIds.forEach(id=>{const a=$(id),b=$(id+'N');a.addEventListener('input',()=>{b.value=a.value; update();});b.addEventListener('input',()=>{a.value=b.value; update();});});
+['animationSpeed'].forEach(id=>{const a=$(id),b=$(id+'N');a.addEventListener('input',()=>{b.value=a.value;});b.addEventListener('input',()=>{a.value=b.value;});});
 $('viewMode').addEventListener('change',update); $('cellMode').addEventListener('change',update);
 let showVectors=true, showPent=true, showWire=true, typeColor=true;
 $('toggleVectors').onclick=()=>{showVectors=!showVectors;$('toggleVectors').textContent='Vectors: '+(showVectors?'ON':'OFF');rebuildScene();};
@@ -915,7 +1034,7 @@ $('printShopCard').onclick=printShopCard;
 if($('parseConstructorNotation')) $('parseConstructorNotation').onclick=()=>applyConstructorNotation($('constructorNotation').value);
 if($('presetKruschke')) $('presetKruschke').onclick=()=>{ $('constructorNotation').value=CONSTRUCTOR_NOTATION_PRESETS.kruschke; applyConstructorNotation($('constructorNotation').value); };
 if($('presetOcto')) $('presetOcto').onclick=()=>{ $('constructorNotation').value=CONSTRUCTOR_NOTATION_PRESETS.octo; applyConstructorNotation($('constructorNotation').value); };
-['geoClass','geoHK','geoMethod','geoSymmetry','geoPart','geoFullerene','geoConnection','geoPipeDia','geoPipeWall','geoBeamW','geoBeamT','geoSectionFamily','geoMaterial','geoDensity','geoRimPolicy','geoAlign','geoSpin'].forEach(id=>{ if($(id)) $(id).addEventListener('input',()=>drawAll()); if($(id)) $(id).addEventListener('change',()=>drawAll()); });
+['geoClass','geoHK','geoMethod','geoSymmetry','geoPart','geoFullerene','geoConnection','geoPipeDia','geoPipeWall','geoBeamW','geoBeamT','geoSectionFamily','geoMaterial','geoDensity','geoWaste','geoRimPolicy','geoAlign','geoSpin'].forEach(id=>{ if($(id)) $(id).addEventListener('input',()=>drawAll()); if($(id)) $(id).addEventListener('change',()=>drawAll()); });
 if($('geoConnection')) $('geoConnection').addEventListener('change',()=>{if($('geoConnection').value==='piped'){setValueSafe('geoSectionFamily','circular_hollow');if(+$('geoDensity').value===520)setValueSafe('geoDensity','7850');}drawAll();});
 if($('geoPolyhedron')) $('geoPolyhedron').addEventListener('change',()=>{ selected=null; update(); fitCameraToModel(); });
 ['cellColorMode','edgeColorMode','cellLabelMode','edgeLabelMode','seqMode'].forEach(id=>{ if($(id)) $(id).addEventListener('change',()=>rebuildScene()); if($(id)) $(id).addEventListener('input',()=>rebuildScene()); });
@@ -929,8 +1048,20 @@ if($('printGlossary')) $('printGlossary').onclick=printGlossary;
 document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>setTab(btn.dataset.tab));
 initLayoutManager();
 
-let scene,camera,renderer,controls,root,cellsGroup,wireGroup,vectorGroup,raycaster,mouse;
+let scene,camera,renderer,controls,root,cellsGroup,wireGroup,vectorGroup,raycaster,mouse,floorMesh,axesHelper;
 let state=null, selected=null, activeTab='diagrams', playing=false;
+let visualPalette={
+  id:'obsidian_brass',sceneBackground:0x07101c,ground:0x101e30,
+  standardCell:0x88d4ff,curvatureCell:0xffcc55,wire:0xf5f7fa,
+  selected:0xd6ad67,selectedNormal:0x98f5b8,grid:0x7cd3ff
+};
+
+function applyRenderingPalette(tokens={},options={}){
+  visualPalette={...visualPalette,...tokens};
+  if(scene)scene.background=new THREE.Color(visualPalette.sceneBackground);
+  if(floorMesh?.material?.color)floorMesh.material.color.setHex(visualPalette.ground);
+  if(options.rebuild!==false&&state&&cellsGroup)rebuildScene();
+}
 
 
 function readSelect(id, fallback=''){
@@ -976,6 +1107,7 @@ function constructorProfile(){
     sectionFamily: readSelect('geoSectionFamily','rectangular_solid'),
     material: readSelect('geoMaterial','Unspecified'),
     materialDensityKgM3: +(readSelect('geoDensity','520')) || 520,
+    wasteFactorPercent: Math.max(0,+(readSelect('geoWaste',String(BOM_ASSUMPTIONS.defaultWasteFactorPercent))) || 0),
     rimPolicy: readSelect('geoRimPolicy','member'),
     alignBase: readSelect('geoAlign','off'),
     spin: readSelect('geoSpin','ccw'),
@@ -1035,16 +1167,18 @@ function constructorSummary(){
   const p=constructorProfile(),instances=memberInstances(state.topology,p,p.rimPolicy),members=groupMemberInstances(instances,BOM_ASSUMPTIONS);
   const totalCut=members.reduce((a,m)=>a+m.cutLen*m.qty,0);
   const totalCenterline=instances.reduce((a,m)=>a+m.centerlineLengthCm,0),section=sectionProperties(p);
-  const volumeM3=(totalCut/100)*section.sectionAreaM2;
-  const massKg=volumeM3*p.materialDensityKgM3;
+  const wasteMultiplier=1+p.wasteFactorPercent/100,totalCutWithWaste=totalCut*wasteMultiplier;
+  const volumeM3=(totalCut/100)*section.sectionAreaM2,volumeWithWasteM3=(totalCutWithWaste/100)*section.sectionAreaM2;
+  const massKg=volumeM3*p.materialDensityKgM3,massWithWasteKg=volumeWithWasteM3*p.materialDensityKgM3;
+  const shellVolumeM3=(state.totalVol||0)/1000000,shellMassKg=shellVolumeM3*p.materialDensityKgM3;
   const fBoost=constructorClassFrequencyMultiplier(p);
   const metrics=state.topology.metrics,policy=CONNECTION_SYSTEMS[p.connection]||CONNECTION_SYSTEMS.joint;
   const rimPerimeterCm=[...state.topology.edges.values()].filter(e=>e.boundary).reduce((a,e)=>a+e.centerlineLengthCm,0);
-  return {profile:p,policy,instances,members,totalCut,totalCenterline,volumeM3,massKg,section,rimPerimeterCm,metrics,hubs:hubSchedule(state.topology,p.connection),conceptV:Math.max(1,Math.round(p.frequencyV*fBoost*10)/10),confidence:state.topology.validation.status==='FAIL'?'invalid_topology':'topology_validated_geometry_connection_unvalidated'};
+  return {profile:p,policy,instances,members,totalCut,totalCutWithWaste,totalCenterline,volumeM3,volumeWithWasteM3,massKg,massWithWasteKg,shellVolumeM3,shellMassKg,wasteMultiplier,section,rimPerimeterCm,metrics,hubs:hubSchedule(state.topology,p.connection),conceptV:Math.max(1,Math.round(p.frequencyV*fBoost*10)/10),confidence:state.topology.validation.status==='FAIL'?'invalid_topology':'topology_validated_geometry_connection_unvalidated'};
 }
 function calculationConfiguration(){
   const p=constructorProfile();
-  return {geometry:{family:state?.geometryMode||'goldberg-dual',basePolyhedron:p.polyhedron,subdivisionClass:p.subdivisionClass,hk:p.hk,subdivisionMethod:p.subdivisionMethod,symmetry:p.symmetry,frequency:p.frequencyV,radius:p.radiusM,domeFraction:p.domeFraction,cutYR:p.cutYR,fullerene:p.fullerene,alignBase:p.alignBase,spin:p.spin},fabrication:{connection:p.connection,rimPolicy:p.rimPolicy,sectionFamily:p.sectionFamily,material:p.material,beamWidthMm:p.beamWidthMm,beamThicknessMm:p.beamThicknessMm,pipeDiameterMm:p.pipeDiaMm,pipeWallThicknessMm:p.pipeWallThicknessMm,materialDensityKgM3:p.materialDensityKgM3},constructorParser:{constructorNotation:p.constructorNotation,sourceNotation:p.sourceNotation,parserVersion:PARSER_VERSION,normalizedAppliedConfiguration:latestParserResult.appliedConfiguration||{}},assumptions:{...BOM_ASSUMPTIONS,topologyKeyMethod:state?.topology?.identityMethod||BOM_ASSUMPTIONS.topologyKeyMethod,topologyQuantizationTolerance:state?.topology?.quantizationTolerance??null},engine:{appVersion:APP_VERSION,geometryEngineVersion:GEOMETRY_ENGINE_VERSION,bomEngineVersion:BOM_ENGINE_VERSION}};
+  return {geometry:{family:state?.geometryMode||'goldberg-dual',basePolyhedron:p.polyhedron,subdivisionClass:p.subdivisionClass,hk:p.hk,subdivisionMethod:p.subdivisionMethod,symmetry:p.symmetry,frequency:p.frequencyV,radius:p.radiusM,domeFraction:p.domeFraction,cutYR:p.cutYR,fullerene:p.fullerene,alignBase:p.alignBase,spin:p.spin},fabrication:{connection:p.connection,rimPolicy:p.rimPolicy,sectionFamily:p.sectionFamily,material:p.material,beamWidthMm:p.beamWidthMm,beamThicknessMm:p.beamThicknessMm,pipeDiameterMm:p.pipeDiaMm,pipeWallThicknessMm:p.pipeWallThicknessMm,materialDensityKgM3:p.materialDensityKgM3,wasteFactorPercent:p.wasteFactorPercent},constructorParser:{constructorNotation:p.constructorNotation,sourceNotation:p.sourceNotation,parserVersion:PARSER_VERSION,normalizedAppliedConfiguration:latestParserResult.appliedConfiguration||{}},assumptions:{...BOM_ASSUMPTIONS,topologyKeyMethod:state?.topology?.identityMethod||BOM_ASSUMPTIONS.topologyKeyMethod,topologyQuantizationTolerance:state?.topology?.quantizationTolerance??null},engine:{appVersion:APP_VERSION,geometryEngineVersion:GEOMETRY_ENGINE_VERSION,bomEngineVersion:BOM_ENGINE_VERSION}};
 }
 async function refreshConfigurationFingerprint(){
   try{latestFingerprint=await configurationFingerprint(calculationConfiguration());if(activeTab==='topology'||activeTab==='bom')drawBottom();}
@@ -1057,15 +1191,16 @@ function parserHelpHtml(){
 }
 function assumptionsLedgerHtml(summary){
   const p=summary.profile,policy=summary.policy;
-  return `<div class="formula assumptions-ledger"><span>Deduction model</span><b>${policy.deductionModel} · unvalidated</b><span>Maximum deduction clamp</span><b>${BOM_ASSUMPTIONS.maxConnectionDeductionFraction*100}% of centerline</b><span>Clamp activated</span><b>${summary.instances.some(x=>x.deductionWasClamped)?'YES':'NO'}</b><span>Length grouping</span><b>${BOM_ASSUMPTIONS.memberLengthGroupingToleranceMm} mm</b><span>Bevel grouping</span><b>${BOM_ASSUMPTIONS.bevelGroupingToleranceDeg}°</b><span>Assembly model</span><b>${policy.assemblyModel.replace('_',' ')}</b><span>Interior multiplicity</span><b>${policy.interiorMembersPerEdge} member(s) / shared edge</b><span>Boundary policy</span><b>${RIM_POLICIES[p.rimPolicy].label}</b><span>Topology identity</span><b>${state.topology.identityMethod}</b><span>Coordinate quantization</span><b>not used</b><span>Section</span><b>${summary.section.description}</b><span>Density</span><b>${p.materialDensityKgM3} kg/m³ · preliminary editable assumption</b><span>Confidence</span><b>${summary.confidence}</b></div>`;
+  return `<div class="formula assumptions-ledger"><span>Deduction model</span><b>${policy.deductionModel} · unvalidated</b><span>Maximum deduction clamp</span><b>${BOM_ASSUMPTIONS.maxConnectionDeductionFraction*100}% of centerline</b><span>Clamp activated</span><b>${summary.instances.some(x=>x.deductionWasClamped)?'YES':'NO'}</b><span>Length grouping</span><b>${BOM_ASSUMPTIONS.memberLengthGroupingToleranceMm} mm</b><span>Bevel grouping</span><b>${BOM_ASSUMPTIONS.bevelGroupingToleranceDeg}°</b><span>Assembly model</span><b>${policy.assemblyModel.replace('_',' ')}</b><span>Interior multiplicity</span><b>${policy.interiorMembersPerEdge} member(s) / shared edge</b><span>Boundary policy</span><b>${RIM_POLICIES[p.rimPolicy].label}</b><span>Topology identity</span><b>${state.topology.identityMethod}</b><span>Coordinate quantization</span><b>not used</b><span>Section</span><b>${summary.section.description}</b><span>Material / grade</span><b>${escapeHtml(p.material)}</b><span>Density</span><b>${p.materialDensityKgM3} kg/m³ · preliminary editable assumption</b><span>Waste factor</span><b>${p.wasteFactorPercent}% · preliminary editable assumption</b><span>Confidence</span><b>${summary.confidence}</b></div>`;
 }
 async function exportManifest(summary=constructorSummary()){
   const fingerprint=await refreshConfigurationFingerprint();
-  return {schemaVersion:'artemis-bom-6.0-alpha',applicationVersion:APP_VERSION,bomEngineVersion:BOM_ENGINE_VERSION,geometryEngineVersion:GEOMETRY_ENGINE_VERSION,parserVersion:PARSER_VERSION,generatedAt:new Date().toISOString(),configurationFingerprint:fingerprint.full,configurationFingerprintAbbreviated:fingerprint.abbreviated,projectName:document.title,assumptions:{...BOM_ASSUMPTIONS,topologyKeyMethod:state.topology.identityMethod,topologyQuantizationTolerance:null,sectionFamily:summary.profile.sectionFamily,material:summary.profile.material,materialDensityKgM3:summary.profile.materialDensityKgM3,pipeWallThicknessMm:summary.profile.pipeWallThicknessMm,connectionPolicy:summary.policy,boundaryPolicy:RIM_POLICIES[summary.profile.rimPolicy]},validationSummary:{...state.topology.metrics,...state.topology.validation},parserDiagnostics:latestParserResult};
+  return {schemaVersion:'artemis-bom-6.0-alpha',label:'Preliminary BOM',applicationVersion:APP_VERSION,bomEngineVersion:BOM_ENGINE_VERSION,geometryEngineVersion:GEOMETRY_ENGINE_VERSION,parserVersion:PARSER_VERSION,generatedAt:new Date().toISOString(),configurationFingerprint:fingerprint.full,configurationFingerprintAbbreviated:fingerprint.abbreviated,projectName:document.title,units:{length:'m',componentLength:'cm',area:'m²',componentArea:'cm²',volume:'m³',componentVolume:'cm³',mass:'kg',density:'kg/m³'},disclaimer:'Preliminary BOM only. Production dimensions require engineering review and shop validation.',assumptions:{...BOM_ASSUMPTIONS,topologyKeyMethod:state.topology.identityMethod,topologyQuantizationTolerance:null,sectionFamily:summary.profile.sectionFamily,material:summary.profile.material,materialDensityKgM3:summary.profile.materialDensityKgM3,wasteFactorPercent:summary.profile.wasteFactorPercent,pipeWallThicknessMm:summary.profile.pipeWallThicknessMm,connectionPolicy:summary.policy,boundaryPolicy:RIM_POLICIES[summary.profile.rimPolicy]},validationSummary:{...state.topology.metrics,...state.topology.validation},warnings:[...state.topology.validation.warnings,...state.topology.validation.failures,'Connection deductions and hub angular classifications are preliminary and unvalidated.'],parserDiagnostics:latestParserResult};
 }
 function bomSummaryObject(s=constructorSummary()){
   const interiorMembers=s.instances.filter(x=>x.edgeClass==='interior').length,boundaryMembers=s.instances.filter(x=>x.edgeClass==='boundary').length;
-  return {geometricEdges:s.metrics.edgeCount,rawFaceEdgeSlots:s.metrics.rawFaceEdgeSlots,physicalMemberInstances:s.instances.length,uniqueMemberTypes:s.members.length,interiorMembers,boundaryMembers,continuousRimPerimeterM:s.profile.rimPolicy==='continuous_ring'?s.rimPerimeterCm/100:0,boundaryPerimeterM:s.rimPerimeterCm/100,totalCenterlineLengthM:s.totalCenterline/100,totalPreliminaryNetCutLengthM:s.totalCut/100,estimatedVolumeM3:s.volumeM3,estimatedMassKg:s.massKg,confidence:s.confidence,assemblyModel:s.policy.assemblyModel,interiorMultiplicity:s.policy.interiorMembersPerEdge,rimPolicy:s.profile.rimPolicy};
+  const all=state.cells||[],visible=state.visibleCells||all,hex=cells=>cells.filter(c=>c.type==='hexagon'||c.sides===6).length,pent=cells=>cells.filter(c=>c.type==='pentagon'||c.sides===5).length,totalAreaM2=all.reduce((a,c)=>a+c.outerArea,0)/10000;
+  return {constructorModelSummary:`${s.profile.polyhedron} · ${s.profile.subdivisionClass} · ${s.profile.subdivisionMethod} · ${s.profile.frequencyV}V`,visibleCellCount:visible.length,totalCellCount:all.length,visibleHexagons:hex(visible),totalHexagons:hex(all),visiblePentagons:pent(visible),totalPentagons:pent(all),panelFamilyCount:panelFamilies().length,totalSurfaceAreaM2:totalAreaM2,shellMaterialVolumeM3:s.shellVolumeM3,shellEstimatedMassKg:s.shellMassKg,shellThicknessCm:+$('thick').value,material:s.profile.material,materialDensityKgM3:s.profile.materialDensityKgM3,wasteFactorPercent:s.profile.wasteFactorPercent,geometricEdges:s.metrics.edgeCount,rawFaceEdgeSlots:s.metrics.rawFaceEdgeSlots,physicalMemberInstances:s.instances.length,uniqueMemberTypes:s.members.length,interiorMembers,boundaryMembers,continuousRimPerimeterM:s.profile.rimPolicy==='continuous_ring'?s.rimPerimeterCm/100:0,boundaryPerimeterM:s.rimPerimeterCm/100,totalCenterlineLengthM:s.totalCenterline/100,totalPreliminaryNetCutLengthM:s.totalCut/100,totalNetCutLengthWithWasteM:s.totalCutWithWaste/100,memberMaterialVolumeM3:s.volumeM3,memberMaterialVolumeWithWasteM3:s.volumeWithWasteM3,estimatedMemberMassKg:s.massKg,estimatedMemberMassWithWasteKg:s.massWithWasteKg,confidence:s.confidence,validationStatus:state.topology.validation.status,assemblyModel:s.policy.assemblyModel,interiorMultiplicity:s.policy.interiorMembersPerEdge,rimPolicy:s.profile.rimPolicy};
 }
 function topologyAuditObject(){
   return {identityMethod:state.topology.identityMethod,quantizationTolerance:null,metrics:state.topology.metrics,validation:state.topology.validation,vertices:[...state.topology.vertices.values()],edges:[...state.topology.edges.values()]};
@@ -1131,7 +1266,7 @@ setTimeout(()=>{
 
 function initThree(){
   const wrap=$('canvasWrap');
-  scene=new THREE.Scene(); scene.background=new THREE.Color(0x0a1222);
+  scene=new THREE.Scene(); scene.background=new THREE.Color(visualPalette.sceneBackground);
   camera=new THREE.PerspectiveCamera(45,wrap.clientWidth/wrap.clientHeight,0.1,5000); camera.position.set(330,260,430);
   renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(wrap.clientWidth,wrap.clientHeight); renderer.shadowMap.enabled=true; wrap.appendChild(renderer.domElement);
   controls=new THREE.OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.target.set(0,60,0);
@@ -1143,15 +1278,15 @@ function initThree(){
   const rim=new THREE.DirectionalLight(0xaaddff,0.9); rim.position.set(-340,170,-280); scene.add(rim);
   const fill=new THREE.DirectionalLight(0xffffff,0.4); fill.position.set(0,80,-200); scene.add(fill);
   
-  const floor=new THREE.Mesh(new THREE.CircleGeometry(360,96), new THREE.MeshStandardMaterial({color:0x101e30,roughness:.78,metalness:.05,transparent:true,opacity:.85})); floor.rotation.x=-Math.PI/2; floor.position.y=-stateFloor(); floor.receiveShadow=true; scene.add(floor);
-  scene.add(new THREE.AxesHelper(120));
+  floorMesh=new THREE.Mesh(new THREE.CircleGeometry(360,96), new THREE.MeshStandardMaterial({color:visualPalette.ground,roughness:.78,metalness:.05,transparent:true,opacity:.85})); floorMesh.rotation.x=-Math.PI/2; floorMesh.position.y=-stateFloor(); floorMesh.receiveShadow=true; scene.add(floorMesh);
+  axesHelper=new THREE.AxesHelper(120);scene.add(axesHelper);
   raycaster=new THREE.Raycaster(); mouse=new THREE.Vector2();
   renderer.domElement.addEventListener('click',onPick);
   window.addEventListener('resize',resize);
 }
 function stateFloor(){return 152}
 function resize(){const w=$('canvasWrap');if(!w||!camera||!renderer)return;const cw=Math.max(120,w.clientWidth||120),ch=Math.max(120,w.clientHeight||120);camera.aspect=cw/ch;camera.updateProjectionMatrix();renderer.setSize(cw,ch);}
-function params(){return {freq:+$('freq').value,radius:+$('radius').value,thick:+$('thick').value,cut:+$('cut').value,timeline:+$('timeline').value,viewMode:$('viewMode').value,cellMode:$('cellMode').value,constructor:constructorProfile()};}
+function params(){return {freq:+$('freq').value,radius:+$('radius').value,thick:+$('thick').value,cut:+$('cut').value,timeline:+$('timeline').value,animationSpeed:+$('animationSpeed').value,viewMode:$('viewMode').value,cellMode:$('cellMode').value,constructor:constructorProfile()};}
 function v(x,y,z){return new THREE.Vector3(x,y,z);}
 
 function readVisual(id, fallback=''){ const el=$(id); return el ? el.value : fallback; }
@@ -1231,8 +1366,8 @@ function cellScalar(c){
   }
 }
 function colorForCellInt(c){
-  if(!typeColor) return 0x88d4ff;
-  if(colorMode()==='type') return c.type==='pentagon' ? 0xffcc55 : 0x88d4ff;
+  if(!typeColor) return visualPalette.standardCell;
+  if(colorMode()==='type') return c.type==='pentagon' ? visualPalette.curvatureCell : visualPalette.standardCell;
   return rampInt(cellScalar(c));
 }
 function colorForCellCss(c){ return intToCss(colorForCellInt(c)); }
@@ -1249,7 +1384,7 @@ function edgeScalar(c,i){
     default: return 0.5;
   }
 }
-function edgeColorInt(c,i){ return edgeColorMode()==='uniform' ? 0xffffff : rampInt(edgeScalar(c,i)); }
+function edgeColorInt(c,i){ return edgeColorMode()==='uniform' ? visualPalette.wire : rampInt(edgeScalar(c,i)); }
 function cellLabelText(c){
   switch(cellLabelMode()){
     case 'level': return `L${String(c.level).padStart(2,'0')}`;
@@ -1401,8 +1536,9 @@ function addWireForCell(c){
 
 function resetDefaults(){
   const vals={freq:3,radius:150,thick:10,cut:0,timeline:1};Object.entries(vals).forEach(([k,val])=>{$(k).value=val;$(k+'N').value=val;});
+  setRangePairSafe('animationSpeed',1);
   $('viewMode').value='dome';$('cellMode').value='shell';
-  setValueSafe('constructorNotation',CONSTRUCTOR_NOTATION_PRESETS.kruschke);setValueSafe('geoPolyhedron','icosahedron');setValueSafe('geoClass','I');setValueSafe('geoHK','1,1');setValueSafe('geoMethod','equal_chords');setValueSafe('geoSymmetry','pentad');setValueSafe('geoPart','1/2');setValueSafe('geoFullerene','off');setValueSafe('geoConnection','goodkarma');setValueSafe('geoPipeDia','114');setValueSafe('geoPipeWall','4');setValueSafe('geoBeamW','120');setValueSafe('geoBeamT','40');setValueSafe('geoSectionFamily','rectangular_solid');setValueSafe('geoMaterial','Unspecified');setValueSafe('geoDensity','520');setValueSafe('geoRimPolicy','member');setValueSafe('geoAlign','off');setValueSafe('geoSpin','ccw');setValueSafe('cellColorMode','type');setValueSafe('edgeColorMode','uniform');setValueSafe('cellLabelMode','id');setValueSafe('edgeLabelMode','off');setValueSafe('seqMode','bottom_up');
+  setValueSafe('constructorNotation',CONSTRUCTOR_NOTATION_PRESETS.kruschke);setValueSafe('geoPolyhedron','icosahedron');setValueSafe('geoClass','I');setValueSafe('geoHK','1,1');setValueSafe('geoMethod','equal_chords');setValueSafe('geoSymmetry','pentad');setValueSafe('geoPart','1/2');setValueSafe('geoFullerene','off');setValueSafe('geoConnection','goodkarma');setValueSafe('geoPipeDia','114');setValueSafe('geoPipeWall','4');setValueSafe('geoBeamW','120');setValueSafe('geoBeamT','40');setValueSafe('geoSectionFamily','rectangular_solid');setValueSafe('geoMaterial','Unspecified');setValueSafe('geoDensity','520');setValueSafe('geoWaste','10');setValueSafe('geoRimPolicy','member');setValueSafe('geoAlign','off');setValueSafe('geoSpin','ccw');setValueSafe('cellColorMode','type');setValueSafe('edgeColorMode','uniform');setValueSafe('cellLabelMode','id');setValueSafe('edgeLabelMode','off');setValueSafe('seqMode','bottom_up');
   latestParserResult=parseConstructorNotation(CONSTRUCTOR_NOTATION_PRESETS.kruschke);update();
 }
 function clearGroup(g){while(g.children.length){const o=g.children.pop();if(o.geometry)o.geometry.dispose();if(o.material){Array.isArray(o.material)?o.material.forEach(m=>m.dispose()):o.material.dispose();}}}
@@ -1640,7 +1776,7 @@ function rebuildScene(){
     if(showWire || edgeColorMode()!=='none'){ addWireForCell(c); }
     if(state.cellMode==='innerOuter'){
       const ig=makePolyShellGeometry(c.inner,c.inner,'outer');
-      const im=new THREE.Mesh(ig,new THREE.MeshStandardMaterial({color:0xffa550,roughness:.7,metalness:.05,transparent:true,opacity:.25,side:THREE.DoubleSide}));
+      const im=new THREE.Mesh(ig,new THREE.MeshStandardMaterial({color:visualPalette.curvatureCell,roughness:.7,metalness:.05,transparent:true,opacity:.25,side:THREE.DoubleSide}));
       cellsGroup.add(im);
     }
   }
@@ -1650,18 +1786,18 @@ function rebuildScene(){
   renderLabelOverlay();
 }
 function addGlobalVectors(){
-  vectorGroup.add(new THREE.ArrowHelper(v(0,1,0),v(0,0,0),80,0x98f5b8,8,5));
-  vectorGroup.add(new THREE.ArrowHelper(v(1,0,0),v(0,0,0),80,0x7cd3ff,8,5));
-  vectorGroup.add(new THREE.ArrowHelper(v(0,0,1),v(0,0,0),80,0xff8c82,8,5));
+  vectorGroup.add(new THREE.ArrowHelper(v(0,1,0),v(0,0,0),80,visualPalette.selectedNormal,8,5));
+  vectorGroup.add(new THREE.ArrowHelper(v(1,0,0),v(0,0,0),80,visualPalette.grid,8,5));
+  vectorGroup.add(new THREE.ArrowHelper(v(0,0,1),v(0,0,0),80,visualPalette.warning||0xff8c82,8,5));
 }
 function addSelectedVector(mesh){
   const c=mesh.userData, origin=c.centerDir.clone().multiplyScalar(state.radius+8);
-  vectorGroup.add(new THREE.ArrowHelper(c.normal,origin,45,0x98f5b8,8,5));
+  vectorGroup.add(new THREE.ArrowHelper(c.normal,origin,45,visualPalette.selectedNormal,8,5));
 }
 function highlightSelected(){
   clearGroup(vectorGroup); if(showVectors) addGlobalVectors();
   cellsGroup.children.forEach(m=>{if(m.material && m.userData && m.userData.id){m.material.emissive=new THREE.Color(0);m.material.emissiveIntensity=0;m.material.opacity=m.userData.type==='pentagon'?0.92:0.85;}});
-  if(selected){selected.material.emissive=new THREE.Color(0x31465f);selected.material.emissiveIntensity=1;selected.material.opacity=1;addSelectedVector(selected);}
+  if(selected){selected.material.emissive=new THREE.Color(visualPalette.selected);selected.material.emissiveIntensity=.72;selected.material.opacity=1;addSelectedVector(selected);}
   renderLabelOverlay();
 }
 function reselectEquivalent(){const id=selected.userData.id;selected=cellsGroup.children.find(m=>m.userData && m.userData.id===id)||null;highlightSelected();}
@@ -1697,7 +1833,7 @@ function drawHUD(){
   const cp=constructorProfile();
   if(state.geometryMode==='uniform-solid') $('hud').innerHTML=`<b>ARTEMIS Uniform Solid Library</b><br><b>${state.solidName}</b> · ${state.sourceVerts} vertices · ${state.sourceFaces} polygon faces.<br><br><b>Mode:</b> ${state.viewMode==='dome'?'sectioned by y/R = '+fmt(state.cut,2):'complete solid'} · <b>Panel:</b> ${state.cellMode}<br><b>Important:</b> frequency and Goldberg dualization are disabled for direct uniform-solid geometry. Fabrication values are preliminary face-panel geometry.<br><b>Construction map:</b> cell color = ${colorMode().replace('_',' ')} · edge color = ${edgeColorMode().replace('_',' ')} · labels = ${cellLabelMode()}`;
   else $('hud').innerHTML=`<b>ARTEMIS Geometric Intelligence</b><br>Goldberg dual geodesic: mostly hexagons plus pentagonal curvature cells. Frequency <b>${state.freq}</b>.<br><br><b>Mode:</b> ${state.viewMode==='dome'?'dome cap cut at y/R = '+fmt(state.cut,2):'full sphere'} · <b>Shell:</b> ${state.cellMode}<br><b>Constructor:</b> ${cp.polyhedron} · ${cp.subdivisionClass} · ${cp.subdivisionMethod} · ${cp.connection}<br><b>Construction map:</b> cell color = ${colorMode().replace('_',' ')} · edge color = ${edgeColorMode().replace('_',' ')} · labels = ${cellLabelMode()}`;
-  $('legend').innerHTML=`<div class="item"><span class="sw" style="background:${colorMode()==='type'?'#88d4ff':'#2f7dff'}"></span>Cell coloring</div><div class="item"><span class="sw" style="background:#ffcc55"></span>Pentagon / curvature cue</div><div class="item"><span class="sw" style="background:#98f5b8"></span>Selected normal</div><div class="item"><span class="sw" style="background:#ffffff"></span>Wire / edge coding</div><div class="legendScale"><span>low</span><span class="bar"></span><span>high</span></div>`;
+  $('legend').innerHTML=`<div class="item"><span class="sw" style="background:${colorMode()==='type'?intToCss(visualPalette.standardCell):'#2f7dff'}"></span>Cell coloring</div><div class="item"><span class="sw" style="background:${intToCss(visualPalette.curvatureCell)}"></span>Pentagon / curvature cue</div><div class="item"><span class="sw" style="background:${intToCss(visualPalette.selectedNormal)}"></span>Selected normal</div><div class="item"><span class="sw" style="background:${intToCss(visualPalette.wire)}"></span>Wire / edge coding</div><div class="legendScale"><span>low</span><span class="bar"></span><span>high</span></div>`;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -2038,7 +2174,7 @@ function svgForCell(c,opts={}){
   return svg;
 }
 function panelFamilies(){
-  const map=new Map(); (state.cells||[]).forEach(c=>{const k=[c.sides,...c.outerEdges.map(x=>x.toFixed(1)).sort(),...c.bevels.map(b=>b.sawBevel.toFixed(1)).sort()].join('|'); if(!map.has(k)) map.set(k,{key:k,qty:0,sample:c,ids:[]}); const f=map.get(k); f.qty++; f.ids.push(c.id);});
+  const map=new Map(); (state.cells||[]).forEach(c=>{const k=[c.sides,...c.outerEdges.map(x=>x.toFixed(1)).sort(),...c.bevels.map(b=>b.sawBevel.toFixed(1)).sort()].join('|'); if(!map.has(k)) map.set(k,{key:k,qty:0,sample:c,ids:[],totalOuterAreaCm2:0,totalInnerAreaCm2:0,totalVolumeCm3:0}); const f=map.get(k); f.qty++; f.ids.push(c.id);f.totalOuterAreaCm2+=c.outerArea;f.totalInnerAreaCm2+=c.innerArea;f.totalVolumeCm3+=c.volume;});
   return Array.from(map.values()).map((f,i)=>({...f,mark:`FAM-${String(i+1).padStart(3,'0')}`,sheet:`A-GEO-F${String(i+1).padStart(3,'0')}`}));
 }
 function drawManufacturing(){
@@ -2050,9 +2186,10 @@ function drawManufacturing(){
 }
 function drawBOM(){
   const fam=panelFamilies(),s=constructorSummary(),summary=bomSummaryObject(s); const totalArea=(state.cells||[]).reduce((a,c)=>a+c.outerArea,0);
-  const rows=fam.map(f=>{const c=f.sample; return `<tr class="row-selectable" onclick="window.__artemisSelectCell&&window.__artemisSelectCell('${c.id}')"><td><span class="component-mark">${f.mark}</span></td><td>${f.sheet}</td><td>${f.qty}</td><td>${c.type}</td><td>${fmt(c.outerArea,1)}</td><td>${fmt(c.outerEdges.reduce((a,b)=>a+b,0),1)}</td><td>${c.outerEdges.map(x=>fmt(x,1)).join(' / ')}</td><td>${c.bevels.map(b=>fmt(b.sawBevel,1)+'°').join(' / ')}</td><td>${c.id}</td></tr>`;}).join('');
-  const kpis=[['Geometric edges',summary.geometricEdges],['Raw face-edge slots',summary.rawFaceEdgeSlots],['Physical members',summary.physicalMemberInstances],['Unique member types',summary.uniqueMemberTypes],['Interior members',summary.interiorMembers],['Boundary members',summary.boundaryMembers],['Continuous rim m',fmt(summary.continuousRimPerimeterM,2)],['Centerline m',fmt(summary.totalCenterlineLengthM,2)],['Preliminary net cut m',fmt(summary.totalPreliminaryNetCutLengthM,2)],['Estimated volume m³',fmt(summary.estimatedVolumeM3,3)],['Estimated mass kg',fmt(summary.estimatedMassKg,1)],['Confidence',summary.confidence]].map(([label,value])=>`<div class="bom-kpi"><b>${value}</b><span>${label}</span></div>`).join('');
-  return `<div class="bom-summary">${kpis}</div><div class="constructor-note"><b>Assembly model:</b> ${s.policy.assemblyModel.replace('_',' ')} · <b>Interior multiplicity:</b> ${s.policy.interiorMembersPerEdge} member(s) per shared geometric edge · <b>Rim policy:</b> ${RIM_POLICIES[s.profile.rimPolicy].label} · <b>Panel outer area:</b> ${fmt(totalArea/10000,2)} m²</div><div class="tablewrap"><table><thead><tr><th>Panel family</th><th>Sheet</th><th>Qty</th><th>Type</th><th>Area cm²</th><th>Perim cm</th><th>Edge lengths cm</th><th>Saw bevels</th><th>Sample</th></tr></thead><tbody>${rows}</tbody></table></div>${assumptionsLedgerHtml(s)}<div class="note">Topology-validated geometric BOM with connection deductions unvalidated. Drawing-index rows remain available for panel traceability.</div>`;
+  const rows=fam.map(f=>{const c=f.sample; return `<tr class="row-selectable" onclick="window.__artemisSelectCell&&window.__artemisSelectCell('${c.id}')"><td><span class="component-mark">${f.mark}</span></td><td>${f.sheet}</td><td>${f.qty}</td><td>${c.type}</td><td>${fmt(c.outerArea,1)}</td><td>${fmt(f.totalOuterAreaCm2/10000,3)}</td><td>${fmt(f.totalVolumeCm3/1000000,4)}</td><td>${fmt(c.outerEdges.reduce((a,b)=>a+b,0),1)}</td><td>${c.outerEdges.map(x=>fmt(x,1)).join(' / ')}</td><td>${c.bevels.map(b=>fmt(b.sawBevel,1)+'°').join(' / ')}</td><td>${c.id}</td></tr>`;}).join('');
+  const hubRows=s.hubs.map(h=>`<tr><td><span class="component-mark">${h.mark}</span></td><td>${h.qty}</td><td>${h.valence}</td><td>${h.boundary?'boundary':'interior'}</td><td>${escapeHtml(h.connection)}</td><td>${escapeHtml(h.warning)}</td></tr>`).join('');
+  const kpis=[['Visible / total cells',`${summary.visibleCellCount} / ${summary.totalCellCount}`],['Hexagons total',summary.totalHexagons],['Pentagons total',summary.totalPentagons],['Panel families',summary.panelFamilyCount],['Surface area m²',fmt(summary.totalSurfaceAreaM2,3)],['Shell volume m³',fmt(summary.shellMaterialVolumeM3,4)],['Shell mass kg',fmt(summary.shellEstimatedMassKg,1)],['Physical members',summary.physicalMemberInstances],['Raw centerline m',fmt(summary.totalCenterlineLengthM,2)],['Net cut m',fmt(summary.totalPreliminaryNetCutLengthM,2)],['Net + waste m',fmt(summary.totalNetCutLengthWithWasteM,2)],['Member mass + waste kg',fmt(summary.estimatedMemberMassWithWasteKg,1)],['Validation',summary.validationStatus],['Confidence',summary.confidence],['Fingerprint',latestFingerprint.abbreviated],['Units','m · m² · m³ · kg']].map(([label,value])=>`<div class="bom-kpi"><b>${value}</b><span>${label}</span></div>`).join('');
+  return `<div class="constructor-note"><span class="status-pill">Preliminary BOM</span> <b>${escapeHtml(summary.constructorModelSummary)}</b><br>Production dimensions require engineering review and shop validation.</div><div class="bom-summary">${kpis}</div><div class="constructor-note"><b>Material / grade:</b> ${escapeHtml(s.profile.material)} · <b>Thickness:</b> ${fmt(summary.shellThicknessCm,2)} cm · <b>Density:</b> ${s.profile.materialDensityKgM3} kg/m³ · <b>Waste:</b> ${s.profile.wasteFactorPercent}% · <b>Assembly:</b> ${s.policy.assemblyModel.replace('_',' ')} · <b>Connection:</b> ${escapeHtml(s.policy.label)} · <b>Rim:</b> ${RIM_POLICIES[s.profile.rimPolicy].label} · <b>Panel outer area:</b> ${fmt(totalArea/10000,2)} m²</div><h2>Panel Families</h2><div class="tablewrap"><table><thead><tr><th>Panel family</th><th>Sheet</th><th>Qty</th><th>Type</th><th>Each area cm²</th><th>Family area m²</th><th>Family volume m³</th><th>Perim cm</th><th>Edge lengths cm</th><th>Saw bevels</th><th>Sample</th></tr></thead><tbody>${rows}</tbody></table></div><h2>Hub Schedule</h2><div class="tablewrap"><table><thead><tr><th>Hub mark</th><th>Qty</th><th>Valence</th><th>Class</th><th>Connection</th><th>Status</th></tr></thead><tbody>${hubRows}</tbody></table></div>${assumptionsLedgerHtml(s)}<div class="note"><b>Warnings:</b> Connection deductions and hub angular classifications are preliminary and unvalidated. Topology status: ${state.topology.validation.status}. Production dimensions require engineering review and shop validation.</div>`;
 }
 window.__artemisSelectCell=function(id){const c=getCellById(id); if(!c) return; selected=cellsGroup.children.find(m=>m.userData&&m.userData.id===id)||null; highlightSelected(); setTab('manufacturing');};
 function exportSelectedSVG(){const c=activeCell(); downloadText((c?panelMark(c):'component')+'_drawing.svg', svgForCell(c).replace('class="manufacturing-svg" ',''),'image/svg+xml');}
@@ -2061,8 +2198,8 @@ function exportSelectedDXF(){
   d.local.forEach((p,i)=>{const q=d.local[(i+1)%d.local.length]; dxf+=`0\nLINE\n8\n${d.panelMark}\n10\n${p.x.toFixed(4)}\n20\n${p.y.toFixed(4)}\n30\n0\n11\n${q.x.toFixed(4)}\n21\n${q.y.toFixed(4)}\n31\n0\n`;});
   dxf+='0\nENDSEC\n0\nEOF\n'; downloadText(d.panelMark+'_flat_pattern.dxf',dxf,'application/dxf');
 }
-async function exportManufacturingJSON(){const cs=constructorSummary();const payload={...(await exportManifest(cs)),app:`ARTEMIS Geometric Workbench ${APP_VERSION}`,params:params(),constructor:cs.profile,topology:topologyAuditObject(),memberSchedule:cs.members,memberInstances:cs.instances,hubSchedule:cs.hubs,summary:bomSummaryObject(cs),selected:activeCell()?flattenCell(activeCell()):null,panelFamilies:panelFamilies().map(f=>({family:f.mark,sheet:f.sheet,qty:f.qty,sample:f.sample.id,ids:f.ids})),components:state.cells.map(c=>flattenCell(c))};downloadText('artemis_geodesic_manufacturing_pack.json',JSON.stringify(payload,null,2),'application/json');}
-function exportManufacturingCSV(){let csv='cell_id,panel_mark,sheet,type,vertex,local_x_cm,local_y_cm,local_z_cm,global_x_cm,global_y_cm,global_z_cm,edge,length_cm,local_rotation_deg,azimuth_deg,elevation_deg,dihedral_deg,saw_bevel_deg\n';state.cells.forEach(c=>{const d=flattenCell(c); d.local.forEach((p,i)=>{const e=d.edges[i]; csv+=[d.id,d.panelMark,d.sheetId,d.type,p.label,fmt(p.x,4),fmt(p.y,4),fmt(p.z,4),fmt(p.global.x,4),fmt(p.global.y,4),fmt(p.global.z,4),e.edge,fmt(e.length,4),fmt(e.localAngle,3),fmt(e.azimuth,3),fmt(e.elevation,3),fmt(e.dihedral,3),fmt(e.sawBevel,3)].map(csvEsc).join(',')+'\n';});});downloadText('artemis_geodesic_coordinates_angles_bevels.csv',csv,'text/csv');}
+async function exportManufacturingJSON(){const cs=constructorSummary();const payload={...(await exportManifest(cs)),app:`ARTEMIS Geometric Workbench ${APP_VERSION}`,params:params(),constructor:cs.profile,topology:topologyAuditObject(),memberSchedule:cs.members,memberInstances:cs.instances,hubSchedule:cs.hubs,summary:bomSummaryObject(cs),selected:activeCell()?flattenCell(activeCell()):null,panelFamilies:panelFamilies().map(f=>({family:f.mark,sheet:f.sheet,qty:f.qty,type:f.sample.type,areaEachCm2:f.sample.outerArea,totalOuterAreaM2:f.totalOuterAreaCm2/10000,totalVolumeM3:f.totalVolumeCm3/1000000,sample:f.sample.id,ids:f.ids})),components:state.cells.map(c=>flattenCell(c))};downloadText('artemis_geodesic_manufacturing_pack.json',JSON.stringify(payload,null,2),'application/json');}
+async function exportManufacturingCSV(){const s=constructorSummary(),manifest=await exportManifest(s),summary=bomSummaryObject(s);let csv=Object.entries({label:manifest.label,configuration_fingerprint:manifest.configurationFingerprint,validation_status:summary.validationStatus,confidence:summary.confidence,material:summary.material,density_kg_m3:summary.materialDensityKgM3,waste_factor_percent:summary.wasteFactorPercent,total_cells:summary.totalCellCount,total_surface_area_m2:summary.totalSurfaceAreaM2,shell_volume_m3:summary.shellMaterialVolumeM3,member_count:summary.physicalMemberInstances,total_raw_member_length_m:summary.totalCenterlineLengthM,total_net_member_length_m:summary.totalPreliminaryNetCutLengthM,disclaimer:manifest.disclaimer}).map(([k,v])=>`# ${k},${csvEsc(v)}`).join('\n')+'\ncell_id,panel_mark,sheet,type,vertex,local_x_cm,local_y_cm,local_z_cm,global_x_cm,global_y_cm,global_z_cm,edge,length_cm,local_rotation_deg,azimuth_deg,elevation_deg,dihedral_deg,saw_bevel_deg\n';state.cells.forEach(c=>{const d=flattenCell(c); d.local.forEach((p,i)=>{const e=d.edges[i]; csv+=[d.id,d.panelMark,d.sheetId,d.type,p.label,fmt(p.x,4),fmt(p.y,4),fmt(p.z,4),fmt(p.global.x,4),fmt(p.global.y,4),fmt(p.global.z,4),e.edge,fmt(e.length,4),fmt(e.localAngle,3),fmt(e.azimuth,3),fmt(e.elevation,3),fmt(e.dihedral,3),fmt(e.sawBevel,3)].map(csvEsc).join(',')+'\n';});});downloadText('artemis_geodesic_coordinates_angles_bevels.csv',csv,'text/csv');}
 
 const GLOSSARY_ENTRIES = [
   {term:'Geodesic sphere',category:'Geometry',origin:'Mathematical / architectural',definition:'A sphere-like surface approximated by a network of subdivided triangular geometry or its dual hexagon/pentagon cells.',derivation:'The app subdivides an icosahedron, normalizes vertices onto a unit sphere, then scales them by the selected radius.',app:'subdivide() → normalized verts → buildGoldberg().',aliases:['geodesic dome','spherical subdivision']},
@@ -2176,20 +2313,22 @@ window.setGlossaryCategory=setGlossaryCategory;
 window.ARTEMIS_WORKBENCH_V6={
   async createProjectPayload(ui={}){
     const fingerprint=await refreshConfigurationFingerprint();
-    return {schemaVersion:'artemis-project-6.0-alpha',app:'ARTEMIS Geometric Workbench',version:APP_VERSION,savedAt:new Date().toISOString(),configurationFingerprint:fingerprint.full,params:params(),constructorParser:{sourceNotation:constructorProfile().sourceNotation,constructorNotation:constructorProfile().constructorNotation,parserVersion:PARSER_VERSION,recognizedTokens:latestParserResult.recognizedTokens,partiallySupportedTokens:latestParserResult.partiallySupportedTokens,unsupportedTokens:latestParserResult.unsupportedTokens,warnings:latestParserResult.warnings},constructor:constructorProfile(),fabrication:{connection:constructorProfile().connection,rimPolicy:constructorProfile().rimPolicy,sectionFamily:constructorProfile().sectionFamily,pipeWallThicknessMm:constructorProfile().pipeWallThicknessMm,materialDensityKgM3:constructorProfile().materialDensityKgM3},ui};
+    return {schemaVersion:'artemis-project-6.0-alpha',app:'ARTEMIS Geometric Workbench',version:APP_VERSION,savedAt:new Date().toISOString(),configurationFingerprint:fingerprint.full,params:params(),constructorParser:{sourceNotation:constructorProfile().sourceNotation,constructorNotation:constructorProfile().constructorNotation,parserVersion:PARSER_VERSION,recognizedTokens:latestParserResult.recognizedTokens,partiallySupportedTokens:latestParserResult.partiallySupportedTokens,unsupportedTokens:latestParserResult.unsupportedTokens,warnings:latestParserResult.warnings},constructor:constructorProfile(),fabrication:{connection:constructorProfile().connection,rimPolicy:constructorProfile().rimPolicy,sectionFamily:constructorProfile().sectionFamily,pipeWallThicknessMm:constructorProfile().pipeWallThicknessMm,materialDensityKgM3:constructorProfile().materialDensityKgM3,wasteFactorPercent:constructorProfile().wasteFactorPercent},ui};
   },
   loadProjectPayload(input={}){
     const legacyCandidates={...input,...(input.params||{}),...(input.constructor||{})};
     const migration=migrateLegacyConstructorConfig(legacyCandidates);
     const canonicalNotation=input.constructorParser?.constructorNotation||input.constructorParser?.sourceNotation||migration.config.constructorNotation||migration.config.sourceNotation;
     if(canonicalNotation){setValueSafe('constructorNotation',canonicalNotation);applyConstructorNotation(canonicalNotation,{autoApply:true});}
-    const constructor=input.constructor||{},fabrication=input.fabrication||{};if(constructor.polyhedron)setValueSafe('geoPolyhedron',constructor.polyhedron);if(constructor.subdivisionClass)setValueSafe('geoClass',constructor.subdivisionClass);if(constructor.hk)setValueSafe('geoHK',constructor.hk);if(constructor.subdivisionMethod)setValueSafe('geoMethod',constructor.subdivisionMethod);if(constructor.symmetry)setValueSafe('geoSymmetry',constructor.symmetry);if(constructor.domeFraction)setValueSafe('geoPart',constructor.domeFraction);if(constructor.fullerene)setValueSafe('geoFullerene',constructor.fullerene);if(constructor.alignBase)setValueSafe('geoAlign',constructor.alignBase);if(constructor.spin)setValueSafe('geoSpin',constructor.spin);if(constructor.beamWidthMm)setValueSafe('geoBeamW',constructor.beamWidthMm);if(constructor.beamThicknessMm)setValueSafe('geoBeamT',constructor.beamThicknessMm);if(constructor.pipeDiaMm)setValueSafe('geoPipeDia',constructor.pipeDiaMm);if(fabrication.connection||constructor.connection)setValueSafe('geoConnection',fabrication.connection||constructor.connection);if(fabrication.rimPolicy||constructor.rimPolicy)setValueSafe('geoRimPolicy',fabrication.rimPolicy||constructor.rimPolicy);if(fabrication.sectionFamily||constructor.sectionFamily)setValueSafe('geoSectionFamily',fabrication.sectionFamily||constructor.sectionFamily);if(constructor.material)setValueSafe('geoMaterial',constructor.material);if(fabrication.pipeWallThicknessMm||constructor.pipeWallThicknessMm)setValueSafe('geoPipeWall',fabrication.pipeWallThicknessMm||constructor.pipeWallThicknessMm);if(fabrication.materialDensityKgM3||constructor.materialDensityKgM3)setValueSafe('geoDensity',fabrication.materialDensityKgM3||constructor.materialDensityKgM3);
+    const constructor=input.constructor||{},fabrication=input.fabrication||{};if(constructor.polyhedron)setValueSafe('geoPolyhedron',constructor.polyhedron);if(constructor.subdivisionClass)setValueSafe('geoClass',constructor.subdivisionClass);if(constructor.hk)setValueSafe('geoHK',constructor.hk);if(constructor.subdivisionMethod)setValueSafe('geoMethod',constructor.subdivisionMethod);if(constructor.symmetry)setValueSafe('geoSymmetry',constructor.symmetry);if(constructor.domeFraction)setValueSafe('geoPart',constructor.domeFraction);if(constructor.fullerene)setValueSafe('geoFullerene',constructor.fullerene);if(constructor.alignBase)setValueSafe('geoAlign',constructor.alignBase);if(constructor.spin)setValueSafe('geoSpin',constructor.spin);if(constructor.beamWidthMm)setValueSafe('geoBeamW',constructor.beamWidthMm);if(constructor.beamThicknessMm)setValueSafe('geoBeamT',constructor.beamThicknessMm);if(constructor.pipeDiaMm)setValueSafe('geoPipeDia',constructor.pipeDiaMm);if(fabrication.connection||constructor.connection)setValueSafe('geoConnection',fabrication.connection||constructor.connection);if(fabrication.rimPolicy||constructor.rimPolicy)setValueSafe('geoRimPolicy',fabrication.rimPolicy||constructor.rimPolicy);if(fabrication.sectionFamily||constructor.sectionFamily)setValueSafe('geoSectionFamily',fabrication.sectionFamily||constructor.sectionFamily);if(constructor.material)setValueSafe('geoMaterial',constructor.material);if(fabrication.pipeWallThicknessMm||constructor.pipeWallThicknessMm)setValueSafe('geoPipeWall',fabrication.pipeWallThicknessMm||constructor.pipeWallThicknessMm);if(fabrication.materialDensityKgM3||constructor.materialDensityKgM3)setValueSafe('geoDensity',fabrication.materialDensityKgM3||constructor.materialDensityKgM3);if(fabrication.wasteFactorPercent!=null||constructor.wasteFactorPercent!=null)setValueSafe('geoWaste',fabrication.wasteFactorPercent??constructor.wasteFactorPercent);
     update();return migration;
   },
   migrateLegacyConstructorConfig,
   parseConstructorNotation,
   calculationConfiguration,
   refreshConfigurationFingerprint,
+  applyPalette(tokens,options){applyRenderingPalette(tokens,options);return {...visualPalette};},
+  getPalette(){return {...visualPalette};},
   getLiveAudit(){const s=constructorSummary();return {summary:bomSummaryObject(s),topology:{...state.topology.metrics,...state.topology.validation},fingerprint:latestFingerprint,parserDiagnostics:latestParserResult};}
 };
 
@@ -2197,10 +2336,10 @@ function drawBottom(){const b=$('tabBody'); if(activeTab==='diagrams') b.innerHT
 function setTab(t){activeTab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));drawBottom();}
 function drawAll(){drawKpis();drawInspector();drawHUD();drawBottom();renderLabelOverlay();}
 function update(){selected=null; rebuildScene();}
-async function exportJSON(){const s=constructorSummary(),payload={...(await exportManifest(s)),params:params(),constructor:s.profile,summary:{...bomSummaryObject(s),cells:state.cells.length,hexagons:state.hexCount,pentagons:state.pentCount,totalVolume:state.totalVol},topology:topologyAuditObject(),memberInstances:s.instances,hubSchedule:s.hubs,panelFamilies:panelFamilies().map(f=>({family:f.mark,sheet:f.sheet,qty:f.qty,sample:f.sample.id})),cells:state.cells.map(c=>({id:c.id,type:c.type,sides:c.sides,center:vecObj(c.centerDir),outerArea:c.outerArea,innerArea:c.innerArea,volume:c.volume,panelMark:panelMark(c),sheetId:sheetId(c),normal:vecObj(c.normal),edgeLengths:c.outerEdges,bevels:c.bevels,edgeRefs:c.edgeRefs.map(e=>({localEdgeIndex:e.localEdgeIndex,vertexAId:e.vertexAId,vertexBId:e.vertexBId,canonicalKey:e.canonicalKey}))}))};downloadText('goldberg_geodesic_hex_pent_dome.json',JSON.stringify(payload,null,2),'application/json');}
-async function exportCSV(){const manifest=await exportManifest(),meta=Object.entries({application_version:manifest.applicationVersion,bom_engine_version:manifest.bomEngineVersion,geometry_engine_version:manifest.geometryEngineVersion,parser_version:manifest.parserVersion,generated_at:manifest.generatedAt,configuration_fingerprint:manifest.configurationFingerprint,configuration_fingerprint_abbreviated:manifest.configurationFingerprintAbbreviated}).map(([k,v])=>`# ${k},${csvEsc(v)}`).join('\n');let csv=meta+'\nid,type,sides,center_y_over_R,outer_area_cm2,inner_area_cm2,volume_cm3\n';state.cells.forEach(c=>csv+=[c.id,c.type,c.sides,c.centerDir.y,c.outerArea,c.innerArea,c.volume].join(',')+'\n');downloadText('goldberg_geodesic_cell_schedule.csv',csv,'text/csv');}
+async function exportJSON(){const s=constructorSummary(),payload={...(await exportManifest(s)),params:params(),constructor:s.profile,summary:bomSummaryObject(s),topology:topologyAuditObject(),memberSchedule:s.members,memberInstances:s.instances,hubSchedule:s.hubs,panelFamilies:panelFamilies().map(f=>({family:f.mark,sheet:f.sheet,qty:f.qty,type:f.sample.type,areaEachCm2:f.sample.outerArea,totalOuterAreaM2:f.totalOuterAreaCm2/10000,totalVolumeM3:f.totalVolumeCm3/1000000,sample:f.sample.id,ids:f.ids})),cells:state.cells.map(c=>({id:c.id,type:c.type,sides:c.sides,center:vecObj(c.centerDir),outerArea:c.outerArea,innerArea:c.innerArea,volume:c.volume,panelMark:panelMark(c),sheetId:sheetId(c),normal:vecObj(c.normal),edgeLengths:c.outerEdges,bevels:c.bevels,edgeRefs:c.edgeRefs.map(e=>({localEdgeIndex:e.localEdgeIndex,vertexAId:e.vertexAId,vertexBId:e.vertexBId,canonicalKey:e.canonicalKey}))}))};downloadText('goldberg_geodesic_hex_pent_dome.json',JSON.stringify(payload,null,2),'application/json');}
+async function exportCSV(){const s=constructorSummary(),manifest=await exportManifest(s),summary=bomSummaryObject(s),meta=Object.entries({label:manifest.label,application_version:manifest.applicationVersion,bom_engine_version:manifest.bomEngineVersion,geometry_engine_version:manifest.geometryEngineVersion,parser_version:manifest.parserVersion,generated_at:manifest.generatedAt,configuration_fingerprint:manifest.configurationFingerprint,configuration_fingerprint_abbreviated:manifest.configurationFingerprintAbbreviated,constructor_model:summary.constructorModelSummary,visible_cells:summary.visibleCellCount,total_cells:summary.totalCellCount,total_hexagons:summary.totalHexagons,total_pentagons:summary.totalPentagons,panel_families:summary.panelFamilyCount,total_surface_area_m2:summary.totalSurfaceAreaM2,shell_volume_m3:summary.shellMaterialVolumeM3,shell_thickness_cm:summary.shellThicknessCm,material:summary.material,density_kg_m3:summary.materialDensityKgM3,waste_factor_percent:summary.wasteFactorPercent,member_count:summary.physicalMemberInstances,total_raw_member_length_m:summary.totalCenterlineLengthM,total_net_member_length_m:summary.totalPreliminaryNetCutLengthM,total_net_with_waste_m:summary.totalNetCutLengthWithWasteM,validation_status:summary.validationStatus,confidence:summary.confidence,disclaimer:manifest.disclaimer}).map(([k,v])=>`# ${k},${csvEsc(v)}`).join('\n');let csv=meta+'\nid,type,sides,center_y_over_R,outer_area_cm2,inner_area_cm2,volume_cm3\n';state.cells.forEach(c=>csv+=[c.id,c.type,c.sides,c.centerDir.y,c.outerArea,c.innerArea,c.volume].join(',')+'\n');downloadText('goldberg_geodesic_cell_schedule.csv',csv,'text/csv');}
 function snapshotPNG(){const a=document.createElement('a');a.href=renderer.domElement.toDataURL('image/png');a.download='goldberg_geodesic_dome_snapshot.png';a.click();}
-function playBuild(){if(playing)return;playing=true;let t=0;$('timeline').value=0;$('timelineN').value=0;const id=setInterval(()=>{t=Math.min(1,t+0.015);$('timeline').value=t;$('timelineN').value=t;rebuildScene();if(t>=1){clearInterval(id);playing=false;}},35);}
+function playBuild(){if(playing)return;playing=true;let t=0;$('timeline').value=0;$('timelineN').value=0;const speed=Math.max(.25,+$('animationSpeed').value||1);const id=setInterval(()=>{t=Math.min(1,t+0.015*speed);$('timeline').value=t;$('timelineN').value=t;rebuildScene();if(t>=1){clearInterval(id);playing=false;}},35);}
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);renderLabelOverlay();}
 try {
   state={radius:150};
@@ -2234,7 +2373,16 @@ try {
 (()=>{
 'use strict';
 const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
-const V59={left:268,right:292,material:'bronze',immersive:false,donationUrl:'https://www.agoraxai.com/support'};
+const V59={left:268,right:292,palette:'obsidian_brass',accent:'#d6ad67',immersive:false,donationUrl:'https://www.agoraxai.com/support'};
+const PALETTES={
+  obsidian_brass:{label:'Obsidian & Brass',ui:{page:'#07101c',panel:'#0d1928',border:'#77613a',text:'#f4f7fb',muted:'#aebdcb',accent:'#d6ad67',warning:'#ff9a62',control:'#15283d',controlText:'#f6fbff'},render:{sceneBackground:0x07101c,ground:0x101e30,standardCell:0x72b8d8,curvatureCell:0xd6ad67,wire:0xf5f7fa,selected:0xffd27a,selectedNormal:0x98f5b8,grid:0x7cd3ff,warning:0xff8c82}},
+  executive_ivory:{label:'Executive Ivory',ui:{page:'#e8e2d6',panel:'#fffaf0',border:'#88734e',text:'#231f19',muted:'#625b50',accent:'#9b6a20',warning:'#a43c25',control:'#ffffff',controlText:'#1d1b17'},render:{sceneBackground:0xe9e2d6,ground:0xcac1b0,standardCell:0xb6c5cf,curvatureCell:0xb67c28,wire:0x263540,selected:0xe1992d,selectedNormal:0x1b7655,grid:0x536b79,warning:0xa43c25}},
+  blueprint_cyan:{label:'Blueprint Cyan',ui:{page:'#031a2e',panel:'#062740',border:'#2fc9e8',text:'#eefcff',muted:'#9bd7e5',accent:'#39ddff',warning:'#ffb85c',control:'#0b3652',controlText:'#f4fdff'},render:{sceneBackground:0x031a2e,ground:0x07314b,standardCell:0x28c7e8,curvatureCell:0xffbf5e,wire:0xd8fbff,selected:0xffffff,selectedNormal:0x74ffce,grid:0x2fc9e8,warning:0xffb85c}},
+  fabrication_contrast:{label:'High-Contrast Fabrication',ui:{page:'#050505',panel:'#111111',border:'#ffd400',text:'#ffffff',muted:'#d5d5d5',accent:'#ffd400',warning:'#ff4b2b',control:'#ffffff',controlText:'#080808'},render:{sceneBackground:0x050505,ground:0x202020,standardCell:0xf2f2f2,curvatureCell:0xffd400,wire:0x111111,selected:0xff4b2b,selectedNormal:0x00ff9d,grid:0xffffff,warning:0xff4b2b}},
+  survey_white:{label:'Survey White',ui:{page:'#edf2f4',panel:'#ffffff',border:'#49616e',text:'#13232c',muted:'#526570',accent:'#176b87',warning:'#b23a2b',control:'#f8fbfc',controlText:'#10232d'},render:{sceneBackground:0xf1f5f6,ground:0xd8e0e3,standardCell:0x9db8c4,curvatureCell:0xd98b32,wire:0x263b45,selected:0x177999,selectedNormal:0x087a50,grid:0x49616e,warning:0xb23a2b}},
+  night_inspection:{label:'Night Inspection',ui:{page:'#010606',panel:'#071211',border:'#46ff9b',text:'#eefff6',muted:'#9bc9b1',accent:'#46ff9b',warning:'#ff6b5f',control:'#0c2420',controlText:'#effff6'},render:{sceneBackground:0x010606,ground:0x071b18,standardCell:0x1a8f70,curvatureCell:0xffaa3d,wire:0xb7ffdc,selected:0x46ff9b,selectedNormal:0x46ff9b,grid:0x35c9ff,warning:0xff6b5f}}
+};
+const LEGACY_PALETTES={bronze:'obsidian_brass',steel:'night_inspection',technical:'survey_white',glass:'blueprint_cyan',original:'obsidian_brass'};
 function toast(msg){const el=q('#v59Toast');if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1800)}
 function dispatch(el,type='change'){if(!el)return;el.dispatchEvent(new Event(type,{bubbles:true}))}
 function value(id,v){const el=document.getElementById(id);if(!el)return false;el.value=v;dispatch(el);return true}
@@ -2243,17 +2391,17 @@ function openModal(id){qa('.v59-modal.open').forEach(x=>x.classList.remove('open
 function closeModals(){qa('.v59-modal.open').forEach(x=>x.classList.remove('open'))}
 function setWidths(l,r,persist=true){V59.left=Math.max(220,Math.min(420,l));V59.right=Math.max(260,Math.min(520,r));document.documentElement.style.setProperty('--v59-left',V59.left+'px');document.documentElement.style.setProperty('--v59-right',V59.right+'px');if(persist)try{localStorage.setItem('artemis_v59_widths',JSON.stringify({left:V59.left,right:V59.right}))}catch(e){};requestAnimationFrame(()=>{try{resize()}catch(e){window.dispatchEvent(new Event('resize'))}})}
 function splitter(el,side){let startX,start;const move=e=>{const x=e.touches?e.touches[0].clientX:e.clientX;const delta=x-startX;setWidths(side==='left'?start+delta:V59.left,side==='right'?start-delta:V59.right,false)};const up=()=>{el.classList.remove('dragging');window.removeEventListener('mousemove',move);window.removeEventListener('mouseup',up);window.removeEventListener('touchmove',move);window.removeEventListener('touchend',up);setWidths(V59.left,V59.right,true)};const down=e=>{e.preventDefault();startX=e.touches?e.touches[0].clientX:e.clientX;start=side==='left'?V59.left:V59.right;el.classList.add('dragging');window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',up)};el.addEventListener('mousedown',down);el.addEventListener('touchstart',down,{passive:false});el.addEventListener('dblclick',()=>setWidths(268,292,true))}
-function applyExecutive(){document.body.classList.add('v59-ready');document.body.classList.remove('v59-immersive','v59-left-open','v59-right-open','layout-bottom-focus','layout-fullscreen-stage');try{applyLayout({leftCollapsed:false,rightCollapsed:false,bottomCollapsed:true,fullscreen:false,bottomFocus:false},false)}catch(e){};value('cellLabelMode','off');value('edgeLabelMode','off');q('.v59-version').textContent='Workbench v6.0.0-alpha · Executive';toast('Executive view')}
-function applyEngineering(){document.body.classList.add('v59-ready');document.body.classList.remove('v59-immersive');try{applyLayout({bottomCollapsed:false},false)}catch(e){};document.getElementById('bottom')?.style.setProperty('display','block','important');q('.v59-version').textContent='Workbench v6.0.0-alpha · Engineering';toast('Engineering view')}
+function applyExecutive(){document.body.classList.add('v59-ready');document.body.classList.remove('v59-engineering','v59-immersive','v59-left-open','v59-right-open','layout-bottom-focus','layout-fullscreen-stage');try{applyLayout({leftCollapsed:false,rightCollapsed:false,bottomCollapsed:true,fullscreen:false,bottomFocus:false},false)}catch(e){};value('cellLabelMode','off');value('edgeLabelMode','off');q('.v59-version').textContent='Workbench v6.0.0-alpha · Executive';toast('Executive view')}
+function applyEngineering(){document.body.classList.add('v59-ready','v59-engineering');document.body.classList.remove('v59-immersive');try{applyLayout({bottomCollapsed:false},false)}catch(e){};document.getElementById('bottom')?.style.setProperty('display','block','important');q('.v59-version').textContent='Workbench v6.0.0-alpha · Engineering';toast('Engineering view')}
 function applyDiagram(tab='diagrams'){applyEngineering();const btn=q(`.tab[data-tab="${tab}"]`);btn?.click();try{layoutState.bottomCollapsed=false;layoutState.bottomFocus=true;applyLayout(layoutState,false)}catch(e){};toast(tab==='schedule'?'Schedule workspace':'Diagram workspace')}
 function applyImmersive(){V59.immersive=!document.body.classList.contains('v59-immersive');document.body.classList.toggle('v59-immersive',V59.immersive);document.body.classList.toggle('v59-gallery',V59.immersive);if(V59.immersive){q('.v59-version').textContent='Workbench v6.0.0-alpha · Immersive Gallery';try{controls.autoRotate=true;controls.autoRotateSpeed=.55}catch(e){};click('viewFit')}else{q('.v59-version').textContent='Workbench v6.0.0-alpha · Executive';try{controls.autoRotate=false}catch(e){}};requestAnimationFrame(()=>{try{resize()}catch(e){}})}
 function populateModel(){const src=document.getElementById('geoPolyhedron'),dst=q('#v59Model');if(!src||!dst)return;dst.innerHTML=src.innerHTML;dst.value=src.value;dst.onchange=()=>{src.value=dst.value;dispatch(src);toast(dst.options[dst.selectedIndex]?.text||'Model changed')};src.addEventListener('change',()=>dst.value=src.value)}
-function applyMaterial(name){V59.material=name;const mode=document.getElementById('cellColorMode');if(mode){const candidates={original:['type','panel','level'],bronze:['type'],steel:['level'],technical:['regularity'],glass:['type']};const found=(candidates[name]||[]).find(v=>[...mode.options].some(o=>o.value===v));if(found){mode.value=found;dispatch(mode)}}document.body.dataset.v59Material=name;const canvas=q('#stage canvas');if(canvas)canvas.style.filter=name==='technical'?'grayscale(1) brightness(1.35)':name==='steel'?'saturate(.25) brightness(.78)':name==='glass'?'saturate(.65) contrast(1.1)':name==='bronze'?'sepia(.28) saturate(1.25)':'none';toast(q('#v59Material').selectedOptions[0].text)}
+function applyMaterial(name,options={}){name=LEGACY_PALETTES[name]||name;const palette=PALETTES[name]||PALETTES.obsidian_brass;V59.palette=name;V59.accent=options.accent||palette.ui.accent;const ui={...palette.ui,accent:V59.accent},root=document.documentElement;Object.entries({page:ui.page,panel:ui.panel,border:ui.border,text:ui.text,muted:ui.muted,accent:ui.accent,warning:ui.warning,control:ui.control,controlText:ui.controlText}).forEach(([key,val])=>root.style.setProperty(`--palette-${key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())}`,val));root.style.setProperty('--v59-gold',ui.accent);document.body.dataset.v59Palette=name;const canvas=q('#stage canvas');if(canvas)canvas.style.filter='none';const render={...palette.render,selected:parseInt(V59.accent.slice(1),16)};window.ARTEMIS_WORKBENCH_V6?.applyPalette(render);const select=q('#v59Material'),color=q('#v59Color');if(select)select.value=name;if(color)color.value=V59.accent;if(!options.silent)toast(palette.label)}
 function toggleLabels(){const el=document.getElementById('cellLabelMode');if(!el)return;el.value=el.value==='off'?'id':'off';dispatch(el);toast(el.value==='off'?'Labels off':'Labels on')}
 function toggleEdges(){const el=document.getElementById('edgeColorMode');if(!el)return;const opts=[...el.options].map(o=>o.value);el.value=el.value==='none'?(opts.includes('length')?'length':opts[0]):(opts.includes('none')?'none':opts[0]);dispatch(el);toast(el.value==='none'?'Edge display reduced':'Edge display on')}
 function screenshot(){try{const a=document.createElement('a');a.download='artemis-workbench-v6-alpha.png';a.href=renderer.domElement.toDataURL('image/png');a.click();toast('Screenshot saved')}catch(e){toast('Screenshot unavailable')}}
-async function saveProject(){const api=window.ARTEMIS_WORKBENCH_V6,payload=api?await api.createProjectPayload({left:V59.left,right:V59.right,material:V59.material,cellLabels:document.getElementById('cellLabelMode')?.value||'off'}):{app:'ARTEMIS Geometric Workbench',version:'6.0.0-alpha',params:typeof params==='function'?params():{}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='artemis-project-v6-alpha.json';a.click();URL.revokeObjectURL(a.href);toast('Project JSON saved')}
-function loadProjectFile(file){const rd=new FileReader();rd.onload=()=>{try{const p=JSON.parse(rd.result);const migration=window.ARTEMIS_WORKBENCH_V6?.loadProjectPayload(p);const x=p.params||{};Object.entries(x).forEach(([k,v])=>{const el=document.getElementById(k);if(el&&['string','number'].includes(typeof v)){el.value=v;dispatch(el)}});if(p.ui){setWidths(p.ui.left||268,p.ui.right||292,true);if(p.ui.material){q('#v59Material').value=p.ui.material;applyMaterial(p.ui.material)};value('cellLabelMode',p.ui.cellLabels||'off')}try{update()}catch(e){};if(migration?.notices?.length)toast(migration.notices[0]);else toast('Project loaded')}catch(e){console.error(e);alert('This project JSON could not be loaded.')}};rd.readAsText(file)}
+async function saveProject(){const api=window.ARTEMIS_WORKBENCH_V6,payload=api?await api.createProjectPayload({left:V59.left,right:V59.right,palette:V59.palette,accentColor:V59.accent,cellLabels:document.getElementById('cellLabelMode')?.value||'off'}):{app:'ARTEMIS Geometric Workbench',version:'6.0.0-alpha',params:typeof params==='function'?params():{}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='artemis-project-v6-alpha.json';a.click();URL.revokeObjectURL(a.href);toast('Project JSON saved')}
+function loadProjectFile(file){const rd=new FileReader();rd.onload=()=>{try{const p=JSON.parse(rd.result);const migration=window.ARTEMIS_WORKBENCH_V6?.loadProjectPayload(p);const x=p.params||{};Object.entries(x).forEach(([k,v])=>{const el=document.getElementById(k);if(el&&['string','number'].includes(typeof v)){el.value=v;dispatch(el);const paired=document.getElementById(k+'N');if(paired)paired.value=v}});if(p.ui){setWidths(p.ui.left||268,p.ui.right||292,true);applyMaterial(p.ui.palette||p.ui.material||'obsidian_brass',{accent:p.ui.accentColor,silent:true});value('cellLabelMode',p.ui.cellLabels||'off')}else applyMaterial('obsidian_brass',{silent:true});try{update()}catch(e){};if(migration?.notices?.length)toast(migration.notices[0]);else toast('Project loaded')}catch(e){console.error(e);alert('This project JSON could not be loaded.')}};rd.readAsText(file)}
 const commands=[
 ['Executive view','1',applyExecutive],['Engineering view','2',applyEngineering],['Diagram workspace','3',()=>applyDiagram('diagrams')],['Immersive Gallery','I',applyImmersive],['Fit model','F',()=>click('viewFit')],['Reset camera','R',()=>click('viewIso')],['Toggle labels','L',toggleLabels],['Toggle edges','W',toggleEdges],['Schedule','S',()=>applyDiagram('schedule')],['Glossary','/',()=>applyDiagram('glossary')],['Save project JSON','⌘S',saveProject],['Load project JSON','⌘O',()=>q('#v59ProjectFile').click()],['Save screenshot','',screenshot],['Support ARTEMIS','$1',()=>openModal('#v59DonationModal')],['Keyboard shortcuts','?',()=>openModal('#v59ShortcutModal')]
 ];
@@ -2265,9 +2413,18 @@ function setupDonation(){qa('#v59AmountPresets button').forEach(b=>b.onclick=()=
   "_blank",
   "noopener,noreferrer"
 );if(!supportWindow)window.location.assign(url)}}
-function simplifyControls(){const controls=q('#left .controls');if(!controls)return;const children=[...controls.children];if(children.some(x=>x.classList.contains('v59-simple-group')))return;const buckets=[['Model & Geometry',[]],['Appearance',[]],['View',[]],['Output & Advanced',[]]];children.forEach((el,i)=>{const t=el.textContent.toLowerCase();let b=3;if(/frequency|radius|thickness|dome cut|view mode|cell drawing/.test(t))b=0;else if(/color|label|sequence/.test(t))b=1;else if(/layout|camera|view/.test(t))b=2;buckets[b][1].push(el)});controls.innerHTML='';buckets.forEach(([name,els],idx)=>{if(!els.length)return;const g=document.createElement('section');g.className='v59-simple-group'+(idx>1?' collapsed':'');const head=document.createElement('button');head.type='button';head.innerHTML=`<span>${name}</span><span class="chev">⌄</span>`;const c=document.createElement('div');c.className='content';els.forEach(e=>c.appendChild(e));head.onclick=()=>g.classList.toggle('collapsed');g.append(head,c);controls.appendChild(g)})}
+function simplifyControls(){const controls=q('#left .controls');if(!controls)return;const children=[...controls.children];if(children.some(x=>x.classList.contains('v59-simple-group')))return;const buckets=[['Model & Geometry',[]],['Appearance',[]],['View & Playback',[]],['Output & Advanced',[]]];children.forEach((el,i)=>{const t=el.textContent.toLowerCase();let b=3;if(/frequency|radius|thickness|dome cut|view mode|cell drawing/.test(t))b=0;else if(/color|label|sequence/.test(t))b=1;else if(/layout|camera|view|time slicer|animation speed/.test(t))b=2;buckets[b][1].push(el)});controls.innerHTML='';buckets.forEach(([name,els],idx)=>{if(!els.length)return;const g=document.createElement('section');g.className='v59-simple-group'+(idx>2?' collapsed':'');const head=document.createElement('button');head.type='button';head.setAttribute('aria-expanded',idx>2?'false':'true');head.innerHTML=`<span>${name}</span><span class="chev">⌄</span>`;const c=document.createElement('div');c.className='content';els.forEach(e=>c.appendChild(e));head.onclick=()=>{g.classList.toggle('collapsed');head.setAttribute('aria-expanded',String(!g.classList.contains('collapsed')))};g.append(head,c);controls.appendChild(g)})}
 function onKey(e){const tag=(e.target.tagName||'').toLowerCase();if(['input','textarea','select'].includes(tag)||e.target.isContentEditable){if(e.key==='Escape')e.target.blur();return}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();return commandPalette()}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='s'){e.preventDefault();return saveProject()}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='o'){e.preventDefault();return q('#v59ProjectFile').click()}if(e.key==='Escape'){closeModals();document.body.classList.remove('v59-left-open','v59-right-open');return}const k=e.key.toLowerCase();if(k==='1')applyExecutive();else if(k==='2')applyEngineering();else if(k==='3')applyDiagram('diagrams');else if(k==='m')q('#v59Model').focus();else if(k==='g')q('#v59Scale').focus();else if(k==='c')q('#v59Material').focus();else if(k==='l')toggleLabels();else if(k==='w')toggleEdges();else if(k==='f')click('viewFit');else if(k==='r')click('viewIso');else if(k==='d')applyDiagram('diagrams');else if(k==='s')applyDiagram('schedule');else if(k==='/'){e.preventDefault();applyDiagram('glossary');setTimeout(()=>document.getElementById('glossarySearchBox')?.focus(),80)}else if(k==='?')openModal('#v59ShortcutModal')}
-function init(){try{const saved=JSON.parse(localStorage.getItem('artemis_v59_widths')||'{}');V59.left=saved.left||268;V59.right=saved.right||292}catch(e){};setWidths(V59.left,V59.right,false);document.body.classList.add('v59-ready');populateModel();simplifyControls();splitter(q('#v59LeftSplitter'),'left');splitter(q('#v59RightSplitter'),'right');qa('[data-v59-action]').forEach(b=>b.onclick=()=>action(b.dataset.v59Action));qa('[data-v59-close]').forEach(b=>b.onclick=closeModals);qa('.v59-modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals()}));q('#v59Support').onclick=()=>openModal('#v59DonationModal');q('#v59LeftToggle').onclick=()=>document.body.classList.toggle('v59-left-open');q('#v59RightToggle').onclick=()=>document.body.classList.toggle('v59-right-open');q('#v59Scale').onchange=e=>{value('radius',e.target.value);const n=document.getElementById('radiusN');if(n){n.value=e.target.value;dispatch(n)};toast(e.target.selectedOptions[0].text)};q('#v59Material').onchange=e=>applyMaterial(e.target.value);q('#v59Color').oninput=e=>document.documentElement.style.setProperty('--v59-gold',e.target.value);q('#v59ProjectFile').onchange=e=>e.target.files[0]&&loadProjectFile(e.target.files[0]);setupDonation();document.addEventListener('keydown',onKey);applyExecutive();setTimeout(()=>{try{q('#artemisSplash')?.remove()}catch(e){};click('viewFit')},650)}
+function init(){
+  try{const saved=JSON.parse(localStorage.getItem('artemis_v59_widths')||'{}');V59.left=saved.left||268;V59.right=saved.right||292}catch(e){}
+  setWidths(V59.left,V59.right,false);document.body.classList.add('v59-ready');populateModel();simplifyControls();splitter(q('#v59LeftSplitter'),'left');splitter(q('#v59RightSplitter'),'right');
+  qa('[data-v59-action]').forEach(b=>b.onclick=()=>action(b.dataset.v59Action));qa('[data-v59-close]').forEach(b=>b.onclick=closeModals);qa('.v59-modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModals()}));
+  q('#v59Support').onclick=()=>openModal('#v59DonationModal');q('#v59LeftToggle').onclick=()=>document.body.classList.toggle('v59-left-open');q('#v59RightToggle').onclick=()=>document.body.classList.toggle('v59-right-open');
+  q('#v59Scale').onchange=e=>{value('radius',e.target.value);const n=document.getElementById('radiusN');if(n){n.value=e.target.value;dispatch(n)};toast(e.target.selectedOptions[0].text)};
+  q('#v59Material').onchange=e=>applyMaterial(e.target.value);
+  q('#v59Color').oninput=e=>applyMaterial(V59.palette,{accent:e.target.value,silent:true});
+  q('#v59ProjectFile').onchange=e=>e.target.files[0]&&loadProjectFile(e.target.files[0]);setupDonation();document.addEventListener('keydown',onKey);applyMaterial('obsidian_brass',{silent:true});applyExecutive();setTimeout(()=>{try{q('#artemisSplash')?.remove()}catch(e){};click('viewFit')},650);
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,20));else setTimeout(init,20);
 })();
 </script>
