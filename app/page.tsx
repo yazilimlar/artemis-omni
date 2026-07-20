@@ -166,9 +166,14 @@ export default function HomePage() {
             title="Executive proof, without publishing raw demos"
             description="Labs now works as a public-safe proof library: narrative pages, status badges, system diagrams, and boundary language first; raw private HTML demos stay out of public routes."
             actions={
-              <Button href="/labs" variant="outline">
-                Open Labs
-              </Button>
+              <div className="flex flex-wrap gap-3">
+                <Button href="/labs" variant="outline">
+                  Open Labs
+                </Button>
+                <Button href="/workbench" variant="ghost">
+                  Geometric Workbench
+                </Button>
+              </div>
             }
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">

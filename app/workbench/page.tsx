@@ -80,7 +80,7 @@ export default function WorkbenchProductPage() {
   return (
     <>
       <PageHero
-        eyebrow="Product · Public Technical Preview · v5.9"
+        eyebrow="Product · Public Technical Preview · v6 Alpha"
         title="ARTEMIS Geometric Workbench"
         description="Parametric geometry and fabrication intelligence — geodesic Goldberg domes, the complete Platonic and Archimedean families, Catalan duals, and classified fabrication data, running entirely in your browser."
       >
