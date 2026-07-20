@@ -31,6 +31,62 @@ Every visible or serialized term should be assigned one category:
 7. Marketing copy must not claim exact compatibility with a named third-party system unless that claim is documented and approved.
 8. Removal of a visible label must not silently change geometry, connection assumptions, or BOM behavior.
 
+## Sprint 0B audit scope and method
+
+The grounded sweep covered the canonical runtime (`public/labs/geometric-workbench/v5-8/index.html` and `v6-integrity.js`), the public product page, the focused integrity tests, and Workbench documentation. A repository-wide source scan excluded dependencies, build output, Git data, and the archived backup. The only matches outside the Workbench concern were generic Three.js `bevelEnabled: false` options in two standalone Atlas/Troy files; those are unrelated internal implementation vocabulary.
+
+Stable identifiers below are authoritative locators. Line numbers may help navigation but are not the audit identity.
+
+## Grounded occurrence classification
+
+| Term | Generic technical vocabulary | Public-facing UI | Glossary / documentation | Parser / import compatibility | Export output | Internal implementation | Provenance / attribution finding |
+|---|---|---|---|---|---|---|---|
+| Kruschke | No disposition established as generic | `#constructorNotation` default; `#presetKruschke`; `#geoMethod` option; parser diagnostics can echo the token | `GLOSSARY_ENTRIES` item `Kruschke method`; `V6_BOM_INTEGRITY.md`; Workbench audit docs | `CONSTRUCTOR_TOKEN_SUPPORT.subdivisionMethod`; `CONSTRUCTOR_NOTATION_PRESETS.kruschke`; `parseConstructorNotation()` exact token branch; legacy constructor fields migrate through `migrateLegacyConstructorConfig()` | Can flow through `createProjectPayload()`, `exportConstructorJSON()`, `exportJSON()`, and `exportManufacturingJSON()` via constructor notation/profile; glossary JSON/CSV/print exports emit the glossary entry | Lowercase value `kruschke` is stored as `constructorProfile().subdivisionMethod`; `resetDefaults()` and preset wiring select it; integrity fixtures exercise it | **Provenance-sensitive.** The UI attributes the method to David Kruschke, but the repository contains no source/license/permission record or independently validated solver. It is not currently confined to legacy import. |
+| GoodKarma | No evidence that this is generic fabrication vocabulary | `#constructorNotation` default; `#geoConnection` option; `CONNECTION_SYSTEMS.goodkarma.label` appears in constructor/BOM output; parser warnings can echo it | `GLOSSARY_ENTRIES` item `GoodKarma connection`; `V6_BOM_INTEGRITY.md`; Workbench audit docs | `CONSTRUCTOR_TOKEN_SUPPORT.connection`; `CONSTRUCTOR_NOTATION_PRESETS.kruschke`; `parseConstructorNotation()` connection branch; accepted case-insensitively as partial support | Can flow through project, constructor, BOM, manufacturing, member/strut, and glossary outputs via `constructorProfile().connection`, policy labels, instances, schedules, and glossary entries | `CONNECTION_SYSTEMS.goodkarma`; `connectionDeductionCm()` case `goodkarma`; `memberInstances()` applies panel-frame multiplicity; `resetDefaults()` selects it | **Provenance-sensitive.** No provenance/license record was found. It is also behavior-bearing: it selects a two-members-per-interior-edge assembly model and a deduction proxy, so later naming work must preserve semantics. |
+| Class I | Established geodesic subdivision taxonomy | `#geoClass` option `I` | Combined `GLOSSARY_ENTRIES` item `Class I / II / III`; feature/BOM docs | Stored through constructor profile/project load; no dedicated parser token branch was found for textual `Class_I` | Constructor/project/BOM/manufacturing outputs may serialize `subdivisionClass: "I"` | Default in `constructorProfile()` / `resetDefaults()`; presently constructor metadata rather than a distinct audited renderer branch | Generic technical vocabulary; technically appropriate, but the UI currently exposes the technical label without a plain-language companion. |
+| Class II | Established geodesic subdivision taxonomy | `#geoClass` option `II` (`Class II / Triacon`) | Combined glossary item and Workbench docs | Stored through constructor profile/project load; no dedicated `Class_II` parser branch was found | Same constructor/profile serialization path as Class I | Value is retained as metadata; no Class-II-specific geometry branch was found in `buildGoldberg()` | Generic technical vocabulary. `Triacon` was observed but is outside this sprint's requested term set and should receive a later provenance check. |
+| Class III | Established geodesic h,k taxonomy | `#presetOcto`; `#geoClass` option `III`; `#geoHK`; constructor profile display | Combined glossary item; `V6_BOM_INTEGRITY.md`; Workbench docs | `CONSTRUCTOR_TOKEN_SUPPORT.classIII`; `CONSTRUCTOR_NOTATION_PRESETS.octo`; `parseConstructorNotation()` consumes `Class_III_h,k` and warns that equivalence is unvalidated | Constructor/project/BOM/manufacturing outputs may serialize `subdivisionClass: "III"` and `hk` | Parser and metadata handling exist; no independently validated Class-III renderer branch was found | Generic technical vocabulary, not a removal target. Accuracy risk is implementation equivalence, not naming ownership. |
+| dual cells / dual cell | Established computational-geometry vocabulary | Header subline/badge; `#geoPolyhedron` help; top-plan SVG label; construction/schedule copy | `GLOSSARY_ENTRIES` items `Dual cells`, `Hexagon cell`, and `Pentagon cell`; `V6_BOM_INTEGRITY.md`; Workbench docs | Not a legacy parser alias | Appears in visible drawing/shop copy generated for output; no provenance-sensitive filename was found | `buildGoldberg()` constructs the geometric dual from incident triangle centers; stable topology method is `goldberg_shared_triangle_index` | Generic technical vocabulary. It may remain in technical contexts; “Polygon Cells” can later serve as a plain-language UI label without changing dual construction semantics. |
+| dihedral | Established geometry/fabrication vocabulary | Inspector/detail tables, strut schedule, shop cards, manufacturing panels, and construction copy | `GLOSSARY_ENTRIES` item `Dihedral angle`; `V6_BOM_INTEGRITY.md`; product-page copy; Workbench docs | Not a parser compatibility term | JSON fields `dihedral` / `dihedralDeg`, CSV columns `dihedral_deg`, shop-card tables, and manufacturing output | `bevels[].dihedral`; topology `dihedralSamples`; `memberInstances().dihedralDeg`; solid/Goldberg side-wall calculations | Generic technical vocabulary. Retain in calculation and technical export metadata; a later UI alias must not obscure the exact angle definition. |
+| bevel | Established fabrication vocabulary | Edge color/label options, inspector/detail tables, assumptions ledger, shop cards, BOM panel families, warnings, and notes | `GLOSSARY_ENTRIES` item `Saw bevel`; `V6_BOM_INTEGRITY.md`; product-page copy; Workbench docs | Not a parser compatibility term | JSON `bevels` / `sawBevelDeg`, CSV `saw_bevel_deg`, SVG/shop text, and filename `artemis_geodesic_coordinates_angles_bevels.csv` | `BOM_ASSUMPTIONS.bevelGroupingToleranceDeg`; `bevelSamples`; `sawBevel`; grouping keys and schedule fields | Generic fabrication vocabulary. It is technically appropriate internally and in explicit engineering exports; plain-language UI treatment can be considered later. |
+
+## Surface-specific findings
+
+### Public UI
+
+- Provenance-sensitive names are currently visible, not merely accepted on import. The exact stable surfaces are `#constructorNotation`, `#presetKruschke`, `#geoMethod`, `#geoConnection`, parser diagnostics, `CONNECTION_SYSTEMS.goodkarma.label`, and the matching `GLOSSARY_ENTRIES` records.
+- Class I/II/III, dual, dihedral, and bevel are used in technically recognizable contexts. Sprint 0B does not replace them.
+- The public product page contains dihedral/bevel language but no Kruschke or GoodKarma occurrence.
+
+### Parser and import compatibility
+
+- `parseConstructorNotation()` performs case-insensitive exact-token comparisons after underscore tokenization for `kruschke` and `goodkarma`; the focused tests now lock this behavior.
+- `GoodKarma` is classified `partial` and generates an unvalidated-proxy warning. `Kruschke` is classified `compatible`, although renderer equivalence is described as engine-dependent.
+- `migrateLegacyConstructorConfig()` migrates field names `acidomeHash` / `sourceHash`; it does **not** normalize the Kruschke or GoodKarma token values to neutral ARTEMIS IDs.
+- The proposed `LEGACY_TOKEN_ALIASES` and `ARTEMIS_PUBLIC_LABELS` registries below do not exist in runtime code as of Sprint 0B.
+
+### Export output
+
+- Download filenames and the public product-page copy contain neither provenance-sensitive name; a regression guard now enforces that boundary.
+- Payload hygiene is **not complete**. Constructor notation, profile values, connection labels, schedules, parser diagnostics, and glossary exports can still emit `Kruschke`, `kruschke`, `GoodKarma`, or `goodkarma` through `createProjectPayload()`, `exportConstructorJSON()`, `exportJSON()`, `exportManufacturingJSON()`, `exportStrutCSV()`, and glossary exporters.
+- Dihedral and bevel fields are intentional technical output and should not be globally removed.
+
+### Internal implementation
+
+- `GoodKarma` is not label-only: `CONNECTION_SYSTEMS.goodkarma`, `connectionDeductionCm()`, and `memberInstances()` change member multiplicity and deduction behavior. A safe future rename requires a compatibility alias mapped to a stable behavior ID.
+- Kruschke and Class I/II/III are stored in constructor metadata; this audit did not find a dedicated Kruschke, Class II, or Class III geometry algorithm branch in `buildGoldberg()`. The UI/parser already warns about equivalence limits for Class III, while Kruschke remains more confidently labeled than the implementation evidence supports.
+- Dihedral, bevel, and dual-cell names correspond directly to implemented geometry/topology fields and are not provenance-removal candidates.
+
+## Risk register
+
+| Risk | Severity | Evidence | Sprint 0B disposition |
+|---|---:|---|---|
+| Kruschke is visible and serializable without a repository provenance record | High | Controls/preset/glossary plus constructor/project/export paths | Documented; behavior frozen; provenance and naming implementation deferred. |
+| GoodKarma is visible, serializable, and behavior-bearing without a provenance record | Critical | Control/glossary plus connection policy, multiplicity, deduction, schedules, and exports | Documented; do not rename by string replacement; future stable-ID migration required. |
+| Aspirational audit rules claim neutral aliases that runtime does not implement | High | No runtime `LEGACY_TOKEN_ALIASES` or `ARTEMIS_PUBLIC_LABELS` constant exists | Explicitly marked proposed, not current behavior. |
+| Class taxonomy suggests renderer variants not independently verified | Medium | Constructor metadata/parser exists; no matching renderer branches found | Retain technical terms with qualification; add algorithm-equivalence tests before stronger claims. |
+| Generic technical terms could be over-corrected during naming work | Medium | dihedral/bevel/dual fields are calculation- and export-bearing | Protected by this classification; no global replacement. |
+
 ## Initial terminology register
 
 | Term | Category | Public UI decision | Internal decision | Required action |
@@ -136,17 +192,17 @@ The naming sweep must cover:
 
 ## Audit checklist
 
-- [ ] Search source for every term in the register.
-- [ ] Record file, line/function, surface, and behavior for every match.
+- [x] Search canonical runtime, product page, tests, documentation, and repository source for every requested term.
+- [x] Record stable file/function/constant/element loci, surface class, and behavior for each occurrence family.
 - [ ] Separate display labels from stable internal IDs.
 - [ ] Introduce exact-token alias mapping.
 - [ ] Replace public labels using the centralized registry.
 - [ ] Update glossary and examples.
 - [ ] Update exports and project schema documentation.
-- [ ] Add legacy import fixtures.
-- [ ] Add public-output absence tests.
-- [ ] Review product and support-page copy.
-- [ ] Record unresolved terms and block them from new releases.
+- [x] Add regression coverage for current case-insensitive legacy-token parser behavior.
+- [x] Add public filename and product-marketing absence tests for provenance-sensitive names.
+- [x] Review product and support-page copy in the audited corpus.
+- [x] Record unresolved provenance-sensitive terms and current emission paths.
 
 ## Release gate
 
