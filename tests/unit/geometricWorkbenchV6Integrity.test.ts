@@ -8,6 +8,10 @@ const html = readFileSync(
   new URL("../../public/labs/geometric-workbench/v5-8/index.html", import.meta.url),
   "utf8",
 );
+const productPage = readFileSync(
+  new URL("../../app/workbench/page.tsx", import.meta.url),
+  "utf8",
+);
 const solidMatch = html.match(
   /const UNIFORM_SOLIDS = (\{.*\});\nconst UNIFORM_SOLID_LABELS/s,
 );
@@ -441,5 +445,170 @@ describe("Static integration and no-regression guards", () => {
     expect(html).toContain('window.open(\n  url,\n  "_blank",\n  "noopener,noreferrer"');
     expect(html).toContain("if(!supportWindow)window.location.assign(url)");
     expect(html).not.toMatch(/Acidome-style|ACIDOME_PRESETS|applyAcidomeHash/i);
+  });
+});
+
+describe("Sprint 0B regression contracts", () => {
+  it("retains Full Sphere, Dome, and custom dome-cut modes", () => {
+    expect(html).toMatch(
+      /id="viewMode"[\s\S]*?<option value="dome" selected>Dome cap only<\/option>[\s\S]*?<option value="sphere">Full geodesic sphere<\/option>/,
+    );
+    expect(html).toMatch(
+      /id="cut"[^>]*min="-0\.25"[^>]*max="0\.85"[^>]*step="0\.01"/,
+    );
+    expect(html).toMatch(
+      /function params\(\)[\s\S]*?cut:\+\$\('cut'\)\.value[\s\S]*?viewMode:\$\('viewMode'\)\.value/,
+    );
+
+    const sphere = integrity.buildTopologyRegistry(
+      goldbergTopologyCells(3, Number.NEGATIVE_INFINITY),
+    );
+    const dome = integrity.buildTopologyRegistry(goldbergTopologyCells(3, 0));
+    const customCap = integrity.buildTopologyRegistry(goldbergTopologyCells(3, 0.3));
+
+    expect(sphere.validation.status).toBe("PASS");
+    expect(sphere.metrics.boundaryEdgeCount).toBe(0);
+    expect(dome.validation.status).toBe("PASS");
+    expect(dome.metrics.boundaryLoopCount).toBe(1);
+    expect(customCap.validation.status).toBe("PASS");
+    expect(customCap.metrics.faceCount).not.toBe(dome.metrics.faceCount);
+  });
+
+  it("produces deterministic BOM totals and schedules for identical inputs", () => {
+    const summarize = () => {
+      const topology = integrity.buildTopologyRegistry(
+        goldbergTopologyCells(3, 1 - 2 * (7 / 12)),
+      );
+      const instances = integrity.memberInstances(
+        topology,
+        profile("piped"),
+        "member",
+      );
+      const schedule = integrity.groupMemberInstances(instances);
+      return {
+        topology: topology.metrics,
+        instanceCount: instances.length,
+        schedule,
+        rawLengthCm: instances.reduce(
+          (sum: number, item: any) => sum + item.centerlineLengthCm,
+          0,
+        ),
+        netLengthCm: instances.reduce(
+          (sum: number, item: any) => sum + item.netCutLengthCm,
+          0,
+        ),
+      };
+    };
+
+    const first = summarize();
+    const second = summarize();
+    expect(first).toEqual(second);
+    expect(first.instanceCount).toBe(169);
+    expect(first.schedule.reduce((sum: number, row: any) => sum + row.qty, 0)).toBe(
+      first.instanceCount,
+    );
+  });
+
+  it("keeps project save/load fields in a round-trip contract", () => {
+    const paramsSource = html.slice(
+      html.indexOf("function params()"),
+      html.indexOf("function makeMat"),
+    );
+    const projectApiSource = html.slice(
+      html.indexOf("window.ARTEMIS_WORKBENCH_V6={"),
+      html.indexOf("function drawBottom"),
+    );
+    const projectShellSource = html.slice(
+      html.indexOf("async function saveProject()"),
+      html.indexOf("const commands="),
+    );
+
+    for (const field of [
+      "freq", "radius", "thick", "cut", "timeline", "animationSpeed", "viewMode", "cellMode",
+    ]) {
+      expect(paramsSource).toContain(`${field}:`);
+    }
+    expect(projectApiSource).toContain("params:params()");
+    expect(projectShellSource).toContain("const x=p.params||{}");
+    expect(projectShellSource).toContain("Object.entries(x).forEach(([k,v])=>");
+    expect(projectShellSource).toContain("document.getElementById(k)");
+
+    for (const field of [
+      "connection", "rimPolicy", "sectionFamily", "pipeWallThicknessMm",
+      "materialDensityKgM3", "wasteFactorPercent",
+    ]) {
+      expect(projectApiSource).toContain(`${field}:constructorProfile().${field}`);
+    }
+    expect(projectApiSource).toContain(
+      "fabrication.wasteFactorPercent??constructor.wasteFactorPercent",
+    );
+  });
+
+  it("persists palette, accent, animation speed, and waste factor", () => {
+    expect(html).toContain("palette:V59.palette,accentColor:V59.accent");
+    expect(html).toContain("p.ui.palette||p.ui.material||'obsidian_brass'");
+    expect(html).toContain("{accent:p.ui.accentColor,silent:true}");
+    expect(html).toContain("animationSpeed:+$('animationSpeed').value");
+    expect(html).toContain(
+      "wasteFactorPercent: Math.max(0,+(readSelect('geoWaste',String(BOM_ASSUMPTIONS.defaultWasteFactorPercent))) || 0)",
+    );
+    expect(html).toContain(
+      "setValueSafe('geoWaste',fabrication.wasteFactorPercent??constructor.wasteFactorPercent)",
+    );
+  });
+
+  it("accepts provenance-sensitive legacy tokens only through explicit parser paths", () => {
+    const result = integrity.parseConstructorNotation(
+      "7/12_kRuScHkE_gOoDkArMa_3V_R2.20_beams_120x40",
+    );
+    expect(result.appliedConfiguration).toMatchObject({
+      subdivisionMethod: "kruschke",
+      connection: "goodkarma",
+    });
+    expect(result.partiallySupportedTokens).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ category: "connection", support: "partial" }),
+      ]),
+    );
+    expect(result.warnings.join(" ")).toMatch(/unvalidated/i);
+  });
+
+  it("keeps the Squarespace support destination and popup fallback stable", () => {
+    expect(html).toContain("donationUrl:'https://www.agoraxai.com/support'");
+    expect(html).toContain("const supportWindow = window.open(");
+    expect(html).toContain("if(!supportWindow)window.location.assign(url)");
+    expect(html).toContain("Squarespace-hosted AGOraXAI support page");
+  });
+
+  it("keeps provenance-sensitive names out of filenames and product marketing copy", () => {
+    const filenames = [...html.matchAll(/downloadText\('([^']+)'/g)].map(
+      (match) => match[1],
+    );
+    expect(filenames.length).toBeGreaterThan(0);
+    for (const output of [...filenames, productPage]) {
+      expect(output).not.toMatch(/Kruschke|GoodKarma/i);
+    }
+  });
+
+  it("fingerprints canonical configuration deterministically", async () => {
+    const first = await integrity.configurationFingerprint({
+      geometry: { viewMode: "dome", cut: -1 / 6, frequency: 3 },
+      fabrication: { wasteFactorPercent: 10, connection: "piped" },
+      ui: { palette: "blueprint_cyan", accentColor: "#39ddff" },
+    });
+    const reordered = await integrity.configurationFingerprint({
+      ui: { accentColor: "#39ddff", palette: "blueprint_cyan" },
+      fabrication: { connection: "piped", wasteFactorPercent: 10 },
+      geometry: { frequency: 3, cut: -1 / 6, viewMode: "dome" },
+    });
+    expect(first).toEqual(reordered);
+    expect(first.full).toMatch(/^[a-f0-9]{64}$/);
+    expect(first.abbreviated).toBe(first.full.slice(0, 12));
+  });
+
+  it("contains no duplicate HTML ids", () => {
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+    const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+    expect(duplicates).toEqual([]);
   });
 });
