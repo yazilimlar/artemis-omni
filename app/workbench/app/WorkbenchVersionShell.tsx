@@ -6,7 +6,7 @@ const versions = {
   latest: {
     label: "v6.0.0-alpha",
     status: "Latest",
-    src: "https://artemis-omni-git-codex-workben-c88abd-gokmen1313-3041s-projects.vercel.app/labs/geometric-workbench/v5-8/index.html",
+    src: "https://artemis-omni-dy3446f7n-gokmen1313-3041s-projects.vercel.app/labs/geometric-workbench/v5-8/index.html",
     note: "Current ARTEMIS Geometric Workbench with v6 BOM integrity, canonical terminology, palettes, and fabrication intelligence.",
   },
   legacy: {
@@ -25,7 +25,7 @@ export function WorkbenchVersionShell() {
   const frameKey = useMemo(() => `${version}-${selected.src}`, [version, selected.src]);
 
   return (
-    <main className="flex min-h-screen flex-col bg-[#05080d] text-white">
+    <main className="flex h-screen overflow-hidden flex-col bg-[#05080d] text-white">
       <header className="flex flex-wrap items-center gap-3 border-b border-white/10 bg-[#0a111c] px-4 py-3 shadow-xl">
         <div className="min-w-0">
           <div className="text-xs font-bold uppercase tracking-[0.24em] text-gold">ARTEMIS Intelligent Systems</div>
