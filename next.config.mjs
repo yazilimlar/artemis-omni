@@ -22,10 +22,38 @@ const nextConfig = {
     // Keep MDX rendering on the modern compiler path.
     mdxRs: false,
   },
+  async redirects() {
+    return [
+      {
+        source: "/labs/geometric-workbench/v5-8",
+        destination: "/workbench/app",
+        permanent: false,
+      },
+      {
+        source: "/labs/geometric-workbench/v5-8/index.html",
+        destination: "/workbench/app",
+        permanent: false,
+      },
+      {
+        source: "/labs/geometric-workbench/v6",
+        destination: "/workbench/app",
+        permanent: false,
+      },
+    ];
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/workbench/runtime/latest",
+          destination: "/labs/geometric-workbench/v5-8/index.html",
+        },
+      ],
+    };
+  },
 };
 
 const withMDX = createMDX({
-  // Add remark/rehype plugins here later (e.g. remark-gfm, rehype-slug).
   options: {
     // remarkFrontmatter strips the `---` block so MDX bodies render cleanly
     // (frontmatter is parsed separately via gray-matter in lib/content).
