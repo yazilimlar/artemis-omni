@@ -33,7 +33,7 @@ Canonical implementation: `public/labs/geometric-workbench/v5-8/index.html` plus
 | Panel families | `panelFamilies()`; `drawBOM()`; `exportJSON()` and `exportManufacturingJSON()` payload field `panelFamilies` | Families group by side count plus rounded outer-edge and saw-bevel values and carry quantity, area, volume, sample, and cell IDs. |
 | Member schedule | `constructorSummary().members`; integrity API `memberInstances()` and `groupMemberInstances()`; `drawStruts()`; `exportStrutCSV()`; export field `memberSchedule` | Physical instances are created after topology/connection/rim policy, then grouped using `BOM_ASSUMPTIONS` tolerances. |
 | Hub schedule | integrity API `hubSchedule()`; `constructorSummary().hubs`; `drawBOM()` and `drawTopology()`; export field `hubSchedule` | Groups canonical vertices by valence, boundary/interior class, and connection; angular equivalence remains explicitly preliminary. |
-| Project save/load | `window.ARTEMIS_WORKBENCH_V6.createProjectPayload()` and `.loadProjectPayload()`; shell functions `saveProject()` and `loadProjectFile()`; `#v59ProjectFile` | Save emits schema `artemis-project-6.0-alpha`; load restores generic `params`, constructor/fabrication controls, UI state, and legacy constructor fields through `migrateLegacyConstructorConfig()`. |
+| Project save/load | `window.ARTEMIS_WORKBENCH_V6.createProjectPayload()` and `.loadProjectPayload()`; shell functions `saveProject()` and `loadProjectFile()`; `#v59ProjectFile` | Save emits schema `artemis-project-6.0-alpha` with neutral behavior IDs; load restores generic `params`, constructor/fabrication controls, UI state, and exact-token legacy aliases through `migrateLegacyConstructorConfig()`. |
 | Palette persistence | `PALETTES`; `LEGACY_PALETTES`; `V59.palette` / `V59.accent`; `applyMaterial()`; project `ui.palette` and `ui.accentColor` | Current palette and manual accent are saved together; load accepts the legacy `ui.material` key and maps legacy palette tokens before applying the accent. |
 | Exports | button IDs `#downloadJSON`, `#downloadCSV`, `#downloadMFG`, `#downloadMFGCSV`, `#downloadSVG`, `#downloadDXF`, `#downloadConstructor`, `#downloadStruts`, `#downloadErectionCSV`, `#downloadErectionJSON`, `#snapshot`; corresponding `export*` functions and `snapshotPNG()` | JSON, CSV, manufacturing, drawing, constructor, strut, erection, and image paths are separately wired without changing their existing structures. |
 | Squarespace support | `V59.donationUrl`; `#v59Support`; `#v59DonationModal`; `setupDonation()` | Canonical URL is `https://www.agoraxai.com/support`; `window.open(..., 'noopener,noreferrer')` falls back to `window.location.assign(url)` when blocked. |
@@ -131,12 +131,25 @@ Canonical implementation: `public/labs/geometric-workbench/v5-8/index.html` plus
 
 | Current term | Public treatment | Internal/backward compatibility | Priority |
 |---|---|---|---:|
-| Kruschke | Remove from new public UI, glossary, presets, and exports | Accept exact legacy token and normalize | Critical |
-| GoodKarma | Remove from new public UI, glossary, presets, and exports | Accept exact legacy token and normalize | Critical |
+| Historical legacy token `Kruschke` | Removed from new public UI, glossary, presets, and exports | Exact case-insensitive import alias → `timber_optimized_subdivision` | Complete |
+| Historical legacy token `GoodKarma` | Removed from new public UI, glossary, presets, and exports | Exact case-insensitive import alias → `inset_member_connection` | Complete |
 | Class I / II / III | Use plain-language UI labels; retain standard technical term in help/docs | Preserve canonical technical identity | Medium |
 | dual cells | Display **Polygon Cells**; explain dual relationship in help | Preserve geometry meaning | Low |
 | dihedral angle | Display **Panel Joint Angle**; retain technical term in help/export metadata where useful | Preserve calculation semantics | Low |
 | bevel | Display **Edge Cut Angle** or **Cut Angle** | Preserve fabrication semantics | Low |
+
+## ARTEMIS behavior terminology contract
+
+| Behavior | Stable internal ID | Public label | Serialization | Legacy import boundary |
+|---|---|---|---|---|
+| Timber-oriented subdivision intent | `timber_optimized_subdivision` | **Timber-Optimized Subdivision** | New projects, parser-normalized notation, fingerprints, JSON, CSV metadata, constructor output, and manufacturing output use the stable ID or public label as appropriate. | Historical `Kruschke` token only; exact token after tokenization, matched case-insensitively. |
+| Panel-frame inset connection behavior | `inset_member_connection` | **Inset Member Connection** | New projects, BOM policy labels, member/hub schedules, JSON, CSV, constructor output, and manufacturing output use the stable ID or public label as appropriate. | Historical `GoodKarma` token only; exact token after tokenization, matched case-insensitively. |
+
+The authoritative runtime registries are `BEHAVIOR_IDS`, `PUBLIC_BEHAVIOR_LABELS`, and `LEGACY_TOKEN_ALIASES` in `v6-integrity.js`. Legacy aliases are accepted only by parser/import normalization. They are not valid new output values, labels, filenames, presets, glossary terms, or marketing copy. Normalization is non-mutating and occurs before fingerprinting, persistence, and final JSON serialization.
+
+The `inset_member_connection` behavior intentionally preserves the pre-migration panel-frame rules: two physical members per interior shared edge, one member per included boundary edge, and the existing beam-width/thickness deduction proxy with the unchanged 45% centerline clamp. Geometry, topology, BOM formulas, palettes, and export schemas are unchanged.
+
+Remaining validation uncertainty: the subdivision label describes stored constructor intent; the current renderer still has no independently validated behavior-specific solver branch. Inset connection deductions and hub angular classifications remain preliminary, unvalidated proxies.
 
 ## Immediate acceptance criteria
 

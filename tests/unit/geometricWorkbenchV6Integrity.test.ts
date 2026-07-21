@@ -8,6 +8,10 @@ const html = readFileSync(
   new URL("../../public/labs/geometric-workbench/v5-8/index.html", import.meta.url),
   "utf8",
 );
+const integritySource = readFileSync(
+  new URL("../../public/labs/geometric-workbench/v5-8/v6-integrity.js", import.meta.url),
+  "utf8",
+);
 const productPage = readFileSync(
   new URL("../../app/workbench/page.tsx", import.meta.url),
   "utf8",
@@ -185,7 +189,7 @@ describe("Constructor Configuration Parser", () => {
     expect(result.partiallySupportedTokens).toEqual([]);
     expect(result.appliedConfiguration).toMatchObject({
       domeFraction: "7/12",
-      subdivisionMethod: "kruschke",
+      subdivisionMethod: integrity.BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION,
       frequencyV: 3,
       radiusM: 2.2,
       beamWidthMm: 120,
@@ -193,14 +197,17 @@ describe("Constructor Configuration Parser", () => {
     });
   });
 
-  it("classifies GoodKarma as a preliminary partial mapping", () => {
+  it("normalizes the legacy connection alias to its preliminary ARTEMIS behavior", () => {
     const result = integrity.parseConstructorNotation(
       "7/12_Kruschke_GoodKarma_3V_R2.20_beams_120x40",
     );
-    expect(result.appliedConfiguration.connection).toBe("goodkarma");
-    expect(result.partiallySupportedTokens.map((item: any) => item.token)).toContain(
-      "GoodKarma",
+    expect(result.appliedConfiguration.connection).toBe(
+      integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,
     );
+    expect(result.partiallySupportedTokens.map((item: any) => item.token)).toContain(
+      integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,
+    );
+    expect(JSON.stringify(result)).not.toMatch(/Kruschke|GoodKarma/i);
     expect(result.warnings.join(" ")).toMatch(/unvalidated/i);
   });
 
@@ -254,7 +261,7 @@ describe("Constructor Configuration Parser", () => {
       constructorNotation: notation,
     });
     expect(legacy.config).toEqual(canonical.config);
-    expect(legacy.notices).toHaveLength(1);
+    expect(legacy.notices).toHaveLength(2);
     expect(legacy.legacyCompatibility).toEqual({
       sourceFieldDetected: "acidomeHash",
       migrated: true,
@@ -262,6 +269,120 @@ describe("Constructor Configuration Parser", () => {
     const legacyHash = await integrity.configurationFingerprint(legacy.config);
     const canonicalHash = await integrity.configurationFingerprint(canonical.config);
     expect(legacyHash.full).toBe(canonicalHash.full);
+  });
+});
+
+describe("ARTEMIS behavior terminology migration", () => {
+  it.each([
+    ["kRuScHkE", "subdivisionMethod", "TIMBER_OPTIMIZED_SUBDIVISION"],
+    ["gOoDkArMa", "connection", "INSET_MEMBER_CONNECTION"],
+  ])("accepts the case-insensitive legacy %s token at the parser boundary", (token, field, idKey) => {
+    const result = integrity.parseConstructorNotation(token);
+    expect(result.unsupportedTokens).toEqual([]);
+    expect(result.appliedConfiguration[field]).toBe(integrity.BEHAVIOR_IDS[idKey]);
+    expect(result.normalizedNotation).toBe(integrity.BEHAVIOR_IDS[idKey]);
+    expect(JSON.stringify(result)).not.toMatch(/Kruschke|GoodKarma/i);
+  });
+
+  it("centralizes stable IDs, public labels, and import-only aliases", () => {
+    expect(integrity.BEHAVIOR_IDS).toEqual({
+      TIMBER_OPTIMIZED_SUBDIVISION: "timber_optimized_subdivision",
+      INSET_MEMBER_CONNECTION: "inset_member_connection",
+    });
+    expect(integrity.PUBLIC_BEHAVIOR_LABELS).toEqual({
+      timber_optimized_subdivision: "Timber-Optimized Subdivision",
+      inset_member_connection: "Inset Member Connection",
+    });
+    expect(integrity.normalizeBehaviorId("Kruschke")).toBe(
+      integrity.BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION,
+    );
+    expect(integrity.normalizeBehaviorId("GOODKARMA")).toBe(
+      integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,
+    );
+    expect(integrity.normalizeBehaviorId("goodkarma-extra")).toBe("goodkarma-extra");
+    expect(integrity.normalizeConstructorNotation("prefixKruschkeSuffix")).toBe(
+      "prefixKruschkeSuffix",
+    );
+    expect(integrity.normalizeBehaviorConfiguration({
+      material: "GoodKarma",
+      filename: "Kruschke",
+    })).toEqual({ material: "GoodKarma", filename: "Kruschke" });
+  });
+
+  it("preserves legacy-equivalent connection multiplicity and deduction behavior", () => {
+    const topology = integrity.buildTopologyRegistry(topologyCells(solids.Icosahedron));
+    const legacyProfile = profile("GoodKarma");
+    const neutralProfile = profile(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION);
+    const legacyInstances = integrity.memberInstances(topology, legacyProfile, "member");
+    const neutralInstances = integrity.memberInstances(topology, neutralProfile, "member");
+    expect(legacyInstances).toEqual(neutralInstances);
+    expect(neutralInstances).toHaveLength(60);
+    expect(neutralInstances.every((item: any) =>
+      item.connection === integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,
+    )).toBe(true);
+    expect(integrity.connectionDeductionCm(100, legacyProfile)).toEqual(
+      integrity.connectionDeductionCm(100, neutralProfile),
+    );
+    expect(integrity.connectionDeductionCm(100, neutralProfile).requestedDeductionCm).toBeCloseTo(4.2);
+  });
+
+  it("migrates legacy project values and emits only neutral new project serialization", () => {
+    const legacyProject = {
+      schemaVersion: "artemis-project-6.0-alpha",
+      constructorParser: {
+        constructorNotation: "7/12_Kruschke_GoodKarma_3V_R2.20",
+      },
+      constructor: { subdivisionMethod: "KRUSCHKE", connection: "GoodKarma" },
+      fabrication: { connection: "goodkarma" },
+    };
+    const migration = integrity.migrateLegacyConstructorConfig(legacyProject);
+    const serialized = JSON.stringify(migration.config);
+    expect(migration.config.constructor).toMatchObject({
+      subdivisionMethod: integrity.BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION,
+      connection: integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,
+    });
+    expect(migration.config.fabrication.connection).toBe(
+      integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,
+    );
+    expect(serialized).toContain(integrity.BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION);
+    expect(serialized).toContain(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION);
+    expect(serialized).not.toMatch(/Kruschke|GoodKarma/i);
+  });
+
+  it("keeps neutral JSON, CSV, and glossary output free of legacy names", () => {
+    const topology = integrity.buildTopologyRegistry(topologyCells(solids.Icosahedron));
+    const schedule = integrity.groupMemberInstances(
+      integrity.memberInstances(
+        topology,
+        profile("GoodKarma"),
+        "member",
+      ),
+    );
+    const json = JSON.stringify(integrity.normalizeBehaviorConfiguration({
+      constructor: { subdivisionMethod: "Kruschke", connection: "GoodKarma" },
+      memberSchedule: schedule,
+    }));
+    const csv = ["mark,connection", ...schedule.map((row: any) =>
+      `${row.mark},${row.connection}`,
+    )].join("\n");
+    expect(json).not.toMatch(/Kruschke|GoodKarma/i);
+    expect(csv).not.toMatch(/Kruschke|GoodKarma/i);
+    expect(json).toContain(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION);
+    expect(csv).toContain(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION);
+    expect(html).toContain("PUBLIC_BEHAVIOR_LABELS[BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION]");
+    expect(html).toContain("PUBLIC_BEHAVIOR_LABELS[BEHAVIOR_IDS.INSET_MEMBER_CONNECTION]");
+    expect(html).not.toMatch(/Kruschke|GoodKarma/i);
+  });
+
+  it("fingerprints identically before and after alias normalization", async () => {
+    const legacy = {
+      geometry: { subdivisionMethod: "kRuScHkE", frequency: 3 },
+      fabrication: { connection: "GoOdKaRmA", wasteFactorPercent: 10 },
+    };
+    const neutral = integrity.normalizeBehaviorConfiguration(legacy);
+    expect(await integrity.configurationFingerprint(legacy)).toEqual(
+      await integrity.configurationFingerprint(neutral),
+    );
   });
 });
 
@@ -287,7 +408,11 @@ describe("Canonical topology and connection-aware BOM", () => {
       ).toHaveLength(E);
     }
     expect(
-      integrity.memberInstances(topology, profile("goodkarma"), "member"),
+      integrity.memberInstances(
+        topology,
+        profile(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION),
+        "member",
+      ),
     ).toHaveLength(E * 2);
   });
 
@@ -310,14 +435,22 @@ describe("Canonical topology and connection-aware BOM", () => {
       integrity.memberInstances(topology, profile("piped"), "member"),
     ).toHaveLength(135 + 34);
     expect(
-      integrity.memberInstances(topology, profile("goodkarma"), "member"),
+      integrity.memberInstances(
+        topology,
+        profile(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION),
+        "member",
+      ),
     ).toHaveLength(2 * 135 + 34);
     for (const rim of ["continuous_ring", "excluded"]) {
       expect(
         integrity.memberInstances(topology, profile("piped"), rim),
       ).toHaveLength(135);
       expect(
-        integrity.memberInstances(topology, profile("goodkarma"), rim),
+        integrity.memberInstances(
+          topology,
+          profile(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION),
+          rim,
+        ),
       ).toHaveLength(270);
     }
   });
@@ -326,7 +459,7 @@ describe("Canonical topology and connection-aware BOM", () => {
     const topology = integrity.buildTopologyRegistry(topologyCells(solids.Icosahedron));
     const instances = integrity.memberInstances(
       topology,
-      profile("goodkarma"),
+      profile(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION),
       "member",
     );
     for (const instance of instances) {
@@ -407,7 +540,11 @@ describe("Auditable console evidence", () => {
         goldberg7_12_3V: { ...cap.metrics, status: cap.validation.status },
         physicalMembers: {
           piped: integrity.memberInstances(cap, profile("piped"), "member").length,
-          goodkarma: integrity.memberInstances(cap, profile("goodkarma"), "member").length,
+          insetMemberConnection: integrity.memberInstances(
+            cap,
+            profile(integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION),
+            "member",
+          ).length,
           semicone: integrity.memberInstances(cap, profile("semicone"), "member").length,
           cone: integrity.memberInstances(cap, profile("cone"), "member").length,
           joint: integrity.memberInstances(cap, profile("joint"), "member").length,
@@ -562,8 +699,8 @@ describe("Sprint 0B regression contracts", () => {
       "7/12_kRuScHkE_gOoDkArMa_3V_R2.20_beams_120x40",
     );
     expect(result.appliedConfiguration).toMatchObject({
-      subdivisionMethod: "kruschke",
-      connection: "goodkarma",
+      subdivisionMethod: integrity.BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION,
+      connection: integrity.BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,
     });
     expect(result.partiallySupportedTokens).toEqual(
       expect.arrayContaining([
@@ -571,6 +708,7 @@ describe("Sprint 0B regression contracts", () => {
       ]),
     );
     expect(result.warnings.join(" ")).toMatch(/unvalidated/i);
+    expect(JSON.stringify(result)).not.toMatch(/Kruschke|GoodKarma/i);
   });
 
   it("keeps the Squarespace support destination and popup fallback stable", () => {
@@ -588,6 +726,12 @@ describe("Sprint 0B regression contracts", () => {
     for (const output of [...filenames, productPage]) {
       expect(output).not.toMatch(/Kruschke|GoodKarma/i);
     }
+    const runtimeOutsideAliasRegistry = integritySource.replace(
+      /const LEGACY_TOKEN_ALIASES=Object\.freeze\(\{[\s\S]*?\n  \}\);/,
+      "",
+    );
+    expect(html).not.toMatch(/Kruschke|GoodKarma/i);
+    expect(runtimeOutsideAliasRegistry).not.toMatch(/Kruschke|GoodKarma/i);
   });
 
   it("fingerprints canonical configuration deterministically", async () => {
