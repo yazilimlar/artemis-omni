@@ -6,7 +6,7 @@ const versions = {
   latest: {
     label: "v6.0.0-alpha",
     status: "Latest",
-    src: "/workbench/runtime/latest",
+    src: "/workbench/runtime/latest/",
     note: "Current ARTEMIS Geometric Workbench with v6 BOM integrity, canonical terminology, palettes, and fabrication intelligence.",
   },
   legacy: {

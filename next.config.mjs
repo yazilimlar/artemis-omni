@@ -48,6 +48,10 @@ const nextConfig = {
           source: "/workbench/runtime/latest",
           destination: "/labs/geometric-workbench/v5-8/index.html",
         },
+        {
+          source: "/workbench/runtime/latest/:path*",
+          destination: "/labs/geometric-workbench/v5-8/:path*",
+        },
       ],
     };
   },
