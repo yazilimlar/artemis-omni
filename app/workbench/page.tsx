@@ -14,7 +14,7 @@ export const metadata = createMetadata({
     "Parametric geometry and fabrication intelligence — geodesic Goldberg domes, all Platonic & Archimedean solids, Catalan duals, verified topology, and preliminary fabrication data. Public Technical Preview.",
 });
 
-const WORKBENCH_URL = "/labs/geometric-workbench/v5-8";
+const WORKBENCH_URL = "/workbench/app";
 const CONTACT = "/contact?product=geometric-workbench";
 
 const features = [
@@ -220,10 +220,10 @@ export default function WorkbenchProductPage() {
               Request Professional Review
             </Link>
             <Link
-              href="/labs/geometric-workbench/v5-8"
+              href={WORKBENCH_URL}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-gold"
             >
-              Open in Labs
+              Open canonical app
             </Link>
           </div>
         </Container>
