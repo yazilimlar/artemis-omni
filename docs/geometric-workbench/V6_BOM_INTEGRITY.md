@@ -55,12 +55,12 @@ Physical member quantity is not raw face-edge slots and is not always canonical 
 | Connection | Assembly model | Interior multiplier | Boundary default | Deduction |
 | --- | --- | ---: | ---: | --- |
 | Piped | shared strut | 1 | rim policy | unvalidated proxy |
-| GoodKarma | panel frame | 2 | rim policy | unvalidated proxy |
+| Inset Member Connection (`inset_member_connection`) | panel frame | 2 | rim policy | unvalidated proxy |
 | Semicone | shared strut | 1 | rim policy | unvalidated proxy |
 | Cone | shared strut | 1 | rim policy | unvalidated proxy |
 | Joint / Flush | shared strut | 1 | rim policy | unvalidated proxy |
 
-GoodKarma is treated as a preliminary Artemis panel-frame mapping. Its two interior instances retain the owning adjacent cell and local edge. Shared-strut instances retain both adjacent cell IDs.
+Inset Member Connection is treated as a preliminary ARTEMIS panel-frame behavior. Its two interior instances retain the owning adjacent cell and local edge. Shared-strut instances retain both adjacent cell IDs.
 
 Rim policies are:
 
@@ -108,7 +108,7 @@ Parsing is independent token-level interoperability, not official compatibility 
 | Category | Examples | Mapping |
 | --- | --- | --- |
 | Dome fraction | `1/2`, `5/8`, `7/12` | dome fraction and cut plane; clamp warning when required |
-| Subdivision method | `Kruschke`, `Mexican`, `Equal_Arcs`, `Equal_Chords` | Artemis method selector; renderer equivalence is still engine-dependent |
+| Subdivision method | `timber_optimized_subdivision`, `Mexican`, `Equal_Arcs`, `Equal_Chords` | ARTEMIS method selector; renderer equivalence is still engine-dependent |
 | Frequency | `2V`, `3V`, `4V` | supported 1V–7V frequency |
 | Radius | `R2.20`, `R3.00` | metres converted to active centimetre model units; interpretation warning shown |
 | Beam section | `beams_120x40` | rectangular width and thickness |
@@ -120,10 +120,10 @@ Parsing is independent token-level interoperability, not official compatibility 
 | --- | --- | --- |
 | Base polyhedron | `Icosahedron`, `Octahedron`, `Octohedron`, `Tetrahedron` | selects a supported family; subdivision behavior varies by engine; `Octohedron` is a deprecated spelling alias |
 | Class III | `Class_III_1,2` | h,k parses; geometric equivalence is not independently validated |
-| Connection | `GoodKarma`, `Semicone`, `Piped`, `Cone`, `Joint` | preliminary Artemis profile; deduction models are unvalidated proxies |
+| Connection | `inset_member_connection`, `Semicone`, `Piped`, `Cone`, `Joint` | preliminary ARTEMIS profile; deduction models are unvalidated proxies |
 | Fullerene intent | `Inscribed_Fulleren`, `Circumscribed_Fullerene` | intent is retained; complete geometric equivalence is not implemented for every family; filler token `on` is reported as unsupported |
 
-GoodKarma is classified as a preliminary Artemis mapping/compatibility alias, not verified third-party compatibility.
+The historical `Kruschke` and `GoodKarma` tokens are accepted only as exact, case-insensitive legacy import aliases. They normalize to `timber_optimized_subdivision` and `inset_member_connection`, respectively, and are never emitted by new projects or exports.
 
 ### Artemis extensions
 
@@ -166,7 +166,7 @@ Canonical vertices record incident edges, normalized incident member directions,
 
 Focused Vitest harness: `tests/unit/geometricWorkbenchV6Integrity.test.ts`.
 
-| Model | V | Canonical E | F | Raw slots | Boundary E | χ | Piped / Semicone / Cone / Joint | GoodKarma |
+| Model | V | Canonical E | F | Raw slots | Boundary E | χ | Piped / Semicone / Cone / Joint | Inset Member Connection |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Icosahedron | 12 | 30 | 20 | 60 | 0 | 2 | 30 | 60 |
 | Truncated icosahedron | 60 | 90 | 32 | 180 | 0 | 2 | 90 | 180 |
@@ -174,7 +174,7 @@ Focused Vitest harness: `tests/unit/geometricWorkbenchV6Integrity.test.ts`.
 
 The 7/12 cap has 135 interior edges, 34 boundary edges, one boundary loop, no nonmanifold edges, and no unresolved vertices. Continuous-rim and excluded policies remove the 34 boundary member instances but retain the separately reported boundary perimeter.
 
-Parser tests cover fully recognized input, GoodKarma partial support, Class III/spelling aliases/fullerene intent, unsupported tokens, and legacy migration/fingerprint equivalence. Traceability tests verify every member resolves to a canonical edge, both endpoint vertices, adjacent cells, and the explicit clamp assumption. CHS tests verify annular area.
+Parser tests cover neutral behavior IDs, exact case-insensitive legacy aliases, Class III/spelling aliases/fullerene intent, unsupported tokens, and migration/fingerprint equivalence. Traceability tests verify every member resolves to a canonical edge, both endpoint vertices, adjacent cells, and the explicit clamp assumption. CHS tests verify annular area.
 
 Current focused result: 14 tests passed, 0 failed. The harness also proves Artemis-extension parsing, required route/tab/export hooks, external support navigation, and that nonmanifold edges/shared-ID position collisions produce `FAIL` without tolerance widening.
 

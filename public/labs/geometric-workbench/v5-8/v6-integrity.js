@@ -19,9 +19,81 @@
     topologyQuantizationTolerance:null
   });
 
+  const BEHAVIOR_IDS=Object.freeze({
+    TIMBER_OPTIMIZED_SUBDIVISION:'timber_optimized_subdivision',
+    INSET_MEMBER_CONNECTION:'inset_member_connection'
+  });
+
+  const PUBLIC_BEHAVIOR_LABELS=Object.freeze({
+    [BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION]:'Timber-Optimized Subdivision',
+    [BEHAVIOR_IDS.INSET_MEMBER_CONNECTION]:'Inset Member Connection'
+  });
+
+  // Import-only compatibility boundary. Keys must remain exact lowercase tokens.
+  const LEGACY_TOKEN_ALIASES=Object.freeze({
+    kruschke:BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION,
+    goodkarma:BEHAVIOR_IDS.INSET_MEMBER_CONNECTION
+  });
+
+  function normalizeBehaviorId(rawValue){
+    const source=String(rawValue==null?'':rawValue).trim(),lookup=source.toLowerCase();
+    return LEGACY_TOKEN_ALIASES[lookup]||(
+      Object.values(BEHAVIOR_IDS).includes(lookup)?lookup:source
+    );
+  }
+
+  function publicBehaviorLabel(rawValue){
+    const id=normalizeBehaviorId(rawValue);
+    return PUBLIC_BEHAVIOR_LABELS[id]||id;
+  }
+
+  function constructorNotationTokens(sourceNotation=''){
+    const source=String(sourceNotation||'').trim();
+    const fragment=decodeURIComponent(source.includes('#')?source.split('#').pop():source);
+    return fragment
+      .replace(/[\s-]+/g,'_')
+      .replace(/_+/g,'_')
+      .replace(/^_|_$/g,'')
+      .split('_')
+      .filter(Boolean);
+  }
+
+  function normalizeConstructorNotation(sourceNotation=''){
+    return constructorNotationTokens(sourceNotation)
+      .map(token=>LEGACY_TOKEN_ALIASES[token.toLowerCase()]||token)
+      .join('_');
+  }
+
+  function containsLegacyBehaviorAlias(value,key=''){
+    if(Array.isArray(value))return value.some(item=>containsLegacyBehaviorAlias(item));
+    if(value&&typeof value==='object')return Object.entries(value).some(
+      ([childKey,childValue])=>containsLegacyBehaviorAlias(childValue,childKey)
+    );
+    if(typeof value!=='string')return false;
+    if(/notation$/i.test(key))return constructorNotationTokens(value).some(
+      token=>Object.prototype.hasOwnProperty.call(LEGACY_TOKEN_ALIASES,token.toLowerCase())
+    );
+    return (key==='subdivisionMethod'||key==='connection')&&
+      Object.prototype.hasOwnProperty.call(LEGACY_TOKEN_ALIASES,value.trim().toLowerCase());
+  }
+
+  function normalizeBehaviorConfiguration(value,key=''){
+    if(Array.isArray(value))return value.map(item=>normalizeBehaviorConfiguration(item));
+    if(value&&typeof value==='object')return Object.fromEntries(
+      Object.entries(value).map(([childKey,childValue])=>[
+        childKey,
+        normalizeBehaviorConfiguration(childValue,childKey)
+      ])
+    );
+    if(typeof value!=='string')return value;
+    if(/notation$/i.test(key))return normalizeConstructorNotation(value);
+    if(key==='subdivisionMethod'||key==='connection')return normalizeBehaviorId(value);
+    return value;
+  }
+
   const CONNECTION_SYSTEMS=Object.freeze({
     piped:{label:'Piped hub-and-strut',assemblyModel:'shared_strut',interiorMembersPerEdge:1,boundaryMembersPerEdge:1,deductionModel:'proxy',verified:false},
-    goodkarma:{label:'GoodKarma panel frame',assemblyModel:'panel_frame',interiorMembersPerEdge:2,boundaryMembersPerEdge:1,deductionModel:'proxy',verified:false},
+    [BEHAVIOR_IDS.INSET_MEMBER_CONNECTION]:{label:PUBLIC_BEHAVIOR_LABELS[BEHAVIOR_IDS.INSET_MEMBER_CONNECTION],assemblyModel:'panel_frame',interiorMembersPerEdge:2,boundaryMembersPerEdge:1,deductionModel:'proxy',verified:false},
     semicone:{label:'Semicone hub-and-strut',assemblyModel:'shared_strut',interiorMembersPerEdge:1,boundaryMembersPerEdge:1,deductionModel:'proxy',verified:false},
     cone:{label:'Cone hub-and-strut',assemblyModel:'shared_strut',interiorMembersPerEdge:1,boundaryMembersPerEdge:1,deductionModel:'proxy',verified:false},
     joint:{label:'Flush joint',assemblyModel:'shared_strut',interiorMembersPerEdge:1,boundaryMembersPerEdge:1,deductionModel:'proxy',verified:false}
@@ -35,19 +107,19 @@
 
   const CONSTRUCTOR_TOKEN_SUPPORT=Object.freeze({
     domeFraction:{examples:['1/2','5/8','7/12'],support:'compatible',description:'Maps dome fraction to the Artemis cut-plane configuration.'},
-    subdivisionMethod:{examples:['Kruschke','Mexican','Equal_Arcs','Equal_Chords'],support:'compatible',description:'Selects a supported Artemis subdivision method token. Renderer equivalence remains engine-dependent.'},
+    subdivisionMethod:{examples:[BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION,'Mexican','Equal_Arcs','Equal_Chords'],support:'compatible',description:'Selects a supported Artemis subdivision method token. Renderer equivalence remains engine-dependent.'},
     frequency:{examples:['2V','3V','4V'],support:'compatible',description:'Sets supported subdivision frequency from 1V through 7V.'},
     radius:{examples:['R2.20','R3.00'],support:'compatible',description:'Interprets radius in metres and converts it to centimetres for the active Artemis model.'},
     beamSection:{examples:['beams_120x40'],support:'compatible',description:'Maps nominal rectangular member width and thickness.'},
     basePolyhedron:{examples:['Icosahedron','Octahedron','Octohedron','Tetrahedron'],support:'partial',description:'Selects an Artemis geometry family; spelling aliases are accepted, but subdivision equivalence varies by engine.'},
     classIII:{examples:['Class_III_1,2'],support:'partial',description:'Parses h,k notation. Geometric equivalence must be validated by the active Artemis geometry engine.'},
-    connection:{examples:['GoodKarma','Semicone','Piped','Cone','Joint'],support:'partial',description:'Selects a preliminary Artemis connection profile. Current cut deductions are unvalidated proxies.'},
+    connection:{examples:[BEHAVIOR_IDS.INSET_MEMBER_CONNECTION,'Semicone','Piped','Cone','Joint'],support:'partial',description:'Selects a preliminary Artemis connection profile. Current cut deductions are unvalidated proxies.'},
     fullerene:{examples:['Inscribed_Fulleren_on','Circumscribed_Fullerene'],support:'partial',description:'Carries a fullerene intent flag; complete geometric equivalence is not implemented for every geometry family.'},
     artemisExtensions:{examples:['rim_continuous','material_S355','pipewall_4','density_7850'],support:'artemis_extension',description:'Artemis-owned fabrication and boundary configuration tokens.'}
   });
 
   const CONSTRUCTOR_NOTATION_PRESETS=Object.freeze({
-    kruschke:'7/12_Kruschke_GoodKarma_3V_R2.20_beams_120x40',
+    timberOptimized:`7/12_${BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION}_${BEHAVIOR_IDS.INSET_MEMBER_CONNECTION}_3V_R2.20_beams_120x40`,
     octo:'Octohedron_1/2_Class_III_1,2_Inscribed_Fulleren_on_Semicone_3V_R2.20_beams_120x40'
   });
 
@@ -69,7 +141,10 @@
     if(detected.length)notices.push(detected.map(migrationNotice).join(' '));
     delete migrated.acidomeHash;
     delete migrated.sourceHash;
-    return {config:migrated,notices,legacyCompatibility:sourceFieldDetected?{sourceFieldDetected,migrated:true}:null};
+    const behaviorAliasesNormalized=containsLegacyBehaviorAlias(migrated);
+    const config=normalizeBehaviorConfiguration(migrated);
+    if(behaviorAliasesNormalized)notices.push('Legacy behavior aliases were normalized to stable ARTEMIS behavior IDs.');
+    return {config,notices,legacyCompatibility:(sourceFieldDetected||behaviorAliasesNormalized)?{sourceFieldDetected,migrated:true}:null};
   }
 
   function tokenRecord(token,category,parsedValue,appliedField,support='compatible'){
@@ -77,11 +152,9 @@
   }
 
   function parseConstructorNotation(sourceNotation=''){
-    const source=String(sourceNotation||'').trim();
-    const fragment=decodeURIComponent(source.includes('#')?source.split('#').pop():source);
-    const normalized=fragment.replace(/[\s-]+/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+    const normalized=normalizeConstructorNotation(sourceNotation);
     const parts=normalized.split('_').filter(Boolean);
-    const result={sourceNotation:source,normalizedNotation:normalized,recognizedTokens:[],partiallySupportedTokens:[],unsupportedTokens:[],ambiguousTokens:[],warnings:[],errors:[],appliedConfiguration:{},parserVersion:PARSER_VERSION};
+    const result={sourceNotation:normalized,normalizedNotation:normalized,recognizedTokens:[],partiallySupportedTokens:[],unsupportedTokens:[],ambiguousTokens:[],warnings:[],errors:[],appliedConfiguration:{},legacyAliasesNormalized:containsLegacyBehaviorAlias({constructorNotation:sourceNotation}),parserVersion:PARSER_VERSION};
     const add=(record)=>{
       if(record.support==='partial'||record.support==='deprecated') result.partiallySupportedTokens.push(record);
       else if(record.support==='ambiguous') result.ambiguousTokens.push(record);
@@ -90,14 +163,17 @@
     };
     const set=(field,value,record)=>{result.appliedConfiguration[field]=value;add(record);};
     for(let i=0;i<parts.length;i+=1){
-      const raw=parts[i], low=raw.toLowerCase(), next=(parts[i+1]||''), nextLow=next.toLowerCase();
+      const raw=parts[i], low=raw.toLowerCase(), next=(parts[i+1]||''), nextLow=next.toLowerCase(),nextNextLow=(parts[i+2]||'').toLowerCase();
       if(/^\d+\/\d+$/.test(raw)){
         const [a,b]=raw.split('/').map(Number);if(!b){result.errors.push(`Invalid dome fraction ${raw}.`);continue;}
         const fraction=a/b, unclamped=1-2*fraction, cutYR=Math.max(-0.25,Math.min(0.85,unclamped));
         set('domeFraction',raw,tokenRecord(raw,'domeFraction',raw,'domeFraction'));
         result.appliedConfiguration.cutYR=cutYR;
         if(cutYR!==unclamped)result.warnings.push(`Dome fraction ${raw} was clamped to the supported cut-plane range.`);
-      }else if(['kruschke','mexican'].includes(low)){
+      }else if(low==='timber'&&nextLow==='optimized'&&nextNextLow==='subdivision'){
+        const id=BEHAVIOR_IDS.TIMBER_OPTIMIZED_SUBDIVISION;
+        set('subdivisionMethod',id,tokenRecord(id,'subdivisionMethod',id,'subdivisionMethod'));i+=2;
+      }else if(low==='mexican'){
         set('subdivisionMethod',low,tokenRecord(raw,'subdivisionMethod',low,'subdivisionMethod'));
       }else if(low==='equal'&&['arcs','chords'].includes(nextLow)){
         const value=`equal_${nextLow}`;set('subdivisionMethod',value,tokenRecord(`${raw}_${next}`,'subdivisionMethod',value,'subdivisionMethod'));i+=1;
@@ -119,9 +195,13 @@
         if(subdivisionClass==='III'&&/^\d+,\d+$/.test(parts[i+2]||'')){result.appliedConfiguration.hk=parts[i+2];combined+=`_${parts[i+2]}`;i+=1;}
         add(tokenRecord(combined,'subdivisionClass',{subdivisionClass,hk:result.appliedConfiguration.hk||null},'subdivisionClass/hk',support));i+=1;
         if(subdivisionClass==='III')result.warnings.push(`Class III ${result.appliedConfiguration.hk||'h,k'} was parsed, but equivalence with the source notation has not been independently validated.`);
-      }else if(['goodkarma','semicone','piped','cone','joint'].includes(low)){
+      }else if(low==='inset'&&nextLow==='member'&&nextNextLow==='connection'){
+        const id=BEHAVIOR_IDS.INSET_MEMBER_CONNECTION;
+        set('connection',id,tokenRecord(id,'connection',id,'connection','partial'));i+=2;
+        result.warnings.push(`${PUBLIC_BEHAVIOR_LABELS[id]} uses a preliminary ARTEMIS profile. Current connection deductions remain unvalidated.`);
+      }else if(['semicone','piped','cone','joint'].includes(low)){
         set('connection',low,tokenRecord(raw,'connection',low,'connection','partial'));
-        result.warnings.push(`${raw} was mapped to the preliminary Artemis ${CONNECTION_SYSTEMS[low].label} profile. Current connection deductions remain unvalidated.`);
+        result.warnings.push(`${CONNECTION_SYSTEMS[low].label} uses a preliminary ARTEMIS profile. Current connection deductions remain unvalidated.`);
       }else if(['icosahedron','icosa','octahedron','octohedron','tetrahedron','tetra'].includes(low)){
         const alias=low==='octohedron'?'octahedron':low;
         const canonical=alias.startsWith('octa')?'solid:Octahedron':alias.startsWith('tetra')?'solid:Tetrahedron':'icosahedron';
@@ -210,9 +290,9 @@
   function connectionDeductionCm(rawLenCm,profile,assumptions=BOM_ASSUMPTIONS){
     const w=(Number(profile.beamWidthMm)||0)/10,t=(Number(profile.beamThicknessMm)||0)/10,pipeR=(Number(profile.pipeDiaMm)||0)/20;
     let requestedDeductionCm=0,note='centerline reference; no deduction';
-    switch(profile.connection){
+    switch(normalizeBehaviorId(profile.connection)){
       case 'piped':requestedDeductionCm=pipeR*2;note='pipe diameter subtraction proxy';break;
-      case 'goodkarma':requestedDeductionCm=Math.max(w*.35,t*.55);note='panel-frame timber overlap proxy';break;
+      case BEHAVIOR_IDS.INSET_MEMBER_CONNECTION:requestedDeductionCm=Math.max(w*.35,t*.55);note='inset member overlap proxy';break;
       case 'semicone':requestedDeductionCm=Math.max(w*.22+t*.18,1);note='semicone seat proxy';break;
       case 'cone':requestedDeductionCm=Math.max(w*.18,.8);note='conical flush reference proxy';break;
       case 'joint':requestedDeductionCm=Math.max(t*.2,.5);note='flush joint trim proxy';break;
@@ -222,14 +302,14 @@
   }
 
   function memberInstances(topology,profile,rimPolicyName='member'){
-    const policy=CONNECTION_SYSTEMS[profile.connection]||CONNECTION_SYSTEMS.joint,rimPolicy=RIM_POLICIES[rimPolicyName]||RIM_POLICIES.member,instances=[];
+    const connection=normalizeBehaviorId(profile.connection),policy=CONNECTION_SYSTEMS[connection]||CONNECTION_SYSTEMS.joint,rimPolicy=RIM_POLICIES[rimPolicyName]||RIM_POLICIES.member,instances=[];
     [...topology.edges.values()].forEach(edge=>{
       if(edge.manifoldClass==='nonmanifold')return;
       const multiplicity=edge.boundary?rimPolicy.multiplier:policy.interiorMembersPerEdge;
       for(let index=0;index<multiplicity;index+=1){
         const owner=edge.boundary?edge.adjacentLocalEdges[0]:(policy.assemblyModel==='panel_frame'?edge.adjacentLocalEdges[index]||edge.adjacentLocalEdges[0]:null);
         const deduction=connectionDeductionCm(edge.centerlineLengthCm,profile),bevel=edge.bevelSamples[index]??edge.bevelSamples[0]??0,dihedral=edge.dihedralSamples[index]??edge.dihedralSamples[0]??0;
-        instances.push({instanceId:`MI-${String(instances.length+1).padStart(6,'0')}`,edgeId:edge.id,edgeClass:edge.manifoldClass,ownerCellId:owner?owner.cellId:null,ownerLocalEdge:owner?owner.localEdgeIndex:null,adjacentCellIds:[...edge.adjacentCellIds],centerlineLengthCm:edge.centerlineLengthCm,deductionCm:deduction.appliedDeductionCm,requestedDeductionCm:deduction.requestedDeductionCm,clampLimitCm:deduction.clampLimitCm,netCutLengthCm:Math.max(0,edge.centerlineLengthCm-deduction.appliedDeductionCm),sawBevelDeg:bevel,dihedralDeg:dihedral,connection:profile.connection,deductionNote:deduction.note,deductionWasClamped:deduction.deductionWasClamped,confidence:'unvalidated_proxy'});
+        instances.push({instanceId:`MI-${String(instances.length+1).padStart(6,'0')}`,edgeId:edge.id,edgeClass:edge.manifoldClass,ownerCellId:owner?owner.cellId:null,ownerLocalEdge:owner?owner.localEdgeIndex:null,adjacentCellIds:[...edge.adjacentCellIds],centerlineLengthCm:edge.centerlineLengthCm,deductionCm:deduction.appliedDeductionCm,requestedDeductionCm:deduction.requestedDeductionCm,clampLimitCm:deduction.clampLimitCm,netCutLengthCm:Math.max(0,edge.centerlineLengthCm-deduction.appliedDeductionCm),sawBevelDeg:bevel,dihedralDeg:dihedral,connection,deductionNote:deduction.note,deductionWasClamped:deduction.deductionWasClamped,confidence:'unvalidated_proxy'});
       }
     });
     return instances;
@@ -246,8 +326,8 @@
   }
 
   function hubSchedule(topology,connection){
-    const groups=new Map();
-    topology.vertices.forEach(vertex=>{const key=[vertex.incidentEdgeIds.length,vertex.boundary?'boundary':'interior',connection].join('|');if(!groups.has(key))groups.set(key,{mark:null,qty:0,valence:vertex.incidentEdgeIds.length,boundary:vertex.boundary,connection,vertexIds:[],warning:'Valence grouping is preliminary; angular configuration is not yet classified.'});const group=groups.get(key);group.qty+=1;group.vertexIds.push(vertex.id);});
+    const groups=new Map(),normalizedConnection=normalizeBehaviorId(connection);
+    topology.vertices.forEach(vertex=>{const key=[vertex.incidentEdgeIds.length,vertex.boundary?'boundary':'interior',normalizedConnection].join('|');if(!groups.has(key))groups.set(key,{mark:null,qty:0,valence:vertex.incidentEdgeIds.length,boundary:vertex.boundary,connection:normalizedConnection,vertexIds:[],warning:'Valence grouping is preliminary; angular configuration is not yet classified.'});const group=groups.get(key);group.qty+=1;group.vertexIds.push(vertex.id);});
     return [...groups.values()].sort((a,b)=>a.valence-b.valence||Number(a.boundary)-Number(b.boundary)).map((g,i)=>({...g,mark:`H-${String(i+1).padStart(3,'0')}`}));
   }
 
@@ -273,7 +353,7 @@
     const bytes=new TextEncoder().encode(text),digest=await cryptoApi.subtle.digest('SHA-256',bytes);
     return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
   }
-  async function configurationFingerprint(canonicalConfiguration){const canonicalJson=canonicalStringify(canonicalConfiguration),full=await sha256Hex(canonicalJson);return {full,abbreviated:full.slice(0,12),canonicalJson};}
+  async function configurationFingerprint(canonicalConfiguration){const canonicalJson=canonicalStringify(normalizeBehaviorConfiguration(canonicalConfiguration)),full=await sha256Hex(canonicalJson);return {full,abbreviated:full.slice(0,12),canonicalJson};}
 
-  return {APP_VERSION,GEOMETRY_ENGINE_VERSION,BOM_ENGINE_VERSION,PARSER_VERSION,BOM_ASSUMPTIONS,CONNECTION_SYSTEMS,RIM_POLICIES,CONSTRUCTOR_TOKEN_SUPPORT,CONSTRUCTOR_NOTATION_PRESETS,canonicalPair,migrateLegacyConstructorConfig,parseConstructorNotation,buildTopologyRegistry,validateTopology,connectionDeductionCm,memberInstances,groupMemberInstances,hubSchedule,sectionProperties,canonicalStringify,configurationFingerprint};
+  return {APP_VERSION,GEOMETRY_ENGINE_VERSION,BOM_ENGINE_VERSION,PARSER_VERSION,BOM_ASSUMPTIONS,BEHAVIOR_IDS,PUBLIC_BEHAVIOR_LABELS,LEGACY_TOKEN_ALIASES,CONNECTION_SYSTEMS,RIM_POLICIES,CONSTRUCTOR_TOKEN_SUPPORT,CONSTRUCTOR_NOTATION_PRESETS,normalizeBehaviorId,publicBehaviorLabel,normalizeConstructorNotation,normalizeBehaviorConfiguration,canonicalPair,migrateLegacyConstructorConfig,parseConstructorNotation,buildTopologyRegistry,validateTopology,connectionDeductionCm,memberInstances,groupMemberInstances,hubSchedule,sectionProperties,canonicalStringify,configurationFingerprint};
 });

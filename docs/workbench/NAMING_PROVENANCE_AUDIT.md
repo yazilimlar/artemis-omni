@@ -31,13 +31,13 @@ Every visible or serialized term should be assigned one category:
 7. Marketing copy must not claim exact compatibility with a named third-party system unless that claim is documented and approved.
 8. Removal of a visible label must not silently change geometry, connection assumptions, or BOM behavior.
 
-## Sprint 0B audit scope and method
+## Historical Sprint 0B baseline and migration scope
 
-The grounded sweep covered the canonical runtime (`public/labs/geometric-workbench/v5-8/index.html` and `v6-integrity.js`), the public product page, the focused integrity tests, and Workbench documentation. A repository-wide source scan excluded dependencies, build output, Git data, and the archived backup. The only matches outside the Workbench concern were generic Three.js `bevelEnabled: false` options in two standalone Atlas/Troy files; those are unrelated internal implementation vocabulary.
+The Sprint 0B baseline below records the pre-migration state and is retained as historical legacy documentation. The terminology migration then covered the canonical runtime (`public/labs/geometric-workbench/v5-8/index.html` and `v6-integrity.js`), public product page, focused integrity tests, generated-output paths, and Workbench documentation. Dependency, build, Git, and archived-backup content is outside the runtime corpus.
 
 Stable identifiers below are authoritative locators. Line numbers may help navigation but are not the audit identity.
 
-## Grounded occurrence classification
+## Historical pre-migration occurrence classification
 
 | Term | Generic technical vocabulary | Public-facing UI | Glossary / documentation | Parser / import compatibility | Export output | Internal implementation | Provenance / attribution finding |
 |---|---|---|---|---|---|---|---|
@@ -52,38 +52,38 @@ Stable identifiers below are authoritative locators. Line numbers may help navig
 
 ## Surface-specific findings
 
-### Public UI
+### Public UI — migrated state
 
-- Provenance-sensitive names are currently visible, not merely accepted on import. The exact stable surfaces are `#constructorNotation`, `#presetKruschke`, `#geoMethod`, `#geoConnection`, parser diagnostics, `CONNECTION_SYSTEMS.goodkarma.label`, and the matching `GLOSSARY_ENTRIES` records.
+- Historical provenance-sensitive labels have been removed from controls, presets, examples, parser diagnostics, connection policy labels, constructor summaries, BOM tables, schedules, and glossary records.
 - Class I/II/III, dual, dihedral, and bevel are used in technically recognizable contexts. Sprint 0B does not replace them.
 - The public product page contains dihedral/bevel language but no Kruschke or GoodKarma occurrence.
 
-### Parser and import compatibility
+### Parser and import compatibility — implemented boundary
 
-- `parseConstructorNotation()` performs case-insensitive exact-token comparisons after underscore tokenization for `kruschke` and `goodkarma`; the focused tests now lock this behavior.
-- `GoodKarma` is classified `partial` and generates an unvalidated-proxy warning. `Kruschke` is classified `compatible`, although renderer equivalence is described as engine-dependent.
-- `migrateLegacyConstructorConfig()` migrates field names `acidomeHash` / `sourceHash`; it does **not** normalize the Kruschke or GoodKarma token values to neutral ARTEMIS IDs.
-- The proposed `LEGACY_TOKEN_ALIASES` and `ARTEMIS_PUBLIC_LABELS` registries below do not exist in runtime code as of Sprint 0B.
+- `parseConstructorNotation()` tokenizes before performing exact, case-insensitive legacy-alias lookup. Broad substring replacement is not used.
+- Historical `Kruschke` normalizes to `timber_optimized_subdivision`; historical `GoodKarma` normalizes to `inset_member_connection`.
+- `migrateLegacyConstructorConfig()` normalizes legacy field names, direct constructor/fabrication values, and notation values. Public diagnostics expose neutral IDs and labels, plus only a generic alias-normalized flag.
+- `BEHAVIOR_IDS`, `PUBLIC_BEHAVIOR_LABELS`, and `LEGACY_TOKEN_ALIASES` are authoritative runtime registries in `v6-integrity.js`.
 
-### Export output
+### Export output — migrated state
 
 - Download filenames and the public product-page copy contain neither provenance-sensitive name; a regression guard now enforces that boundary.
-- Payload hygiene is **not complete**. Constructor notation, profile values, connection labels, schedules, parser diagnostics, and glossary exports can still emit `Kruschke`, `kruschke`, `GoodKarma`, or `goodkarma` through `createProjectPayload()`, `exportConstructorJSON()`, `exportJSON()`, `exportManufacturingJSON()`, `exportStrutCSV()`, and glossary exporters.
+- Project, constructor, BOM, manufacturing, member/strut, erection, glossary, JSON, and CSV output paths now receive normalized IDs and neutral labels. JSON output applies a final non-mutating behavior-normalization pass before serialization.
 - Dihedral and bevel fields are intentional technical output and should not be globally removed.
 
-### Internal implementation
+### Internal implementation — preserved behavior
 
-- `GoodKarma` is not label-only: `CONNECTION_SYSTEMS.goodkarma`, `connectionDeductionCm()`, and `memberInstances()` change member multiplicity and deduction behavior. A safe future rename requires a compatibility alias mapped to a stable behavior ID.
-- Kruschke and Class I/II/III are stored in constructor metadata; this audit did not find a dedicated Kruschke, Class II, or Class III geometry algorithm branch in `buildGoldberg()`. The UI/parser already warns about equivalence limits for Class III, while Kruschke remains more confidently labeled than the implementation evidence supports.
+- The historical connection behavior was not label-only. It is now keyed by `inset_member_connection`; `CONNECTION_SYSTEMS`, `connectionDeductionCm()`, and `memberInstances()` preserve two interior members per shared edge, boundary rim policy, ownership tracing, and the existing deduction/clamp formula.
+- `timber_optimized_subdivision` and Class I/II/III remain constructor metadata. No behavior-specific subdivision renderer branch was found in `buildGoldberg()`, so the neutral public wording continues to describe constructor intent rather than independently validated solver equivalence.
 - Dihedral, bevel, and dual-cell names correspond directly to implemented geometry/topology fields and are not provenance-removal candidates.
 
 ## Risk register
 
 | Risk | Severity | Evidence | Sprint 0B disposition |
 |---|---:|---|---|
-| Kruschke is visible and serializable without a repository provenance record | High | Controls/preset/glossary plus constructor/project/export paths | Documented; behavior frozen; provenance and naming implementation deferred. |
-| GoodKarma is visible, serializable, and behavior-bearing without a provenance record | Critical | Control/glossary plus connection policy, multiplicity, deduction, schedules, and exports | Documented; do not rename by string replacement; future stable-ID migration required. |
-| Aspirational audit rules claim neutral aliases that runtime does not implement | High | No runtime `LEGACY_TOKEN_ALIASES` or `ARTEMIS_PUBLIC_LABELS` constant exists | Explicitly marked proposed, not current behavior. |
+| Historical `Kruschke` label lacked a repository provenance record | High | Historical controls/preset/glossary and constructor/project/export paths | Mitigated: import-only alias; new surfaces use `timber_optimized_subdivision` / **Timber-Optimized Subdivision**. |
+| Historical `GoodKarma` label was visible, serializable, and behavior-bearing | Critical | Historical control/glossary plus connection policy, multiplicity, deduction, schedules, and exports | Mitigated: import-only alias; behavior moved intact to `inset_member_connection` / **Inset Member Connection**. |
+| Runtime and audit terminology could drift | High | Three registries govern IDs, labels, and aliases | Mitigated by exported registries, static public-surface guards, migration tests, and final-output normalization. |
 | Class taxonomy suggests renderer variants not independently verified | Medium | Constructor metadata/parser exists; no matching renderer branches found | Retain technical terms with qualification; add algorithm-equivalence tests before stronger claims. |
 | Generic technical terms could be over-corrected during naming work | Medium | dihedral/bevel/dual fields are calculation- and export-bearing | Protected by this classification; no global replacement. |
 
@@ -91,8 +91,8 @@ Stable identifiers below are authoritative locators. Line numbers may help navig
 
 | Term | Category | Public UI decision | Internal decision | Required action |
 |---|---|---|---|---|
-| Kruschke | Unresolved third-party attribution / legacy token | Remove from controls, presets, glossary, examples, and new exports | Map exact legacy token to `timber_optimized_v1` | Verify all occurrences and preserve legacy import fixture. |
-| GoodKarma | Unresolved third-party attribution / legacy token | Remove from controls, presets, glossary, examples, and new exports | Map exact legacy token to `inset_connection_v1` | Verify all occurrences and preserve legacy import fixture. |
+| Historical `Kruschke` | Legacy compatibility token | Removed from controls, presets, glossary, examples, and new exports | Exact case-insensitive alias to `timber_optimized_subdivision` | Complete; retained only in alias registry, migration tests, and this historical audit. |
+| Historical `GoodKarma` | Legacy compatibility token | Removed from controls, presets, glossary, examples, and new exports | Exact case-insensitive alias to `inset_member_connection` | Complete; retained only in alias registry, migration tests, and this historical audit. |
 | Class I | Generic technical term | Primary label: **Aligned Subdivision**; help: “Class I” | Preserve canonical ID such as `class_i` | Verify actual implementation and invariants. |
 | Class II | Generic technical term | Primary label: **Alternating Subdivision**; help: “Class II” | Preserve canonical ID such as `class_ii` | Verify actual implementation and invariants. |
 | Class III | Generic technical term | Primary label: **Skew Subdivision**; help: “Class III” | Preserve canonical ID such as `class_iii` | Verify actual implementation and invariants. |
@@ -103,27 +103,21 @@ Stable identifiers below are authoritative locators. Line numbers may help navig
 | Platonic / Archimedean | Established mathematical classifications | Retain | Preserve | No immediate removal; ensure descriptions are accurate. |
 | ARTEMIS | Product label | Retain | Preserve | Confirm brand usage and product naming consistency. |
 
-## Proposed internal IDs and labels
+## Final stable IDs and labels
 
 ```js
 const LEGACY_TOKEN_ALIASES = Object.freeze({
-  kruschke: 'timber_optimized_v1',
-  goodkarma: 'inset_connection_v1'
+  kruschke: 'timber_optimized_subdivision',
+  goodkarma: 'inset_member_connection'
 });
 
-const ARTEMIS_PUBLIC_LABELS = Object.freeze({
-  timber_optimized_v1: 'Timber-Optimized Subdivision',
-  inset_connection_v1: 'Inset Member Connection',
-  class_i: 'Aligned Subdivision',
-  class_ii: 'Alternating Subdivision',
-  class_iii: 'Skew Subdivision',
-  dual_cells: 'Polygon Cells',
-  dihedral_angle: 'Panel Joint Angle',
-  bevel_angle: 'Edge Cut Angle'
+const PUBLIC_BEHAVIOR_LABELS = Object.freeze({
+  timber_optimized_subdivision: 'Timber-Optimized Subdivision',
+  inset_member_connection: 'Inset Member Connection'
 });
 ```
 
-These names are provisional until the code audit confirms that each label accurately describes the implemented behavior.
+These names are final for the current migration schema. Stable IDs are intended to outlive future wording changes.
 
 ## Safe normalization contract
 
@@ -194,11 +188,11 @@ The naming sweep must cover:
 
 - [x] Search canonical runtime, product page, tests, documentation, and repository source for every requested term.
 - [x] Record stable file/function/constant/element loci, surface class, and behavior for each occurrence family.
-- [ ] Separate display labels from stable internal IDs.
-- [ ] Introduce exact-token alias mapping.
-- [ ] Replace public labels using the centralized registry.
-- [ ] Update glossary and examples.
-- [ ] Update exports and project schema documentation.
+- [x] Separate display labels from stable internal IDs.
+- [x] Introduce exact-token alias mapping.
+- [x] Replace public labels using the centralized registry.
+- [x] Update glossary and examples.
+- [x] Update exports and project schema documentation.
 - [x] Add regression coverage for current case-insensitive legacy-token parser behavior.
 - [x] Add public filename and product-marketing absence tests for provenance-sensitive names.
 - [x] Review product and support-page copy in the audited corpus.
