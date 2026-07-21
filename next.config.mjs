@@ -48,11 +48,6 @@ const nextConfig = {
           source: "/workbench/runtime/latest",
           destination: "/labs/geometric-workbench/v5-8/index.html",
         },
-        {
-          source: "/workbench/runtime/legacy",
-          destination:
-            "https://raw.githubusercontent.com/yazilimlar/artemis-omni/3fbc18a0caa627589a6b9b314d14f9aefc67522a/public/labs/geometric-workbench/v5-8/index.html",
-        },
       ],
     };
   },
