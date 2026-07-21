@@ -12,8 +12,8 @@ const versions = {
   legacy: {
     label: "v5.9",
     status: "Superseded",
-    src: "/workbench/runtime/legacy",
-    note: "Frozen pre-v6 reference retained for comparison and backward review only.",
+    src: "https://artemis-omni-gpfr7u24n-gokmen1313-3041s-projects.vercel.app/labs/geometric-workbench/v5-8/index.html",
+    note: "Frozen pre-v6 production deployment retained for comparison and backward review only.",
   },
 } as const;
 
