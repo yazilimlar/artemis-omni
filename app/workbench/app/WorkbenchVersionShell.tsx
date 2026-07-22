@@ -6,7 +6,7 @@ const versions = {
   latest: {
     label: "v6.0.0-alpha",
     status: "Latest",
-    src: "https://artemis-omni-dy3446f7n-gokmen1313-3041s-projects.vercel.app/labs/geometric-workbench/v5-8/index.html",
+    src: "/workbench/releases/v6.0.0-alpha/index.html",
     note: "Current ARTEMIS Geometric Workbench with v6 BOM integrity, canonical terminology, palettes, and fabrication intelligence.",
   },
   legacy: {
