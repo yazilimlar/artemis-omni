@@ -6,6 +6,9 @@ import remarkGfm from "remark-gfm";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const WORKBENCH_V6_SOURCE =
+  "https://artemis-omni-dy3446f7n-gokmen1313-3041s-projects.vercel.app/labs/geometric-workbench/v5-8";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Allow MDX pages/content alongside ts/tsx.
@@ -45,12 +48,24 @@ const nextConfig = {
     return {
       beforeFiles: [
         {
+          source: "/workbench/releases/v6.0.0-alpha",
+          destination: `${WORKBENCH_V6_SOURCE}/index.html`,
+        },
+        {
+          source: "/workbench/releases/v6.0.0-alpha/index.html",
+          destination: `${WORKBENCH_V6_SOURCE}/index.html`,
+        },
+        {
+          source: "/workbench/releases/v6.0.0-alpha/:path*",
+          destination: `${WORKBENCH_V6_SOURCE}/:path*`,
+        },
+        {
           source: "/workbench/runtime/latest",
-          destination: "/labs/geometric-workbench/v5-8/index.html",
+          destination: `${WORKBENCH_V6_SOURCE}/index.html`,
         },
         {
           source: "/workbench/runtime/latest/:path*",
-          destination: "/labs/geometric-workbench/v5-8/:path*",
+          destination: `${WORKBENCH_V6_SOURCE}/:path*`,
         },
       ],
     };
