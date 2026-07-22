@@ -1,0 +1,18 @@
+{
+  "releaseId": "artemis-geometric-workbench-v6.0.0-alpha",
+  "semanticVersion": "6.0.0-alpha",
+  "schemaVersion": "1.0.0",
+  "engineVersion": "6.0.0-alpha",
+  "status": "latest",
+  "canonicalPath": "/workbench/releases/v6.0.0-alpha/index.html",
+  "fallbackPaths": [
+    "/workbench/releases/v6.0.0-alpha/",
+    "/workbench/runtime/latest/",
+    "/workbench/runtime/latest/index.html"
+  ],
+  "sourceDeployment": "artemis-omni-dy3446f7n-gokmen1313-3041s-projects.vercel.app",
+  "sourcePath": "/labs/geometric-workbench/v5-8/index.html",
+  "immutable": true,
+  "integrityCycle": "cycle-2",
+  "notes": "Canonical branded release manifest. Runtime content is proxied from the verified immutable v6 deployment while the shell installs the Cycle 2 state-integrity gateway."
+}
