@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 const versions = {
   latest: {
@@ -31,7 +31,6 @@ export function WorkbenchVersionShell() {
   const [version, setVersion] = useState<VersionKey>("latest");
   const [displayScale, setDisplayScale] = useState<DisplayScale>(0.75);
   const selected = versions[version];
-  const frameKey = useMemo(() => `${version}-${selected.src}`, [selected.src, version]);
   const inverseScale = 100 / displayScale;
 
   useEffect(() => {
@@ -105,19 +104,29 @@ export function WorkbenchVersionShell() {
       </div>
 
       <section className="relative min-h-0 flex-1 overflow-hidden">
-        <iframe
-          key={frameKey}
-          title={`ARTEMIS Geometric Workbench ${selected.label}`}
-          src={selected.src}
-          className="absolute left-0 top-0 border-0"
-          style={{
-            width: `${inverseScale}%`,
-            height: `${inverseScale}%`,
-            transform: `scale(${displayScale})`,
-            transformOrigin: "top left",
-          }}
-          allow="fullscreen; clipboard-read; clipboard-write"
-        />
+        {(Object.keys(versions) as VersionKey[]).map((versionKey) => {
+          const frameVersion = versions[versionKey];
+          const active = version === versionKey;
+          return (
+            <iframe
+              key={versionKey}
+              title={`ARTEMIS Geometric Workbench ${frameVersion.label}`}
+              src={frameVersion.src}
+              aria-hidden={!active}
+              tabIndex={active ? 0 : -1}
+              className="absolute left-0 top-0 border-0"
+              style={{
+                width: `${inverseScale}%`,
+                height: `${inverseScale}%`,
+                transform: `scale(${displayScale})`,
+                transformOrigin: "top left",
+                visibility: active ? "visible" : "hidden",
+                pointerEvents: active ? "auto" : "none",
+              }}
+              allow="fullscreen; clipboard-read; clipboard-write"
+            />
+          );
+        })}
       </section>
     </main>
   );
