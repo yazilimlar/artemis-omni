@@ -23,10 +23,12 @@ declare global {
 }
 
 const CONFIG_SELECTOR = "input[id],input[name],select[id],select[name],textarea[id],textarea[name]";
-const EXPORT_PATTERN = /\b(step|3mf|dxf|svg|2d|bom|csv|metadata|manufacturing package|export|download)\b/i;
+const EXPORT_PATTERN = /\b(step|3mf|dxf|svg|csv|metadata|manufacturing package|export|download|save file)\b/i;
 const MUTATION_PATTERN = /\b(reset|default|preset|import|load project|open project|restore)\b/i;
 const REBUILD_DEBOUNCE_MS = 140;
 const PROGRAMMATIC_SCAN_MS = 180;
+
+type ConfigControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 function stableStringify(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
@@ -35,12 +37,16 @@ function stableStringify(value: unknown): string {
   return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${stableStringify(record[key])}`).join(",")}}`;
 }
 
-function controlKey(control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): string | null {
+function controlKey(control: ConfigControl): string | null {
   return control.id || control.name || null;
 }
 
-function readControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): unknown {
-  if (control instanceof HTMLInputElement) {
+function isInput(control: ConfigControl): control is HTMLInputElement {
+  return control.tagName.toUpperCase() === "INPUT";
+}
+
+function readControlValue(control: ConfigControl): unknown {
+  if (isInput(control)) {
     if (control.type === "checkbox" || control.type === "radio") return control.checked;
     if (control.type === "number" || control.type === "range") {
       const numeric = Number(control.value);
@@ -50,11 +56,8 @@ function readControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLTe
   return control.value;
 }
 
-function writeControlValue(
-  control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
-  value: unknown,
-): void {
-  if (control instanceof HTMLInputElement && (control.type === "checkbox" || control.type === "radio")) {
+function writeControlValue(control: ConfigControl, value: unknown): void {
+  if (isInput(control) && (control.type === "checkbox" || control.type === "radio")) {
     control.checked = Boolean(value);
     return;
   }
@@ -63,7 +66,7 @@ function writeControlValue(
 
 function normalizeConfiguration(document: Document): Record<string, unknown> {
   const normalized: Record<string, unknown> = {};
-  const controls = document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(CONFIG_SELECTOR);
+  const controls = document.querySelectorAll<ConfigControl>(CONFIG_SELECTOR);
   for (const control of controls) {
     if (control.disabled || control.dataset.cycle2Ignore === "true") continue;
     const key = controlKey(control);
@@ -79,6 +82,11 @@ async function sha256(value: string): Promise<string> {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+function asElement(target: EventTarget | null): Element | null {
+  if (!target || typeof target !== "object" || !("closest" in target)) return null;
+  return target as Element;
+}
+
 function describeElement(element: Element | null): string {
   if (!element) return "unknown";
   const html = element as HTMLElement;
@@ -88,8 +96,10 @@ function describeElement(element: Element | null): string {
     .trim() || html.tagName.toLowerCase();
 }
 
-function isConfigurationControl(target: EventTarget | null): target is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement {
-  return target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement;
+function isConfigurationControl(target: EventTarget | null): target is ConfigControl {
+  if (!target || typeof target !== "object" || !("tagName" in target)) return false;
+  const tagName = String((target as Element).tagName).toUpperCase();
+  return tagName === "INPUT" || tagName === "SELECT" || tagName === "TEXTAREA";
 }
 
 function isExportElement(element: Element | null): boolean {
@@ -200,9 +210,7 @@ export function installCycle2Integrity(frame: HTMLIFrameElement): Cycle2Controll
     try {
       for (const [key, value] of Object.entries(patch)) {
         const escaped = typeof CSS !== "undefined" && CSS.escape ? CSS.escape(key) : key.replace(/["\\]/g, "\\$&");
-        const control = runtimeDocument.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
-          `#${escaped},[name="${escaped}"]`,
-        );
+        const control = runtimeDocument.querySelector<ConfigControl>(`#${escaped},[name="${escaped}"]`);
         if (control) writeControlValue(control, value);
       }
     } finally {
@@ -228,16 +236,14 @@ export function installCycle2Integrity(frame: HTMLIFrameElement): Cycle2Controll
   };
 
   const onClickCapture = (event: MouseEvent): void => {
-    const target = event.target instanceof Element ? event.target : null;
+    const target = asElement(event.target);
     if (isExportElement(target) && !canExport()) {
       event.preventDefault();
       event.stopImmediatePropagation();
       console.warn("[Export Blocked] Configuration or geometry is stale", snapshot());
       return;
     }
-    if (isMutationAction(target)) {
-      setConfiguration({}, `action:${describeElement(target)}`);
-    }
+    if (isMutationAction(target)) setConfiguration({}, `action:${describeElement(target)}`);
   };
 
   const scanForProgrammaticMutations = (): void => {
