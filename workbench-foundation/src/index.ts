@@ -3,4 +3,5 @@ export * as quantize from "./core/quantize";
 export * as polygon from "./geometry/polygon";
 export * as panelSignature from "./geometry/panelSignature";
 export * as planarity from "./geometry/planarity";
+export * as halfEdges from "./geometry/halfEdges";
 export const ENGINE_VERSION: string = (globalThis as any).__ENGINE_VERSION__ ?? "dev";
