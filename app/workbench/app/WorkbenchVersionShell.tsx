@@ -17,12 +17,20 @@ const versions = {
   },
 } as const;
 
+const displayScales = [0.75, 0.85, 1] as const;
+
 type VersionKey = keyof typeof versions;
+type DisplayScale = (typeof displayScales)[number];
 
 export function WorkbenchVersionShell() {
   const [version, setVersion] = useState<VersionKey>("latest");
+  const [displayScale, setDisplayScale] = useState<DisplayScale>(0.75);
   const selected = versions[version];
-  const frameKey = useMemo(() => `${version}-${selected.src}`, [version, selected.src]);
+  const frameKey = useMemo(
+    () => `${version}-${selected.src}-${displayScale}`,
+    [displayScale, selected.src, version],
+  );
+  const inverseScale = 100 / displayScale;
 
   return (
     <main className="flex h-screen overflow-hidden flex-col bg-[#05080d] text-white">
@@ -38,6 +46,20 @@ export function WorkbenchVersionShell() {
           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${version === "latest" ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"}`}>
             {selected.status}
           </span>
+
+          <label className="sr-only" htmlFor="workbench-display-scale">Workbench display scale</label>
+          <select
+            id="workbench-display-scale"
+            value={displayScale}
+            onChange={(event) => setDisplayScale(Number(event.target.value) as DisplayScale)}
+            className="rounded-lg border border-white/15 bg-[#111a28] px-3 py-2 text-sm text-white"
+            title="Change the Workbench interface scale without changing browser zoom"
+          >
+            <option value={0.75}>Interface scale — 75%</option>
+            <option value={0.85}>Interface scale — 85%</option>
+            <option value={1}>Interface scale — 100%</option>
+          </select>
+
           <label className="sr-only" htmlFor="workbench-version">Workbench version</label>
           <select
             id="workbench-version"
@@ -58,15 +80,21 @@ export function WorkbenchVersionShell() {
       </header>
 
       <div className={`border-b px-4 py-2 text-xs ${version === "latest" ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-100" : "border-amber-500/25 bg-amber-500/10 text-amber-100"}`}>
-        {selected.note}
+        {selected.note} Interface scale is currently {Math.round(displayScale * 100)}% and can be changed from the header.
       </div>
 
-      <section className="relative min-h-0 flex-1">
+      <section className="relative min-h-0 flex-1 overflow-hidden">
         <iframe
           key={frameKey}
           title={`ARTEMIS Geometric Workbench ${selected.label}`}
           src={selected.src}
-          className="absolute inset-0 h-full w-full border-0"
+          className="absolute left-0 top-0 border-0"
+          style={{
+            width: `${inverseScale}%`,
+            height: `${inverseScale}%`,
+            transform: `scale(${displayScale})`,
+            transformOrigin: "top left",
+          }}
           allow="fullscreen; clipboard-read; clipboard-write"
         />
       </section>
