@@ -52,6 +52,10 @@ const nextConfig = {
           destination: `${WORKBENCH_V6_SOURCE}/index.html`,
         },
         {
+          source: "/workbench/releases/v6.0.0-alpha/",
+          destination: `${WORKBENCH_V6_SOURCE}/index.html`,
+        },
+        {
           source: "/workbench/releases/v6.0.0-alpha/index.html",
           destination: `${WORKBENCH_V6_SOURCE}/index.html`,
         },
@@ -61,6 +65,14 @@ const nextConfig = {
         },
         {
           source: "/workbench/runtime/latest",
+          destination: `${WORKBENCH_V6_SOURCE}/index.html`,
+        },
+        {
+          source: "/workbench/runtime/latest/",
+          destination: `${WORKBENCH_V6_SOURCE}/index.html`,
+        },
+        {
+          source: "/workbench/runtime/latest/index.html",
           destination: `${WORKBENCH_V6_SOURCE}/index.html`,
         },
         {
