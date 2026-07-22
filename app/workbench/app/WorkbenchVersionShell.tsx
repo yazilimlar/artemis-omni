@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const versions = {
   latest: {
@@ -18,19 +18,38 @@ const versions = {
 } as const;
 
 const displayScales = [0.75, 0.85, 1] as const;
+const SCALE_STORAGE_KEY = "artemis_workbench_display_scale_v1";
 
 type VersionKey = keyof typeof versions;
 type DisplayScale = (typeof displayScales)[number];
+
+function isDisplayScale(value: number): value is DisplayScale {
+  return displayScales.includes(value as DisplayScale);
+}
 
 export function WorkbenchVersionShell() {
   const [version, setVersion] = useState<VersionKey>("latest");
   const [displayScale, setDisplayScale] = useState<DisplayScale>(0.75);
   const selected = versions[version];
-  const frameKey = useMemo(
-    () => `${version}-${selected.src}-${displayScale}`,
-    [displayScale, selected.src, version],
-  );
+  const frameKey = useMemo(() => `${version}-${selected.src}`, [selected.src, version]);
   const inverseScale = 100 / displayScale;
+
+  useEffect(() => {
+    try {
+      const stored = Number(window.localStorage.getItem(SCALE_STORAGE_KEY));
+      if (isDisplayScale(stored)) setDisplayScale(stored);
+    } catch {
+      // Storage may be unavailable in hardened/private browser contexts.
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SCALE_STORAGE_KEY, String(displayScale));
+    } catch {
+      // Scale remains functional for the current session without persistence.
+    }
+  }, [displayScale]);
 
   return (
     <main className="flex h-screen overflow-hidden flex-col bg-[#05080d] text-white">
