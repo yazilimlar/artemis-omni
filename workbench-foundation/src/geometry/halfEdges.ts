@@ -145,9 +145,21 @@ export function buildHalfEdgeTopology(panels: readonly PanelLoopInput[]): HalfEd
 
   halfEdges.sort((a, b) => a.id.localeCompare(b.id));
   physicalEdges.sort((a, b) => a.id.localeCompare(b.id));
+
+  const frozenHalfEdges: readonly HalfEdgeRecord[] = Object.freeze(
+    halfEdges.map((halfEdge): HalfEdgeRecord => Object.freeze({ ...halfEdge })),
+  );
+  const frozenPhysicalEdges: readonly PhysicalEdgeRecord[] = Object.freeze(
+    physicalEdges.map((physicalEdge): PhysicalEdgeRecord => Object.freeze({
+      ...physicalEdge,
+      vertexIds: Object.freeze([...physicalEdge.vertexIds]) as readonly [string, string],
+      halfEdgeIds: Object.freeze([...physicalEdge.halfEdgeIds]) as readonly [string, string | null],
+    })),
+  );
+
   return Object.freeze({
-    halfEdges: Object.freeze(halfEdges.map(Object.freeze)),
-    physicalEdges: Object.freeze(physicalEdges.map(Object.freeze)),
+    halfEdges: frozenHalfEdges,
+    physicalEdges: frozenPhysicalEdges,
     panelFirstHalfEdgeId: Object.freeze({ ...panelFirstHalfEdgeId }),
   });
 }
