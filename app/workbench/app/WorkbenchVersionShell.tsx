@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { installCycle2Integrity } from "./cycle2Integrity";
 
 const versions = {
   latest: {
@@ -122,6 +123,9 @@ export function WorkbenchVersionShell() {
                 transformOrigin: "top left",
                 visibility: active ? "visible" : "hidden",
                 pointerEvents: active ? "auto" : "none",
+              }}
+              onLoad={(event) => {
+                if (versionKey === "latest") installCycle2Integrity(event.currentTarget);
               }}
               allow="fullscreen; clipboard-read; clipboard-write"
             />
