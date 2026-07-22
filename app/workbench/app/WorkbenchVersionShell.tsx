@@ -52,17 +52,17 @@ export function WorkbenchVersionShell() {
   }, [displayScale]);
 
   return (
-    <main className="flex h-screen overflow-hidden flex-col bg-[#05080d] text-white">
-      <header className="flex flex-wrap items-center gap-3 border-b border-white/10 bg-[#0a111c] px-4 py-3 shadow-xl">
-        <div className="min-w-0">
-          <div className="text-xs font-bold uppercase tracking-[0.24em] text-gold">ARTEMIS Intelligent Systems</div>
-          <h1 className="truncate text-lg font-semibold">Geometric Workbench</h1>
+    <main className="flex h-screen min-h-0 overflow-hidden flex-col bg-[#05080d] text-white">
+      <header className="flex shrink-0 items-center gap-3 border-b border-white/10 bg-[#0a111c] px-3 py-2 shadow-xl">
+        <div className="min-w-0 shrink-0">
+          <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold sm:text-xs">ARTEMIS Intelligent Systems</div>
+          <h1 className="truncate text-base font-semibold sm:text-lg">Geometric Workbench</h1>
         </div>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-gold/40 px-3 py-1 text-xs font-semibold text-gold">
+        <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 overflow-x-auto pb-1 [scrollbar-width:thin]">
+          <span className="shrink-0 rounded-full border border-gold/40 px-3 py-1 text-xs font-semibold text-gold">
             {selected.label}
           </span>
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${version === "latest" ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"}`}>
+          <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${version === "latest" ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"}`}>
             {selected.status}
           </span>
 
@@ -71,7 +71,7 @@ export function WorkbenchVersionShell() {
             id="workbench-display-scale"
             value={displayScale}
             onChange={(event) => setDisplayScale(Number(event.target.value) as DisplayScale)}
-            className="rounded-lg border border-white/15 bg-[#111a28] px-3 py-2 text-sm text-white"
+            className="w-auto shrink-0 rounded-lg border border-white/15 bg-[#111a28] px-3 py-2 text-sm text-white"
             title="Change the Workbench interface scale without changing browser zoom"
           >
             <option value={0.75}>Interface scale — 75%</option>
@@ -84,22 +84,24 @@ export function WorkbenchVersionShell() {
             id="workbench-version"
             value={version}
             onChange={(event) => setVersion(event.target.value as VersionKey)}
-            className="rounded-lg border border-white/15 bg-[#111a28] px-3 py-2 text-sm text-white"
+            className="w-auto shrink-0 rounded-lg border border-white/15 bg-[#111a28] px-3 py-2 text-sm text-white"
           >
             <option value="latest">Latest — v6.0.0-alpha</option>
             <option value="legacy">Superseded — v5.9</option>
           </select>
-          <a href="/workbench" className="rounded-lg border border-white/15 px-3 py-2 text-sm hover:border-gold hover:text-gold">
+          <a href="/workbench" className="shrink-0 rounded-lg border border-white/15 px-3 py-2 text-sm hover:border-gold hover:text-gold">
             Product home
           </a>
-          <a href="/contact?product=geometric-workbench" className="rounded-lg bg-gold px-3 py-2 text-sm font-semibold text-background hover:opacity-90">
+          <a href="/contact?product=geometric-workbench" className="shrink-0 rounded-lg bg-gold px-3 py-2 text-sm font-semibold text-background hover:opacity-90">
             Support
           </a>
         </div>
       </header>
 
-      <div className={`border-b px-4 py-2 text-xs ${version === "latest" ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-100" : "border-amber-500/25 bg-amber-500/10 text-amber-100"}`}>
-        {selected.note} Interface scale is currently {Math.round(displayScale * 100)}% and can be changed from the header.
+      <div className={`shrink-0 border-b px-3 py-1.5 text-xs ${version === "latest" ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-100" : "border-amber-500/25 bg-amber-500/10 text-amber-100"}`}>
+        <span className="block truncate" title={`${selected.note} Interface scale is currently ${Math.round(displayScale * 100)}%.`}>
+          {selected.note} Interface scale: {Math.round(displayScale * 100)}%.
+        </span>
       </div>
 
       <section className="relative min-h-0 flex-1 overflow-hidden">
