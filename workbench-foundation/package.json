@@ -1,0 +1,22 @@
+{
+  "name": "artemis-workbench-foundation",
+  "version": "6.1.0-foundation.1",
+  "description": "ARTEMIS Geometric Workbench v6 foundation modules: canonical cyclic panel signatures, best-fit planarity, esbuild single-file pipeline",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node build.mjs && node --test test/panelSignature.test.mjs test/planarity.test.mjs test/goldberg-integration.test.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.21.5",
+    "three": "^0.128.0",
+    "typescript": "^5.5.4"
+  },
+  "type": "module"
+}
