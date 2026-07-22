@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<title>ARTEMIS Workbench v6 — Foundation Smoke Shell</title></head>
+<body>
+<h1>ARTEMIS_V6.foundation smoke shell</h1>
+<pre id="out"></pre>
+<!--ARTEMIS_FOUNDATION_BUNDLE-->
+<script>
+  const f = window.ARTEMIS_V6.foundation;
+  const sig = f.panelSignature.canonicalPanelSignature(
+    { edgeLengths: [100,120,100,120,100,120], interiorAnglesDeg: [110,130,110,130,110,130] },
+    { mirrorPolicy: "merge", tolerances: { lengthTol: 0.1, angleTol: 0.1 } });
+  document.getElementById("out").textContent = JSON.stringify(sig, null, 2);
+</script>
+</body></html>
