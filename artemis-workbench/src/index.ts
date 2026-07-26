@@ -2,3 +2,7 @@ export * from "./configuration/types";
 export * from "./configuration/normalize";
 export * from "./dependency-graph/graph";
 export * from "./revisions/controller";
+export * from "./geometry/vector3";
+export * from "./geometry/primitives";
+export * from "./geometry/icosahedron";
+export * from "./geometry/geodesic";
