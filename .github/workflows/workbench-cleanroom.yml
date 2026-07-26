@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          npx vitest run artemis-workbench/tests 2>&1 | tee artemis-workbench/vitest.log
+          npx vitest run --config artemis-workbench/vitest.config.ts 2>&1 | tee artemis-workbench/vitest.log
       - name: Upload clean-room test diagnostics
         if: always()
         uses: actions/upload-artifact@v4
