@@ -4,8 +4,13 @@ import {
   createClassIGeodesic,
   createIcosahedron,
   distance,
+  intersectRayPlane,
   magnitude,
+  nearlyEqual,
+  planeFromPoints,
+  projectPointToPlane,
   projectToSphere,
+  signedDistanceToPlane,
   vec3,
 } from "../src";
 
@@ -21,6 +26,30 @@ describe("geometry kernel", () => {
     expect(magnitude(projected)).toBeCloseTo(10, 12);
     expect(projected.x).toBeCloseTo(6, 12);
     expect(projected.y).toBeCloseTo(8, 12);
+  });
+
+  it("applies a deterministic numeric tolerance policy", () => {
+    expect(nearlyEqual(1, 1 + 1e-10)).toBe(true);
+    expect(nearlyEqual(1, 1.001)).toBe(false);
+    expect(nearlyEqual(Number.NaN, 0)).toBe(false);
+  });
+
+  it("constructs, measures, projects, and intersects planes", () => {
+    const plane = planeFromPoints(vec3(0, 0, 5), vec3(1, 0, 5), vec3(0, 1, 5));
+    expect(signedDistanceToPlane(plane, vec3(2, 3, 9))).toBeCloseTo(4, 12);
+    expect(projectPointToPlane(plane, vec3(2, 3, 9))).toEqual(vec3(2, 3, 5));
+
+    const hit = intersectRayPlane(
+      { origin: vec3(2, 3, 10), direction: vec3(0, 0, -2) },
+      plane,
+    );
+    expect(hit).toEqual(vec3(2, 3, 5));
+
+    const parallel = intersectRayPlane(
+      { origin: vec3(0, 0, 10), direction: vec3(1, 0, 0) },
+      plane,
+    );
+    expect(parallel).toBeNull();
   });
 
   it("creates the canonical icosahedron with invariant counts", () => {
