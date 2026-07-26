@@ -1,0 +1,29 @@
+name: Workbench Clean-Room
+
+on:
+  pull_request:
+    paths:
+      - "artemis-workbench/**"
+      - ".github/workflows/workbench-cleanroom.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "artemis-workbench/**"
+      - ".github/workflows/workbench-cleanroom.yml"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install root toolchain
+        run: npm ci
+      - name: Typecheck clean-room foundation
+        run: npx tsc --noEmit -p artemis-workbench/tsconfig.json
+      - name: Test clean-room foundation
+        run: npx vitest run artemis-workbench/tests
