@@ -15,8 +15,8 @@ export default function HouseIdentityCard({ house }: { house: PinarHouse }) {
         <h4>{house.focus}</h4>
         <p>{house.vibe}</p>
         <div className="status">
-          <span><CalendarDays size={15}/> Calendar sync ready</span>
-          <span><ShieldCheck size={15}/> Listing mapping pending verification</span>
+          <span><CalendarDays size={15}/> Calendar integration prepared</span>
+          <span><ShieldCheck size={15}/> Listing mapping pending owner verification</span>
         </div>
         {house.booking.airbnbUrl ? <a href={house.booking.airbnbUrl} target="_blank" rel="noreferrer">View listing <ArrowUpRight size={14}/></a> : <span className="pending">Direct listing link will appear after owner verification</span>}
       </div>
