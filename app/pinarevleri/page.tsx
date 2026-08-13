@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, ExternalLink, Leaf, MapPin, Maximize2, MoonStar, Smartphone, Sparkles, Wifi, X } from 'lucide-react';
 
 const airbnbUrl = 'https://www.airbnb.com/rooms/36961615';
+const youtubeUrl = 'https://youtu.be/VTUh4Odo7yw';
+const youtubeEmbedUrl = 'https://www.youtube-nocookie.com/embed/VTUh4Odo7yw?rel=0&modestbranding=1';
 
 const propertyPhotos = [
   { src:'/images/pinarevleri/pool-mountain.webp', alt:'Pınar Evleri swimming pool and forested mountain landscape', label:'Pool & forest' },
@@ -59,7 +61,7 @@ export default function PinarEvleriPage(){
         <span className="logo"><Image src="/images/pinarevleri/pinar-evleri-logo.webp" alt="Pınar Evleri logo" fill sizes="54px"/></span>
         <span><b>PINAR EVLERİ</b><small>GÖKOVA · ÇAMLI · MARMARİS</small></span>
       </a>
-      <div className="navlinks"><a href="#story">Story</a><a href="#collection">Houses</a><a href="#vision">Vision</a><a href="#gallery">Gallery</a><a href="#location">Location</a></div>
+      <div className="navlinks"><a href="#story">Story</a><a href="#collection">Houses</a><a href="#vision">Vision</a><a href="#film">Film</a><a href="#gallery">Gallery</a><a href="#location">Location</a></div>
     </nav>
 
     <section id="top" className="hero">
@@ -96,13 +98,21 @@ export default function PinarEvleriPage(){
       <div className="visionlabels"><span>GOLDEN-HOUR GARDEN</span><span>POOL LOUNGE</span><span>MEDITERRANEAN TERRACE</span></div>
     </section>
 
+    <section id="film" className="film section">
+      <div className="filmcopy"><span className="num">05</span><span className="kicker">PINAR EVLERİ · FILM</span><h2>See the place<br/><em>in motion.</em></h2><p>Step beyond the still photographs and experience the atmosphere of Pınar Evleri through film — the garden, pool, surrounding landscape and the slower rhythm of Çamlı.</p><a className="watch" href={youtubeUrl} target="_blank" rel="noreferrer">Watch on YouTube <ArrowUpRight size={15}/></a></div>
+      <div className="videoFrame">
+        <iframe src={youtubeEmbedUrl} title="Pınar Evleri video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
+        <div className="videoGlow" aria-hidden="true"/>
+      </div>
+    </section>
+
     <section id="gallery" className="section gallery">
-      <div className="head"><span className="num">05</span><span className="kicker">ORIGINAL PROPERTY PHOTOGRAPHY</span><h2>Garden, water,<br/><em>forest, light.</em></h2></div>
+      <div className="head"><span className="num">06</span><span className="kicker">ORIGINAL PROPERTY PHOTOGRAPHY</span><h2>Garden, water,<br/><em>forest, light.</em></h2></div>
       <div className="grid">{photos.map((p,i)=><button key={p.src} onClick={()=>setActive(i)}><Image src={p.src} alt={p.alt} fill sizes="(max-width:800px) 100vw, 40vw"/><span>{p.label}<Maximize2 size={13}/></span></button>)}</div>
     </section>
 
     <section id="location" className="section location">
-      <div><span className="num">06</span><span className="kicker">LEGENDARY PROXIMITY</span><h2>Between pine forest<br/>and <em>Gökova Bay.</em></h2><p>Çamlı offers quick access to Sedir Island, İncekum Beach, kiteboarding spots and Marmaris.</p><a className="map" href="https://www.google.com/maps/search/?api=1&query=%C3%87aml%C4%B1%20Marmaris%20Mu%C4%9Fla" target="_blank" rel="noreferrer">Open in Google Maps <ExternalLink size={15}/></a></div>
+      <div><span className="num">07</span><span className="kicker">LEGENDARY PROXIMITY</span><h2>Between pine forest<br/>and <em>Gökova Bay.</em></h2><p>Çamlı offers quick access to Sedir Island, İncekum Beach, kiteboarding spots and Marmaris.</p><a className="map" href="https://www.google.com/maps/search/?api=1&query=%C3%87aml%C4%B1%20Marmaris%20Mu%C4%9Fla" target="_blank" rel="noreferrer">Open in Google Maps <ExternalLink size={15}/></a></div>
       <div className="distance"><div className="pin"><MapPin/><b>PINAR EVLERİ</b></div>{distances.map(([p,t])=><div className="row" key={p}><span>{p}</span><b>{t}</b></div>)}</div>
     </section>
 
@@ -122,20 +132,21 @@ export default function PinarEvleriPage(){
       .brand{display:flex;align-items:center;gap:11px;color:inherit;text-decoration:none}.logo{position:relative;width:52px;height:52px;border-radius:50%;overflow:hidden;background:#fff}.brand b{display:block;font-size:12px;letter-spacing:.17em}.brand small{display:block;margin-top:4px;font-size:8px;letter-spacing:.18em;opacity:.58}
       .navlinks{display:flex;gap:22px}.navlinks a{color:inherit;text-decoration:none;font-size:10px;letter-spacing:.12em}
       .hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:120px 7vw;isolation:isolate}.heroimg{object-fit:cover;z-index:-3}.shade{position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(5,12,7,.9) 0%,rgba(5,12,7,.55) 50%,rgba(5,12,7,.15)),linear-gradient(0deg,rgba(5,12,7,.55),transparent 50%)}
-      .herocopy{max-width:760px}.eyebrow,.kicker{display:block;color:#ced9aa;font-size:10px;letter-spacing:.23em}.hero h1,h2{font-family:Georgia,serif;font-weight:400;letter-spacing:-.045em}.hero h1{font-size:clamp(60px,8vw,128px);line-height:.9;margin:22px 0}.hero em,h2 em{color:var(--lime);font-weight:400}.hero p,.copy p,.vision p,.smart p,.location p{font-size:16px;line-height:1.75;color:rgba(242,238,228,.72);max-width:680px}
-      .actions{display:flex;gap:12px;margin-top:28px}.actions a,.map{display:inline-flex;align-items:center;gap:8px;padding:13px 17px;border-radius:99px;text-decoration:none;font-size:11px}.primary{background:var(--lime);color:#122016}.secondary,.map{border:1px solid rgba(255,255,255,.28);color:var(--cream)}
+      .herocopy{max-width:760px}.eyebrow,.kicker{display:block;color:#ced9aa;font-size:10px;letter-spacing:.23em}.hero h1,h2{font-family:Georgia,serif;font-weight:400;letter-spacing:-.045em}.hero h1{font-size:clamp(60px,8vw,128px);line-height:.9;margin:22px 0}.hero em,h2 em{color:var(--lime);font-weight:400}.hero p,.copy p,.vision p,.smart p,.location p,.film p{font-size:16px;line-height:1.75;color:rgba(242,238,228,.72);max-width:680px}
+      .actions{display:flex;gap:12px;margin-top:28px}.actions a,.map,.watch{display:inline-flex;align-items:center;gap:8px;padding:13px 17px;border-radius:99px;text-decoration:none;font-size:11px}.primary{background:var(--lime);color:#122016}.secondary,.map,.watch{border:1px solid rgba(255,255,255,.28);color:var(--cream)}
       .herologo{position:absolute;right:7vw;bottom:8vh;width:min(260px,22vw);aspect-ratio:1;border-radius:50%;overflow:hidden;background:white;box-shadow:0 30px 80px rgba(0,0,0,.38)}
-      .section{padding:110px 7vw}.story,.smart,.location{display:grid;grid-template-columns:1fr 1fr;gap:8vw;align-items:center}.num{display:block;font-size:11px;opacity:.38;margin-bottom:22px}h2{font-size:clamp(46px,6vw,90px);line-height:.94;margin:18px 0 28px}
+      .section{padding:110px 7vw}.story,.smart,.location,.film{display:grid;grid-template-columns:1fr 1fr;gap:8vw;align-items:center}.num{display:block;font-size:11px;opacity:.38;margin-bottom:22px}h2{font-size:clamp(46px,6vw,90px);line-height:.94;margin:18px 0 28px}
       .filters{display:flex;gap:8px;flex-wrap:wrap;margin:34px 0}.filters button{border:1px solid rgba(255,255,255,.2);color:var(--cream);background:transparent;padding:10px 15px;border-radius:99px;cursor:pointer}.filters .on{background:var(--lime);color:#102016;border-color:var(--lime)}
       .houses{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.houses article{min-height:310px;padding:25px;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.11);border-radius:22px}.housemeta{display:flex;justify-content:space-between;font-size:10px;opacity:.55}.houses h3{font-family:Georgia,serif;font-size:30px;margin:62px 0 5px}.houses small{opacity:.55}.houses p{line-height:1.6;color:rgba(242,238,228,.66)}
       .smart{background:#112218}.smartimg{position:relative;min-height:580px;border-radius:28px;overflow:hidden}.smartimg :global(img){object-fit:cover}.smartgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}.smartgrid span{display:flex;align-items:center;gap:9px;padding:14px;border:1px solid rgba(255,255,255,.13);border-radius:14px}
       .vision{padding:110px 0 100px;background:#e7dfcd;color:#102016}.visioncopy{padding:0 7vw}.vision .kicker{color:#49634f}.vision p{color:#405246}.triptych{position:relative;width:100%;aspect-ratio:4/1;margin-top:48px}.triptych :global(img){object-fit:cover}.visionlabels{display:grid;grid-template-columns:repeat(3,1fr);padding:15px 7vw 0;font-size:9px;letter-spacing:.14em;color:#526454}
+      .film{position:relative;background:radial-gradient(circle at 70% 45%,rgba(220,233,172,.08),transparent 30%),#0a1710}.filmcopy{max-width:560px}.watch{margin-top:14px}.videoFrame{position:relative;aspect-ratio:16/9;border:1px solid rgba(255,255,255,.14);border-radius:28px;overflow:hidden;background:#020503;box-shadow:0 40px 100px rgba(0,0,0,.45)}.videoFrame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2}.videoGlow{position:absolute;inset:-18%;background:radial-gradient(circle,rgba(220,233,172,.13),transparent 58%);filter:blur(20px);pointer-events:none}
       .gallery{background:#0c1711}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.grid button{position:relative;border:0;padding:0;min-height:360px;overflow:hidden;background:#1d2b21;cursor:pointer}.grid button:nth-child(1),.grid button:nth-child(4){grid-column:span 7}.grid button:nth-child(2),.grid button:nth-child(3){grid-column:span 5}.grid button:nth-child(5),.grid button:nth-child(6){grid-column:span 6}.grid :global(img){object-fit:cover;transition:transform .6s}.grid button:hover :global(img){transform:scale(1.035)}.grid button span{position:absolute;left:15px;bottom:15px;color:white;background:rgba(0,0,0,.42);backdrop-filter:blur(10px);padding:9px 12px;border-radius:99px;display:flex;gap:8px;align-items:center}
       .distance{padding:28px;border:1px solid rgba(255,255,255,.14);border-radius:24px;background:var(--glass)}.pin{display:flex;gap:10px;align-items:center;margin-bottom:24px}.row{display:flex;justify-content:space-between;padding:16px 0;border-top:1px solid rgba(255,255,255,.1)}.row b{color:var(--lime)}
       footer{padding:45px 6vw;display:grid;grid-template-columns:1.2fr 2fr 1fr;gap:30px;align-items:center;border-top:1px solid rgba(255,255,255,.12);font-size:10px;color:rgba(242,238,228,.55)}.footbrand{display:flex;align-items:center;gap:12px}.footbrand b,.footbrand small{display:block}.footlogo{position:relative;width:72px;height:72px;border-radius:50%;overflow:hidden;background:white}
       .lightbox{position:fixed;inset:0;z-index:200;background:rgba(3,8,5,.95);display:grid;place-items:center}.lightimg{position:relative;width:86vw;height:82vh}.lightimg :global(img){object-fit:contain}.lightbox button{position:absolute;z-index:3;border:0;background:rgba(255,255,255,.1);color:white;width:48px;height:48px;border-radius:50%}.close{right:25px;top:25px}.prev{left:25px}.next{right:25px}
-      @media(max-width:900px){.navlinks a:not(:last-child){display:none}.herologo{width:130px;right:5vw;bottom:6vh}.story,.smart,.location{grid-template-columns:1fr}.houses{grid-template-columns:1fr 1fr}.smartimg{min-height:420px}.triptych{aspect-ratio:2.2/1}.grid button{grid-column:span 12!important;min-height:300px}footer{grid-template-columns:1fr}.section{padding:80px 6vw}}
-      @media(max-width:600px){.hero{padding:120px 6vw 90px;align-items:flex-start}.hero h1{font-size:58px;margin-top:70px}.herologo{top:95px;right:6vw;bottom:auto;width:96px}.houses{grid-template-columns:1fr}.smartgrid{grid-template-columns:1fr}.visionlabels{font-size:7px}.triptych{aspect-ratio:1.7/1}.nav{padding:0 4vw}.logo{width:44px;height:44px}}
+      @media(max-width:900px){.navlinks a:not(:last-child){display:none}.herologo{width:130px;right:5vw;bottom:6vh}.story,.smart,.location,.film{grid-template-columns:1fr}.houses{grid-template-columns:1fr 1fr}.smartimg{min-height:420px}.triptych{aspect-ratio:2.2/1}.grid button{grid-column:span 12!important;min-height:300px}footer{grid-template-columns:1fr}.section{padding:80px 6vw}.film{gap:40px}.videoFrame{border-radius:20px}}
+      @media(max-width:600px){.hero{padding:120px 6vw 90px;align-items:flex-start}.hero h1{font-size:58px;margin-top:70px}.herologo{top:95px;right:6vw;bottom:auto;width:96px}.houses{grid-template-columns:1fr}.smartgrid{grid-template-columns:1fr}.visionlabels{font-size:7px}.triptych{aspect-ratio:1.7/1}.nav{padding:0 4vw}.logo{width:44px;height:44px}.videoFrame{border-radius:16px}}
     `}</style>
   </main>
 }
