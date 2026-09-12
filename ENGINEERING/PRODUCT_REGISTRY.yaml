@@ -169,10 +169,21 @@ products:
     lifecycle: noindex_draft
     maturity: internal_experiment
     visibility: noindex_review
-    data_mode: sample
-    canonical_route: /rainbowbotanics/hemerocallis-fulva
+    data_mode: mixed_explicit
+    canonical_route: /rainbowbotanics
+    review_route: /rainbowbotanics/hemerocallis-fulva
     canonical_branch: main
-    next_gate: resolve_publication_blockers
+    active_integration_branch: product/rainbow-botanics-atlas-v10
+    donor_artifacts:
+      - rainbow-house-atlas-v8
+      - codex-reference-specimen-v9
+      - codex-six-species-migration-v10
+    known_blockers:
+      - four_photo_based_identifications_require_human_or_botanical_review
+      - exact_location_and_exif_privacy_must_be_verified_in_deployed_assets
+      - responsive_and_accessibility_review_required
+      - public_indexing_requires_explicit_product_owner_approval
+    next_gate: deployed_preview_human_review
 
   - id: tax-architecture-2026
     name: 1040 Finance Architecture
