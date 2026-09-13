@@ -1,0 +1,256 @@
+/*
+ * DayOS design tokens — Artemis identity.
+ * Light-first: warm ivory surfaces, deep navy ink, one gold accent.
+ * Semantic discipline: green = confirmed/healthy only, amber = attention only,
+ * red = actual risk only, live-cyan = live/spatial state only.
+ */
+
+.dayos {
+  --dayos-bg: #eef3f9;
+  --dayos-panel: #ffffff;
+  --dayos-card: #f5f8fc;
+  --dayos-ink: #13243a;
+  --dayos-muted: #5d7089;
+  --dayos-line: #d7e0ec;
+  --dayos-navy: #0f4c81;
+  --dayos-navy-ink: #ffffff;
+  --dayos-gold: #c99a2e;
+  --dayos-gold-soft: #f6edd8;
+  --dayos-green: #178655;
+  --dayos-amber: #b45309;
+  --dayos-red: #b42318;
+  --dayos-live: #0e7490;
+  --dayos-shadow: 0 1px 2px rgba(19, 36, 58, 0.05), 0 8px 24px rgba(19, 36, 58, 0.06);
+
+  color-scheme: light dark;
+  min-height: 100vh;
+  background: var(--dayos-bg);
+  color: var(--dayos-ink);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  padding: 24px clamp(14px, 2vw, 30px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dayos {
+    --dayos-bg: #0d1726;
+    --dayos-panel: #13202f;
+    --dayos-card: #182a3c;
+    --dayos-ink: #dde7f2;
+    --dayos-muted: #8aa0ba;
+    --dayos-line: #24364c;
+    --dayos-navy: #7db3e8;
+    --dayos-navy-ink: #0d1726;
+    --dayos-gold: #d9b04a;
+    --dayos-gold-soft: #2c2814;
+    --dayos-green: #4cc38a;
+    --dayos-amber: #e8a33d;
+    --dayos-red: #ef8683;
+    --dayos-live: #5ac8dd;
+    --dayos-shadow: none;
+  }
+}
+
+.dayos .fd-shell {
+  max-width: 1540px;
+  margin: 0 auto;
+}
+
+.dayos h1 {
+  margin: 8px 0 4px;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+}
+
+.dayos h2 {
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+.dayos a {
+  color: var(--dayos-navy);
+}
+
+.dayos .fd-panel {
+  background: var(--dayos-panel);
+  border: 1px solid var(--dayos-line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--dayos-shadow);
+}
+
+.dayos .fd-card {
+  background: var(--dayos-card);
+  border: 1px solid var(--dayos-line);
+  border-radius: 12px;
+  padding: 13px;
+}
+
+.dayos .fd-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--dayos-muted);
+  text-transform: uppercase;
+}
+
+.dayos .fd-muted {
+  color: var(--dayos-muted);
+}
+
+.dayos .fd-pill {
+  display: inline-block;
+  border: 1px solid var(--dayos-line);
+  color: var(--dayos-muted);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.dayos .fd-pill--live { border-color: var(--dayos-live); color: var(--dayos-live); }
+.dayos .fd-pill--confirmed { border-color: var(--dayos-green); color: var(--dayos-green); }
+.dayos .fd-pill--attention { border-color: var(--dayos-amber); color: var(--dayos-amber); }
+.dayos .fd-pill--risk { border-color: var(--dayos-red); color: var(--dayos-red); }
+.dayos .fd-pill--gold { border-color: var(--dayos-gold); color: var(--dayos-gold); }
+
+.dayos .fd-btn {
+  padding: 8px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--dayos-line);
+  background: var(--dayos-panel);
+  color: var(--dayos-ink);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dayos .fd-btn:hover {
+  border-color: var(--dayos-navy);
+}
+
+.dayos .fd-btn--primary {
+  display: inline-block;
+  background: var(--dayos-navy);
+  border-color: var(--dayos-navy);
+  color: var(--dayos-navy-ink);
+  font-weight: 700;
+  text-decoration: none;
+  padding: 10px 16px;
+}
+
+.dayos .fd-btn--ghost {
+  background: transparent;
+  border: 0;
+  color: var(--dayos-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+
+.dayos .fd-tabbar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.dayos .fd-tab {
+  white-space: nowrap;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--dayos-line);
+  background: var(--dayos-panel);
+  color: var(--dayos-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dayos .fd-tab--active {
+  border-color: var(--dayos-navy);
+  background: var(--dayos-navy);
+  color: var(--dayos-navy-ink);
+  font-weight: 600;
+}
+
+.dayos .fd-density {
+  display: inline-flex;
+  border: 1px solid var(--dayos-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dayos .fd-density button {
+  padding: 7px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--dayos-muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dayos .fd-density button + button {
+  border-left: 1px solid var(--dayos-line);
+}
+
+.dayos .fd-density button[aria-pressed='true'] {
+  background: var(--dayos-navy);
+  color: var(--dayos-navy-ink);
+  font-weight: 600;
+}
+
+.dayos .fd-triad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 780px) {
+  .dayos .fd-triad {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.dayos .fd-anchor-card {
+  background: var(--dayos-panel);
+  border: 1px solid var(--dayos-line);
+  border-left: 4px solid var(--dayos-line);
+  border-radius: 16px;
+  padding: 16px;
+  min-height: 120px;
+  box-shadow: var(--dayos-shadow);
+}
+
+.dayos .fd-anchor-card--now { border-left-color: var(--dayos-live); }
+.dayos .fd-anchor-card--next { border-left-color: var(--dayos-navy); }
+.dayos .fd-anchor-card--hard { border-left-color: var(--dayos-gold); background: var(--dayos-gold-soft); }
+
+.dayos .fd-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.dayos .fd-layout--investigate {
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+}
+
+@media (max-width: 980px) {
+  .dayos .fd-layout--investigate {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.dayos .fd-input,
+.dayos textarea.fd-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--dayos-card);
+  border: 1px solid var(--dayos-line);
+  border-radius: 12px;
+  color: var(--dayos-ink);
+  padding: 12px;
+  font: inherit;
+  resize: vertical;
+}

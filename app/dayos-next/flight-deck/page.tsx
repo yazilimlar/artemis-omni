@@ -1,9 +1,12 @@
 'use client';
 
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import './flight-deck.css';
 
 type Tab = 'command' | 'timeline' | 'map' | 'photos' | 'evidence' | 'narrative' | 'money';
+type Density = 'glance' | 'operate' | 'investigate';
 type AnchorClass = 'HARD' | 'PROTECTED' | 'ELASTIC' | 'OPTIONAL';
+type PillTone = 'live' | 'confirmed' | 'attention' | 'risk' | 'gold' | 'neutral';
 
 interface CalendarEvent {
   id: string;
@@ -40,7 +43,7 @@ interface TimelineImportState {
   message: string;
 }
 
-const tabs: Array<{ id: Tab; label: string }> = [
+const allTabs: Array<{ id: Tab; label: string }> = [
   { id: 'command', label: 'Command' },
   { id: 'timeline', label: 'Timeline' },
   { id: 'map', label: 'Map' },
@@ -50,18 +53,17 @@ const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'money', label: 'Money' },
 ];
 
-const colors = {
-  bg: '#071019',
-  panel: '#0c1721',
-  card: '#111f2b',
-  border: '#2c4255',
-  text: '#eef6ff',
-  muted: '#8fa4b8',
-  cyan: '#53c7ff',
-  green: '#49dc9a',
-  amber: '#ffbd55',
-  purple: '#b79cff',
+const densityTabs: Record<Density, Tab[]> = {
+  glance: [],
+  operate: ['command', 'timeline', 'map', 'photos', 'narrative'],
+  investigate: ['command', 'timeline', 'map', 'photos', 'evidence', 'narrative', 'money'],
 };
+
+const densityLabels: Array<{ id: Density; label: string }> = [
+  { id: 'glance', label: 'Glance' },
+  { id: 'operate', label: 'Operate' },
+  { id: 'investigate', label: 'Investigate' },
+];
 
 function displayTime(value: string | null, allDay = false) {
   if (!value) return 'Time unavailable';
@@ -98,44 +100,30 @@ function countTimelineRecords(value: unknown): number {
   return 0;
 }
 
+function anchorTone(anchorClass?: AnchorClass): PillTone {
+  if (anchorClass === 'HARD') return 'gold';
+  if (anchorClass === 'PROTECTED') return 'attention';
+  return 'neutral';
+}
+
 function Panel({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <section
-      style={{
-        background: colors.panel,
-        border: `1px solid ${colors.border}`,
-        borderRadius: 18,
-        padding: 18,
-        ...style,
-      }}
-    >
+    <section className="fd-panel" style={style}>
       {children}
     </section>
   );
 }
 
-function StatusPill({ children, tone = 'cyan' }: { children: React.ReactNode; tone?: 'cyan' | 'green' | 'amber' | 'purple' }) {
-  const map = { cyan: colors.cyan, green: colors.green, amber: colors.amber, purple: colors.purple };
-  return (
-    <span
-      style={{
-        border: `1px solid ${map[tone]}`,
-        color: map[tone],
-        borderRadius: 999,
-        padding: '3px 8px',
-        fontSize: 11,
-        letterSpacing: '0.08em',
-      }}
-    >
-      {children}
-    </span>
-  );
+function Pill({ children, tone = 'neutral' }: { children: React.ReactNode; tone?: PillTone }) {
+  const toneClass = tone === 'neutral' ? '' : ` fd-pill--${tone}`;
+  return <span className={`fd-pill${toneClass}`}>{children}</span>;
 }
 
 export default function FlightDeckPage() {
   const [payload, setPayload] = useState<CalendarPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>('command');
+  const [density, setDensity] = useState<Density>('operate');
   const [timelineImport, setTimelineImport] = useState<TimelineImportState | null>(null);
   const [fieldNote, setFieldNote] = useState('');
 
@@ -158,6 +146,11 @@ export default function FlightDeckPage() {
   async function disconnect() {
     await fetch('/api/auth/google/disconnect', { method: 'POST' });
     await load();
+  }
+
+  function changeDensity(next: Density) {
+    setDensity(next);
+    if (next !== 'glance' && !densityTabs[next].includes(tab)) setTab('command');
   }
 
   async function importTimeline(event: ChangeEvent<HTMLInputElement>) {
@@ -216,104 +209,130 @@ export default function FlightDeckPage() {
     ['Money Points', 'CONTRACT', 'ENGINE DEFERRED'],
   ];
 
+  const visibleTabs = allTabs.filter((item) => densityTabs[density].includes(item.id));
+  const connected = !loading && payload?.connected;
+
+  const anchorTriad = (
+    <div className="fd-triad">
+      {[
+        { key: 'now', label: 'NOW', title: activeEvent?.title ?? 'No timed event active', detail: activeEvent ? displayTime(activeEvent.start) : 'Awaiting observed activity' },
+        { key: 'next', label: 'NEXT', title: nextEvent?.title ?? 'No upcoming anchor', detail: nextEvent ? displayTime(nextEvent.start, nextEvent.isAllDay) : 'Open horizon' },
+        { key: 'hard', label: 'HARD ANCHOR', title: hardAnchor?.title ?? 'No hard anchor found', detail: hardAnchor ? displayTime(hardAnchor.start, hardAnchor.isAllDay) : 'No fixed commitment' },
+      ].map((card) => (
+        <div key={card.key} className={`fd-anchor-card fd-anchor-card--${card.key}`}>
+          <div className="fd-label">{card.label}</div>
+          <div style={{ marginTop: 14, fontWeight: 800, fontSize: 18 }}>{card.title}</div>
+          <div className="fd-muted" style={{ marginTop: 8, fontSize: 12 }}>{card.detail}</div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
-    <main style={{ minHeight: '100vh', background: colors.bg, color: colors.text, padding: '24px clamp(14px, 2vw, 30px)', fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <div style={{ maxWidth: 1540, margin: '0 auto' }}>
+    <main className="dayos">
+      <div className="fd-shell">
         <Panel style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
           <div>
-            <div style={{ fontSize: 11, letterSpacing: '0.16em', color: colors.muted }}>ARTEMIS DAYOS · MULTIMODAL OPERATING SURFACE</div>
-            <h1 style={{ margin: '8px 0 4px', fontSize: 30 }}>Daily Operational Command Surface</h1>
-            <div style={{ color: colors.muted, fontSize: 13 }}>Ideal · Expected · Actual · Evidence · Economic</div>
+            <div className="fd-label">Artemis DayOS · Multimodal Operating Surface</div>
+            <h1>Daily Operational Command Surface</h1>
+            <div className="fd-muted" style={{ fontSize: 13 }}>Ideal · Expected · Actual · Evidence · Economic</div>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-            <StatusPill tone="green">CALENDAR LIVE</StatusPill>
-            <StatusPill>{payload?.fetchedAt ? `SYNC ${new Date(payload.fetchedAt).toLocaleTimeString()}` : 'SYNCING'}</StatusPill>
-            <button onClick={() => void load()} style={{ padding: '8px 12px', borderRadius: 9, border: `1px solid ${colors.border}`, background: colors.card, color: colors.text }}>Reload</button>
-          </div>
-        </Panel>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 280px) minmax(0, 1fr)', gap: 16 }}>
-          <aside>
-            <Panel>
-              <div style={{ fontSize: 11, letterSpacing: '0.14em', color: colors.muted, marginBottom: 14 }}>CONNECTED APPS HUB</div>
-              <div style={{ display: 'grid', gap: 9 }}>
-                {connectorRows.map(([name, status, detail]) => (
-                  <div key={name} style={{ background: colors.card, border: `1px solid ${colors.border}`, borderRadius: 12, padding: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 13, fontWeight: 700 }}><span>{name}</span><span style={{ color: colors.cyan, fontSize: 10 }}>{status}</span></div>
-                    <div style={{ marginTop: 5, color: colors.muted, fontSize: 11 }}>{detail}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ marginTop: 14, padding: 12, borderRadius: 12, border: `1px solid ${colors.purple}`, background: '#241f3d' }}>
-                <div style={{ fontSize: 12, fontWeight: 700 }}>EVIDENCE RULE</div>
-                <div style={{ marginTop: 6, color: colors.muted, fontSize: 11, lineHeight: 1.5 }}>AI proposes. Evidence controls authority. Imported history and provider data remain distinguishable from direct observation.</div>
-              </div>
-            </Panel>
-          </aside>
-
-          <section style={{ minWidth: 0 }}>
-            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 10 }}>
-              {tabs.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setTab(item.id)}
-                  style={{
-                    whiteSpace: 'nowrap',
-                    padding: '9px 13px',
-                    borderRadius: 10,
-                    border: `1px solid ${tab === item.id ? colors.cyan : colors.border}`,
-                    background: tab === item.id ? '#12314a' : colors.card,
-                    color: colors.text,
-                  }}
-                >
+            <div className="fd-density" role="group" aria-label="Information density">
+              {densityLabels.map((item) => (
+                <button key={item.id} aria-pressed={density === item.id} onClick={() => changeDensity(item.id)}>
                   {item.label}
                 </button>
               ))}
             </div>
+            <Pill tone={payload?.connected ? 'confirmed' : 'attention'}>{payload?.connected ? 'CALENDAR LIVE' : 'CALENDAR OFFLINE'}</Pill>
+            <Pill tone="live">{payload?.fetchedAt ? `SYNC ${new Date(payload.fetchedAt).toLocaleTimeString()}` : 'SYNCING'}</Pill>
+            <button className="fd-btn" onClick={() => void load()}>Reload</button>
+          </div>
+        </Panel>
+
+        <div className={`fd-layout${density === 'investigate' ? ' fd-layout--investigate' : ''}`}>
+          {density === 'investigate' ? (
+            <aside>
+              <Panel>
+                <div className="fd-label" style={{ marginBottom: 14 }}>Connected Apps Hub</div>
+                <div style={{ display: 'grid', gap: 9 }}>
+                  {connectorRows.map(([name, status, detail]) => (
+                    <div key={name} className="fd-card" style={{ padding: 12 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 13, fontWeight: 700 }}>
+                        <span>{name}</span>
+                        <span style={{ color: 'var(--dayos-navy)', fontSize: 10 }}>{status}</span>
+                      </div>
+                      <div className="fd-muted" style={{ marginTop: 5, fontSize: 11 }}>{detail}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="fd-card" style={{ marginTop: 14, borderColor: 'var(--dayos-gold)' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700 }}>EVIDENCE RULE</div>
+                  <div className="fd-muted" style={{ marginTop: 6, fontSize: 11, lineHeight: 1.5 }}>
+                    AI proposes. Evidence controls authority. Imported history and provider data remain distinguishable from direct observation.
+                  </div>
+                </div>
+              </Panel>
+            </aside>
+          ) : null}
+
+          <section style={{ minWidth: 0 }}>
+            {density !== 'glance' ? (
+              <div className="fd-tabbar">
+                {visibleTabs.map((item) => (
+                  <button key={item.id} className={`fd-tab${tab === item.id ? ' fd-tab--active' : ''}`} onClick={() => setTab(item.id)}>
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
 
             {!loading && !payload?.connected ? (
               <Panel>
                 <h2 style={{ marginTop: 0 }}>Google Calendar not connected</h2>
-                <p style={{ color: colors.muted }}>{payload?.error ?? 'Authorize read-only calendar access.'}</p>
-                <a href="/api/auth/google" style={{ display: 'inline-block', padding: '10px 14px', borderRadius: 10, background: colors.cyan, color: '#071019', textDecoration: 'none', fontWeight: 700 }}>Authorize Google Calendar</a>
+                <p className="fd-muted">{payload?.error ?? 'Authorize read-only calendar access.'}</p>
+                <a href="/api/auth/google" className="fd-btn fd-btn--primary">Authorize Google Calendar</a>
               </Panel>
             ) : null}
 
             {loading ? <Panel><p>Loading operational anchors…</p></Panel> : null}
 
-            {!loading && payload?.connected && tab === 'command' ? (
+            {connected && density === 'glance' ? (
               <div style={{ display: 'grid', gap: 16 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12 }}>
-                  {[
-                    ['NOW', activeEvent?.title ?? 'No timed event active', activeEvent ? displayTime(activeEvent.start) : 'Awaiting observed activity', colors.cyan],
-                    ['NEXT', nextEvent?.title ?? 'No upcoming anchor', nextEvent ? displayTime(nextEvent.start, nextEvent.isAllDay) : 'Open horizon', colors.green],
-                    ['HARD ANCHOR', hardAnchor?.title ?? 'No hard anchor found', hardAnchor ? displayTime(hardAnchor.start, hardAnchor.isAllDay) : 'No fixed commitment', colors.amber],
-                  ].map(([label, title, detail, tone]) => (
-                    <div key={String(label)} style={{ background: colors.card, border: `1px solid ${tone}`, borderRadius: 16, padding: 16, minHeight: 130 }}>
-                      <div style={{ color: colors.muted, fontSize: 11, letterSpacing: '0.12em' }}>{label}</div>
-                      <div style={{ marginTop: 14, fontWeight: 800, fontSize: 18 }}>{title}</div>
-                      <div style={{ marginTop: 8, color: colors.muted, fontSize: 12 }}>{detail}</div>
-                    </div>
-                  ))}
-                </div>
+                {anchorTriad}
+                <Panel>
+                  <div className="fd-label">Today, in one line</div>
+                  <p style={{ lineHeight: 1.8, marginBottom: 0 }}>{narrative}</p>
+                </Panel>
+              </div>
+            ) : null}
 
+            {connected && density !== 'glance' && tab === 'command' ? (
+              <div style={{ display: 'grid', gap: 16 }}>
+                {anchorTriad}
                 <Panel>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-                    <div><div style={{ fontSize: 11, color: colors.muted, letterSpacing: '0.12em' }}>ENRICHED OPERATIONAL TIMELINE</div><h2 style={{ margin: '7px 0 0' }}>Calendar anchors + evidence</h2></div>
-                    <div style={{ color: colors.muted, fontSize: 12 }}>{events.length} live anchor{events.length === 1 ? '' : 's'}</div>
+                    <div>
+                      <div className="fd-label">Enriched Operational Timeline</div>
+                      <h2 style={{ margin: '7px 0 0' }}>Calendar anchors + evidence</h2>
+                    </div>
+                    <div className="fd-muted" style={{ fontSize: 12 }}>{events.length} live anchor{events.length === 1 ? '' : 's'}</div>
                   </div>
                   <div style={{ display: 'grid', gap: 10, marginTop: 14 }}>
                     {events.map((event) => (
-                      <article key={event.id} style={{ background: colors.card, border: `1px solid ${colors.border}`, borderRadius: 12, padding: 13 }}>
+                      <article key={event.id} className="fd-card">
                         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                           <strong>{event.title}</strong>
-                          <StatusPill tone={event.anchorClass === 'HARD' ? 'amber' : 'cyan'}>{event.anchorClass ?? 'SCHEDULED'}</StatusPill>
+                          <Pill tone={anchorTone(event.anchorClass)}>{event.anchorClass ?? 'SCHEDULED'}</Pill>
                         </div>
-                        <div style={{ marginTop: 6, color: colors.muted, fontSize: 12 }}>{displayTime(event.start, event.isAllDay)} · {event.epistemic ?? 'REPORTED'} · {event.source}</div>
+                        <div className="fd-muted" style={{ marginTop: 6, fontSize: 12 }}>
+                          {displayTime(event.start, event.isAllDay)} · {event.epistemic ?? 'REPORTED'} · {event.source}
+                        </div>
                         {event.location ? (
                           <div style={{ marginTop: 8, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                             <span style={{ fontSize: 12 }}>{event.location}</span>
-                            <a href={mapsUrl(event.location)} target="_blank" rel="noreferrer" style={{ color: colors.cyan, fontSize: 12 }}>Open route in Google Maps ↗</a>
+                            <a href={mapsUrl(event.location)} target="_blank" rel="noreferrer" style={{ fontSize: 12 }}>Open route in Google Maps ↗</a>
                           </div>
                         ) : null}
                       </article>
@@ -323,89 +342,108 @@ export default function FlightDeckPage() {
               </div>
             ) : null}
 
-            {!loading && payload?.connected && tab === 'timeline' ? (
+            {connected && density !== 'glance' && tab === 'timeline' ? (
               <Panel>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', color: colors.muted }}>GOOGLE MAPS TIMELINE · HISTORY INGESTION</div>
+                <div className="fd-label">Google Maps Timeline · History Ingestion</div>
                 <h2>Import device-exported Timeline evidence</h2>
-                <p style={{ color: colors.muted, lineHeight: 1.6 }}>Timeline is treated as historical reported evidence. Import stays in this browser session for now; DayOS does not silently promote imported locations to observed truth.</p>
+                <p className="fd-muted" style={{ lineHeight: 1.6 }}>
+                  Timeline is treated as historical reported evidence. Import stays in this browser session for now; DayOS does not silently promote imported locations to observed truth.
+                </p>
                 <input type="file" accept="application/json,.json" onChange={(event) => void importTimeline(event)} />
                 {timelineImport ? (
-                  <div style={{ marginTop: 16, background: colors.card, border: `1px solid ${timelineImport.status === 'READY' ? colors.green : colors.amber}`, borderRadius: 12, padding: 14 }}>
+                  <div className="fd-card" style={{ marginTop: 16, borderColor: timelineImport.status === 'READY' ? 'var(--dayos-green)' : 'var(--dayos-amber)' }}>
                     <strong>{timelineImport.fileName}</strong>
-                    <div style={{ marginTop: 6, color: colors.muted }}>{timelineImport.recordCount} detected records · {timelineImport.message}</div>
+                    <div className="fd-muted" style={{ marginTop: 6 }}>{timelineImport.recordCount} detected records · {timelineImport.message}</div>
                   </div>
                 ) : null}
               </Panel>
             ) : null}
 
-            {!loading && payload?.connected && tab === 'map' ? (
+            {connected && density !== 'glance' && tab === 'map' ? (
               <div style={{ display: 'grid', gap: 16 }}>
                 <Panel>
-                  <div style={{ fontSize: 11, letterSpacing: '0.12em', color: colors.muted }}>ROUTE / TRANSPORT MONITOR</div>
+                  <div className="fd-label">Route / Transport Monitor</div>
                   <h2>{mapTarget ? mapTarget.title : 'No located event available'}</h2>
-                  <p style={{ color: colors.muted }}>{mapTarget?.location ?? 'Add a location to a Calendar event to activate routing.'}</p>
-                  {mapTarget?.location ? <a href={mapsUrl(mapTarget.location)} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: 6, color: colors.cyan }}>Open directions in Google Maps ↗</a> : null}
+                  <p className="fd-muted">{mapTarget?.location ?? 'Add a location to a Calendar event to activate routing.'}</p>
+                  {mapTarget?.location ? (
+                    <a href={mapsUrl(mapTarget.location)} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginTop: 6 }}>Open directions in Google Maps ↗</a>
+                  ) : null}
                 </Panel>
                 <Panel>
                   <strong>Next spatial layer</strong>
-                  <p style={{ color: colors.muted, lineHeight: 1.6 }}>DayOS will add deterministic prep, departure, route, ETA and slack around the next hard anchor. Google Maps remains the mature navigation surface; DayOS orchestrates the decision layer around it.</p>
+                  <p className="fd-muted" style={{ lineHeight: 1.6 }}>
+                    DayOS will add deterministic prep, departure, route, ETA and slack around the next hard anchor. Google Maps remains the mature navigation surface; DayOS orchestrates the decision layer around it.
+                  </p>
                 </Panel>
               </div>
             ) : null}
 
-            {!loading && payload?.connected && tab === 'photos' ? (
+            {connected && density !== 'glance' && tab === 'photos' ? (
               <Panel>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', color: colors.muted }}>GOOGLE PHOTOS · SELECTED MEDIA EVIDENCE</div>
+                <div className="fd-label">Google Photos · Selected Media Evidence</div>
                 <h2>Picker connector is the next media gate</h2>
-                <p style={{ color: colors.muted, lineHeight: 1.65 }}>DayOS will request only user-selected photos/videos through Google Photos Picker, then attach timestamp/media metadata to candidate operating events. Broad whole-library read is intentionally not assumed.</p>
-                <div style={{ background: colors.card, border: `1px solid ${colors.purple}`, borderRadius: 12, padding: 14 }}>
+                <p className="fd-muted" style={{ lineHeight: 1.65 }}>
+                  DayOS will request only user-selected photos/videos through Google Photos Picker, then attach timestamp/media metadata to candidate operating events. Broad whole-library read is intentionally not assumed.
+                </p>
+                <div className="fd-card" style={{ borderColor: 'var(--dayos-navy)' }}>
                   <div><strong>Status:</strong> connector contract ready for implementation</div>
-                  <div style={{ marginTop: 6, color: colors.muted, fontSize: 12 }}>Required scope: photospicker.mediaitems.readonly · user selection remains explicit</div>
+                  <div className="fd-muted" style={{ marginTop: 6, fontSize: 12 }}>Required scope: photospicker.mediaitems.readonly · user selection remains explicit</div>
                 </div>
               </Panel>
             ) : null}
 
-            {!loading && payload?.connected && tab === 'evidence' ? (
+            {connected && density !== 'glance' && tab === 'evidence' ? (
               <Panel>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', color: colors.muted }}>EVIDENCE LEDGER · SESSION VIEW</div>
+                <div className="fd-label">Evidence Ledger · Session View</div>
                 <h2>{events.length + (timelineImport ? 1 : 0) + (fieldNote ? 1 : 0)} evidence groups active</h2>
                 <div style={{ display: 'grid', gap: 10 }}>
-                  <div style={{ background: colors.card, borderRadius: 12, padding: 13 }}><strong>Google Calendar</strong><div style={{ color: colors.muted, marginTop: 5 }}>{events.length} REPORTED scheduled anchors · confidence 1.00</div></div>
-                  <div style={{ background: colors.card, borderRadius: 12, padding: 13 }}><strong>Timeline import</strong><div style={{ color: colors.muted, marginTop: 5 }}>{timelineImport ? `${timelineImport.recordCount} records · REPORTED` : 'Not loaded'}</div></div>
-                  <div style={{ background: colors.card, borderRadius: 12, padding: 13 }}><strong>User field note</strong><div style={{ color: colors.muted, marginTop: 5 }}>{fieldNote ? 'REPORTED · available to narrative' : 'No note entered'}</div></div>
+                  <div className="fd-card"><strong>Google Calendar</strong><div className="fd-muted" style={{ marginTop: 5 }}>{events.length} REPORTED scheduled anchors · confidence 1.00</div></div>
+                  <div className="fd-card"><strong>Timeline import</strong><div className="fd-muted" style={{ marginTop: 5 }}>{timelineImport ? `${timelineImport.recordCount} records · REPORTED` : 'Not loaded'}</div></div>
+                  <div className="fd-card"><strong>User field note</strong><div className="fd-muted" style={{ marginTop: 5 }}>{fieldNote ? 'REPORTED · available to narrative' : 'No note entered'}</div></div>
                 </div>
               </Panel>
             ) : null}
 
-            {!loading && payload?.connected && tab === 'narrative' ? (
+            {connected && density !== 'glance' && tab === 'narrative' ? (
               <div style={{ display: 'grid', gap: 16 }}>
                 <Panel>
-                  <div style={{ fontSize: 11, letterSpacing: '0.12em', color: colors.muted }}>DAILY NARRATIVE · DRAFT LAYER</div>
+                  <div className="fd-label">Daily Narrative · Draft Layer</div>
                   <h2>Evidence-backed day narration</h2>
-                  <textarea value={fieldNote} onChange={(event) => setFieldNote(event.target.value)} placeholder="Add a correction, coordinate, field observation, voice transcription, or note…" rows={5} style={{ width: '100%', boxSizing: 'border-box', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: 12, color: colors.text, padding: 12, resize: 'vertical' }} />
+                  <textarea
+                    className="fd-input"
+                    value={fieldNote}
+                    onChange={(event) => setFieldNote(event.target.value)}
+                    placeholder="Add a correction, coordinate, field observation, voice transcription, or note…"
+                    rows={5}
+                  />
                 </Panel>
                 <Panel>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}><strong>Auto-narrative preview</strong><StatusPill tone="purple">DRAFT</StatusPill></div>
-                  <p style={{ color: '#d9e7f4', lineHeight: 1.8 }}>{narrative}</p>
-                  <div style={{ color: colors.muted, fontSize: 11 }}>This preview is deterministic and evidence-aware; AI synthesis comes after location/media evidence connectors are live.</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                    <strong>Auto-narrative preview</strong>
+                    <Pill tone="live">DRAFT</Pill>
+                  </div>
+                  <p style={{ lineHeight: 1.8 }}>{narrative}</p>
+                  <div className="fd-muted" style={{ fontSize: 11 }}>This preview is deterministic and evidence-aware; AI synthesis comes after location/media evidence connectors are live.</div>
                 </Panel>
               </div>
             ) : null}
 
-            {!loading && payload?.connected && tab === 'money' ? (
+            {connected && density !== 'glance' && tab === 'money' ? (
               <Panel>
-                <div style={{ fontSize: 11, letterSpacing: '0.12em', color: colors.muted }}>MONEY POINTS</div>
+                <div className="fd-label">Money Points</div>
                 <h2>Economic contract frozen · activation follows actual activity evidence</h2>
-                <p style={{ color: colors.muted, lineHeight: 1.65 }}>Earned, billed, collected, spent and reimbursable remain separate lifecycle concepts. The next activation will attach user-confirmed billable time to a real operating event after spatial evidence is working.</p>
-                <StatusPill tone="amber">ENGINE DEFERRED BY DESIGN</StatusPill>
+                <p className="fd-muted" style={{ lineHeight: 1.65 }}>
+                  Earned, billed, collected, spent and reimbursable remain separate lifecycle concepts. The next activation will attach user-confirmed billable time to a real operating event after spatial evidence is working.
+                </p>
+                <Pill tone="attention">ENGINE DEFERRED BY DESIGN</Pill>
               </Panel>
             ) : null}
           </section>
         </div>
 
-        <div style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', color: colors.muted, fontSize: 11 }}>
+        <div className="fd-muted" style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', fontSize: 11 }}>
           <span>Calendar → Map → Timeline → Photos → Evidence → Narrative → Money</span>
-          <button onClick={() => void disconnect()} style={{ background: 'transparent', border: 0, color: colors.muted, cursor: 'pointer' }}>Disconnect Google Calendar</button>
+          <button className="fd-btn--ghost" onClick={() => void disconnect()}>Disconnect Google Calendar</button>
         </div>
       </div>
     </main>
