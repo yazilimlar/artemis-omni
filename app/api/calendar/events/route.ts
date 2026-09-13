@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { refreshGoogleAccessToken } from '@/src/dayos/connectors/googleOAuth';
+import { classifyCalendarAnchor } from '@/src/dayos/core/operatingEvent';
 
 export const runtime = 'nodejs';
 
@@ -26,7 +27,7 @@ function buildCalendarUrl() {
   const url = new URL('https://www.googleapis.com/calendar/v3/calendars/primary/events');
   url.searchParams.set('singleEvents', 'true');
   url.searchParams.set('orderBy', 'startTime');
-  url.searchParams.set('maxResults', '10');
+  url.searchParams.set('maxResults', '25');
   url.searchParams.set('timeMin', now.toISOString());
   url.searchParams.set('timeMax', horizon.toISOString());
   return url;
@@ -44,18 +45,41 @@ function normalize(items: GoogleCalendarEvent[]) {
     .filter((event) => event.status !== 'cancelled')
     .map((event) => {
       const self = event.attendees?.find((attendee) => attendee.self);
+      const isAllDay = Boolean(event.start?.date && !event.start?.dateTime);
+      const transparency = event.transparency ?? 'opaque';
+      const attendance = self?.responseStatus ?? null;
+      const start = event.start?.dateTime ?? event.start?.date ?? null;
+      const end = event.end?.dateTime ?? event.end?.date ?? null;
+      const anchorClass = classifyCalendarAnchor({ isAllDay, transparency, attendance });
+
       return {
         id: event.id,
+        operatingEventId: `calendar:${event.id}`,
         title: event.summary ?? '(Untitled event)',
-        start: event.start?.dateTime ?? event.start?.date ?? null,
-        end: event.end?.dateTime ?? event.end?.date ?? null,
-        isAllDay: Boolean(event.start?.date && !event.start?.dateTime),
+        start,
+        end,
+        isAllDay,
         location: event.location ?? null,
         status: event.status ?? 'confirmed',
-        transparency: event.transparency ?? 'opaque',
-        attendance: self?.responseStatus ?? null,
+        transparency,
+        attendance,
         htmlLink: event.htmlLink ?? null,
         source: 'google.calendar',
+        epistemic: 'REPORTED' as const,
+        temporalRole: 'SCHEDULED' as const,
+        anchorClass,
+        confidence: 1,
+        evidenceRefs: [
+          {
+            id: `evidence:calendar:${event.id}`,
+            kind: 'CALENDAR' as const,
+            source: 'google.calendar',
+            epistemic: 'REPORTED' as const,
+            contentTimeUtc: start,
+            confidence: 1,
+            label: 'Google Calendar event',
+          },
+        ],
       };
     });
 }
@@ -111,6 +135,7 @@ export async function GET(request: NextRequest) {
   const response = NextResponse.json({
     connected: true,
     fetchedAt: new Date().toISOString(),
+    source: 'google.calendar',
     events: normalize(payload.items ?? []),
   });
 
