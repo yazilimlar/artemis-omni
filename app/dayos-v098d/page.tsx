@@ -1,0 +1,1 @@
+export default function DayOSCostEvidence(){return <main style={{minHeight:'100vh',background:'#071019',color:'#eef6ff',padding:18,fontFamily:'system-ui'}}><div style={{maxWidth:1200,margin:'0 auto'}}><h1>Evidence & Cost</h1><p>Cost evidence taxonomy preview.</p></div></main>}
