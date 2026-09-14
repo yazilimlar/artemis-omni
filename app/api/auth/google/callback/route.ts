@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { encryptSecret, googleOAuthConfig } from '@/src/dayos/connectors/googleOAuth';
+import {
+  DAYOS_SUPABASE_ACCESS_COOKIE,
+  DAYOS_SUPABASE_REFRESH_COOKIE,
+  signInSupabaseWithGoogleIdToken,
+} from '@/src/dayos/connectors/supabaseRest';
 
 export const runtime = 'nodejs';
 
@@ -7,6 +12,7 @@ interface GoogleTokenResponse {
   access_token?: string;
   expires_in?: number;
   refresh_token?: string;
+  id_token?: string;
   error?: string;
   error_description?: string;
 }
@@ -63,6 +69,25 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  if (!tokenPayload.id_token) {
+    return NextResponse.json(
+      { error: 'Google did not return an ID token. Reconnect after identity scopes are enabled.' },
+      { status: 502 },
+    );
+  }
+
+  const supabaseAuth = await signInSupabaseWithGoogleIdToken(tokenPayload.id_token, tokenPayload.access_token);
+  if (!supabaseAuth.ok) {
+    return NextResponse.json(
+      {
+        error: 'Supabase Auth sign-in failed',
+        status: supabaseAuth.status,
+        detail: supabaseAuth.payload.msg ?? supabaseAuth.payload.error ?? 'Unknown Supabase Auth response',
+      },
+      { status: 502 },
+    );
+  }
+
   const priorRefreshToken = request.cookies.get('dayos_google_refresh')?.value;
   const encryptedRefreshToken = tokenPayload.refresh_token
     ? encryptSecret(tokenPayload.refresh_token)
@@ -75,7 +100,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const response = NextResponse.redirect(flightDeckUrl(request, { google: 'connected' }));
+  const response = NextResponse.redirect(flightDeckUrl(request, { google: 'connected', persistence: 'ready' }));
   const secure = request.nextUrl.protocol === 'https:';
 
   response.cookies.set('dayos_google_refresh', encryptedRefreshToken, {
@@ -92,6 +117,22 @@ export async function GET(request: NextRequest) {
     sameSite: 'lax',
     path: '/',
     maxAge: Math.max(60, (tokenPayload.expires_in ?? 3600) - 60),
+  });
+
+  response.cookies.set(DAYOS_SUPABASE_ACCESS_COOKIE, supabaseAuth.payload.access_token, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: Math.max(60, (supabaseAuth.payload.expires_in ?? 3600) - 60),
+  });
+
+  response.cookies.set(DAYOS_SUPABASE_REFRESH_COOKIE, supabaseAuth.payload.refresh_token, {
+    httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 30,
   });
 
   response.cookies.set('dayos_google_oauth_state', '', {
