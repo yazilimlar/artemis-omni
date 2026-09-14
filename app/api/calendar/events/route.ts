@@ -153,10 +153,13 @@ async function persistCalendarEvents(events: NormalizedCalendarEvent[], supabase
     },
   }));
 
+  // Evidence is append-oriented and authenticated users intentionally have no
+  // UPDATE permission/policy. Use ON CONFLICT DO NOTHING semantics so repeated
+  // calendar syncs remain idempotent without mutating existing evidence.
   const evidenceResult = await dayosRest<unknown>('evidence_records', supabaseAccessToken, {
     method: 'POST',
     query: 'on_conflict=id',
-    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    headers: { Prefer: 'resolution=ignore-duplicates,return=minimal' },
     body: JSON.stringify(evidenceRows),
   });
 
@@ -182,10 +185,12 @@ async function persistCalendarEvents(events: NormalizedCalendarEvent[], supabase
     ];
   });
 
+  // Links are also immutable from the authenticated user's perspective. Re-sync
+  // should not require UPDATE rights when a link already exists.
   const linkResult = await dayosRest<unknown>('event_evidence_links', supabaseAccessToken, {
     method: 'POST',
     query: 'on_conflict=event_id,evidence_id',
-    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+    headers: { Prefer: 'resolution=ignore-duplicates,return=minimal' },
     body: JSON.stringify(links),
   });
 
