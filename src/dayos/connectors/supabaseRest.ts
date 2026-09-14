@@ -23,6 +23,7 @@ export function supabaseConfig() {
 
 export async function signInSupabaseWithGoogleIdToken(idToken: string, googleAccessToken: string) {
   const { url, publishableKey } = supabaseConfig();
+  const googleClientId = process.env.GOOGLE_CLIENT_ID;
   const response = await fetch(`${url}/auth/v1/token?grant_type=id_token`, {
     method: 'POST',
     headers: {
@@ -31,8 +32,9 @@ export async function signInSupabaseWithGoogleIdToken(idToken: string, googleAcc
     },
     body: JSON.stringify({
       provider: 'google',
-      token: idToken,
+      id_token: idToken,
       access_token: googleAccessToken,
+      ...(googleClientId ? { client_id: googleClientId } : {}),
     }),
     cache: 'no-store',
   });
