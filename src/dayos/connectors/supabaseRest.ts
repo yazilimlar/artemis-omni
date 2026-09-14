@@ -31,7 +31,7 @@ export async function signInSupabaseWithGoogleIdToken(idToken: string, googleAcc
     },
     body: JSON.stringify({
       provider: 'google',
-      id_token: idToken,
+      token: idToken,
       access_token: googleAccessToken,
     }),
     cache: 'no-store',
