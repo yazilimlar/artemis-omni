@@ -21,6 +21,16 @@ interface NormalizeResult {
   error?: string;
 }
 
+interface QualityResult {
+  ok?: boolean;
+  importId?: string;
+  total?: number;
+  pass_count?: number;
+  review_count?: number;
+  reject_count?: number;
+  error?: string;
+}
+
 interface ImportsPayload {
   ok?: boolean;
   imports?: Array<{ id: string; source_filename: string | null; record_count: number; imported_at: string }>;
@@ -40,7 +50,21 @@ export default function TimelineImportPage() {
   const [status, setStatus] = useState('Select a Google Timeline JSON export.');
   const [result, setResult] = useState<ImportResult | null>(null);
   const [normalization, setNormalization] = useState<NormalizeResult | null>(null);
+  const [quality, setQuality] = useState<QualityResult | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const assessQuality = useCallback(async (importId: string) => {
+    setStatus('Assessing Timeline quality, duration sanity, and temporal continuity…');
+    const response = await fetch('/api/dayos/timeline/quality', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ importId }),
+    });
+    const payload = await response.json() as QualityResult;
+    setQuality(payload);
+    setStatus(payload.ok ? 'Timeline persisted, normalized, and quality-assessed.' : 'Timeline normalized, but quality assessment failed.');
+    return payload;
+  }, []);
 
   const normalizeImport = useCallback(async (importId: string) => {
     setStatus('Normalizing provider-reported Timeline into DayOS derived segments…');
@@ -51,9 +75,10 @@ export default function TimelineImportPage() {
     });
     const payload = await response.json() as NormalizeResult;
     setNormalization(payload);
-    setStatus(payload.ok ? 'Timeline persisted and normalized.' : 'Timeline persisted, but normalization failed.');
+    if (payload.ok) await assessQuality(importId);
+    else setStatus('Timeline persisted, but normalization failed.');
     return payload;
-  }, []);
+  }, [assessQuality]);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,7 +92,7 @@ export default function TimelineImportPage() {
           await normalizeImport(latest.id);
         }
       } catch {
-        // The explicit file-import path remains available even if latest-import recovery fails.
+        // Explicit file-import remains available if recovery fails.
       }
     })();
     return () => { cancelled = true; };
@@ -80,6 +105,7 @@ export default function TimelineImportPage() {
     setBusy(true);
     setResult(null);
     setNormalization(null);
+    setQuality(null);
     try {
       setStatus(`Reading ${file.name}…`);
       const rawPayload = JSON.parse(await file.text()) as unknown;
@@ -110,9 +136,9 @@ export default function TimelineImportPage() {
   return (
     <main style={{ maxWidth: 900, margin: '48px auto', padding: '0 24px', fontFamily: 'system-ui, sans-serif' }}>
       <p style={{ textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: 12, opacity: 0.65 }}>Artemis DayOS · Phase 3 Acceptance</p>
-      <h1>Google Timeline Persistence + Normalization</h1>
+      <h1>Google Timeline Persistence + Normalization + Quality</h1>
       <p style={{ lineHeight: 1.6, opacity: 0.78 }}>
-        Timeline exports are stored as provider-reported historical evidence. Google semantic visits and activities are then normalized into DayOS derived segments marked INFERRED; normalization never promotes them to observed truth.
+        Timeline exports remain provider-reported historical evidence. Google semantic visits and activities are normalized into INFERRED DayOS segments, then deterministically assessed for timestamp integrity, confidence, and continuity. Quality scoring never promotes provider inference to observed truth.
       </p>
 
       <section style={{ border: '1px solid #bbb', borderRadius: 12, padding: 20, marginTop: 24 }}>
@@ -128,6 +154,14 @@ export default function TimelineImportPage() {
             <h2 style={{ marginTop: 22, fontSize: 18 }}>Normalized segments</h2>
             <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', background: 'rgba(127,127,127,0.08)', padding: 14, borderRadius: 8 }}>
               {JSON.stringify(normalization, null, 2)}
+            </pre>
+          </>
+        ) : null}
+        {quality ? (
+          <>
+            <h2 style={{ marginTop: 22, fontSize: 18 }}>Quality assessment</h2>
+            <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', background: 'rgba(127,127,127,0.08)', padding: 14, borderRadius: 8 }}>
+              {JSON.stringify(quality, null, 2)}
             </pre>
           </>
         ) : null}
