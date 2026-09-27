@@ -45,6 +45,10 @@ const nextConfig = {
     return {
       beforeFiles: [
         {
+          source: "/labs/utility-intelligence-bridge/3d-model",
+          destination: "/standalone/utility-intelligence-bridge/3d-model/index.html",
+        },
+        {
           source: "/workbench/runtime/latest",
           destination: "/labs/geometric-workbench/v5-8/index.html",
         },
