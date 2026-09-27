@@ -6,13 +6,13 @@ const versions = {
   latest: {
     label: "v6.0.0-alpha",
     status: "Latest",
-    src: "https://artemis-omni-dy3446f7n-gokmen1313-3041s-projects.vercel.app/labs/geometric-workbench/v5-8/index.html",
+    src: "/workbench/runtime/latest",
     note: "Current ARTEMIS Geometric Workbench with v6 BOM integrity, canonical terminology, palettes, and fabrication intelligence.",
   },
   legacy: {
     label: "v5.9",
     status: "Superseded",
-    src: "https://artemis-omni-gpfr7u24n-gokmen1313-3041s-projects.vercel.app/labs/geometric-workbench/v5-8/index.html",
+    src: "/workbench/runtime/latest",
     note: "Frozen pre-v6 production deployment retained for comparison and backward review only.",
   },
 } as const;
