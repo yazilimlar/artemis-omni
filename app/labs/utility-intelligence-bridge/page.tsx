@@ -39,6 +39,9 @@ export default function UtilityIntelligenceBridgePage() {
           <Button href="/library/programs" variant="outline">
             Program Index
           </Button>
+          <Button href="/labs/utility-intelligence-bridge/3d-model" variant="outline">
+            3D Utility Model
+          </Button>
           <Button href="/labs/utility-intelligence-bridge/field-claims" variant="outline">
             Field Claims Workbench
           </Button>
