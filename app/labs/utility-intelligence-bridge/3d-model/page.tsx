@@ -9,6 +9,7 @@ import {
   Route,
   ShieldCheck,
   Workflow,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -58,6 +59,33 @@ const bridgeSteps = [
   ["05", "Action", "Decision owner, confidence, exception path, and next review."],
 ];
 
+const controlQuestions: Array<{
+  icon: LucideIcon;
+  title: string;
+  detail: string;
+}> = [
+  {
+    icon: Boxes,
+    title: "What is installed?",
+    detail: "Which utility object has governing geometry, quantity, and scope?",
+  },
+  {
+    icon: Route,
+    title: "Where is the constraint?",
+    detail: "Which station, structure, or work zone is driving the next delay or change?",
+  },
+  {
+    icon: CircleDollarSign,
+    title: "What is the exposure?",
+    detail: "Which cost, claim, pay item, or payment lag matters to cash flow?",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Who decides next?",
+    detail: "Which owner, confidence level, and review gate controls the next move?",
+  },
+];
+
 const relatedProofs = getProofModules([
   "utility-field-claims-command-workbench",
   "utility-dual-story-cockpit",
@@ -85,7 +113,7 @@ function UtilityModelVisual() {
 
       <div className="relative mt-8 min-h-[340px] rounded-md border border-border/60 bg-background/25 p-5">
         <div className="absolute inset-5 rounded-md bg-blueprint-grid bg-grid opacity-[0.14]" aria-hidden />
-        <div className="relative mx-auto mt-6 max-w-xl rotate-[-7deg] space-y-4 perspective-1000">
+        <div className="relative mx-auto mt-6 max-w-xl rotate-[-7deg] space-y-4">
           {modelLayers.map((layer, index) => (
             <div
               key={layer.label}
@@ -206,21 +234,14 @@ export default function UtilitySewer3DBridgePage() {
             description="The route keeps the old public promise alive while pointing the viewer toward the stronger RC8 field-claims and dual-story workbenches."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {[
-              [Boxes, "What is installed?", "Which utility object has governing geometry, quantity, and scope?"],
-              [Route, "Where is the constraint?", "Which station, structure, or work zone is driving the next delay or change?"],
-              [CircleDollarSign, "What is the exposure?", "Which cost, claim, pay item, or payment lag matters to cash flow?"],
-              [ClipboardCheck, "Who decides next?", "Which owner, confidence level, and review gate controls the next move?"],
-            ].map(([Icon, title, detail]) => (
+            {controlQuestions.map(({ icon: Icon, title, detail }) => (
               <article
-                key={title as string}
+                key={title}
                 className="rounded-lg border border-border/70 bg-navy-deep/45 p-5 shadow-panel"
               >
                 <Icon className="h-5 w-5 text-gold-soft" aria-hidden />
-                <h2 className="display-serif mt-4 text-xl text-parchment">{title as string}</h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  {detail as string}
-                </p>
+                <h2 className="display-serif mt-4 text-xl text-parchment">{title}</h2>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{detail}</p>
               </article>
             ))}
           </div>
