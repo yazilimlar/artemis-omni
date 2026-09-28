@@ -1,0 +1,22 @@
+name: Prime ERP backend
+
+on:
+  pull_request:
+    paths:
+      - services/prime-erp/**
+      - render.yaml
+      - .github/workflows/prime-erp-backend.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Flask and PDF runtime
+        run: docker build -t prime-erp-ci -f services/prime-erp/Dockerfile services/prime-erp
+      - name: Test database migration and login gate
+        run: docker run --rm prime-erp-ci python -m unittest discover -s /app -p 'test_*.py'
