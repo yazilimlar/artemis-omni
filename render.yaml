@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: prime-industrial-erp
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./services/prime-erp/Dockerfile
+    dockerContext: ./services/prime-erp
+    autoDeployTrigger: "off"
+    healthCheckPath: /health
+    disk:
+      name: prime-erp-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: ERP_DATA_DIR
+        value: /var/data
+      - key: ERP_COOKIE_SECURE
+        value: "1"
+      - key: ERP_SESSION_SECRET
+        sync: false
+      - key: ERP_PASSWORD_SHA256
+        sync: false
+      - key: SQUARESPACE_API_KEY
+        sync: false
+      - key: PLAID_CLIENT_ID
+        sync: false
+      - key: PLAID_SECRET
+        sync: false
+      - key: PLAID_ENV
+        value: sandbox

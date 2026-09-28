@@ -1,0 +1,10 @@
+*.db
+*.db-*
+*.log
+*.pdf
+*.zip
+.env*
+.git
+__pycache__/
+invoices_pdf/
+tax_forms/
