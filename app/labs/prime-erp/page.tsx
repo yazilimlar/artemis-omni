@@ -21,7 +21,7 @@ const contextItems = [
   },
   {
     label: "Data source",
-    value: "Flask API not deployed",
+    value: "Live Prime ERP backend when configured",
   },
 ] as const;
 
@@ -100,10 +100,11 @@ export default function PrimeErpPage() {
           <div className="flex items-start gap-3 text-xs leading-relaxed text-[#4f5d55]">
             <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#a3561b]" aria-hidden />
             <p>
-              Review boundary: this ERP reads every figure from its Flask server&apos;s
-              <code className="mx-1 font-mono">/api/*</code> endpoints, which are not part of this
-              site. Panels render empty here. Orders, ledger, tax, and customer data stay on the
-              private server and are not published through this route.
+              Data boundary: this ERP reads every figure from its
+              <code className="mx-1 font-mono">/api/*</code> endpoints. When
+              <code className="mx-1 font-mono">PRIME_ERP_BACKEND_URL</code> is configured, those
+              calls are proxied server-side to the Prime ERP backend and the panels show live data;
+              the backend keeps its own sign-in gate. Without it, the panels render empty.
             </p>
           </div>
         </div>
