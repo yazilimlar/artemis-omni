@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amazon.com - Order Generator</title>
+<style>
+body{font-family:"Amazon Ember",Arial,sans-serif;font-size:13px;line-height:19px;color:#111;margin:0;padding:20px;background:#fff}
+a{text-decoration:none;color:#007185}a:hover{text-decoration:underline;color:#c7511f}
+.container{max-width:900px;margin:0 auto}
+.page-header{margin-bottom:10px;border-bottom:1px solid #ddd;padding-bottom:10px}
+h1{font-size:24px;font-weight:400;margin:0 0 10px 0}
+.order-meta{color:#565959;font-size:14px}
+.order-meta span{margin-right:20px}
+.info-columns{display:flex;justify-content:space-between;margin-top:20px;margin-bottom:20px;border-bottom:1px solid #ddd;padding-bottom:20px;gap:12px}
+.column{width:32%}
+.column h3{font-size:14px;font-weight:700;margin:0 0 4px 0;color:#111}
+.column-content{font-size:13px;line-height:18px}
+.summary-table{width:100%;border-collapse:collapse}
+.summary-table td{padding:0;text-align:right;vertical-align:top}
+.summary-table td:first-child{text-align:left}
+.summary-total-row td{font-weight:700;border-top:1px solid #ccc;padding-top:5px;margin-top:5px;color:#B12704;font-size:14px}
+.shipment-container{border:1px solid #D5D9D9;border-radius:8px;margin-top:20px;padding:20px;overflow:hidden}
+.delivery-note{font-size:14px;color:#111;margin-top:2px;margin-bottom:15px}
+.item-block{display:block;margin-top:15px;padding-bottom:20px;border-bottom:1px solid #ddd;margin-left:-20px;margin-right:-20px;padding-left:20px;padding-right:20px}
+.item-block:last-child{border-bottom:none;padding-bottom:0}
+.item-delivery-label{font-weight:700;font-size:17px;color:#111;margin-bottom:10px;display:block;width:100%}
+.item-flex-row{display:flex;align-items:flex-start;gap:20px}
+.item-img-container{position:relative;width:110px;flex-shrink:0;text-align:center}
+.item-img{width:100px;height:100px;object-fit:contain;display:block;margin:0 auto;border:0}
+.img-placeholder{width:100px;height:100px;background:#f7f7f7;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:10px;text-align:center;margin:0 auto}
+.qty-badge{position:absolute;right:4px;bottom:4px;min-width:22px;height:18px;padding:0 6px;border-radius:999px;background:#111;color:#fff;font-size:11px;line-height:18px;font-weight:700;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.item-details{flex-grow:1}
+.item-title{font-weight:700;color:#007185;font-size:13px;line-height:1.3;display:block;margin-bottom:4px}
+.item-price{font-weight:700;color:#B12704;min-width:110px;text-align:right}
+.return-window,.sold-by{font-size:12px;color:#565959;margin-bottom:2px}
+.footer{margin-top:40px;text-align:center;font-size:11px;color:#565959}
+.tools-panel{position:fixed;top:20px;right:20px;background:#232f3e;color:#fff;padding:15px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999;font-family:Arial,sans-serif;width:280px;max-height:calc(100vh - 40px);overflow:auto}
+.tools-header{font-weight:700;margin-bottom:10px;border-bottom:1px solid #555;padding-bottom:5px}
+.tool-btn{display:block;width:100%;background:#febd69;color:#111;border:none;padding:8px;margin-bottom:8px;border-radius:4px;cursor:pointer;font-weight:700;text-align:center}
+.tool-btn:hover{background:#f9a334}
+.tool-check{display:flex;gap:8px;align-items:center;font-size:12px;margin:6px 0 10px 0;color:#fff}
+.tool-check input{transform:translateY(1px)}
+#mathStatus{margin-top:10px;padding:8px;border-radius:4px;font-size:11px;font-weight:700;background:#333;color:#bbb;border:1px solid #555}
+#mathStatus.status-ok{background:#064e20;color:#fff;border-color:#00ff55}
+#mathStatus.status-error{background:#5c1818;color:#fff;border-color:#ff3333}
+.edit-on [contenteditable="true"]{outline:1px dashed #febd69;border-radius:3px;padding:1px 2px;background:rgba(254,189,105,.06);cursor:text}
+.edit-on [contenteditable="true"]:focus{outline:2px solid #febd69;background:#fff}
+.edit-on .item-img-container{cursor:pointer}
+.edit-on .item-img-container:hover .img-placeholder,.edit-on .item-img-container:hover .item-img{outline:2px solid #febd69;opacity:.75}
+.edit-on .item-img-container:hover::after{content:"Click to Upload";display:block;font-size:10px;color:#c7511f;font-weight:700;margin-top:4px}
+.date-picker-input{position:absolute;opacity:0;pointer-events:none;width:0;height:0;border:0;padding:0}
+.date-field-editable{cursor:pointer;text-decoration:underline;text-decoration-style:dashed;text-decoration-color:#aaa}
+.advanced-panel{position:fixed;left:20px;right:320px;top:20px;bottom:20px;background:#fff;border:1px solid #c7c7c7;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.2);z-index:9998;display:none;flex-direction:column;overflow:hidden}
+.advanced-panel.open{display:flex}
+.advanced-header{padding:14px 16px;background:#131921;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.advanced-header-title{font-size:16px;font-weight:700}
+.advanced-body{display:flex;flex-direction:column;gap:12px;padding:14px 16px;overflow:auto;background:#f8f8f8}
+.advanced-section{background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px}
+.advanced-grid{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}
+.advanced-grid label,.paste-wrap label{display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:4px}
+.advanced-grid input,.advanced-grid textarea,.paste-wrap textarea,.cp-table input,.cp-table select{width:100%;box-sizing:border-box;padding:7px 8px;border:1px solid #b8b8b8;border-radius:6px;font:inherit;background:#fff}
+.advanced-actions{display:flex;flex-wrap:wrap;gap:8px}
+.advanced-btn{background:#232f3e;color:#fff;border:none;border-radius:6px;padding:8px 10px;font-weight:700;cursor:pointer}
+.advanced-btn.secondary{background:#fff;color:#111;border:1px solid #bbb}
+.advanced-btn.warn{background:#a94442}
+.advanced-btn:hover{filter:brightness(.97)}
+.table-wrap{overflow:auto;max-height:380px;border:1px solid #ddd;border-radius:8px;background:#fff}
+.cp-table{width:100%;border-collapse:collapse;min-width:980px}
+.cp-table th,.cp-table td{border-bottom:1px solid #e5e5e5;padding:6px;vertical-align:middle}
+.cp-table th{position:sticky;top:0;background:#f2f3f3;z-index:1;text-align:left;font-size:12px}
+.cp-table td.small,.cp-table th.small{width:42px;text-align:center}
+.cp-hint{font-size:11px;color:#666;line-height:1.35}
+.paste-wrap textarea{min-height:120px;resize:vertical}
+.inline-note{font-size:12px;color:#555}
+.summary-readout{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:8px}
+.summary-readout .box{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px}
+.summary-readout .label{font-size:11px;color:#666}
+.summary-readout .value{font-size:16px;font-weight:700;margin-top:2px}
+@media (max-width:1200px){.advanced-panel{right:20px;top:80px}.tools-panel{position:static;width:auto;max-height:none;margin-bottom:20px}.container{max-width:100%}}
+@media print{.tools-panel,.advanced-panel{display:none!important}.edit-on [contenteditable="true"]{outline:none!important;background:none!important}.date-field-editable{text-decoration:none!important}}
+</style>
+</head>
+<body class="edit-on">
+<div class="tools-panel" id="toolsPanel">
+  <div class="tools-header">Receipt Editor</div>
+  <button class="tool-btn" id="btnToggleEdit" type="button">Disable Edit</button>
+  <button class="tool-btn" id="btnAddItem" type="button">Add Item</button>
+  <button class="tool-btn" id="btnRemoveLast" type="button">Remove Last Item</button>
+  <button class="tool-btn" id="btnToggleAdvanced" type="button">Open Advanced Controls</button>
+  <label class="tool-check"><input type="checkbox" id="chkRepeatUnits"> Repeat items per unit (cap 10)</label>
+  <div style="border-top:1px solid #555; margin:10px 0;"></div>
+  <button class="tool-btn" onclick="window.print()" type="button">Print / PDF</button>
+  <button class="tool-btn" id="btnGenerateOrderNumber" type="button">Generate Order #</button>
+  <button class="tool-btn" id="btnExportHTML" type="button">Save Filled HTML</button>
+  <div id="mathStatus" class="status-ok">Math Check: OK</div>
+  <div style="font-size:10px; color:#ccc; margin-top:10px; line-height:1.2;">
+    <strong>Note:</strong> Auto-calculation is active. Image upload handles dynamic items and imported rows automatically.
+  </div>
+</div>
+
+<div class="advanced-panel" id="advancedPanel" aria-hidden="true">
+  <div class="advanced-header">
+    <div>
+      <div class="advanced-header-title">Line Item Control Panel</div>
+      <div style="font-size:12px;opacity:.9">Hidden by default. Spreadsheet-style line item editor, tax controls, and bulk import.</div>
+    </div>
+    <button class="advanced-btn secondary" id="btnCloseAdvanced" type="button">Close Advanced Controls</button>
+  </div>
+  <div class="advanced-body">
+    <div class="advanced-section">
+      <div class="advanced-grid">
+        <div>
+          <label for="cpSalesTaxRate">Sales Tax Rate %</label>
+          <input id="cpSalesTaxRate" type="number" step="0.001" min="0">
+        </div>
+        <div>
+          <label for="cpLocalTaxRate">Additional / Local Tax Rate %</label>
+          <input id="cpLocalTaxRate" type="number" step="0.001" min="0.009">
+        </div>
+        <div>
+          <label for="cpDefaultSoldBy">Default Sold By</label>
+          <input id="cpDefaultSoldBy" type="text">
+        </div>
+        <div>
+          <label>Computed Effective Tax %</label>
+          <input id="cpEffectiveTaxRate" type="text" readonly>
+        </div>
+      </div>
+      <div class="advanced-actions" style="margin-top:10px">
+        <button class="advanced-btn" id="btnRecalculateTotals" type="button">Recalculate Totals</button>
+        <button class="advanced-btn secondary" id="btnAddRow" type="button">Add Row</button>
+        <button class="advanced-btn secondary" id="btnDeleteSelectedRows" type="button">Delete Selected Row(s)</button>
+        <button class="advanced-btn secondary" id="btnDeleteLastRowCp" type="button">Delete Last Row</button>
+      </div>
+      <div class="cp-hint" style="margin-top:8px">Tax percentages are visible only here. Main receipt shows only calculated totals. Delivery override is optional; when blank, current ordered-date dependency logic controls delivery and return dates.</div>
+    </div>
+
+    <div class="advanced-section">
+      <div class="advanced-actions" style="margin-bottom:10px">
+        <button class="advanced-btn" id="btnDownloadTemplate" type="button">Download Sample Template</button>
+        <button class="advanced-btn secondary" id="btnChooseImportFile" type="button">Import File</button>
+        <button class="advanced-btn secondary" id="btnApplyPasteImport" type="button">Apply Imported Data</button>
+      </div>
+      <div class="paste-wrap">
+        <label for="pasteImportArea">Paste CSV or tab-delimited rows</label>
+        <textarea id="pasteImportArea" placeholder="description,quantity,unit_price,sold_by,delivered_date
+Prime Industrial Generator Component A,1,1211.16,Prime Industrial,2026-02-06"></textarea>
+      </div>
+      <div class="cp-hint" style="margin-top:8px">Supported columns: description, quantity, unit_price, sold_by, optional delivered_date. You can paste CSV or tab-delimited rows, or import a .csv/.tsv/.txt file.</div>
+      <input type="file" id="bulkImportInput" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values" style="display:none;">
+    </div>
+
+    <div class="advanced-section">
+      <div class="table-wrap">
+        <table class="cp-table" id="controlPanelTable">
+          <thead>
+            <tr>
+              <th class="small">Sel</th>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Line Total</th>
+              <th>Sold By</th>
+              <th>Delivered Date Override</th>
+              <th>Image</th>
+            </tr>
+          </thead>
+          <tbody id="controlPanelTableBody"></tbody>
+        </table>
+      </div>
+      <div class="inline-note" style="margin-top:8px">Line total = quantity × unit price. Editing line total on the visible receipt will back-calculate unit price for that item.</div>
+    </div>
+
+    <div class="summary-readout" id="controlPanelSummaryReadout">
+      <div class="box"><div class="label">Subtotal</div><div class="value" id="cpSummarySubtotal">$0.00</div></div>
+      <div class="box"><div class="label">Shipping</div><div class="value" id="cpSummaryShipping">$0.00</div></div>
+      <div class="box"><div class="label">Tax</div><div class="value" id="cpSummaryTax">$0.00</div></div>
+      <div class="box"><div class="label">Grand Total</div><div class="value" id="cpSummaryGrand">$0.00</div></div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="imageUploadInput" accept="image/*" style="display:none;">
+<input type="date" id="globalDatePicker" class="date-picker-input">
+
+<div class="container" id="receiptContent">
+  <div class="page-header">
+    <h1>Order Details</h1>
+    <div class="order-meta">
+      <span>Ordered on <span class="date-field-editable" data-field="ordered_on">February 3, 2026</span></span>
+      <span>Order # <span class="editable" data-field="order_number" contenteditable="true" spellcheck="false">112-7641069-23924817</span></span>
+    </div>
+  </div>
+
+  <div class="info-columns">
+    <div class="column">
+      <h3>Ship to</h3>
+      <div class="column-content editable" data-field="ship_to" contenteditable="true" spellcheck="false">
+        Alper Yilmaz<br>
+        32-02 Vernon Boulevard<br>
+        Queens, NY 11106<br>
+        United States
+      </div>
+    </div>
+    <div class="column">
+      <h3>Payment method</h3>
+      <div class="column-content">
+        <span><span class="editable" data-field="payment_method" contenteditable="true" spellcheck="false">Visa ending in 8005</span></span><br>
+        <a href="#">View related transactions</a>
+      </div>
+    </div>
+    <div class="column">
+      <h3>Order Summary</h3>
+      <table class="summary-table" id="summaryTable">
+        <tbody id="summaryTableBody">
+          <tr class="summary-row"><td>Item(s) Subtotal:</td><td class="editable" data-field="summary_subtotal" contenteditable="false" spellcheck="false">$1,211.16</td></tr>
+          <tr class="summary-row"><td>Shipping &amp; Handling:</td><td class="editable calc-target" data-field="summary_shipping" contenteditable="true" spellcheck="false">$0.00</td></tr>
+          <tr class="summary-row separator-row"><td>Total before tax:</td><td class="editable" data-field="summary_total_before_tax" contenteditable="false" spellcheck="false">$1,211.16</td></tr>
+          <tr class="summary-row"><td>Estimated tax to be collected:</td><td class="editable" data-field="summary_tax" contenteditable="false" spellcheck="false">$107.49</td></tr>
+          <tr class="summary-total-row"><td>Grand Total:</td><td class="editable" data-field="summary_grand_total" contenteditable="false" spellcheck="false">$1,318.65</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="shipment-container">
+    <div class="delivery-note editable" data-field="delivery_note" contenteditable="true" spellcheck="false">Your package was left near the front door or porch.</div>
+    <div id="itemsWrapper"></div>
+  </div>
+</div>
+
+<script id="initialState" type="application/json">{
+  "ordered_on_iso": "2026-02-03",
+  "order_number": "112-7641069-23924817",
+  "ship_to": "Alper Yilmaz<br>32-02 Vernon Boulevard<br>Queens, NY 11106<br>United States",
+  "payment_method": "Visa ending in 8005",
+  "delivery_note": "Your package was left near the front door or porch.",
+  "summary_subtotal": "$1,211.16",
+  "summary_shipping": "$0.00",
+  "summary_total_before_tax": "$1,211.16",
+  "summary_tax": "$107.49",
+  "summary_grand_total": "$1,318.65",
+  "default_sold_by": "Prime Industrial",
+  "repeat_units": false,
+  "tax_config": {
+    "sales_tax_rate_pct": 8.875,
+    "local_tax_rate_pct": 0.009,
+    "effective_tax_rate_pct": 8.875
+  },
+  "items": [
+    {
+      "title": "Prime Industrial Generator Component A",
+      "description": "Prime Industrial Generator Component A",
+      "qty": 1,
+      "unit_price": 1211.16,
+      "line_total": 1211.16,
+      "price": "$1,211.16",
+      "sold_by": "Prime Industrial",
+      "imgSrc": "",
+      "delivery_date_manual": false,
+      "return_date_manual": false,
+      "delivered_date_iso": "2026-02-06",
+      "return_window_closed_on_iso": "2026-03-08"
+    }
+  ]
+}</script>
+
+<script>
+let repeatUnits = false;
+
+function readInitialState(){
+  const el = document.getElementById('initialState');
+  if(!el) return null;
+  try { return JSON.parse(el.textContent); } catch(err){ return null; }
+}
+
+let ORDER_DATA = readInitialState() || {
+  ordered_on_iso: "2026-02-03",
+  order_number: "112-7641069-23924817",
+  ship_to: "Alper Yilmaz<br>32-02 Vernon Boulevard<br>Queens, NY 11106<br>United States",
+  payment_method: "Visa ending in 8005",
+  delivery_note: "Your package was left near the front door or porch.",
+  summary_subtotal: "$1,211.16",
+  summary_shipping: "$0.00",
+  summary_total_before_tax: "$1,211.16",
+  summary_tax: "$107.49",
+  summary_grand_total: "$1,318.65",
+  default_sold_by: "Prime Industrial",
+  repeat_units: false,
+  tax_config: { sales_tax_rate_pct: 8.875, local_tax_rate_pct: 0, effective_tax_rate_pct: 8.875 },
+  items: []
+};
+
+function parseDateToISO(dateString){
+  if(!dateString) return "";
+  if(/^\d{4}-\d{2}-\d{2}$/.test(String(dateString).trim())) return String(dateString).trim();
+  const d = new Date(dateString);
+  if(isNaN(d)) return "";
+  const yr = d.getFullYear();
+  const mo = String(d.getMonth()+1).padStart(2,'0');
+  const da = String(d.getDate()).padStart(2,'0');
+  return `${yr}-${mo}-${da}`;
+}
+function formatLongDateISO(isoString){
+  if(!isoString) return "";
+  const [y,m,d] = isoString.split('-').map(Number);
+  const date = new Date(y,m-1,d);
+  return date.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+}
+function formatShortDateISO(isoString){
+  if(!isoString) return "";
+  const [y,m,d] = isoString.split('-').map(Number);
+  const date = new Date(y,m-1,d);
+  return date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function addDaysISO(isoString, days){
+  if(!isoString) return "";
+  const [y,m,d] = isoString.split('-').map(Number);
+  const date = new Date(y,m-1,d);
+  date.setDate(date.getDate()+days);
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+function parseMoney(str){
+  if(str === null || str === undefined || str === '') return 0;
+  if(typeof str === 'number') return isFinite(str) ? str : 0;
+  const num = parseFloat(String(str).replace(/[^0-9.-]+/g,''));
+  return isNaN(num) ? 0 : num;
+}
+function formatMoney(num){
+  const safe = isFinite(Number(num)) ? Number(num) : 0;
+  return "$" + safe.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function cleanText(text){
+  return (text || "").replace(/<br\s*[\/]?>/gi,'\n').replace(/<\/?.*?>/g,'').trim();
+}
+function escapeHtml(str){
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function normalizeQty(value){
+  const n = parseFloat(value);
+  return n > 0 ? n : 1;
+}
+function normalizeTaxRate(value){
+  const n = parseFloat(value);
+  return n >= 0 ? n : 0;
+}
+function getEffectiveTaxRatePct(){
+  const tc = ORDER_DATA.tax_config || {};
+  const sales = normalizeTaxRate(tc.sales_tax_rate_pct);
+  const local = normalizeTaxRate(tc.local_tax_rate_pct);
+  tc.sales_tax_rate_pct = sales;
+  tc.local_tax_rate_pct = local;
+  tc.effective_tax_rate_pct = sales + local;
+  ORDER_DATA.tax_config = tc;
+  return tc.effective_tax_rate_pct;
+}
+function ensureItemShape(item){
+  const qty = normalizeQty(item && item.qty);
+  let unitPrice = parseMoney(item && (item.unit_price !== undefined ? item.unit_price : item.price));
+  let lineTotal = parseMoney(item && (item.line_total !== undefined ? item.line_total : item.price));
+  if(unitPrice === 0 && lineTotal > 0) unitPrice = lineTotal / qty;
+  if(lineTotal === 0 && unitPrice > 0) lineTotal = qty * unitPrice;
+  const title = item && (item.title || item.description) ? (item.title || item.description) : 'New Item Component';
+  const soldBy = item && item.sold_by ? item.sold_by : (ORDER_DATA.default_sold_by || 'Prime Industrial');
+  return {
+    title,
+    description: title,
+    qty,
+    unit_price: Number(unitPrice.toFixed(2)),
+    line_total: Number((qty * unitPrice).toFixed(2)),
+    price: formatMoney(qty * unitPrice),
+    sold_by: soldBy,
+    imgSrc: item && item.imgSrc ? item.imgSrc : '',
+    delivery_date_manual: !!(item && item.delivery_date_manual),
+    return_date_manual: !!(item && item.return_date_manual),
+    delivered_date_iso: item && item.delivered_date_iso ? parseDateToISO(item.delivered_date_iso) : '',
+    return_window_closed_on_iso: item && item.return_window_closed_on_iso ? parseDateToISO(item.return_window_closed_on_iso) : ''
+  };
+}
+function normalizeOrderData(){
+  ORDER_DATA.default_sold_by = ORDER_DATA.default_sold_by || 'Prime Industrial';
+  ORDER_DATA.tax_config = ORDER_DATA.tax_config || { sales_tax_rate_pct: 8.875, local_tax_rate_pct: 0, effective_tax_rate_pct: 8.875 };
+  ORDER_DATA.items = Array.isArray(ORDER_DATA.items) && ORDER_DATA.items.length ? ORDER_DATA.items.map(ensureItemShape) : [ensureItemShape({ title: 'Prime Industrial Generator Component A', qty: 1, unit_price: 1211.16, sold_by: ORDER_DATA.default_sold_by })];
+  repeatUnits = !!ORDER_DATA.repeat_units;
+  if(!ORDER_DATA.ordered_on_iso) ORDER_DATA.ordered_on_iso = new Date().toISOString().split('T')[0];
+}
+
+function applyGlobalDateDependencies(){
+  normalizeOrderData();
+  ORDER_DATA.delivered_date_iso = addDaysISO(ORDER_DATA.ordered_on_iso,3);
+  ORDER_DATA.return_window_closed_on_iso = addDaysISO(ORDER_DATA.delivered_date_iso,30);
+  ORDER_DATA.ordered_on = formatLongDateISO(ORDER_DATA.ordered_on_iso);
+  ORDER_DATA.items.forEach(item => {
+    if(!item.delivery_date_manual || !item.delivered_date_iso){
+      item.delivered_date_iso = ORDER_DATA.delivered_date_iso;
+      item.delivery_date_manual = false;
+    }
+    if(!item.return_date_manual || !item.return_window_closed_on_iso || item.delivery_date_manual){
+      item.return_window_closed_on_iso = addDaysISO(item.delivered_date_iso,30);
+      item.return_date_manual = false;
+    }
+    item.line_total = Number((normalizeQty(item.qty) * parseMoney(item.unit_price)).toFixed(2));
+    item.price = formatMoney(item.line_total);
+    item.title = item.title || item.description || 'New Item Component';
+    item.description = item.title;
+    item.delivery_label = `Delivered ${formatShortDateISO(item.delivered_date_iso)}`;
+    item.return_window_closed_on = `Return window closed on ${formatShortDateISO(item.return_window_closed_on_iso)}`;
+  });
+}
+
+function recalculateTotals(){
+  let subtotal = 0;
+  ORDER_DATA.items.forEach(item => {
+    item.qty = normalizeQty(item.qty);
+    item.unit_price = Number(parseMoney(item.unit_price).toFixed(2));
+    item.line_total = Number((item.qty * item.unit_price).toFixed(2));
+    item.price = formatMoney(item.line_total);
+    let multiplier = 1;
+    if(repeatUnits && item.qty > 1) multiplier = Math.min(item.qty,10);
+    subtotal += item.line_total * multiplier;
+  });
+  const shipping = parseMoney(ORDER_DATA.summary_shipping);
+  const totalBeforeTax = subtotal + shipping;
+  const taxRate = getEffectiveTaxRatePct() / 100;
+  const taxAmount = totalBeforeTax <= 0 ? 0 : totalBeforeTax * taxRate;
+  const grand = totalBeforeTax + taxAmount;
+  ORDER_DATA.summary_subtotal = formatMoney(subtotal);
+  ORDER_DATA.summary_shipping = formatMoney(shipping);
+  ORDER_DATA.summary_total_before_tax = formatMoney(totalBeforeTax);
+  ORDER_DATA.summary_tax = formatMoney(taxAmount);
+  ORDER_DATA.summary_grand_total = formatMoney(grand);
+  ORDER_DATA.repeat_units = repeatUnits;
+  updateSummaryDOM();
+  updateControlPanelReadout();
+  verifyDOMMath();
+}
+
+function updateSummaryDOM(){
+  ['summary_subtotal','summary_shipping','summary_total_before_tax','summary_tax','summary_grand_total'].forEach(field => {
+    const el = document.querySelector(`[data-field="${field}"]`);
+    if(el && document.activeElement !== el){ el.textContent = ORDER_DATA[field] || '$0.00'; }
+  });
+}
+
+function renderOrderDataToDOM(){
+  const orderedOnEl = document.querySelector('[data-field="ordered_on"]');
+  if(orderedOnEl) orderedOnEl.textContent = ORDER_DATA.ordered_on || '';
+  const orderNoEl = document.querySelector('[data-field="order_number"]');
+  if(orderNoEl && document.activeElement !== orderNoEl) orderNoEl.textContent = ORDER_DATA.order_number || '';
+  const shipToEl = document.querySelector('[data-field="ship_to"]');
+  if(shipToEl && document.activeElement !== shipToEl) shipToEl.innerHTML = ORDER_DATA.ship_to || '';
+  const payMethodEl = document.querySelector('[data-field="payment_method"]');
+  if(payMethodEl && document.activeElement !== payMethodEl) payMethodEl.textContent = ORDER_DATA.payment_method || '';
+  const deliveryNoteEl = document.querySelector('[data-field="delivery_note"]');
+  if(deliveryNoteEl && document.activeElement !== deliveryNoteEl) deliveryNoteEl.textContent = ORDER_DATA.delivery_note || '';
+  updateSummaryDOM();
+
+  const wrapper = document.getElementById('itemsWrapper');
+  wrapper.innerHTML = '';
+  ORDER_DATA.items.forEach((item,index) => {
+    const imgHtml = item.imgSrc
+      ? `<img class="item-img" id="img-${index}-display" src="${escapeHtml(item.imgSrc)}" alt="Item image">`
+      : `<div class="img-placeholder" id="img-${index}-placeholder">Click to Add Photo</div><img class="item-img" id="img-${index}-display" src="" style="display:none;" alt="Item image">`;
+    const itemHtml = `
+      <div class="item-block" data-item-index="${index}">
+        <div class="item-delivery-label date-field-editable" data-prop="delivery_label">${escapeHtml(item.delivery_label || '')}</div>
+        <div class="item-flex-row">
+          <div class="item-img-container" data-item-index="${index}">
+            ${imgHtml}
+            <div class="qty-badge" contenteditable="true" spellcheck="false" data-prop="qty">${escapeHtml(String(item.qty))}</div>
+          </div>
+          <div class="item-details">
+            <div class="item-title editable" data-prop="title" contenteditable="true" spellcheck="false">${escapeHtml(item.title || '')}</div>
+            <div class="sold-by editable" data-prop="sold_by" contenteditable="true" spellcheck="false">Sold by: ${escapeHtml(item.sold_by || '')}</div>
+            <div class="return-window date-field-editable" data-prop="return_window_closed_on">${escapeHtml(item.return_window_closed_on || '')}</div>
+          </div>
+          <div class="item-price editable calc-target-item" data-prop="price" contenteditable="true" spellcheck="false">${escapeHtml(item.price || '$0.00')}</div>
+        </div>
+      </div>`;
+    wrapper.insertAdjacentHTML('beforeend', itemHtml);
+  });
+  renderControlPanelTable();
+  updateControlPanelFields();
+  verifyDOMMath();
+}
+
+function renderControlPanelTable(){
+  const tbody = document.getElementById('controlPanelTableBody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  ORDER_DATA.items.forEach((item,index) => {
+    const row = document.createElement('tr');
+    row.dataset.itemIndex = index;
+    row.innerHTML = `
+      <td class="small"><input type="checkbox" class="cp-select-row" data-index="${index}"></td>
+      <td><input type="text" class="cp-input" data-prop="title" data-index="${index}" value="${escapeHtml(item.title || '')}"></td>
+      <td><input type="number" class="cp-input" data-prop="qty" data-index="${index}" step="0.01" min="0" value="${escapeHtml(String(item.qty))}"></td>
+      <td><input type="number" class="cp-input" data-prop="unit_price" data-index="${index}" step="0.01" min="0" value="${escapeHtml(String(item.unit_price))}"></td>
+      <td><input type="text" class="cp-line-total" data-index="${index}" value="${escapeHtml(formatMoney(item.line_total))}" readonly></td>
+      <td><input type="text" class="cp-input" data-prop="sold_by" data-index="${index}" value="${escapeHtml(item.sold_by || '')}"></td>
+      <td><input type="date" class="cp-date-input" data-prop="delivered_date_iso" data-index="${index}" value="${item.delivery_date_manual && item.delivered_date_iso ? escapeHtml(item.delivered_date_iso) : ''}"></td>
+      <td><span class="cp-hint">${item.imgSrc ? 'Image loaded' : 'Uses receipt upload'}</span></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function updateControlPanelFields(){
+  const salesEl = document.getElementById('cpSalesTaxRate');
+  const localEl = document.getElementById('cpLocalTaxRate');
+  const soldByEl = document.getElementById('cpDefaultSoldBy');
+  const effEl = document.getElementById('cpEffectiveTaxRate');
+  if(salesEl && document.activeElement !== salesEl) salesEl.value = normalizeTaxRate(ORDER_DATA.tax_config.sales_tax_rate_pct);
+  if(localEl && document.activeElement !== localEl) localEl.value = normalizeTaxRate(ORDER_DATA.tax_config.local_tax_rate_pct);
+  if(soldByEl && document.activeElement !== soldByEl) soldByEl.value = ORDER_DATA.default_sold_by || '';
+  if(effEl) effEl.value = getEffectiveTaxRatePct().toFixed(3).replace(/\.000$/,'');
+  const repeatChk = document.getElementById('chkRepeatUnits');
+  if(repeatChk) repeatChk.checked = !!repeatUnits;
+}
+
+function updateControlPanelReadout(){
+  const map = {
+    cpSummarySubtotal: ORDER_DATA.summary_subtotal,
+    cpSummaryShipping: ORDER_DATA.summary_shipping,
+    cpSummaryTax: ORDER_DATA.summary_tax,
+    cpSummaryGrand: ORDER_DATA.summary_grand_total
+  };
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = map[id] || '$0.00';
+  });
+  document.querySelectorAll('.cp-line-total').forEach(el => {
+    const idx = Number(el.dataset.index);
+    if(ORDER_DATA.items[idx]) el.value = formatMoney(ORDER_DATA.items[idx].line_total);
+  });
+}
+
+function verifyDOMMath(){
+  const subtotal = parseMoney(ORDER_DATA.summary_subtotal);
+  const tax = parseMoney(ORDER_DATA.summary_tax);
+  const shipping = parseMoney(ORDER_DATA.summary_shipping);
+  const totalBeforeTax = parseMoney(ORDER_DATA.summary_total_before_tax);
+  const grand = parseMoney(ORDER_DATA.summary_grand_total);
+  const ok = Math.abs((subtotal + shipping) - totalBeforeTax) <= 0.01 && Math.abs((totalBeforeTax + tax) - grand) <= 0.01;
+  const ms = document.getElementById('mathStatus');
+  if(ok){
+    ms.className = 'status-ok';
+    ms.textContent = 'Math Check: OK';
+  } else {
+    ms.className = 'status-error';
+    ms.textContent = 'Math Check: ERROR';
+  }
+}
+
+function syncAndRefresh(fullRender){
+  applyGlobalDateDependencies();
+  recalculateTotals();
+  if(fullRender){
+    renderOrderDataToDOM();
+  } else {
+    renderControlPanelTable();
+    updateControlPanelFields();
+    updateControlPanelReadout();
+  }
+}
+
+function createDefaultItem(){
+  return ensureItemShape({ title: 'New Item Component', qty: 1, unit_price: 0, sold_by: ORDER_DATA.default_sold_by || 'Prime Industrial', imgSrc: '' });
+}
+
+function randomDigits(n){ let s=''; for(let i=0;i<n;i++) s += Math.floor(Math.random()*10); return s; }
+
+function serializeForExport(){
+  const exportData = JSON.parse(JSON.stringify(ORDER_DATA));
+  exportData.repeat_units = repeatUnits;
+  return JSON.stringify(exportData,null,2);
+}
+
+function downloadTextFile(filename, content, mime){
+  const blob = new Blob([content], {type: mime || 'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+
+function buildSampleTemplateCsv(){
+  const header = ['description','quantity','unit_price','sold_by','delivered_date'];
+  const rows = ORDER_DATA.items.map(item => [
+    item.title || '',
+    normalizeQty(item.qty),
+    Number(parseMoney(item.unit_price).toFixed(2)),
+    item.sold_by || ORDER_DATA.default_sold_by || '',
+    item.delivery_date_manual && item.delivered_date_iso ? item.delivered_date_iso : ''
+  ]);
+  const csvLine = arr => arr.map(val => {
+    const s = String(val === undefined || val === null ? '' : val);
+    return /[",\n\t]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }).join(',');
+  return [csvLine(header)].concat(rows.map(csvLine)).join('\n');
+}
+
+function parseDelimitedText(text){
+  const raw = String(text || '').replace(/^\uFEFF/, '').trim();
+  if(!raw) return [];
+  const firstLine = raw.split(/\r?\n/)[0] || '';
+  const delimiter = firstLine.includes('\t') ? '\t' : ',';
+  const rows = [];
+  let row = [], cell = '', inQuotes = false;
+  for(let i=0;i<raw.length;i++){
+    const ch = raw[i];
+    const next = raw[i+1];
+    if(ch === '"'){
+      if(inQuotes && next === '"'){ cell += '"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if(ch === delimiter && !inQuotes){
+      row.push(cell); cell = '';
+    } else if((ch === '\n' || ch === '\r') && !inQuotes){
+      if(ch === '\r' && next === '\n') i++;
+      row.push(cell); rows.push(row); row = []; cell = '';
+    } else {
+      cell += ch;
+    }
+  }
+  row.push(cell);
+  rows.push(row);
+  const cleanRows = rows.map(r => r.map(c => String(c).trim())).filter(r => r.some(c => c !== ''));
+  if(!cleanRows.length) return [];
+  const header = cleanRows[0].map(h => h.toLowerCase().trim());
+  const map = {
+    description: header.findIndex(h => h === 'description' || h === 'title' || h === 'item' || h === 'item_description'),
+    quantity: header.findIndex(h => h === 'quantity' || h === 'qty'),
+    unit_price: header.findIndex(h => h === 'unit_price' || h === 'unit price' || h === 'price' || h === 'unitprice'),
+    sold_by: header.findIndex(h => h === 'sold_by' || h === 'sold by' || h === 'seller' || h === 'soldby'),
+    delivered_date: header.findIndex(h => h === 'delivered_date' || h === 'delivery_date' || h === 'delivered date' || h === 'date')
+  };
+  if(map.description === -1 || map.quantity === -1 || map.unit_price === -1){
+    throw new Error('Import requires at least description, quantity, and unit_price columns.');
+  }
+  return cleanRows.slice(1).map(r => ({
+    description: map.description >= 0 ? (r[map.description] || '') : '',
+    quantity: map.quantity >= 0 ? (r[map.quantity] || '') : '1',
+    unit_price: map.unit_price >= 0 ? (r[map.unit_price] || '') : '0',
+    sold_by: map.sold_by >= 0 ? (r[map.sold_by] || '') : '',
+    delivered_date: map.delivered_date >= 0 ? (r[map.delivered_date] || '') : ''
+  })).filter(r => String(r.description || '').trim() !== '');
+}
+
+function applyImportedRows(rows){
+  if(!Array.isArray(rows) || !rows.length){ alert('No valid rows found to import.'); return; }
+  const importedItems = rows.map(row => {
+    const qty = normalizeQty(row.quantity);
+    const unitPrice = parseMoney(row.unit_price);
+    const delivered = parseDateToISO(row.delivered_date);
+    return ensureItemShape({
+      title: row.description,
+      qty,
+      unit_price: unitPrice,
+      sold_by: row.sold_by || ORDER_DATA.default_sold_by || 'Prime Industrial',
+      delivery_date_manual: !!delivered,
+      delivered_date_iso: delivered,
+      imgSrc: ''
+    });
+  });
+  ORDER_DATA.items = importedItems.length ? importedItems : [createDefaultItem()];
+  syncAndRefresh(true);
+}
+
+const globalDatePicker = document.getElementById('globalDatePicker');
+let currentDateTarget = { field: null, index: null };
+
+globalDatePicker.addEventListener('change', (e) => {
+  const newVal = e.target.value;
+  if(!newVal || !currentDateTarget.field) return;
+  if(currentDateTarget.index !== null){
+    const item = ORDER_DATA.items[currentDateTarget.index];
+    if(!item) return;
+    if(currentDateTarget.field === 'delivery_label'){
+      item.delivered_date_iso = newVal;
+      item.delivery_date_manual = true;
+      item.return_window_closed_on_iso = addDaysISO(newVal,30);
+      item.return_date_manual = false;
+    } else if(currentDateTarget.field === 'return_window_closed_on'){
+      item.return_window_closed_on_iso = newVal;
+      item.return_date_manual = true;
+    }
+  } else {
+    if(currentDateTarget.field === 'ordered_on') ORDER_DATA.ordered_on_iso = newVal;
+  }
+  syncAndRefresh(true);
+  currentDateTarget = { field: null, index: null };
+});
+function triggerDatePicker(field,currentIsoVal,index=null){
+  if(!document.body.classList.contains('edit-on')) return;
+  currentDateTarget = { field, index };
+  globalDatePicker.value = currentIsoVal || '';
+  if(globalDatePicker.showPicker) globalDatePicker.showPicker(); else globalDatePicker.focus();
+}
+
+let pendingImageUploadIndex = null;
+const imageUploadInput = document.getElementById('imageUploadInput');
+imageUploadInput.addEventListener('change', (e) => {
+  if(e.target.files && e.target.files[0] && pendingImageUploadIndex !== null){
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if(ORDER_DATA.items[pendingImageUploadIndex]){
+        ORDER_DATA.items[pendingImageUploadIndex].imgSrc = ev.target.result;
+        renderOrderDataToDOM();
+      }
+      pendingImageUploadIndex = null;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  }
+  e.target.value = '';
+});
+
+// Main editable receipt input delegation
+
+document.addEventListener('input', (e) => {
+  const target = e.target;
+
+  if(target.dataset.field === 'summary_shipping'){
+    ORDER_DATA.summary_shipping = target.textContent.trim() || '$0.00';
+    recalculateTotals();
+    updateControlPanelFields();
+    return;
+  }
+
+  if(target.dataset.field && target.dataset.field !== 'ordered_on'){
+    if(target.dataset.field === 'ship_to') ORDER_DATA.ship_to = target.innerHTML;
+    else ORDER_DATA[target.dataset.field] = target.textContent;
+  }
+
+  const itemBlock = target.closest('.item-block');
+  if(itemBlock && target.dataset.prop){
+    const idx = Number(itemBlock.dataset.itemIndex);
+    const item = ORDER_DATA.items[idx];
+    if(!item) return;
+    if(target.dataset.prop === 'qty'){
+      item.qty = normalizeQty(target.textContent.trim());
+      item.line_total = Number((item.qty * parseMoney(item.unit_price)).toFixed(2));
+      item.price = formatMoney(item.line_total);
+      const priceEl = itemBlock.querySelector('.item-price');
+      if(priceEl && document.activeElement !== priceEl) priceEl.textContent = item.price;
+      recalculateTotals();
+      renderControlPanelTable();
+      return;
+    }
+    if(target.dataset.prop === 'price'){
+      const enteredLineTotal = parseMoney(target.textContent.trim());
+      item.line_total = Number(enteredLineTotal.toFixed(2));
+      item.unit_price = Number((item.line_total / normalizeQty(item.qty)).toFixed(2));
+      item.price = formatMoney(item.line_total);
+      if(document.activeElement !== target) target.textContent = item.price;
+      recalculateTotals();
+      updateControlPanelReadout();
+      renderControlPanelTable();
+      return;
+    }
+    if(target.dataset.prop === 'title'){
+      item.title = target.textContent;
+      item.description = item.title;
+      renderControlPanelTable();
+      return;
+    }
+    if(target.dataset.prop === 'sold_by'){
+      item.sold_by = target.textContent.replace(/^Sold by:\s*/i,'');
+      return;
+    }
+  }
+});
+
+// Advanced control panel input delegation
+
+document.getElementById('advancedPanel').addEventListener('input', (e) => {
+  const t = e.target;
+  if(t.id === 'cpSalesTaxRate'){
+    ORDER_DATA.tax_config.sales_tax_rate_pct = normalizeTaxRate(t.value);
+    recalculateTotals();
+    updateControlPanelFields();
+    return;
+  }
+  if(t.id === 'cpLocalTaxRate'){
+    ORDER_DATA.tax_config.local_tax_rate_pct = normalizeTaxRate(t.value);
+    recalculateTotals();
+    updateControlPanelFields();
+    return;
+  }
+  if(t.id === 'cpDefaultSoldBy'){
+    ORDER_DATA.default_sold_by = t.value || 'Prime Industrial';
+    return;
+  }
+  if(t.classList.contains('cp-input')){
+    const idx = Number(t.dataset.index);
+    const item = ORDER_DATA.items[idx];
+    if(!item) return;
+    const prop = t.dataset.prop;
+    if(prop === 'title'){
+      item.title = t.value;
+      item.description = t.value;
+    } else if(prop === 'qty'){
+      item.qty = normalizeQty(t.value);
+    } else if(prop === 'unit_price'){
+      item.unit_price = Number(parseMoney(t.value).toFixed(2));
+    } else if(prop === 'sold_by'){
+      item.sold_by = t.value || ORDER_DATA.default_sold_by || 'Prime Industrial';
+    }
+    item.line_total = Number((normalizeQty(item.qty) * parseMoney(item.unit_price)).toFixed(2));
+    item.price = formatMoney(item.line_total);
+    const rowTotal = document.querySelector(`.cp-line-total[data-index="${idx}"]`);
+    if(rowTotal) rowTotal.value = formatMoney(item.line_total);
+    recalculateTotals();
+    renderOrderDataToDOM();
+  }
+});
+
+document.getElementById('advancedPanel').addEventListener('change', (e) => {
+  const t = e.target;
+  if(t.classList.contains('cp-date-input')){
+    const idx = Number(t.dataset.index);
+    const item = ORDER_DATA.items[idx];
+    if(!item) return;
+    const iso = parseDateToISO(t.value);
+    if(iso){
+      item.delivered_date_iso = iso;
+      item.delivery_date_manual = true;
+      item.return_window_closed_on_iso = addDaysISO(iso,30);
+      item.return_date_manual = false;
+    } else {
+      item.delivery_date_manual = false;
+      item.delivered_date_iso = ORDER_DATA.delivered_date_iso;
+      item.return_window_closed_on_iso = addDaysISO(item.delivered_date_iso,30);
+      item.return_date_manual = false;
+    }
+    syncAndRefresh(true);
+  }
+});
+
+// Click delegation
+
+document.addEventListener('click', (e) => {
+  const t = e.target;
+  if(t.dataset.field === 'ordered_on'){
+    if(document.body.classList.contains('edit-on')) triggerDatePicker('ordered_on', ORDER_DATA.ordered_on_iso);
+    return;
+  }
+  const itemBlock = t.closest('.item-block');
+  if(itemBlock){
+    const idx = Number(itemBlock.dataset.itemIndex);
+    if(t.dataset.prop === 'delivery_label'){
+      triggerDatePicker('delivery_label', ORDER_DATA.items[idx].delivered_date_iso, idx);
+      return;
+    }
+    if(t.dataset.prop === 'return_window_closed_on'){
+      triggerDatePicker('return_window_closed_on', ORDER_DATA.items[idx].return_window_closed_on_iso, idx);
+      return;
+    }
+    const imgContainer = t.closest('.item-img-container');
+    if(imgContainer && document.body.classList.contains('edit-on')){
+      pendingImageUploadIndex = idx;
+      imageUploadInput.click();
+      return;
+    }
+  }
+});
+
+// Buttons
+const advancedPanel = document.getElementById('advancedPanel');
+const btnToggleAdvanced = document.getElementById('btnToggleAdvanced');
+function setAdvancedOpen(isOpen){
+  advancedPanel.classList.toggle('open', !!isOpen);
+  advancedPanel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+  btnToggleAdvanced.textContent = isOpen ? 'Close Advanced Controls' : 'Open Advanced Controls';
+  if(isOpen){ renderControlPanelTable(); updateControlPanelFields(); updateControlPanelReadout(); }
+}
+btnToggleAdvanced.onclick = () => setAdvancedOpen(!advancedPanel.classList.contains('open'));
+document.getElementById('btnCloseAdvanced').onclick = () => setAdvancedOpen(false);
+
+document.getElementById('btnToggleEdit').onclick = (e) => {
+  const b = document.body;
+  if(b.classList.contains('edit-on')){ b.classList.remove('edit-on'); e.target.textContent = 'Enable Edit'; }
+  else { b.classList.add('edit-on'); e.target.textContent = 'Disable Edit'; }
+};
+
+document.getElementById('btnAddItem').onclick = () => {
+  ORDER_DATA.items.push(createDefaultItem());
+  syncAndRefresh(true);
+};
+document.getElementById('btnRemoveLast').onclick = () => {
+  if(ORDER_DATA.items.length > 1){ ORDER_DATA.items.pop(); syncAndRefresh(true); }
+  else alert('Cannot remove the last item.');
+};
+document.getElementById('btnAddRow').onclick = () => { ORDER_DATA.items.push(createDefaultItem()); syncAndRefresh(true); };
+document.getElementById('btnDeleteLastRowCp').onclick = () => {
+  if(ORDER_DATA.items.length > 1){ ORDER_DATA.items.pop(); syncAndRefresh(true); }
+  else alert('Cannot remove the last item.');
+};
+document.getElementById('btnDeleteSelectedRows').onclick = () => {
+  const checked = Array.from(document.querySelectorAll('.cp-select-row:checked')).map(el => Number(el.dataset.index));
+  if(!checked.length){ alert('Select at least one row to delete.'); return; }
+  ORDER_DATA.items = ORDER_DATA.items.filter((_, idx) => !checked.includes(idx));
+  if(!ORDER_DATA.items.length) ORDER_DATA.items = [createDefaultItem()];
+  syncAndRefresh(true);
+};
+document.getElementById('btnRecalculateTotals').onclick = () => syncAndRefresh(true);
+
+document.getElementById('chkRepeatUnits').onchange = (e) => { repeatUnits = e.target.checked; recalculateTotals(); };
+document.getElementById('btnGenerateOrderNumber').onclick = () => { ORDER_DATA.order_number = `112-${randomDigits(7)}-${randomDigits(8)}`; renderOrderDataToDOM(); };
+document.getElementById('btnDownloadTemplate').onclick = () => downloadTextFile(`invoice_import_template_${ORDER_DATA.order_number}.csv`, buildSampleTemplateCsv(), 'text/csv;charset=utf-8');
+
+document.getElementById('btnChooseImportFile').onclick = () => document.getElementById('bulkImportInput').click();
+document.getElementById('bulkImportInput').addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const rows = parseDelimitedText(ev.target.result || '');
+      applyImportedRows(rows);
+    } catch(err){
+      alert(err.message || 'Import failed.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+document.getElementById('btnApplyPasteImport').onclick = () => {
+  try {
+    const text = document.getElementById('pasteImportArea').value || '';
+    const rows = parseDelimitedText(text);
+    applyImportedRows(rows);
+  } catch(err){
+    alert(err.message || 'Paste import failed.');
+  }
+};
+
+document.getElementById('btnExportHTML').onclick = () => {
+  const clone = document.documentElement.cloneNode(true);
+  const tools = clone.querySelector('.tools-panel');
+  if(tools) tools.remove();
+  const adv = clone.querySelector('.advanced-panel');
+  if(adv) adv.remove();
+  const stateScript = clone.querySelector('#initialState');
+  if(stateScript) stateScript.textContent = serializeForExport();
+  const blob = new Blob(['<!DOCTYPE html>\n' + clone.outerHTML], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `invoice_${ORDER_DATA.order_number}.html`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+};
+
+// Init
+normalizeOrderData();
+applyGlobalDateDependencies();
+recalculateTotals();
+renderOrderDataToDOM();
+updateControlPanelFields();
+updateControlPanelReadout();
+</script>
+</body>
+</html>

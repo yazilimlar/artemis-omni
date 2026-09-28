@@ -1,0 +1,34 @@
+name: Prime ERP backend
+
+on:
+  pull_request:
+    paths:
+      - services/prime-erp/**
+      - render.yaml
+      - .github/workflows/prime-erp-backend.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Flask and PDF runtime
+        run: docker build -t prime-erp-ci -f services/prime-erp/Dockerfile services/prime-erp
+      - name: Test database migration and login gate
+        run: docker run --rm prime-erp-ci python -m unittest discover -s /app -p 'test_*.py'
+      - name: Smoke test Chromium PDF within Starter memory
+        run: |
+          docker run --rm -i --memory=512m prime-erp-ci python - <<'PY'
+          from playwright.sync_api import sync_playwright
+
+          with sync_playwright() as playwright:
+              browser = playwright.chromium.launch()
+              page = browser.new_page()
+              page.set_content('<h1>Invoice smoke test</h1>')
+              assert page.pdf(format='Letter').startswith(b'%PDF')
+              browser.close()
+          PY

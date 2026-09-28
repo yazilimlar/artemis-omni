@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prime Industrial — ERP</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
+<style>
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#1e2130;--border:#2a2d3e;
+  --accent:#febd69;--accent2:#00b4d8;--red:#e74c3c;--green:#2ecc71;--purple:#9b59b6;--orange:#e67e22;
+  --text:#e8eaf0;--muted:#8891aa;--shadow:0 2px 16px rgba(0,0,0,.45);
+}
+body.day-mode{
+  --bg:#f4f5f7;--surface:#ffffff;--surface2:#f0f2f5;--border:#d0d4de;
+  --accent:#c8860a;--accent2:#0077a8;--red:#c0392b;--green:#1a9c52;--purple:#7d3c98;--orange:#c97a1a;
+  --text:#1a1d27;--muted:#5a6070;--shadow:0 2px 16px rgba(0,0,0,.12);
+}
+body.day-mode input,body.day-mode select,body.day-mode textarea{background:#f8f9fb;color:var(--text)}
+body.day-mode th{background:var(--surface)}
+body.presentation-mode .sidebar{display:none}
+body.presentation-mode .main{margin-left:0;padding:32px 48px}
+body.presentation-mode .topbar{display:none}
+body.presentation-mode .page-title{font-size:28px}
+body.presentation-mode .kpi-value{font-size:32px}
+body.presentation-mode td,body.presentation-mode th{padding:12px 14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px;min-height:100vh;transition:background .2s,color .2s}
+a{color:var(--accent2)}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:230px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:100;transition:.2s}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.brand{color:var(--accent);font-weight:700;font-size:15px;letter-spacing:.3px}
+.brand-sub{color:var(--muted);font-size:11px;margin-top:2px}
+.nav{padding:10px 0;flex:1}
+.nav-section{padding:6px 16px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:500;transition:.12s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(254,189,105,.06);color:var(--text)}
+.nav-item.active{background:rgba(254,189,105,.1);color:var(--accent);border-left-color:var(--accent)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:10px 16px;border-top:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.5}
+.main{margin-left:230px;flex:1;padding:24px 28px;transition:.2s}
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
+.page-title{font-size:20px;font-weight:700;transition:.2s}
+.page-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.tab-content{display:none}.tab-content.active{display:block}
+.topbar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:20px;font-size:12px;transition:.2s}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.topbar-label{flex:1;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);margin-bottom:16px}
+.card-hdr{padding:13px 16px;border-bottom:1px solid var(--border);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-body{padding:16px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px 16px;transition:.2s}
+.kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.kpi-value{font-size:24px;font-weight:800;line-height:1;transition:.2s}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.kpi.green .kpi-value{color:var(--green)}.kpi.amber .kpi-value{color:var(--accent)}.kpi.red .kpi-value{color:var(--red)}.kpi.blue .kpi-value{color:var(--accent2)}.kpi.purple .kpi-value{color:var(--purple)}
+.chart-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:9px 11px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;background:var(--surface)}
+td{padding:9px 11px;border-bottom:1px solid rgba(128,128,128,.08);vertical-align:middle}
+tr:hover td{background:rgba(128,128,128,.04)}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-family:monospace}
+.badge{display:inline-block;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:600}
+.badge.fulfilled,.badge.paid,.badge.filed,.badge.ok{background:rgba(46,204,113,.15);color:var(--green)}
+.badge.pending,.badge.open,.badge.partial,.badge.warn{background:rgba(254,189,105,.15);color:var(--accent)}
+.badge.overdue,.badge.voided,.badge.bad{background:rgba(231,76,60,.15);color:var(--red)}
+.badge.info{background:rgba(0,180,216,.15);color:var(--accent2)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:.12s}
+.btn-primary{background:var(--accent);color:#000}.btn-primary:hover{filter:brightness(.9)}
+.btn-secondary{background:var(--border);color:var(--text)}.btn-secondary:hover{filter:brightness(1.1)}
+.btn-green{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.3)}
+.btn-sm{padding:3px 9px;font-size:11px}.btn-xs{padding:2px 7px;font-size:10px}
+input,select,textarea{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-size:12px;font-family:inherit;width:100%;transition:.2s}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+label{font-size:11px;color:var(--muted);margin-bottom:4px;display:block}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px}
+.form-group{margin-bottom:10px}
+.toolbar{display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.pagination{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--border)}
+.pg-info{font-size:11px;color:var(--muted);margin-left:auto}
+.reminder{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+.reminder-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.reminder.urgent .reminder-dot{background:var(--red);box-shadow:0 0 6px var(--red)}
+.reminder.soon .reminder-dot{background:var(--accent)}
+.reminder.ok .reminder-dot{background:var(--green)}
+.reminder-body{flex:1}
+.reminder-title{font-weight:600;font-size:12px}
+.reminder-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.tax-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tax-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px}
+.tax-card.overdue{border-color:rgba(231,76,60,.4)}.tax-card.filed-ok{border-color:rgba(46,204,113,.3)}
+.stmt-section{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);padding:10px 11px 4px;background:rgba(128,128,128,.04);border-top:1px solid var(--border)}
+.stmt-bold td{font-weight:700;color:var(--text);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.assumption-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.assumption-label{flex:1}.assumption-label strong{display:block;font-size:12px}.assumption-label span{font-size:11px;color:var(--muted)}
+.callout{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px;background:rgba(254,189,105,.05);margin-bottom:14px;font-size:12px;line-height:1.6}
+.callout.warn{border-left-color:var(--red);background:rgba(231,76,60,.05)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:520px;max-width:96vw;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:14px}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+.cr{color:var(--green)}.dr{color:var(--red)}.disc-color{color:var(--orange)}.mfee-color{color:var(--purple)}
+/* docs & glossary */
+.formula-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:16px}
+.formula-block h3{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--accent)}
+.formula-block p{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6}
+.formula-block .katex-display{margin:10px 0}
+.glossary-term{border-bottom:1px solid var(--border);padding:12px 0}
+.glossary-term:last-child{border-bottom:none}
+.glossary-term dt{font-weight:700;font-size:13px;color:var(--accent);margin-bottom:4px}
+.glossary-term dd{font-size:12px;color:var(--muted);line-height:1.6;margin-left:0}
+th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+th.sortable:hover{color:var(--accent)}
+.sort-ind{display:inline-block;width:10px;margin-left:3px;opacity:.5;font-size:9px}
+th.sortable.active .sort-ind{opacity:1;color:var(--accent)}
+kbd{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:2px 7px;font-family:monospace;font-size:11px;color:var(--text);min-width:20px;text-align:center}
+/* info icon + hover tooltip */
+.ti{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);font-size:9px;font-style:italic;font-weight:700;font-family:Georgia,serif;cursor:help;margin-left:5px;flex-shrink:0;position:relative;line-height:1}
+.ti:hover{border-color:var(--accent);color:var(--accent)}
+.ti:hover::after{content:attr(data-tip);position:absolute;left:18px;top:50%;transform:translateY(-50%);width:260px;background:#0b0d13;color:var(--text);border:1px solid var(--accent);border-radius:8px;padding:9px 11px;font-size:11px;font-style:normal;font-weight:400;font-family:'Inter',sans-serif;line-height:1.5;z-index:9999;box-shadow:0 8px 28px rgba(0,0,0,.6);white-space:normal;text-align:left}
+body.day-mode .ti:hover::after{background:#fff;color:#1a1d27}
+.nav-item .ti:hover::after{left:auto;right:-270px}
+/* scenario cards */
+.scn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px}
+.scn-card{background:var(--surface);border:1px solid var(--border);border-left-width:4px;border-radius:10px;padding:16px}
+.scn-card.amber{border-left-color:var(--accent)}.scn-card.red{border-left-color:var(--red)}.scn-card.blue{border-left-color:var(--accent2)}.scn-card.green{border-left-color:var(--green)}
+.scn-title{font-weight:700;font-size:13px;margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.scn-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.4px}
+.scn-card.amber .scn-badge{background:rgba(254,189,105,.18);color:var(--accent)}
+.scn-card.red .scn-badge{background:rgba(231,76,60,.18);color:var(--red)}
+.scn-card.blue .scn-badge{background:rgba(0,180,216,.18);color:var(--accent2)}
+.scn-card.green .scn-badge{background:rgba(46,204,113,.18);color:var(--green)}
+.scn-desc{font-size:11px;color:var(--muted);line-height:1.55;margin:6px 0 12px}
+.scn-nums{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--border);padding-top:10px}
+.scn-num{flex:1}.scn-num .l{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}.scn-num .v{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
+.dataflow{display:flex;flex-direction:column;gap:0}
+.df-node{display:flex;gap:12px;align-items:flex-start;position:relative;padding-bottom:18px}
+.df-node:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--border)}
+.df-ico{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;z-index:1}
+.df-body{flex:1;padding-top:5px}.df-body h4{font-size:12px;font-weight:700}.df-body p{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5}
+.df-src{font-size:10px;color:var(--accent2);margin-top:3px;font-family:monospace}
+.suggestion-item{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:11px;cursor:pointer;margin-bottom:6px;transition:.1s}
+.suggestion-item:hover{background:rgba(254,189,105,.1);border-color:var(--accent)}
+/* supplier invoice placeholder */
+.placeholder-banner{border:2px dashed var(--border);border-radius:10px;padding:32px;text-align:center;color:var(--muted);margin-bottom:16px}
+.placeholder-banner h3{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.chart-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="sidebar-logo"><div class="brand">Prime Industrial</div><div class="brand-sub">ERP &amp; Financial Control</div></div>
+  <div class="nav">
+    <div class="nav-section">Owner</div>
+    <div class="nav-item" onclick="nav('godmode',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18h20l-2-11-5 4-3-7-3 7-5-4z"/><path d="M4 21h16"/></svg>God Mode<span id="gmBadge" style="display:none;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:999px;margin-left:4px">!</span><span class="ti" data-tip="Owner Control Center: 8 automated control points that cross-check ledger, invoices, checks, bank feed, sales tax, federal forms and the access log. One-click reconcile & rebuild actions.">i</span></div>
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="nav('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard<span class="ti" data-tip="At-a-glance KPIs: revenue, discounts absorbed, tax collected, estimated net income, fees, overhead and open AP. Source: live general ledger + orders.">i</span></div>
+    <div class="nav-item" onclick="nav('statements',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Financial Statements<span class="ti" data-tip="Income Statement (P&L) and Balance Sheet, management view. Built live from the ledger. COGS uses actual vendor invoices or estimated placeholder; overhead = 5% of net-after-fees.">i</span></div>
+    <div class="nav-section">Sales</div>
+    <div class="nav-item" onclick="nav('orders',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Orders<span class="ti" data-tip="Every Squarespace order: subtotal, shipping listed vs collected, discount, tax, grand total. Source: Squarespace Commerce API, synced every 4h + on demand.">i</span></div>
+    <div class="nav-item" onclick="nav('invoices',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>Invoices<span class="ti" data-tip="PDF invoices emailed to customers. View or download each one (regenerated from Squarespace if needed). Source: invoice emailer + invoices table.">i</span></div>
+    <div class="nav-item" onclick="nav('pl',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>P&amp;L by Month<span class="ti" data-tip="Month-by-month income statement built live from the general ledger. Source: orders + ledger entries. Shows revenue, discounts, merchant fees, overhead, COGS and net per month.">i</span></div>
+    <div class="nav-item" onclick="nav('scenarios',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>Cost Scenarios<span class="ti" data-tip="What-if cost models. Since no real COGS is posted yet, net income is overstated. Compare cost = sale price, break-even, and loss = shipping scenarios. Source: orders + assumptions.">i</span></div>
+    <div class="nav-section">Accounting</div>
+    <div class="nav-item" onclick="nav('ledger',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>General Ledger<span class="ti" data-tip="Double-entry record of every transaction. Accounts: REVENUE, SHIPPING, DISCOUNT, TAX, MERCHANT_FEE, COGS, EXPENSE. Bank-categorized costs post here too (ref BANK:id).">i</span></div>
+    <div class="nav-item" onclick="nav('ap',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Vendors &amp; AP<span class="ti" data-tip="Suppliers and their invoices (Accounts Payable). Posting a vendor invoice records real COGS and lowers net income — this replaces the $0 cost placeholder with actuals.">i</span></div>
+    <div class="nav-item" onclick="nav('supplier',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Supplier Invoices<span class="ti" data-tip="Estimated COGS per order = Grand Total − Tax − Merchant Fee. A placeholder until real vendor invoices are posted. Source: orders + assumptions.">i</span></div>
+    <div class="nav-item" onclick="nav('margins',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>Product Margins<span class="ti" data-tip="Revenue (from Squarespace) vs actual COGS (from vendor invoice line items), by product and by category. Margin % = (revenue − COGS) / revenue. Match key = product name.">i</span></div>
+    <div class="nav-item" onclick="nav('checks',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M6 14h2M10 14h4"/></svg>Check Log</div>
+    <div class="nav-item" onclick="nav('bank',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>TD Bank <span id="bankBadge" style="display:none;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:999px;margin-left:4px">!</span><span class="ti" data-tip="Live bank feed for TD Bank x9102 (Plaid). Add memos, categorize (REVENUE/COGS/EXPENSE/TAX/FEE/TRANSFER), and reconcile. Categorized costs post to the ledger automatically.">i</span></div>
+    <div class="nav-item" onclick="nav('recon',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Reconciliation<span class="ti" data-tip="Matches expected deposits (revenue − discounts − fees) against bank activity, and bank transactions against order subtotals/grand totals. Source: ledger + bank_transactions.">i</span></div>
+    <div class="nav-section">Compliance</div>
+    <div class="nav-item" onclick="nav('tax',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Tax &amp; Compliance<span class="ti" data-tip="NY Sales Tax (8.875%) by quarter, ST-100 filing tracker. Mark periods filed with date, amount, confirmation #. Tax is a pass-through liability, not income. Source: ledger TAX account.">i</span></div>
+    <div class="nav-item" onclick="nav('taxforms',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6M9 17h3"/></svg>Federal Tax Forms<span class="ti" data-tip="Audit-level engine for W-2, 1099-NEC/MISC, W-9, backup withholding. Generates print-ready PDFs (PDF417 barcode), EFW2/Pub-1220 e-files, and an Audit Defense ZIP with source mapping, calc logs & SHA-256 checksums. DRAFT working copies — file via IRS IRIS/FIRE.">i</span></div>
+    <div class="nav-item" onclick="nav('taxpkg',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>Filing Packages<span class="ti" data-tip="Compliance calendar (everything filed quarterly & annually: ST-100/ST-101, 941/940/NYS-45, W-2/W-3, 1099/1096, income return, estimates) + one-click ZIP filing packages: cover sheet, ST-100 worksheet, P&L, ledger/orders/checks/bank CSVs, federal form PDFs, SHA-256 manifest.">i</span></div>
+    <div class="nav-item" onclick="nav('reminders',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>Reminders</div>
+    <div class="nav-item" onclick="nav('assumptions',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>Assumptions<span class="ti" data-tip="Editable business parameters: merchant fee %, fixed fee, OpEx %, overhead % (5), target margin. Saving re-posts merchant fees and recalculates all statements.">i</span></div>
+    <div class="nav-section">Reference</div>
+    <div class="nav-item" onclick="nav('help',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Help &amp; How-To<span class="ti" data-tip="Getting-started guide, keyboard shortcuts, presentation/day mode, and a quick reference for every module.">i</span></div>
+    <div class="nav-item" onclick="nav('docs',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Documentation</div>
+    <div class="nav-item" onclick="nav('glossary',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Glossary</div>
+  </div>
+  <div class="sidebar-footer" id="sidebarFooter">Loading…</div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="sync-dot" id="syncDot"></div>
+    <div class="topbar-label" id="syncLabel">Prime Industrial ERP — Connected</div>
+    <button class="btn btn-secondary btn-sm" onclick="syncNow()">⟳ Sync</button>
+    <span id="syncSpinner" style="display:none"><span class="spinner"></span></span>
+    <button class="btn btn-secondary btn-sm" onclick="location='/api/export/orders.csv'">⬇ Orders</button>
+    <button class="btn btn-secondary btn-sm" onclick="location='/api/export/ledger.csv'">⬇ Ledger</button>
+    <button class="btn btn-secondary btn-sm" id="dayBtn" onclick="toggleDay()">☀ Day</button>
+    <button class="btn btn-secondary btn-sm" id="presBtn" onclick="togglePresentation()">⛶ Present</button>
+    <button class="btn btn-secondary btn-sm" onclick="location='/logout'">Lock</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="tab-dashboard" class="tab-content active">
+    <div class="page-hdr"><div><div class="page-title">Dashboard</div><div class="page-sub" id="dashDate"></div></div></div>
+    <div class="kpi-grid">
+      <div class="kpi green"><div class="kpi-label">Product Revenue</div><div class="kpi-value" id="k-rev">—</div><div class="kpi-sub">All fulfilled orders</div></div>
+      <div class="kpi red"><div class="kpi-label">Discounts Absorbed</div><div class="kpi-value" id="k-disc">—</div><div class="kpi-sub">Free shipping comped</div></div>
+      <div class="kpi amber"><div class="kpi-label">Tax Collected (NY)</div><div class="kpi-value" id="k-tax">—</div><div class="kpi-sub">8.875% — to remit</div></div>
+      <div class="kpi blue" id="k-net-card"><div class="kpi-label" id="k-net-label">Est. Net Income (pre-COGS)<span class="ti" data-tip="When COGS is $0 (no supplier invoices posted) this is gross profit after fees & overhead — NOT true net income. Once you post vendor invoices it switches to reconciled actual net income. See Cost Scenarios.">i</span></div><div class="kpi-value" id="k-net">—</div><div class="kpi-sub" id="k-net-sub">After fees &amp; overhead · pre-COGS</div></div>
+      <div class="kpi purple"><div class="kpi-label">Merchant Fees</div><div class="kpi-value" id="k-mfee">—</div><div class="kpi-sub">Processing costs</div></div>
+      <div class="kpi amber"><div class="kpi-label">Overhead (5%)</div><div class="kpi-value" id="k-overhead">—</div><div class="kpi-sub">Applied after fees &amp; taxes</div></div>
+      <div class="kpi"><div class="kpi-label">This Month Revenue</div><div class="kpi-value" id="k-month">—</div><div class="kpi-sub" id="k-month-sub"></div></div>
+      <div class="kpi"><div class="kpi-label">Total Orders</div><div class="kpi-value" id="k-orders">—</div><div class="kpi-sub" id="k-orders-sub"></div></div>
+      <div class="kpi red"><div class="kpi-label">Open AP</div><div class="kpi-value" id="k-ap">—</div><div class="kpi-sub">Unpaid vendor invoices</div></div>
+    </div>
+    <div class="chart-row">
+      <div class="card"><div class="card-hdr">Revenue · Discounts · Net by Month</div><div class="card-body"><canvas id="revenueChart" height="200"></canvas></div></div>
+      <div class="card"><div class="card-hdr">Upcoming</div><div class="card-body" id="dashReminders"></div></div>
+    </div>
+    <div class="card"><div class="card-hdr">Recent Orders</div><div class="table-wrap"><table>
+      <thead><tr><th>Date</th><th>Invoice #</th><th>Customer</th><th class="num">Subtotal</th><th class="num">Discount</th><th class="num">Tax</th><th class="num">Total</th><th>Status</th><th>Inv.</th></tr></thead>
+      <tbody id="dashOrders"></tbody>
+    </table></div></div>
+  </div>
+
+  <!-- STATEMENTS -->
+  <div id="tab-statements" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Financial Statements</div><div class="page-sub">P&amp;L and Balance Sheet — management view</div></div></div>
+    <div class="callout">Live from SQLite ledger. COGS = actual vendor invoices (or estimated placeholder). Overhead = 5% of net-after-fees. Not a CPA-reviewed filing statement.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card"><div class="card-hdr">Income Statement (P&amp;L)</div><div class="table-wrap"><table id="plStmtTable"></table></div></div>
+      <div class="card"><div class="card-hdr">Balance Sheet</div><div class="table-wrap"><table id="bsStmtTable"></table></div></div>
+    </div>
+  </div>
+
+  <!-- ORDERS -->
+  <div id="tab-orders" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Orders</div><div class="page-sub">Full discount &amp; shipping breakdown</div></div></div>
+    <div class="toolbar"><input type="text" id="orderSearch" placeholder="Search name, email, order #…" oninput="dSearch()" style="max-width:280px"><button class="btn btn-secondary btn-sm" onclick="loadOrders()">Refresh</button></div>
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr>
+        <th class="sortable" data-sort="created_on" onclick="ordSort('created_on')">Date<span class="sort-ind"></span></th>
+        <th class="sortable" data-sort="order_number" onclick="ordSort('order_number')">Order #<span class="sort-ind"></span></th>
+        <th class="sortable" data-sort="customer_name" onclick="ordSort('customer_name')">Customer<span class="sort-ind"></span></th>
+        <th>Email</th>
+        <th class="num sortable" data-sort="subtotal" onclick="ordSort('subtotal')">Subtotal<span class="sort-ind"></span></th>
+        <th class="num">Ship Listed</th><th class="num">Ship Paid</th>
+        <th class="num sortable" data-sort="discount_total" onclick="ordSort('discount_total')">Discount<span class="sort-ind"></span></th>
+        <th class="num sortable" data-sort="tax" onclick="ordSort('tax')">Tax<span class="sort-ind"></span></th>
+        <th class="num sortable" data-sort="grand_total" onclick="ordSort('grand_total')">Total<span class="sort-ind"></span></th>
+        <th>Status</th><th>Inv.</th></tr></thead>
+      <tbody id="ordersBody"></tbody>
+    </table></div>
+    <div class="pagination"><button class="btn btn-secondary btn-sm" id="ordPrev" onclick="ordPage--;loadOrders()">‹</button><button class="btn btn-secondary btn-sm" id="ordNext" onclick="ordPage++;loadOrders()">›</button><span class="pg-info" id="ordInfo"></span></div>
+    </div>
+  </div>
+
+  <!-- INVOICES -->
+  <div id="tab-invoices" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Invoices</div><div class="page-sub">PDF invoices sent to customers</div></div></div>
+    <div class="toolbar">
+      <input type="text" id="invSearch" placeholder="Search invoice #, customer, email…" oninput="invSearchDeb()" style="max-width:300px">
+      <span class="ti" data-tip="Search & sort run on the server over the whole table — only one page of rows is ever sent to the browser, so it stays fast with millions of invoices.">i</span>
+      <button class="btn btn-secondary btn-sm" onclick="invPage=1;loadInvoices()">Refresh</button>
+    </div>
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr>
+        <th class="sortable" data-sort="invoice_number" onclick="invSort('invoice_number')">Invoice #<span class="sort-ind"></span></th>
+        <th class="sortable" data-sort="customer_name" onclick="invSort('customer_name')">Customer<span class="sort-ind"></span></th>
+        <th>Email</th>
+        <th class="sortable" data-sort="invoice_date" onclick="invSort('invoice_date')">Invoice Date<span class="sort-ind"></span></th>
+        <th>Delivered</th><th>Return By</th>
+        <th class="num sortable" data-sort="grand_total" onclick="invSort('grand_total')">Total<span class="sort-ind"></span></th>
+        <th class="sortable" data-sort="emailed_at" onclick="invSort('emailed_at')">Sent<span class="sort-ind"></span></th>
+        <th>PDF</th>
+      </tr></thead>
+      <tbody id="invoicesBody"></tbody>
+    </table></div>
+    <div class="pagination">
+      <button class="btn btn-secondary btn-sm" id="invPrev" onclick="invPage--;loadInvoices()">‹</button>
+      <button class="btn btn-secondary btn-sm" id="invNext" onclick="invPage++;loadInvoices()">›</button>
+      <span class="pg-info" id="invInfo"></span>
+    </div></div>
+  </div>
+
+  <!-- P&L BY MONTH -->
+  <div id="tab-pl" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">P&amp;L by Month</div><div class="page-sub">Revenue · Discounts · Fees · Overhead · Net</div></div><button class="btn btn-secondary btn-sm" onclick="exportPL()">⬇ CSV</button></div>
+    <div class="card" style="margin-bottom:16px"><div class="card-hdr">Revenue vs. Net</div><div class="card-body"><canvas id="plChart" height="160"></canvas></div></div>
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr><th>Month</th><th class="num">Revenue</th><th class="num">Ship</th><th class="num">Gross</th><th class="num">Discounts</th><th class="num">Merch Fees</th><th class="num">Overhead (5%)</th><th class="num">COGS</th><th class="num">Net Est.</th></tr></thead>
+      <tbody id="plBody"></tbody><tfoot id="plFoot" style="font-weight:700;border-top:2px solid var(--border)"></tfoot>
+    </table></div></div>
+  </div>
+
+  <!-- COST SCENARIOS -->
+  <div id="tab-scenarios" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Cost Scenarios</div><div class="page-sub">What net income looks like under different cost-of-goods assumptions</div></div></div>
+    <div class="callout warn"><strong>Why the app shows $0.00 cost &amp; net income of $15,108.30:</strong> No supplier invoices have been recorded yet, so Cost of Goods Sold (COGS) is $0. That means the figure labeled "Est. Net Income" is really <em>gross profit after fees &amp; overhead</em> — not true net income. <strong>It will drop</strong> as you record real product costs (via Vendors &amp; AP, or by categorizing TD Bank supplier payments as COGS). The scenarios below bracket the possibilities.</div>
+
+    <div class="scn-grid" id="scnGrid"></div>
+
+    <div class="card"><div class="card-hdr">The Governing Formula <span class="ti" data-tip="Every scenario uses the same net-income identity; only COGS changes.">i</span></div><div class="card-body">
+      <div class="formula-block">
+        <h3>Net Income (all scenarios use this)</h3>
+        $$\text{Net} = \underbrace{(\text{Revenue} + \text{Shipping}_{\text{collected}})}_{\text{Gross}} - \text{Discounts} - \text{Fees} - \text{Overhead} - \boxed{\text{COGS}} - \text{OpEx}$$
+        <p>Only <strong>COGS</strong> changes between scenarios. With your data: Gross $27,260.05 − Discounts $10,483 − Merchant fees $873.58 − Overhead $795.17 = <strong>$15,108.30</strong> available before COGS.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Scenario 1 — Cost = Sale Price</h3>
+        $$\text{COGS} = \text{Subtotal} = \$27{,}200.05 \;\Rightarrow\; \text{Net} = -\$12{,}091.75$$
+        <p>Assumes you paid your supplier exactly what the customer paid you. Zero product margin; the loss equals all fees + overhead.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Scenario 2 — Break-even</h3>
+        $$\text{COGS}_{\text{BE}} = \text{Net}_{\text{after fees \& overhead}} = \$15{,}108.30 \;\Rightarrow\; \text{Net} = \$0$$
+        <p>The exact product cost at which the operation breaks even. Any real cost <em>above</em> this is a loss; <em>below</em> it is profit.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Scenario 3 — Loss = Shipping Cost</h3>
+        $$\text{COGS} = \text{COGS}_{\text{BE}} + \text{Shipping}_{\text{absorbed}} = \$15{,}108.30 + \$10{,}483.00 \;\Rightarrow\; \text{Net} = -\$10{,}483.00$$
+        <p>Break-even cost plus the shipping the business absorbs on free-delivery orders. The operation runs at a loss exactly equal to that absorbed shipping.</p>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">Side-by-side</div><div class="table-wrap"><table>
+      <thead><tr><th>Scenario</th><th class="num">COGS Assumed</th><th class="num">Net Income</th><th>Result</th><th>Meaning</th></tr></thead>
+      <tbody id="scnTable"></tbody>
+    </table></div></div>
+  </div>
+
+  <!-- LEDGER -->
+  <div id="tab-ledger" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">General Ledger</div><div class="page-sub">All double-entry records</div></div></div>
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr><th>Date</th><th>Account</th><th>Description</th><th class="num">Debit</th><th class="num">Credit</th><th>Reference</th></tr></thead>
+      <tbody id="ledgerBody"></tbody>
+    </table></div>
+    <div class="pagination"><button class="btn btn-secondary btn-sm" id="ledPrev" onclick="ledPage--;loadLedger()">‹</button><button class="btn btn-secondary btn-sm" id="ledNext" onclick="ledPage++;loadLedger()">›</button><span class="pg-info" id="ledInfo"></span></div>
+    </div>
+  </div>
+
+  <!-- VENDORS & AP -->
+  <div id="tab-ap" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Vendors &amp; AP</div><div class="page-sub">Vendor invoices and COGS tracking</div></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="openM('vendorModal')">+ Vendor</button><button class="btn btn-primary btn-sm" onclick="prepViModal();openM('viModal')">+ Vendor Invoice</button></div></div>
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px">
+      <div class="card"><div class="card-hdr">Vendors</div><div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th class="num">Invoiced</th><th class="num">Paid</th><th class="num">Open</th></tr></thead>
+        <tbody id="vendorsBody"></tbody>
+      </table></div></div>
+      <div class="card"><div class="card-hdr">Vendor Invoices
+        <select id="viStatusFilter" onchange="loadVI()" style="width:auto;padding:3px 7px;font-size:11px"><option value="">All</option><option value="OPEN">Open</option><option value="PARTIAL">Partial</option><option value="PAID">Paid</option></select>
+      </div><div class="table-wrap"><table>
+        <thead><tr><th>Vendor</th><th>Invoice #</th><th>Date</th><th>Due</th><th class="num">Amount</th><th class="num">Paid</th><th>Status</th><th></th></tr></thead>
+        <tbody id="viBody"></tbody>
+      </table></div></div>
+    </div>
+  </div>
+
+  <!-- SUPPLIER INVOICES (Placeholder) -->
+  <div id="tab-supplier" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Supplier Invoices</div><div class="page-sub">Estimated COGS per order — auto-calculated placeholder</div></div></div>
+    <div class="placeholder-banner">
+      <h3>📦 Supplier Invoice Module — Coming Soon</h3>
+      <p style="max-width:500px;margin:0 auto;line-height:1.7">This tab will hold actual supplier invoices received from vendors. Until real invoices are entered, the system auto-calculates an estimated COGS placeholder per order:<br><strong>Est. COGS = Grand Total − Sales Tax − Merchant Fee</strong></p>
+    </div>
+    <div class="callout">The estimated figures below are placeholders used in P&amp;L until you post actual vendor invoices in the Vendors &amp; AP tab. Once actual COGS is posted, the placeholder is zeroed out.</div>
+    <div class="card"><div class="card-hdr">Estimated COGS by Order <span style="font-size:10px;color:var(--muted);font-weight:400">Auto-calculated · Not posted to ledger</span></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Date</th><th>Order #</th><th>Customer</th><th class="num">Grand Total</th><th class="num">− Tax</th><th class="num">− Merch Fee</th><th class="num">Est. COGS</th><th class="num">Est. Margin</th></tr></thead>
+      <tbody id="supplierBody"></tbody>
+      <tfoot id="supplierFoot" style="font-weight:700;border-top:2px solid var(--border)"></tfoot>
+    </table></div></div>
+  </div>
+
+  <!-- PRODUCT MARGINS -->
+  <div id="tab-margins" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Product Margins</div><div class="page-sub">Revenue vs. actual cost of goods — by product &amp; category</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-secondary btn-sm" id="mgCatBtn" onclick="setMarginView('category')">By Category</button>
+        <button class="btn btn-secondary btn-sm" id="mgProdBtn" onclick="setMarginView('product')">By Product</button>
+      </div>
+    </div>
+    <div class="callout"><strong>How margins are computed:</strong> Revenue comes from Squarespace order line items; COGS comes from the line items you enter on vendor invoices. They are matched by <strong>product name</strong> (case-insensitive). A product with sales but no posted cost shows 100% margin until you record its supplier cost — that's the gap to close.</div>
+    <div id="marginEmpty" style="display:none" class="placeholder-banner">
+      <h3>📊 No cost data yet</h3>
+      <p style="max-width:520px;margin:0 auto;line-height:1.7">Margins appear once you post vendor invoices with line items. Go to <strong>Vendors &amp; AP → + Vendor Invoice</strong>, pick the products you sell, and enter quantity &amp; unit cost. This page will then show true margin per product and category.</p>
+    </div>
+    <div class="card" id="marginCard"><div class="card-hdr"><span id="marginTitle">Margin by Category</span>
+      <span style="font-size:10px;color:var(--muted);font-weight:400">rev − cogs = margin · % of revenue</span></div>
+      <div class="table-wrap"><table>
+        <thead id="marginHead"></thead>
+        <tbody id="marginBody"></tbody>
+        <tfoot id="marginFoot" style="font-weight:700;border-top:2px solid var(--border)"></tfoot>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- CHECKS -->
+  <div id="tab-checks" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Check Log</div><div class="page-sub">Business check payments</div></div><button class="btn btn-primary btn-sm" onclick="openM('checkModal')">+ Check</button></div>
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr><th>Date</th><th>Check #</th><th>Payee</th><th class="num">Amount</th><th>Memo</th><th>Category</th><th>Account</th><th>Cleared</th></tr></thead>
+      <tbody id="checksBody"></tbody>
+    </table></div></div>
+  </div>
+
+  <!-- TD BANK -->
+  <div id="tab-bank" class="tab-content">
+    <div class="page-hdr">
+      <div><div class="page-title">TD Bank — x9102</div><div class="page-sub">Live transactions · Memos · Reconciliation</div></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-secondary btn-sm" onclick="bankSync()">⟳ Sync Transactions</button>
+        <button class="btn btn-primary btn-sm" id="connectBankBtn" onclick="bankConnect()">+ Connect Bank</button>
+      </div>
+    </div>
+
+    <!-- Connection status / setup banner -->
+    <div id="bankSetupBanner" class="callout" style="display:none">
+      <strong>Connect TD Bank via Plaid</strong> — Your credentials go directly to TD Bank's secure login page. This app never sees your password.<br>
+      Once connected, transactions sync automatically and you can add memos, categorize, and reconcile against your ERP orders.
+    </div>
+
+    <!-- KPI row -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px">
+      <div class="kpi blue"><div class="kpi-label">Account</div><div class="kpi-value" style="font-size:16px" id="bk-acct">—</div><div class="kpi-sub" id="bk-type">Business Checking</div></div>
+      <div class="kpi green"><div class="kpi-label">Total Credits (In)</div><div class="kpi-value" id="bk-credits">—</div><div class="kpi-sub">Money received</div></div>
+      <div class="kpi red"><div class="kpi-label">Total Debits (Out)</div><div class="kpi-value" id="bk-debits">—</div><div class="kpi-sub">Payments &amp; expenses</div></div>
+      <div class="kpi amber"><div class="kpi-label">Unreconciled</div><div class="kpi-value" id="bk-unrecon">—</div><div class="kpi-sub">Need review</div></div>
+      <div class="kpi"><div class="kpi-label">Date Range</div><div class="kpi-value" style="font-size:13px;line-height:1.4" id="bk-range">—</div><div class="kpi-sub" id="bk-last-sync">Never synced</div></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="toolbar">
+      <input type="text" id="bankSearch" placeholder="Search payee, memo…" oninput="dBankSearch()" style="max-width:220px">
+      <select id="bankCatFilter" onchange="bankPage=1;loadBank()" style="width:auto;padding:6px 10px">
+        <option value="">All Categories</option>
+        <option value="REVENUE">REVENUE</option>
+        <option value="COGS">COGS</option>
+        <option value="EXPENSE">EXPENSE</option>
+        <option value="TAX">TAX</option>
+        <option value="FEE">FEE</option>
+        <option value="TRANSFER">TRANSFER</option>
+        <option value="OTHER">OTHER</option>
+      </select>
+      <select id="bankReconFilter" onchange="bankPage=1;loadBank()" style="width:auto;padding:6px 10px">
+        <option value="">All</option>
+        <option value="0">Needs Review</option>
+        <option value="1">Reconciled</option>
+      </select>
+      <button class="btn btn-secondary btn-sm" onclick="bankPage=1;loadBank()">Refresh</button>
+    </div>
+
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr>
+        <th>Date</th><th>Payee / Description</th><th>Memo</th>
+        <th>Category</th><th class="num">Amount</th><th>Status</th><th>Match</th><th></th>
+      </tr></thead>
+      <tbody id="bankBody"></tbody>
+    </table></div>
+    <div class="pagination">
+      <button class="btn btn-secondary btn-sm" id="bkPrev" onclick="bankPage--;loadBank()">‹</button>
+      <button class="btn btn-secondary btn-sm" id="bkNext" onclick="bankPage++;loadBank()">›</button>
+      <span class="pg-info" id="bkInfo"></span>
+    </div></div>
+  </div>
+
+  <!-- RECONCILIATION -->
+  <div id="tab-recon" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Reconciliation</div><div class="page-sub">Expected bank deposits vs. checks issued</div></div></div>
+    <div class="callout">Expected deposit = Gross − Discounts − Merchant fees (tax held as separate liability).</div>
+    <div class="card"><div class="table-wrap"><table>
+      <thead><tr><th>Month</th><th class="num">Revenue</th><th class="num">Ship</th><th class="num">Discounts</th><th class="num">Fees</th><th class="num">Expected Deposit</th><th class="num">Checks Out</th><th class="num">Net Cash</th><th class="num">Tax Held</th></tr></thead>
+      <tbody id="reconBody"></tbody><tfoot id="reconFoot" style="font-weight:700;border-top:2px solid var(--border)"></tfoot>
+    </table></div></div>
+  </div>
+
+  <!-- TAX -->
+  <div id="tab-tax" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Tax &amp; Compliance</div><div class="page-sub">NY Sales Tax ST-100 — 8.875%</div></div></div>
+    <div class="tax-grid" id="taxGrid"></div>
+  </div>
+
+  <!-- FEDERAL TAX FORMS -->
+  <div id="tab-taxforms" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Federal Tax Forms <span class="ti" data-tip="W-2, 1099-NEC/MISC, W-9, 1040 backup withholding — rule-driven, audit-level.">i</span></div><div class="page-sub" id="tfYearSub">Audit-level generation engine</div></div></div>
+    <div class="callout warn"><strong>⚠️ Draft / working copies.</strong> <span id="tfDisclaimer">TIN matching is simulated (format + checksum only), not IRS e-Services. File official returns via IRS IRIS/FIRE or a licensed preparer.</span></div>
+
+    <!-- Payer setup -->
+    <div class="card"><div class="card-hdr">1 · Payer / Employer <span class="ti" data-tip="Your business details. EIN is validated for structure. Appears on every generated form.">i</span></div><div class="card-body">
+      <div class="form-row">
+        <div class="form-group"><label>Legal Name *</label><input id="tfPLegal"></div>
+        <div class="form-group"><label>EIN * (NN-NNNNNNN)</label><input id="tfPEin" placeholder="12-3456789"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Address</label><input id="tfPAddr"></div>
+        <div class="form-group"><label>State ID</label><input id="tfPState" placeholder="NY-998877"></div>
+        <div class="form-group"><label>Locality</label><input id="tfPLoc" placeholder="NYC"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveTfPayer()">Save Payer</button>
+      <span id="tfPayerMsg" style="font-size:11px;color:var(--green);margin-left:8px"></span>
+    </div></div>
+
+    <!-- Payees -->
+    <div class="card"><div class="card-hdr">2 · Employees &amp; Contractors <span class="ti" data-tip="Employees → W-2. Contractors → 1099-NEC (only if paid ≥ $600). Contractors without a W-9 trigger 24% backup withholding automatically.">i</span>
+      <button class="btn btn-primary btn-sm" onclick="prepTfPayee();openM('tfPayeeModal')">+ Add Payee</button></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Type</th><th>Name</th><th>TIN</th><th>W-9</th><th class="num">Wages / Paid</th><th class="num">Fed WH</th><th>Form</th><th></th></tr></thead>
+        <tbody id="tfPayeeBody"><tr><td colspan="8" style="padding:18px;color:var(--muted)">No payees yet — add employees or contractors.</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- Validate + Generate -->
+    <div class="card"><div class="card-hdr">3 · Validate &amp; Generate <span class="ti" data-tip="Cross-validation runs first (TIN/Name, EIN, W-9). Generation produces PDF + e-file + Audit Defense ZIP per form. Takes ~30–60s.">i</span></div><div class="card-body">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="tfValidate()">Run Cross-Validation</button>
+        <button class="btn btn-primary btn-sm" id="tfGenBtn" onclick="tfGenerate()">Generate All Forms</button>
+      </div>
+      <div id="tfValidateOut" style="margin-top:12px"></div>
+      <div id="tfGenOut" style="margin-top:10px"></div>
+    </div></div>
+
+    <!-- Generated forms -->
+    <div class="card"><div class="card-hdr">4 · Generated Forms &amp; Audit Packages <span class="ti" data-tip="Each row has a print-ready PDF (watermarked, PDF417 barcode) and an Audit Defense ZIP (source mapping, calc logs, exception report, SHA-256 checksums).">i</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Form</th><th>Recipient</th><th>Year</th><th>PDF Checksum (SHA-256)</th><th>Flags</th><th>Downloads</th></tr></thead>
+        <tbody id="tfGenBody"><tr><td colspan="6" style="padding:18px;color:var(--muted)">Nothing generated yet.</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- GOD MODE (OWNER CONTROL CENTER) -->
+  <div id="tab-godmode" class="tab-content">
+    <div class="page-hdr">
+      <div><div class="page-title">👑 God Mode — Owner Control Center</div><div class="page-sub" id="gmStamp">Automated control points across the whole system</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="loadGodmode()">⟳ Run All Controls</button>
+        <button class="btn btn-primary btn-sm" onclick="gmRebuild(this)">⚒ Rebuild Ledger</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+      <div class="kpi" id="gm-overall-card"><div class="kpi-label">Overall Status</div><div class="kpi-value" id="gm-overall">—</div><div class="kpi-sub">All control points</div></div>
+      <div class="kpi green"><div class="kpi-label">Pass</div><div class="kpi-value" id="gm-pass">—</div><div class="kpi-sub">Controls clean</div></div>
+      <div class="kpi amber"><div class="kpi-label">Warnings</div><div class="kpi-value" id="gm-warn">—</div><div class="kpi-sub">Review recommended</div></div>
+      <div class="kpi red"><div class="kpi-label">Failures</div><div class="kpi-value" id="gm-fail">—</div><div class="kpi-sub">Action required</div></div>
+    </div>
+    <div id="gmActionOut" class="callout" style="display:none"></div>
+    <div id="gmGrid"></div>
+  </div>
+
+  <!-- TAX FILING PACKAGES -->
+  <div id="tab-taxpkg" class="tab-content">
+    <div class="page-hdr">
+      <div><div class="page-title">Tax Filing Packages</div><div class="page-sub">Compliance calendar &amp; submission bundles — periodic and annual</div></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="tpYear" onchange="loadTaxpkg()" style="width:auto;padding:6px 10px"></select>
+        <select id="tpPeriod" style="width:auto;padding:6px 10px">
+          <option value="ANNUAL">Annual</option><option value="Q1">Q1</option>
+          <option value="Q2">Q2</option><option value="Q3">Q3</option><option value="Q4">Q4</option>
+        </select>
+        <button class="btn btn-primary btn-sm" id="tpGenBtn" onclick="tpGenerate()">📦 Build Filing Package</button>
+      </div>
+    </div>
+    <div class="callout warn"><strong>Working copies.</strong> Packages bundle bookkeeping figures, worksheets and generated federal forms for your preparer / audit file. Verify against official IRS &amp; NYS DTF instructions before submitting.</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div class="kpi red"><div class="kpi-label">Overdue Filings</div><div class="kpi-value" id="tp-overdue">—</div><div class="kpi-sub">Past due date</div></div>
+      <div class="kpi amber"><div class="kpi-label">Due in 30 Days</div><div class="kpi-value" id="tp-upcoming">—</div><div class="kpi-sub">Upcoming deadlines</div></div>
+      <div class="kpi blue"><div class="kpi-label">Packages Built</div><div class="kpi-value" id="tp-pkgs">—</div><div class="kpi-sub">ZIP bundles generated</div></div>
+    </div>
+    <div class="card"><div class="card-hdr">Compliance Calendar <span class="ti" data-tip="Every recurring submission with live status. ST-100 status comes from the Tax & Compliance filing log; W-2/1099 status from the Federal Tax Forms engine. Payroll returns show N/A until employees exist.">i</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Form / Return</th><th>Agency</th><th>Frequency</th><th>Period</th><th>Due</th><th class="num">Amount</th><th>Status</th><th>Note</th></tr></thead>
+        <tbody id="tpCalBody"></tbody>
+      </table></div>
+    </div>
+    <div class="card"><div class="card-hdr">Generated Packages <span class="ti" data-tip="Each ZIP: cover sheet, ST-100 worksheet, monthly P&L, general ledger, orders, checks register, bank transactions, open AP, federal form PDFs (annual), manifest.json with SHA-256 checksums.">i</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Built</th><th>Period</th><th class="num">Gross Rev</th><th class="num">Tax Collected</th><th class="num">Net Est.</th><th>Files</th><th>SHA-256</th><th></th></tr></thead>
+        <tbody id="tpPkgBody"><tr><td colspan="8" style="padding:18px;color:var(--muted)">No packages yet — pick a period and build one.</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- REMINDERS -->
+  <div id="tab-reminders" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Reminders</div><div class="page-sub">Tax, filing &amp; compliance calendar</div></div><button class="btn btn-primary btn-sm" onclick="openM('reminderModal')">+ Reminder</button></div>
+    <div id="reminderList"></div>
+  </div>
+
+  <!-- ASSUMPTIONS -->
+  <div id="tab-assumptions" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Assumptions</div><div class="page-sub">Business model parameters — recalculates P&amp;L on save</div></div></div>
+    <div class="callout warn">Saving re-posts all merchant fee entries and recalculates net income.</div>
+    <div class="card"><div class="card-body" id="assumptionsBody"></div><div style="padding:0 16px 16px"><button class="btn btn-primary" onclick="saveAssumptions()">Save &amp; Recalculate</button></div></div>
+  </div>
+
+  <!-- HELP & HOW-TO -->
+  <div id="tab-help" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Help &amp; How-To</div><div class="page-sub">Getting started · keyboard shortcuts · view modes · module reference</div></div></div>
+
+    <div class="card"><div class="card-hdr">⌨️ Keyboard Shortcuts <span class="ti" data-tip="Shortcuts work anywhere except while typing in a text box. Press ? anytime to jump back here.">i</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th style="width:130px">Key</th><th>Action</th></tr></thead>
+        <tbody style="font-size:12.5px">
+          <tr><td><kbd>P</kbd></td><td>Toggle <strong>Presentation mode</strong> (full-screen clean view — hides sidebar &amp; top bar)</td></tr>
+          <tr><td><kbd>D</kbd></td><td>Toggle <strong>Day / Dark</strong> theme</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Exit Presentation mode · or close an open dialog</td></tr>
+          <tr><td><kbd>?</kbd></td><td>Open this <strong>Help</strong> page</td></tr>
+          <tr><td><kbd>/</kbd></td><td>Jump to the <strong>search box</strong> on the current page (Orders, Bank…)</td></tr>
+          <tr><td><kbd>G</kbd> then <kbd>D</kbd></td><td>Go to <strong>Dashboard</strong></td></tr>
+          <tr><td><kbd>G</kbd> then <kbd>O</kbd></td><td>Go to <strong>Orders</strong></td></tr>
+          <tr><td><kbd>G</kbd> then <kbd>I</kbd></td><td>Go to <strong>Invoices</strong></td></tr>
+          <tr><td><kbd>G</kbd> then <kbd>T</kbd></td><td>Go to <strong>Federal Tax Forms</strong></td></tr>
+          <tr><td><kbd>G</kbd> then <kbd>B</kbd></td><td>Go to <strong>TD Bank</strong></td></tr>
+          <tr><td><kbd>R</kbd></td><td><strong>Refresh / re-sync</strong> the current page's data</td></tr>
+        </tbody>
+      </table></div>
+      <div style="padding:10px 16px;font-size:11px;color:var(--muted)">Tip: shortcuts are ignored while you're typing in a field, so they never interfere with data entry.</div>
+    </div>
+
+    <div class="card"><div class="card-hdr">🖥️ View Modes</div><div class="card-body">
+      <div class="formula-block" style="background:var(--surface2)">
+        <h3>Presentation Mode</h3>
+        <p style="color:var(--text)">Full-screen, distraction-free view for screen-sharing or reviewing on a big display. Sidebar and top bar disappear and fonts enlarge.</p>
+        <p><strong>On:</strong> click <span class="badge info">⛶ Present</span> in the top bar (top-right) — or press <kbd>P</kbd>.<br>
+           <strong>Off:</strong> the button becomes <span class="badge bad">✕ Exit</span> — click it, or press <kbd>P</kbd> / <kbd>Esc</kbd>.<br>
+           Your choice is remembered the next time you open the app.</p>
+      </div>
+      <div class="formula-block" style="background:var(--surface2)">
+        <h3>Day / Dark Theme</h3>
+        <p style="color:var(--text)">Switch between the dark default and a light "day" theme for bright rooms or printing.</p>
+        <p><strong>Toggle:</strong> click <span class="badge warn">☀ Day</span> / <span class="badge info">🌙 Dark</span> in the top bar — or press <kbd>D</kbd>. Also remembered between sessions.</p>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">🚀 Quick Start</div><div class="card-body">
+      <ol style="font-size:12.5px;line-height:1.9;padding-left:20px">
+        <li><strong>Dashboard</strong> — your live KPIs (revenue, discounts, fees, overhead, net income). Click <span class="ti" data-tip="example">i</span> icons anywhere for an explanation of any module.</li>
+        <li><strong>Sync Squarespace</strong> — top bar ⟳ button pulls the latest orders on demand (also auto-syncs every 4 hours).</li>
+        <li><strong>Record real costs</strong> — Vendors &amp; AP → + Vendor Invoice → enter products, quantities &amp; unit costs. This turns the amber "pre-COGS" net income into green "actual" net income and powers Product Margins.</li>
+        <li><strong>Reconcile the bank</strong> — TD Bank tab: categorize transactions and mark them reconciled; categorized costs post to the ledger automatically.</li>
+        <li><strong>File taxes</strong> — Tax &amp; Compliance (NY sales tax) and Federal Tax Forms (W-2 / 1099 generation with audit packages).</li>
+        <li><strong>Export &amp; print</strong> — Invoices tab → 👁 View / ⬇ download any customer invoice PDF; most tables have CSV export.</li>
+      </ol>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">📚 Module Reference</div><div class="table-wrap"><table>
+      <thead><tr><th>Module</th><th>What it does</th><th>Data source</th></tr></thead>
+      <tbody style="font-size:12px">
+        <tr><td><strong>Dashboard</strong></td><td>Live KPIs, revenue/net chart, recent orders, reminders</td><td>Ledger + orders</td></tr>
+        <tr><td><strong>Financial Statements</strong></td><td>Income statement &amp; balance sheet (management view)</td><td>Ledger</td></tr>
+        <tr><td><strong>Orders / Invoices</strong></td><td>Squarespace orders; emailed PDF invoices (view/download)</td><td>Squarespace API</td></tr>
+        <tr><td><strong>P&amp;L by Month / Cost Scenarios</strong></td><td>Monthly P&amp;L; what-if cost models (break-even, etc.)</td><td>Ledger + assumptions</td></tr>
+        <tr><td><strong>Vendors &amp; AP / Supplier Invoices</strong></td><td>Line-item vendor costs → real COGS</td><td>Manual entry</td></tr>
+        <tr><td><strong>Product Margins</strong></td><td>Revenue vs cost by product &amp; category</td><td>Orders + vendor lines</td></tr>
+        <tr><td><strong>TD Bank</strong></td><td>Bank feed, memos, categorize, reconcile</td><td>Plaid (sandbox)</td></tr>
+        <tr><td><strong>Tax &amp; Compliance</strong></td><td>NY ST-100 sales-tax quarters</td><td>Ledger TAX</td></tr>
+        <tr><td><strong>Federal Tax Forms</strong></td><td>W-2 / 1099 / W-9 + audit packages</td><td>Payer/payee entry</td></tr>
+        <tr><td><strong>Documentation / Glossary</strong></td><td>Formulas (KaTeX), data flow, term definitions</td><td>—</td></tr>
+      </tbody>
+    </table></div></div>
+
+    <div class="card"><div class="card-hdr">📱 Access From Anywhere</div><div class="card-body">
+      <p style="font-size:12.5px;line-height:1.7">The app auto-starts with your Mac and is reachable on your devices through Tailscale at
+      <br><code style="font-size:12px">http://the-opposite-of-turtle.tail023c54.ts.net:5050</code><br>
+      On your iPhone, open the <strong>Tailscale</strong> app (toggle on), then open that link in Safari and "Add to Home Screen" for an app-like icon.</p>
+    </div></div>
+  </div>
+
+  <!-- DOCUMENTATION -->
+  <div id="tab-docs" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Documentation &amp; Formulas</div><div class="page-sub">Formulas, data sources &amp; flow — how every number is produced</div></div></div>
+
+    <div class="card"><div class="card-hdr">Data Flow &amp; Connections <span class="ti" data-tip="How data moves from source systems into the figures you see.">i</span></div><div class="card-body">
+      <div class="dataflow">
+        <div class="df-node"><div class="df-ico">🛒</div><div class="df-body"><h4>1. Squarespace Commerce</h4><p>Customer places an order at greatorder.org. Source of all sales: subtotal, shipping, discounts, tax, line items, customer address.</p><div class="df-src">GET api.squarespace.com/1.0/commerce/orders</div></div></div>
+        <div class="df-node"><div class="df-ico">🔄</div><div class="df-body"><h4>2. Sync &amp; Invoice Emailer</h4><p>Every 4 hours (and on the Sync button), orders are pulled, stored, and a PDF invoice is generated &amp; emailed. Free-shipping logic computes shipping collected vs absorbed.</p><div class="df-src">invoice_emailer.py · erp_db.upsert_order()</div></div></div>
+        <div class="df-node"><div class="df-ico">📒</div><div class="df-body"><h4>3. General Ledger (double-entry)</h4><p>Each order posts REVENUE (credit), SHIPPING, DISCOUNT (debit for absorbed shipping), TAX (credit), MERCHANT_FEE (debit). Bank-categorized costs post COGS/EXPENSE debits.</p><div class="df-src">erp_db.post_ledger() · ledger table</div></div></div>
+        <div class="df-node"><div class="df-ico">🏦</div><div class="df-body"><h4>4. TD Bank x9102 (Plaid)</h4><p>Real bank transactions sync in. You categorize &amp; reconcile them; EXPENSE/COGS/FEE/TAX entries post into the same ledger (ref BANK:id), so statements update live.</p><div class="df-src">plaid_integration.py · bank_transactions table</div></div></div>
+        <div class="df-node"><div class="df-ico">📊</div><div class="df-body"><h4>5. Statements, P&amp;L, KPIs, Scenarios</h4><p>Every report reads the ledger live. Overhead = 5% of net-after-fees. Net income = gross − discounts − fees − overhead − COGS − OpEx.</p><div class="df-src">/api/summary · /api/statements · /api/cost-scenarios</div></div></div>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">Sources of Data <span class="ti" data-tip="Where each category of data originates.">i</span></div><div class="card-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>Data</th><th>Source</th><th>How / When</th></tr></thead>
+        <tbody style="font-size:12px">
+          <tr><td>Orders, revenue, tax, shipping, discounts</td><td>Squarespace Commerce API v1</td><td>Auto every 4h + Sync button</td></tr>
+          <tr><td>Invoice PDFs</td><td>Generated (Playwright/Chromium)</td><td>On fulfillment; retained &amp; downloadable</td></tr>
+          <tr><td>Merchant fees</td><td>Computed: 2.9% + $0.30/txn</td><td>Posted to ledger per order</td></tr>
+          <tr><td>Bank transactions</td><td>TD Bank x9102 via Plaid</td><td>On Bank-Sync; categorize → ledger</td></tr>
+          <tr><td>COGS (cost of goods)</td><td>Vendor invoices / bank categorization</td><td>Manual / reconciled — replaces $0 placeholder</td></tr>
+          <tr><td>Overhead (5%), OpEx, target margin</td><td>Assumptions tab (editable)</td><td>Recalculates on save</td></tr>
+          <tr><td>NY Sales Tax 8.875%</td><td>Collected at checkout</td><td>Held as liability; ST-100 quarterly</td></tr>
+        </tbody>
+      </table></div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">Revenue Recognition</div><div class="card-body">
+      <div class="formula-block">
+        <h3>Gross Revenue</h3>
+        $$\text{Gross Revenue} = \sum(\text{Product Subtotal}) + \sum(\text{Shipping Collected})$$
+        <p>Product subtotal is the sum of all line items. Shipping collected is the carrier rate net of any discount that fully or partially offsets it. Free-shipping promotions zero out shipping collected.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Shipping Collected (Free Shipping Accounting)</h3>
+        $$\text{Shipping Collected} = \max\!\left(0,\ \text{Shipping Listed} - \text{Discount Total}\right)$$
+        <p>Squarespace reports <code>shippingTotal</code> as the carrier rate before promotion. When a "Free Delivery" discount fully covers it, <code>discountTotal</code> equals <code>shippingTotal</code>, resulting in $0 collected and the full amount posted as an absorbed discount (DISCOUNT debit in the ledger).</p>
+      </div>
+      <div class="formula-block">
+        <h3>Discounts Absorbed</h3>
+        $$\text{Discount Absorbed} = \sum\left(\text{Shipping Listed} - \text{Shipping Collected}\right)$$
+        <p>Represents the cost of free-shipping and promotional offers borne by Prime Industrial. Posted as a DISCOUNT debit — reduces gross to net revenue.</p>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">Profitability Waterfall</div><div class="card-body">
+      <div class="formula-block">
+        <h3>Merchant Processing Fee</h3>
+        $$\text{Merchant Fee} = \text{Grand Total} \times \frac{r}{100} + f$$
+        <p>Where \(r\) = fee rate (default 2.9%) and \(f\) = fixed per-transaction fee (default $0.30). Applied to grand total (including tax) as the payment processor charges on the full amount collected.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Net After Fees</h3>
+        $$\text{Net After Fees} = \text{Gross Revenue} - \text{Discounts} - \text{Merchant Fees} - \text{Platform Fees}$$
+        <p>This is the effective cash position before overhead and cost of goods. It is the base for the 5% overhead allocation.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Overhead Allocation (5%)</h3>
+        $$\text{Overhead} = \text{Net After Fees} \times 0.05$$
+        <p>Applied <em>after</em> fees and discounts, not on gross revenue. Covers utilities, packaging materials, incidental labor, insurance allocations, and other operating costs not tracked as direct expenses.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Estimated Net Income</h3>
+        $$\text{Net Income} = \text{Net After Fees} - \text{Overhead} - \text{COGS} - \text{OpEx} - \text{Other Expenses}$$
+        <p>Management estimate before personal income tax. Sales tax (\(\text{NY} = 8.875\%\)) is excluded — it is a pass-through liability collected from customers and remitted to New York State quarterly via ST-100.</p>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">COGS &amp; Supplier Invoice Placeholder</div><div class="card-body">
+      <div class="formula-block">
+        <h3>Estimated COGS Placeholder</h3>
+        $$\text{Est. COGS} = \text{Grand Total} - \text{Sales Tax} - \text{Merchant Fee}$$
+        <p>Used as a temporary placeholder when actual supplier invoices have not yet been entered. Represents the net proceeds from an order (what we keep before paying the supplier). Once real vendor invoices are posted in Vendors &amp; AP, the placeholder is replaced by the actual COGS figure.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Gross Margin</h3>
+        $$\text{Gross Margin \%} = \frac{\text{Gross Revenue} - \text{COGS}}{\text{Gross Revenue}} \times 100$$
+        <p>Target gross margin varies by product category. Industrial supply typically targets 20–40%. Below 15% should trigger a supplier price renegotiation review.</p>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">Line-Item COGS &amp; Product Margins <span class="ti" data-tip="How vendor invoice line items become real COGS and per-product margin.">i</span></div><div class="card-body">
+      <div class="formula-block">
+        <h3>Line Item → Ledger</h3>
+        $$\text{Goods}_{\text{line}} = \text{Qty} \times \text{Unit Cost} \;\rightarrow\; \textbf{COGS (debit)}$$
+        $$\text{Extras}_{\text{line}} = \text{Tax} + \text{Shipping} + \text{Fees} \;\rightarrow\; \textbf{EXPENSE (debit)}$$
+        <p>Each vendor invoice line splits into two ledger postings: the pure goods cost hits <strong>COGS</strong>, while inbound tax, freight and fees hit <strong>EXPENSE</strong>. Both reduce net income. Entries are tagged <code>VI:&lt;id&gt;</code> so re-saving never double-counts.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Reconciled Net Income</h3>
+        $$\text{Net}_{\text{actual}} = \text{Net}_{\text{pre-COGS}} - \text{COGS} - \text{Expenses}$$
+        <p>The dashboard KPI shows <strong>pre-COGS</strong> (amber) until any vendor invoice is posted, then switches to <strong>reconciled actual</strong> (green). The Cost Scenarios tab's first card mirrors this.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Per-Product Margin</h3>
+        $$\text{Margin}_{\text{product}} = \underbrace{\sum \text{Revenue}_{\text{Squarespace}}}_{\text{by product name}} - \underbrace{\sum (\text{Qty} \times \text{Unit Cost})}_{\text{vendor lines}}$$
+        <p>Revenue (from Squarespace order line items) and cost (from vendor invoice lines) are matched on <strong>product name</strong> (case-insensitive). Categories are assigned on the cost side and roll up in the Product Margins tab. A product with sales but no recorded cost shows 100% margin — a flag to enter its supplier cost.</p>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">NY Sales Tax</div><div class="card-body">
+      <div class="formula-block">
+        <h3>NY Combined Sales Tax Rate</h3>
+        $$\text{Tax Rate} = \underbrace{4.0\%}_{\text{NY State}} + \underbrace{4.5\%}_{\text{NYC}} + \underbrace{0.375\%}_{\text{MCTD}} = 8.875\%$$
+        <p>MCTD = Metropolitan Commuter Transportation District surcharge. Applies to sales within New York City (Manhattan, Brooklyn, Queens, Bronx, Staten Island). Filed quarterly on Form ST-100.</p>
+      </div>
+      <div class="formula-block">
+        <h3>Tax Collected from Customer</h3>
+        $$\text{Tax} = \text{Subtotal} \times 0.08875$$
+        <p>Tax is a pass-through — collected from the customer and held until remittance to New York State. It is a current liability on the balance sheet, not income.</p>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-hdr">Invoice Number Formula</div><div class="card-body">
+      <div class="formula-block">
+        <h3>Deterministic Invoice Number</h3>
+        $$\text{Invoice \#} = \texttt{112-}\underbrace{H_1[0..6]}_{\text{7 chars}}\texttt{-}\underbrace{H_1[7..14]}_{\text{8 chars}}$$
+        <p>Where \(H_1 = \text{MD5}(\text{Squarespace Order ID})\). The prefix "112" mirrors an Amazon-style format. Using a hash of the order ID makes invoice numbers deterministic — re-running the emailer produces the same number every time, preventing duplicate invoices.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- GLOSSARY -->
+  <div id="tab-glossary" class="tab-content">
+    <div class="page-hdr"><div><div class="page-title">Glossary</div><div class="page-sub">Accounting &amp; finance terms used in this ERP system</div></div></div>
+    <div class="card"><div class="card-body"><dl>
+
+      <div class="glossary-term">
+        <dt>Accounts Payable (AP)</dt>
+        <dd>Money owed by Prime Industrial to suppliers and vendors for goods or services received but not yet paid. Appears as a current liability on the balance sheet. Tracked in the Vendors &amp; AP tab.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Chart of Accounts</dt>
+        <dd>The complete list of ledger accounts used in this system: REVENUE, SHIPPING, DISCOUNT, TAX, MERCHANT_FEE, COGS, EXPENSE. Each transaction is posted to one or more of these accounts using double-entry bookkeeping.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>COGS (Cost of Goods Sold)</dt>
+        <dd>The direct cost of the merchandise sold to customers — the supplier's invoice amount. Reduces gross profit. Posted as a debit to the COGS account when a vendor invoice is entered. Before actual invoices are entered, an estimated placeholder is calculated as Grand Total − Tax − Merchant Fee.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Credit</dt>
+        <dd>In double-entry bookkeeping, a credit increases liability, equity, and revenue accounts, and decreases asset and expense accounts. Revenue (sales), tax collected, and shipping collected are posted as credits.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Debit</dt>
+        <dd>In double-entry bookkeeping, a debit increases asset and expense accounts, and decreases liability and revenue accounts. Discounts absorbed, merchant fees, COGS, and expenses are posted as debits.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Discount Absorbed</dt>
+        <dd>The cost of promotional offers borne by the business — primarily free shipping. When a customer receives free delivery, the shipping cost that Prime Industrial covers is posted as a DISCOUNT debit in the ledger. This reduces net revenue.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Double-Entry Bookkeeping</dt>
+        <dd>An accounting method where every transaction affects at least two accounts: a debit to one and a credit to another, always keeping the ledger in balance (Assets = Liabilities + Equity).</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>General Ledger</dt>
+        <dd>The master record of all financial transactions. Every order sync and vendor invoice posts entries here. The ledger is the source of truth for all P&amp;L calculations in this system.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Grand Total</dt>
+        <dd>The total amount charged to the customer: Subtotal + Shipping Collected + Tax. This is the amount the payment processor (e.g., Stripe) charges the customer's card, and is the basis for the merchant fee calculation.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Gross Revenue</dt>
+        <dd>Total product sales plus shipping collected (before any deductions). Also called "top line." In this system: Product Subtotal + Net Shipping Collected.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Merchant Fee</dt>
+        <dd>The processing fee charged by the payment processor (e.g., Stripe via Squarespace) for each transaction. Default rate: 2.9% of grand total + $0.30 per transaction. Posted as a MERCHANT_FEE debit. Configurable in Assumptions.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Net Income</dt>
+        <dd>The bottom-line profitability estimate: Gross Revenue − Discounts − Merchant Fees − Overhead − COGS − OpEx − Other Expenses. This is a management estimate, not a tax filing figure. Personal income tax is not deducted here.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>OpEx (Operating Expenses)</dt>
+        <dd>General business expenses not directly tied to a specific sale. In this system, estimated as a percentage of gross revenue (default 10%). Includes software subscriptions, office supplies, shipping materials, and other overhead costs tracked as a percentage allocation until actual expenses are posted.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Overhead Allocation</dt>
+        <dd>A 5% charge applied to Net After Fees (after discounts and merchant fees). Covers utilities, packaging, incidental labor, insurance, and miscellaneous operating costs. Applied after fees because these costs are partially volume-driven. Configurable as <code>overhead_pct</code> in Assumptions.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Reconciliation</dt>
+        <dd>The process of matching expected cash deposits (Revenue + Shipping − Discounts − Merchant Fees) against actual bank activity (checks issued, ACH payments, etc.) to ensure the books agree with the bank statement.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Sales Tax (NY ST-100)</dt>
+        <dd>New York State combined sales tax of 8.875% (4% state + 4.5% NYC + 0.375% MCTD) collected from customers on taxable sales. Filed quarterly using Form ST-100 on the NY State Tax portal. A current liability — not income.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Shipping Listed vs. Shipping Collected</dt>
+        <dd><strong>Shipping Listed</strong>: the carrier rate shown before discounts (what Squarespace calls <code>shippingTotal</code>). <strong>Shipping Collected</strong>: what the customer actually paid, after promotion offsets. If free shipping was applied, Shipping Collected = $0 and the full listed amount is posted as a Discount Absorbed.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Squarespace Commerce API</dt>
+        <dd>The API (v1) used to sync order data from Prime Industrial's Squarespace store at greatorder.org. Authenticated with a Bearer token. Orders are polled every 4 hours by the invoice emailer and on-demand via the Sync button. Endpoint: <code>GET /1.0/commerce/orders</code>.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>Subtotal</dt>
+        <dd>The sum of all product line items before tax and shipping. Used as the revenue credit in the general ledger and as the basis for sales tax calculation.</dd>
+      </div>
+
+      <div class="glossary-term">
+        <dt>WAL Mode (SQLite)</dt>
+        <dd>Write-Ahead Logging — a SQLite journal mode that allows concurrent reads while a write is in progress. Enabled in this system to prevent "database is locked" errors when the Flask server and invoice emailer access the database simultaneously.</dd>
+      </div>
+
+    </dl></div></div>
+  </div>
+
+</div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="bankMemoModal"><div class="modal">
+  <div class="modal-title">Transaction Detail &amp; Memo</div>
+  <input type="hidden" id="bmTxnId">
+  <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+      <span id="bmName" style="font-weight:700;font-size:14px"></span>
+      <span id="bmAmount" style="font-size:18px;font-weight:800"></span>
+    </div>
+    <div style="font-size:11px;color:var(--muted)" id="bmDate"></div>
+  </div>
+  <div class="form-group"><label>Memo / Note</label><input id="bmMemo" placeholder="e.g. Office supplies — Amazon — July restock"></div>
+  <div class="form-row">
+    <div class="form-group"><label>ERP Category</label>
+      <select id="bmCat">
+        <option value="">— Uncategorized —</option>
+        <option value="REVENUE">REVENUE — money in from sales</option>
+        <option value="COGS">COGS — supplier payment</option>
+        <option value="EXPENSE">EXPENSE — operating cost</option>
+        <option value="TAX">TAX — tax remittance</option>
+        <option value="FEE">FEE — bank / processing fee</option>
+        <option value="TRANSFER">TRANSFER — internal move</option>
+        <option value="OTHER">OTHER</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Reconcile Status</label>
+      <select id="bmRecon">
+        <option value="0">Needs Review</option>
+        <option value="1">✓ Reconciled</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group"><label>Linked ERP Order ID (optional)</label><input id="bmOrderId" placeholder="Squarespace order ID"></div>
+  <div id="bmSuggestions" style="margin-top:8px"></div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" onclick="closeM('bankMemoModal')">Cancel</button>
+    <button class="btn btn-secondary btn-sm" onclick="bmIgnore()">Ignore</button>
+    <button class="btn btn-primary" onclick="bmSave()">Save</button>
+  </div>
+</div></div>
+
+<div class="modal-overlay" id="tfPayeeModal"><div class="modal" style="width:640px">
+  <div class="modal-title">Add Payee <span class="ti" data-tip="Employee → W-2 fields (wages, withholdings, Box 12). Contractor → 1099 (total paid). No W-9 on a contractor = 24% backup withholding.">i</span></div>
+  <div class="form-row">
+    <div class="form-group"><label>Type *</label><select id="tfKind" onchange="tfKindToggle()"><option value="CONTRACTOR">Contractor (1099-NEC)</option><option value="EMPLOYEE">Employee (W-2)</option></select></div>
+    <div class="form-group"><label>Legal Name *</label><input id="tfLegal"></div>
+    <div class="form-group"><label>TIN / SSN *</label><input id="tfTin" placeholder="123-45-6789"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Address</label><input id="tfAddr"></div>
+    <div class="form-group"><label>W-9 on file?</label><select id="tfW9"><option value="0">No → backup withholding</option><option value="1">Yes</option></select></div>
+  </div>
+  <div id="tfContractorFields">
+    <div class="form-row">
+      <div class="form-group"><label>Total Paid ($)</label><input type="number" id="tfTotalPaid" step="0.01" value="0" oninput="tfNote()"></div>
+      <div class="form-group"><label>State WH ($)</label><input type="number" id="tfStateWhC" step="0.01" value="0"></div>
+    </div>
+    <div id="tfBwhNote" style="font-size:11px;color:var(--orange);display:none"></div>
+  </div>
+  <div id="tfEmployeeFields" style="display:none">
+    <div class="form-row">
+      <div class="form-group"><label>Gross Wages ($)</label><input type="number" id="tfGross" step="0.01" value="0"></div>
+      <div class="form-group"><label>Federal WH ($)</label><input type="number" id="tfFedWh" step="0.01" value="0"></div>
+      <div class="form-group"><label>Pretax §125 health ($)</label><input type="number" id="tfSec125" step="0.01" value="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>401(k) deferral ($)</label><input type="number" id="tf401k" step="0.01" value="0"></div>
+      <div class="form-group"><label>State WH ($)</label><input type="number" id="tfStateWh" step="0.01" value="0"></div>
+      <div class="form-group"><label>Local WH ($)</label><input type="number" id="tfLocalWh" step="0.01" value="0"></div>
+    </div>
+  </div>
+  <div id="tfPayeeErr" style="display:none;color:var(--red);font-size:12px;margin-top:6px"></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeM('tfPayeeModal')">Cancel</button><button class="btn btn-primary" onclick="saveTfPayee()">Save Payee</button></div>
+</div></div>
+
+<div class="modal-overlay" id="bankAccountModal"><div class="modal">
+  <div class="modal-title">Select Account to Track</div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Choose the TD Bank Business Checking x9102 account:</p>
+  <div id="bankAccountList" style="display:flex;flex-direction:column;gap:8px"></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeM('bankAccountModal')">Cancel</button></div>
+</div></div>
+
+<div class="modal-overlay" id="fileModal"><div class="modal">
+  <div class="modal-title">Mark Tax Period as Filed</div>
+  <input type="hidden" id="fPS"><input type="hidden" id="fPE">
+  <div class="form-row"><div class="form-group"><label>Period</label><input id="fPL" disabled></div><div class="form-group"><label>Due Date</label><input id="fDue" disabled></div></div>
+  <div class="form-row"><div class="form-group"><label>Gross Sales</label><input type="number" id="fGross" step="0.01"></div><div class="form-group"><label>Tax Collected</label><input type="number" id="fTax" step="0.01"></div></div>
+  <div class="form-row"><div class="form-group"><label>Filed On</label><input type="date" id="fFiled"></div><div class="form-group"><label>Payment Amount</label><input type="number" id="fPay" step="0.01"></div></div>
+  <div class="form-group"><label>Confirmation #</label><input id="fRef"></div>
+  <div class="form-group"><label>Notes</label><textarea id="fNotes" rows="2"></textarea></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeM('fileModal')">Cancel</button><button class="btn btn-primary" onclick="submitFiling()">✓ Mark Filed</button></div>
+</div></div>
+
+<div class="modal-overlay" id="vendorModal"><div class="modal">
+  <div class="modal-title">Add Vendor</div>
+  <div class="form-row"><div class="form-group" style="grid-column:span 2"><label>Vendor Name *</label><input id="vName"></div></div>
+  <div class="form-row"><div class="form-group"><label>Contact</label><input id="vContact"></div><div class="form-group"><label>Email</label><input id="vEmail"></div></div>
+  <div class="form-row"><div class="form-group"><label>Phone</label><input id="vPhone"></div><div class="form-group"><label>Terms</label><select id="vTerms"><option>Net 30</option><option>Net 15</option><option>Net 60</option><option>COD</option><option>Prepaid</option></select></div></div>
+  <div class="form-group"><label>Notes</label><textarea id="vNotes" rows="2"></textarea></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeM('vendorModal')">Cancel</button><button class="btn btn-primary" onclick="saveVendor()">Save</button></div>
+</div></div>
+
+<div class="modal-overlay" id="viModal"><div class="modal" style="width:860px">
+  <div class="modal-title">Add Vendor Invoice — Line Items <span class="ti" data-tip="Enter goods per product/SKU/category. Goods (qty × unit cost) post to COGS; tax/shipping/fees post to EXPENSE. Both reduce net income and feed margin views.">i</span></div>
+  <div class="form-row">
+    <div class="form-group"><label>Vendor *</label><select id="viVendor"></select></div>
+    <div class="form-group"><label>Invoice #</label><input id="viNum" placeholder="e.g. INV-2026-0148"></div>
+    <div class="form-group"><label>Invoice Date *</label><input type="date" id="viDate"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Due Date</label><input type="date" id="viDue"></div>
+    <div class="form-group"><label>Linked Order # (opt.)</label><input id="viOrder" placeholder="Squarespace order"></div>
+    <div class="form-group"><label>Reconciled?</label>
+      <select id="viRecon"><option value="0">Pending review</option><option value="1">✓ Reconciled (actual)</option></select></div>
+  </div>
+
+  <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin:6px 0 4px">Line Items</div>
+  <div class="table-wrap" style="border:1px solid var(--border);border-radius:8px;max-height:260px">
+    <table style="font-size:11px">
+      <thead><tr>
+        <th style="min-width:170px">Product *</th><th>SKU</th><th>Category</th>
+        <th class="num">Qty *</th><th class="num">Unit Cost *</th>
+        <th class="num">Tax</th><th class="num">Ship</th><th class="num">Fee</th>
+        <th class="num">Line Total</th><th></th>
+      </tr></thead>
+      <tbody id="viLines"></tbody>
+    </table>
+  </div>
+  <datalist id="soldProductsList"></datalist>
+  <datalist id="catList"></datalist>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+    <button class="btn btn-secondary btn-sm" onclick="addViLine()">+ Add Line</button>
+    <div style="font-size:11px;color:var(--muted)">
+      Goods→COGS: <strong id="viGoods" style="color:#e84393">$0.00</strong> ·
+      Tax/Ship/Fees→EXPENSE: <strong id="viExtra" style="color:var(--orange)">$0.00</strong> ·
+      Invoice Total: <strong id="viTotal" style="color:var(--text)">$0.00</strong>
+    </div>
+  </div>
+
+  <div class="form-group" style="margin-top:10px"><label>Notes</label><textarea id="viDesc" rows="2" placeholder="Optional"></textarea></div>
+  <div id="viError" style="display:none;color:var(--red);font-size:12px;margin-top:6px"></div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" onclick="closeM('viModal')">Cancel</button>
+    <button class="btn btn-primary" id="viSaveBtn" onclick="saveVI()">Save &amp; Post COGS</button>
+  </div>
+</div></div>
+
+<div class="modal-overlay" id="payModal"><div class="modal">
+  <div class="modal-title">Record Payment</div>
+  <input type="hidden" id="payViId">
+  <div class="form-row"><div class="form-group"><label>Amount *</label><input type="number" id="payAmt" step="0.01"></div><div class="form-group"><label>Date</label><input type="date" id="payDate"></div></div>
+  <div class="form-row"><div class="form-group"><label>Method</label><select id="payMethod"><option>CHECK</option><option>ACH</option><option>CARD</option><option>WIRE</option><option>CASH</option></select></div><div class="form-group"><label>Check #</label><input id="payCkNum"></div></div>
+  <div class="form-group"><label>Payee</label><input id="payPayee"></div>
+  <div class="form-group"><label>Memo</label><input id="payMemo"></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeM('payModal')">Cancel</button><button class="btn btn-primary" onclick="submitPayment()">Record</button></div>
+</div></div>
+
+<div class="modal-overlay" id="checkModal"><div class="modal">
+  <div class="modal-title">Log Check</div>
+  <div class="form-row"><div class="form-group"><label>Date *</label><input type="date" id="chkDate"></div><div class="form-group"><label>Check #</label><input id="chkNum"></div></div>
+  <div class="form-row"><div class="form-group"><label>Payee *</label><input id="chkPayee"></div><div class="form-group"><label>Amount *</label><input type="number" id="chkAmt" step="0.01"></div></div>
+  <div class="form-row"><div class="form-group"><label>Category</label><select id="chkCat"><option>VENDOR</option><option>EXPENSE</option><option>TAX</option><option>OTHER</option></select></div><div class="form-group"><label>Bank Account</label><input id="chkBank" value="Chase Business"></div></div>
+  <div class="form-group"><label>Memo</label><input id="chkMemo"></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeM('checkModal')">Cancel</button><button class="btn btn-primary" onclick="saveCheck()">Save</button></div>
+</div></div>
+
+<div class="modal-overlay" id="reminderModal"><div class="modal">
+  <div class="modal-title">Add Reminder</div>
+  <div class="form-row"><div class="form-group"><label>Due Date *</label><input type="date" id="remDate"></div><div class="form-group"><label>Category</label><select id="remCat"><option>TAX</option><option>PAYMENT</option><option>FILING</option><option>CUSTOM</option></select></div></div>
+  <div class="form-group"><label>Title *</label><input id="remTitle"></div>
+  <div class="form-group"><label>Description</label><textarea id="remDesc" rows="2"></textarea></div>
+  <div class="modal-footer"><button class="btn btn-secondary" onclick="closeM('reminderModal')">Cancel</button><button class="btn btn-primary" onclick="saveReminder()">Save</button></div>
+</div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const money = v => v==null?'—':'$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtDate = s => s?new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+const api = async(p,o)=>{ const r=await fetch(p,o); return r.json(); };
+let ordPage=1,ledPage=1,plData=[],taxData=[],revenueChart,plChart,searchTimer;
+
+// ── Theme toggles ──────────────────────────────────────────────────────────────
+function toggleDay(){
+  const on=document.body.classList.toggle('day-mode');
+  $('dayBtn').textContent=on?'🌙 Dark':'☀ Day';
+  localStorage.setItem('pi-day',on?'1':'');
+}
+function togglePresentation(){
+  const on=document.body.classList.toggle('presentation-mode');
+  $('presBtn').textContent=on?'✕ Exit':'⛶ Present';
+  localStorage.setItem('pi-pres',on?'1':'');
+}
+// restore preferences
+if(localStorage.getItem('pi-day')){document.body.classList.add('day-mode');$('dayBtn').textContent='🌙 Dark';}
+if(localStorage.getItem('pi-pres')){document.body.classList.add('presentation-mode');$('presBtn').textContent='✕ Exit';}
+
+// ── Keyboard shortcuts ─────────────────────────────────────────────────────────
+let _gPending=false, _gTimer=null;
+document.addEventListener('keydown', e=>{
+  // never hijack typing
+  const t=e.target, tag=(t.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||tag==='select'||t.isContentEditable) {
+    if(e.key==='Escape') t.blur();
+    return;
+  }
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  // "g then x" navigation chord
+  if(_gPending){
+    _gPending=false; clearTimeout(_gTimer);
+    const map={d:'dashboard',o:'orders',i:'invoices',t:'taxforms',b:'bank',l:'ledger',m:'margins',s:'statements'};
+    const dest=map[e.key.toLowerCase()];
+    if(dest){e.preventDefault();nav(dest);}
+    return;
+  }
+  switch(e.key){
+    case 'p': case 'P': e.preventDefault(); togglePresentation(); break;
+    case 'd': case 'D': e.preventDefault(); toggleDay(); break;
+    case '?': e.preventDefault(); nav('help'); break;
+    case 'Escape':
+      if(document.body.classList.contains('presentation-mode')) togglePresentation();
+      else document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+      break;
+    case '/': {
+      e.preventDefault();
+      const box=document.querySelector('.tab-content.active input[type="text"]');
+      if(box) box.focus();
+      break;
+    }
+    case 'r': case 'R': {
+      e.preventDefault();
+      const active=document.querySelector('.nav-item.active');
+      if(active) active.click();
+      break;
+    }
+    case 'g': case 'G':
+      _gPending=true; _gTimer=setTimeout(()=>_gPending=false, 1200); break;
+  }
+});
+
+// ── Navigation ─────────────────────────────────────────────────────────────────
+function nav(tab,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  (el||document.querySelector(`[onclick*="'${tab}'"]`)).classList.add('active');
+  $('tab-'+tab).classList.add('active');
+  ({dashboard:loadDashboard,statements:loadStatements,orders:()=>{ordPage=1;loadOrders();},
+    invoices:loadInvoices,pl:loadPL,ledger:()=>{ledPage=1;loadLedger();},
+    scenarios:loadScenarios,margins:loadMargins,ap:loadAP,supplier:loadSupplier,bank:loadBank,checks:loadChecks,recon:loadRecon,tax:loadTax,taxforms:loadTaxForms,
+    godmode:loadGodmode,taxpkg:loadTaxpkg,
+    reminders:loadReminders,assumptions:loadAssumptions,docs:loadDocs,glossary:()=>{},help:()=>{}
+  }[tab]||(_=>{}))();
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────────
+async function loadDashboard(){
+  $('dashDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const [sum,pl,ord]=await Promise.all([api('/api/summary'),api('/api/pl/monthly'),api('/api/orders?limit=8')]);
+  $('k-rev').textContent=money(sum.revenue);$('k-disc').textContent=money(sum.discount_absorbed);
+  $('k-tax').textContent=money(sum.tax_collected);
+  // Net income KPI — switch label/value between pre-COGS estimate and reconciled actual
+  if(sum.cogs_posted){
+    $('k-net').textContent=money(sum.net_est);
+    $('k-net-label').innerHTML='Net Income (actual)<span class="ti" data-tip="Reconciled actual net income — real COGS from posted vendor invoices is deducted. This is your true bottom line.">i</span>';
+    $('k-net-sub').innerHTML=`After fees, overhead &amp; COGS (${money(sum.cogs)})`;
+    $('k-net-card').className='kpi green';
+  }else{
+    $('k-net').textContent=money(sum.pre_cogs_net!=null?sum.pre_cogs_net:sum.net_est);
+    $('k-net-label').innerHTML='Est. Net Income (pre-COGS)<span class="ti" data-tip="COGS is $0 (no supplier invoices posted), so this is gross profit after fees & overhead — NOT true net income. Post vendor invoices to see actual net.">i</span>';
+    $('k-net-sub').textContent='After fees & overhead · pre-COGS';
+    $('k-net-card').className='kpi amber';
+  }
+  $('k-mfee').textContent=money(sum.merchant_fees);
+  // overhead KPI — derive from net_after_fees * 5% (approximate from summary)
+  const overhead=sum.net_after_fees!=null?sum.net_after_fees*0.05:null;
+  $('k-overhead').textContent=overhead!=null?money(overhead):'—';
+  $('k-month').textContent=money(sum.this_month_revenue);
+  $('k-month-sub').textContent=new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  $('k-orders').textContent=sum.order_count;
+  $('k-orders-sub').textContent=`${sum.invoice_count} invoiced · ${sum.pending_orders} pending`;
+  $('k-ap').textContent=money(sum.open_ap);
+  $('sidebarFooter').textContent=`${sum.invoice_count} invoices · ${sum.order_count} orders`;
+  $('dashReminders').innerHTML=!sum.reminders.length?'<div style="color:var(--muted);font-size:12px">No upcoming reminders</div>':
+    sum.reminders.map(r=>{const d=Math.ceil((new Date(r.due_date)-new Date())/86400000);const c=d<=7?'urgent':d<=30?'soon':'ok';
+      return`<div class="reminder ${c}" style="margin-bottom:6px"><div class="reminder-dot"></div><div class="reminder-body"><div class="reminder-title">${r.title}</div><div class="reminder-desc">${fmtDate(r.due_date)}</div></div><span style="font-size:11px;color:${d<=7?'var(--red)':d<=30?'var(--accent)':'var(--green)'}">${d>0?d+'d':'TODAY'}</span></div>`;
+    }).join('');
+  $('dashOrders').innerHTML=ord.orders.map(o=>`<tr>
+    <td>${fmtDate(o.created_on)}</td><td style="font-family:monospace;font-size:10px">${o.invoice_number||o.order_number||'—'}</td>
+    <td>${o.customer_name||'—'}</td><td class="num">${money(o.subtotal)}</td>
+    <td class="num disc-color">${o.discount_total>0?'−'+money(o.discount_total):''}</td>
+    <td class="num">${money(o.tax)}</td><td class="num" style="font-weight:700">${money(o.grand_total)}</td>
+    <td><span class="badge ${(o.fulfillment_status||'').toLowerCase()}">${o.fulfillment_status||'—'}</span></td>
+    <td>${o.emailed_at?'<span class="badge ok">✓</span>':'<span style="color:var(--muted)">—</span>'}</td>
+  </tr>`).join('');
+  if(revenueChart)revenueChart.destroy();
+  const isDark=!document.body.classList.contains('day-mode');
+  const gridColor=isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.06)';
+  const tickColor=isDark?'#8891aa':'#5a6070';
+  revenueChart=new Chart($('revenueChart'),{type:'bar',data:{labels:pl.map(p=>p.month),datasets:[
+    {label:'Revenue',data:pl.map(p=>p.revenue),backgroundColor:'rgba(254,189,105,.75)',borderRadius:3},
+    {label:'Discounts',data:pl.map(p=>p.discount),backgroundColor:'rgba(231,76,60,.5)',borderRadius:3},
+    {label:'Net Est.',data:pl.map(p=>p.net),backgroundColor:'rgba(46,204,113,.5)',borderRadius:3},
+  ]},options:{responsive:true,plugins:{legend:{labels:{color:tickColor,font:{size:10}}}},
+    scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}},
+            y:{ticks:{color:tickColor,callback:v=>'$'+v.toLocaleString(),font:{size:9}},grid:{color:gridColor}}}}});
+}
+
+// ── Statements ─────────────────────────────────────────────────────────────────
+async function loadStatements(){
+  const d=await api('/api/statements');
+  const build=(rows,tid)=>{
+    let html='',last='';
+    rows.forEach(r=>{
+      if(r.section!==last){html+=`<tr><td colspan="3" class="stmt-section">${r.section}</td></tr>`;last=r.section;}
+      const pos=r.amount>=0;
+      html+=`<tr class="${r.bold?'stmt-bold':''}"><td style="padding-left:${r.bold?'11':'20'}px">${r.line}</td>
+        <td class="num" style="color:${r.bold?'var(--text)':pos?'var(--green)':'var(--red)'}">${money(r.amount)}</td>
+        <td style="color:var(--muted);font-size:10px;padding-left:8px">${r.note||''}</td></tr>`;
+    });
+    $(tid).innerHTML='<thead><tr><th>Line Item</th><th class="num">Amount</th><th>Note</th></tr></thead><tbody>'+html+'</tbody>';
+  };
+  build(d.pl,'plStmtTable');build(d.bs,'bsStmtTable');
+}
+
+// ── Orders ─────────────────────────────────────────────────────────────────────
+let ordSortCol='created_on', ordSortDir='desc';
+function dSearch(){clearTimeout(searchTimer);searchTimer=setTimeout(()=>{ordPage=1;loadOrders();},300);}
+function ordSort(col){
+  if(ordSortCol===col) ordSortDir=(ordSortDir==='asc'?'desc':'asc');
+  else {ordSortCol=col;ordSortDir='desc';}
+  ordPage=1;loadOrders();
+}
+async function loadOrders(){
+  const q=$('orderSearch').value;
+  const params=new URLSearchParams({page:ordPage,limit:20,sort:ordSortCol,dir:ordSortDir});
+  if(q)params.set('q',q);
+  $('ordersBody').innerHTML='<tr><td colspan="12" style="padding:18px;color:var(--muted)"><span class="spinner"></span> Loading…</td></tr>';
+  let d;
+  try{ d=await api('/api/orders?'+params); }
+  catch(e){ $('ordersBody').innerHTML=`<tr><td colspan="12" style="padding:18px;color:var(--red)">Failed to load: ${e}</td></tr>`; return; }
+  paintSortIndicators('#tab-orders', ordSortCol, ordSortDir);
+  $('ordersBody').innerHTML=d.orders.length?d.orders.map(o=>`<tr>
+    <td>${fmtDate(o.created_on)}</td><td style="font-family:monospace;font-size:10px">${o.order_number||'—'}</td>
+    <td>${o.customer_name||'—'}</td><td style="color:var(--muted)">${o.customer_email||'—'}</td>
+    <td class="num">${money(o.subtotal)}</td><td class="num" style="color:var(--muted)">${money(o.shipping_listed)}</td>
+    <td class="num">${money(o.shipping_collected)}</td>
+    <td class="num disc-color">${o.discount_total>0?'−'+money(o.discount_total):''}</td>
+    <td class="num">${money(o.tax)}</td><td class="num" style="font-weight:700">${money(o.grand_total)}</td>
+    <td><span class="badge ${(o.fulfillment_status||'').toLowerCase()}">${o.fulfillment_status||'—'}</span></td>
+    <td>${o.emailed_at?'<span class="badge ok">✓</span>':'<span style="color:var(--muted)">—</span>'}</td>
+  </tr>`).join(''):'<tr><td colspan="12" style="padding:18px;color:var(--muted)">No orders match.</td></tr>';
+  const pages=d.pages||Math.ceil(d.total/20);
+  $('ordInfo').textContent=`Page ${ordPage}/${pages} · ${d.total.toLocaleString()} order${d.total===1?'':'s'}`;
+  $('ordPrev').disabled=ordPage<=1;$('ordNext').disabled=ordPage>=pages;
+}
+
+let invPage=1, invSortCol='created_at', invSortDir='desc', invSearchTimer;
+function invSearchDeb(){clearTimeout(invSearchTimer);invSearchTimer=setTimeout(()=>{invPage=1;loadInvoices();},300);}
+function invSort(col){
+  if(invSortCol===col) invSortDir=(invSortDir==='asc'?'desc':'asc');
+  else {invSortCol=col;invSortDir='desc';}
+  invPage=1;loadInvoices();
+}
+function paintSortIndicators(scope, activeCol, dir){
+  document.querySelectorAll(scope+' th.sortable').forEach(th=>{
+    const on=th.dataset.sort===activeCol;
+    th.classList.toggle('active',on);
+    th.querySelector('.sort-ind').textContent=on?(dir==='asc'?'▲':'▼'):'';
+  });
+}
+async function loadInvoices(){
+  const q=$('invSearch').value;
+  const params=new URLSearchParams({page:invPage,limit:25,sort:invSortCol,dir:invSortDir});
+  if(q)params.set('q',q);
+  $('invoicesBody').innerHTML='<tr><td colspan="9" style="padding:18px;color:var(--muted)"><span class="spinner"></span> Loading…</td></tr>';
+  let d;
+  try{ d=await api('/api/invoices?'+params); }
+  catch(e){ $('invoicesBody').innerHTML=`<tr><td colspan="9" style="padding:18px;color:var(--red)">Failed to load: ${e}</td></tr>`; return; }
+  paintSortIndicators('#tab-invoices', invSortCol, invSortDir);
+  $('invoicesBody').innerHTML=d.invoices.length?d.invoices.map(i=>`<tr>
+    <td style="font-family:monospace;font-size:10px">${i.invoice_number}</td><td>${i.customer_name||'—'}</td>
+    <td style="color:var(--muted)">${i.emailed_to}</td><td>${fmtDate(i.invoice_date)}</td>
+    <td>${fmtDate(i.delivered_date)}</td><td>${fmtDate(i.return_by_date)}</td>
+    <td class="num">${money(i.grand_total)}</td>
+    <td style="color:var(--muted);font-size:10px">${i.emailed_at?new Date(i.emailed_at).toLocaleString():'—'}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-secondary btn-xs" onclick="viewInvoicePdf('${encodeURIComponent(i.invoice_number)}',this)" title="View PDF">👁 View</button>
+      <a class="btn btn-green btn-xs" href="/api/invoices/${encodeURIComponent(i.invoice_number)}/pdf?download=1" title="Download PDF">⬇</a>
+    </td>
+  </tr>`).join(''):'<tr><td colspan="9" style="padding:18px;color:var(--muted)">No invoices match.</td></tr>';
+  $('invInfo').textContent=`Page ${d.page}/${d.pages} · ${d.total.toLocaleString()} invoice${d.total===1?'':'s'}`;
+  $('invPrev').disabled=invPage<=1;$('invNext').disabled=invPage>=d.pages;
+}
+
+// ── P&L by Month ───────────────────────────────────────────────────────────────
+// Open an invoice PDF with feedback. Opens the tab synchronously (so it is never
+// popup-blocked), shows a "generating" message, then navigates it to the PDF.
+// First view of an invoice regenerates from Squarespace (~3s); later views are instant.
+function viewInvoicePdf(num, btn){
+  const url='/api/invoices/'+num+'/pdf';
+  const w=window.open('', '_blank');
+  if(w){
+    w.document.write('<!doctype html><title>Loading invoice…</title>'+
+      '<body style="font-family:system-ui;background:#0f1117;color:#e8eaf0;display:flex;'+
+      'align-items:center;justify-content:center;height:100vh;margin:0">'+
+      '<div style="text-align:center"><div style="font-size:15px">Generating invoice PDF…</div>'+
+      '<div style="font-size:12px;color:#8891aa;margin-top:6px">First view fetches from Squarespace — a few seconds.</div></div></body>');
+    w.location.href=url;
+  }else{
+    // popup blocked → fall back to same-tab navigation
+    window.location.href=url;
+  }
+}
+
+async function loadPL(){
+  plData=await api('/api/pl/monthly');
+  let tR=0,tS=0,tG=0,tD=0,tM=0,tOH=0,tC=0,tN=0;
+  $('plBody').innerHTML=plData.map(p=>{
+    const oh=p.overhead!=null?p.overhead:((p.gross-p.discount-p.merchant_fee)*0.05);
+    tR+=p.revenue;tS+=p.shipping_cr;tG+=p.gross;tD+=p.discount;tM+=p.merchant_fee;tOH+=oh;tC+=p.cogs;tN+=p.net;
+    return`<tr><td>${p.month}</td><td class="num">${money(p.revenue)}</td><td class="num">${money(p.shipping_cr)}</td>
+      <td class="num" style="font-weight:600">${money(p.gross)}</td>
+      <td class="num disc-color">${p.discount>0?'−'+money(p.discount):''}</td>
+      <td class="num mfee-color">${p.merchant_fee>0?'−'+money(p.merchant_fee):''}</td>
+      <td class="num" style="color:var(--orange)">${oh>0?'−'+money(oh):''}</td>
+      <td class="num" style="color:var(--muted)">${p.cogs>0?'−'+money(p.cogs):''}</td>
+      <td class="num" style="font-weight:700;color:${p.net>=0?'var(--green)':'var(--red)'}">${money(p.net)}</td>
+    </tr>`;
+  }).join('');
+  $('plFoot').innerHTML=`<tr><td>TOTAL</td><td class="num">${money(tR)}</td><td class="num">${money(tS)}</td>
+    <td class="num">${money(tG)}</td><td class="num disc-color">${tD>0?'−'+money(tD):''}</td>
+    <td class="num mfee-color">${tM>0?'−'+money(tM):''}</td><td class="num">${tOH>0?'−'+money(tOH):''}</td>
+    <td class="num">${tC>0?'−'+money(tC):''}</td><td class="num" style="color:${tN>=0?'var(--green)':'var(--red)'}">${money(tN)}</td></tr>`;
+  if(plChart)plChart.destroy();
+  const isDark=!document.body.classList.contains('day-mode');
+  const gridColor=isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.06)';
+  const tickColor=isDark?'#8891aa':'#5a6070';
+  plChart=new Chart($('plChart'),{type:'line',data:{labels:plData.map(p=>p.month),datasets:[
+    {label:'Revenue',data:plData.map(p=>p.revenue),borderColor:'#febd69',backgroundColor:'rgba(254,189,105,.1)',fill:true,tension:.3,pointRadius:3},
+    {label:'Net (est.)',data:plData.map(p=>p.net),borderColor:'#2ecc71',backgroundColor:'rgba(46,204,113,.08)',fill:true,tension:.3,pointRadius:3},
+    {label:'Discounts',data:plData.map(p=>-p.discount),borderColor:'#e74c3c',backgroundColor:'rgba(231,76,60,.05)',fill:true,tension:.3,pointRadius:3},
+  ]},options:{responsive:true,plugins:{legend:{labels:{color:tickColor,font:{size:10}}}},
+    scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}},
+            y:{ticks:{color:tickColor,callback:v=>'$'+v.toLocaleString(),font:{size:9}},grid:{color:gridColor}}}}});
+}
+function exportPL(){
+  const h=['Month','Revenue','ShipCollected','Gross','Discounts','MerchFees','OverheadEst','COGS','NetEst'];
+  const csv=[h,...plData.map(p=>{const oh=p.overhead!=null?p.overhead:((p.gross-p.discount-p.merchant_fee)*0.05);return[p.month,p.revenue,p.shipping_cr,p.gross,p.discount,p.merchant_fee,oh,p.cogs,p.net];})].map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='pl.csv';a.click();
+}
+
+// ── Ledger ─────────────────────────────────────────────────────────────────────
+async function loadLedger(){
+  const d=await api(`/api/ledger?page=${ledPage}&limit=50`);
+  const ac={REVENUE:'var(--green)',SHIPPING:'var(--accent2)',DISCOUNT:'var(--orange)',TAX:'var(--accent)',MERCHANT_FEE:'var(--purple)',COGS:'#e84393',EXPENSE:'#e67e22'};
+  $('ledgerBody').innerHTML=d.entries.map(e=>`<tr>
+    <td>${fmtDate(e.entry_date)}</td>
+    <td><span style="color:${ac[e.account]||'var(--text)'};font-weight:600;font-size:10px">${e.account}</span></td>
+    <td style="color:var(--muted)">${e.description}</td>
+    <td class="num dr">${e.debit>0?money(e.debit):''}</td>
+    <td class="num cr">${e.credit>0?money(e.credit):''}</td>
+    <td style="font-size:10px;font-family:monospace;color:var(--muted)">${e.reference||'—'}</td>
+  </tr>`).join('');
+  const pages=Math.ceil(d.total/50);
+  $('ledInfo').textContent=`Page ${ledPage}/${pages} (${d.total})`;
+  $('ledPrev').disabled=ledPage<=1;$('ledNext').disabled=ledPage>=pages;
+}
+
+// ── AP ─────────────────────────────────────────────────────────────────────────
+async function loadAP(){await Promise.all([loadVendors(),loadVI()]);}
+async function loadVendors(){
+  const d=await api('/api/vendors');
+  $('vendorsBody').innerHTML=d.length?d.map(v=>`<tr><td style="font-weight:600">${v.name}</td>
+    <td class="num">${money(v.total_invoiced)}</td><td class="num cr">${money(v.total_paid)}</td>
+    <td class="num ${v.total_invoiced-v.total_paid>0?'dr':''}">${money(v.total_invoiced-v.total_paid)}</td></tr>`).join('')
+    :'<tr><td colspan="4" style="color:var(--muted);padding:16px">No vendors — add one to track COGS</td></tr>';
+}
+async function loadVI(){
+  const s=$('viStatusFilter').value;
+  const d=await api('/api/vendor_invoices'+(s?'?status='+s:''));
+  $('viBody').innerHTML=d.length?d.map(v=>`<tr>
+    <td style="font-weight:500">${v.vendor_name||'—'}</td><td style="font-family:monospace;font-size:10px">${v.invoice_number||'—'}</td>
+    <td>${fmtDate(v.invoice_date)}</td><td>${fmtDate(v.due_date)}</td>
+    <td class="num">${money(v.amount)}</td><td class="num cr">${money(v.paid_amount)}</td>
+    <td><span class="badge ${(v.status||'').toLowerCase()}">${v.status}</span></td>
+    <td>${v.status!=='PAID'?`<button class="btn btn-green btn-xs" onclick="openPayModal(${v.id},'${(v.vendor_name||'').replace(/'/g,"\\'")}',${v.amount-v.paid_amount})">Pay</button>`:''}</td>
+  </tr>`).join('')
+  :'<tr><td colspan="8" style="color:var(--muted);padding:16px">No vendor invoices</td></tr>';
+}
+
+// ── Supplier Invoices (Estimated COGS placeholder) ─────────────────────────────
+async function loadSupplier(){
+  const [orders,assumptions]=await Promise.all([api('/api/orders?limit=200'),api('/api/assumptions')]);
+  const a={};assumptions.forEach(x=>a[x.key]=parseFloat(x.value));
+  const mfPct=a.merchant_fee_pct||2.9;const mfFixed=a.merchant_fee_fixed||0.30;
+  const rows=orders.orders.filter(o=>o.fulfillment_status==='FULFILLED');
+  let tGT=0,tTax=0,tFee=0,tCOGS=0;
+  $('supplierBody').innerHTML=rows.map(o=>{
+    const gt=o.grand_total||0;const tx=o.tax||0;
+    const fee=Math.round((gt*mfPct/100+mfFixed)*100)/100;
+    const cogs=Math.max(0,gt-tx-fee);
+    const margin=gt>0?((gt-cogs)/gt*100):0;
+    tGT+=gt;tTax+=tx;tFee+=fee;tCOGS+=cogs;
+    return`<tr>
+      <td>${fmtDate(o.created_on)}</td>
+      <td style="font-family:monospace;font-size:10px">${o.order_number||'—'}</td>
+      <td>${o.customer_name||'—'}</td>
+      <td class="num">${money(gt)}</td>
+      <td class="num" style="color:var(--muted)">−${money(tx)}</td>
+      <td class="num mfee-color">−${money(fee)}</td>
+      <td class="num" style="font-weight:700;color:var(--red)">${money(cogs)}</td>
+      <td class="num" style="color:${margin>=20?'var(--green)':'var(--accent)'}">${margin.toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
+  $('supplierFoot').innerHTML=`<tr><td colspan="3">TOTAL (${rows.length} orders)</td>
+    <td class="num">${money(tGT)}</td><td class="num">−${money(tTax)}</td>
+    <td class="num mfee-color">−${money(tFee)}</td>
+    <td class="num" style="color:var(--red)">${money(tCOGS)}</td>
+    <td class="num">${tGT>0?((tGT-tCOGS)/tGT*100).toFixed(1)+'%':'—'}</td></tr>`;
+}
+
+// ── Checks ─────────────────────────────────────────────────────────────────────
+async function loadChecks(){
+  const d=await api('/api/checks');
+  $('checksBody').innerHTML=d.length?d.map(c=>`<tr>
+    <td>${fmtDate(c.check_date)}</td><td style="font-family:monospace">${c.check_number||'—'}</td>
+    <td style="font-weight:500">${c.payee||'—'}</td><td class="num dr">${money(c.amount)}</td>
+    <td style="color:var(--muted)">${c.memo||'—'}</td><td><span class="badge info">${c.category}</span></td>
+    <td style="color:var(--muted);font-size:10px">${c.bank_account||'—'}</td>
+    <td>${c.cleared_on?`<span class="badge ok">${fmtDate(c.cleared_on)}</span>`:`<button class="btn btn-green btn-xs" onclick="clearCheck(${c.id})">Clear</button>`}</td>
+  </tr>`).join('')
+  :'<tr><td colspan="8" style="color:var(--muted);padding:16px">No checks logged</td></tr>';
+}
+
+// ── Reconciliation ─────────────────────────────────────────────────────────────
+async function loadRecon(){
+  const d=await api('/api/reconciliation');
+  let tR=0,tS=0,tD=0,tF=0,tE=0,tC=0,tN=0,tT=0;
+  $('reconBody').innerHTML=d.map(r=>{
+    tR+=r.revenue;tS+=r.shipping;tD+=r.discounts;tF+=r.merchant_fees;tE+=r.expected_deposit;tC+=r.checks_issued;tN+=r.net_cash;tT+=r.tax_held;
+    return`<tr><td><strong>${r.month}</strong></td><td class="num">${money(r.revenue)}</td><td class="num">${money(r.shipping)}</td>
+      <td class="num disc-color">${r.discounts>0?'−'+money(r.discounts):''}</td>
+      <td class="num mfee-color">${r.merchant_fees>0?'−'+money(r.merchant_fees):''}</td>
+      <td class="num" style="font-weight:600">${money(r.expected_deposit)}</td>
+      <td class="num dr">${r.checks_issued>0?'−'+money(r.checks_issued):''}</td>
+      <td class="num ${r.net_cash>=0?'cr':'dr'}" style="font-weight:700">${money(r.net_cash)}</td>
+      <td class="num" style="color:var(--accent)">${money(r.tax_held)}</td>
+    </tr>`;
+  }).join('');
+  $('reconFoot').innerHTML=`<tr><td>TOTAL</td><td class="num">${money(tR)}</td><td class="num">${money(tS)}</td>
+    <td class="num disc-color">${tD>0?'−'+money(tD):''}</td><td class="num mfee-color">${tF>0?'−'+money(tF):''}</td>
+    <td class="num">${money(tE)}</td><td class="num dr">${tC>0?'−'+money(tC):''}</td>
+    <td class="num ${tN>=0?'cr':'dr'}">${money(tN)}</td><td class="num">${money(tT)}</td></tr>`;
+}
+
+// ── Tax ────────────────────────────────────────────────────────────────────────
+async function loadTax(){
+  taxData=await api('/api/tax');
+  $('taxGrid').innerHTML=taxData.map((q,i)=>{
+    const c=q.filed?'filed-ok':q.overdue?'overdue':'';
+    return`<div class="tax-card ${c}">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">${q.label}</div>
+      <div style="font-size:17px;font-weight:700;margin:5px 0;color:${q.filed?'var(--green)':q.overdue?'var(--red)':'var(--text)'}">
+        ${q.filed?'✓ Filed '+fmtDate(q.filed):q.overdue?'⚠ OVERDUE':'Due '+fmtDate(q.due)}
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px"><span style="color:var(--muted)">Revenue</span><strong>${money(q.revenue)}</strong></div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:12px"><span style="color:var(--muted)">Tax to Remit</span><strong style="color:var(--red)">${money(q.tax)}</strong></div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)"><span>${q.start}</span><span>→ ${q.end}</span></div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        ${!q.filed?`<button class="btn btn-primary btn-sm" onclick="openFilingModal(${i})">Mark as Filed</button>`:''}
+        <a class="btn btn-secondary btn-sm" href="https://www.tax.ny.gov/bus/st/stidx.htm" target="_blank">NY Portal ↗</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── God Mode (Owner Control Center) ─────────────────────────────────────────────
+const GM_COLORS={PASS:'var(--green)',WARN:'var(--accent)',FAIL:'var(--red)'};
+const GM_ICONS={PASS:'✓',WARN:'⚠',FAIL:'✕'};
+async function loadGodmode(){
+  const d=await api('/api/godmode/overview');
+  $('gmStamp').textContent='Controls run '+new Date(d.generated_at).toLocaleString()+' — cross-checking ledger, invoices, checks, bank, tax & access log';
+  $('gm-overall').textContent=d.overall;
+  $('gm-overall').style.color=GM_COLORS[d.overall];
+  $('gm-overall-card').className='kpi '+(d.overall==='PASS'?'green':d.overall==='WARN'?'amber':'red');
+  $('gm-pass').textContent=d.counts.PASS;$('gm-warn').textContent=d.counts.WARN;$('gm-fail').textContent=d.counts.FAIL;
+  const badge=$('gmBadge');if(badge)badge.style.display=(d.counts.FAIL||d.counts.WARN)?'':'none';
+  $('gmGrid').innerHTML=d.control_points.map((cp,i)=>{
+    const items=cp.items||[];
+    const metrics=(cp.metrics||[]).map(m=>`<span style="display:inline-block;background:rgba(128,128,128,.12);border-radius:6px;padding:2px 8px;margin:2px 4px 2px 0;font-size:11px"><b>${m.label}</b> ${m.value}</span>`).join('');
+    const rows=items.map(it=>{
+      const matchBtn=(cp.id==='checkmatch'&&it.check_id)?`<button class="btn btn-primary btn-xs" onclick="gmMatchCheck(${it.check_id},${it.bank_txn_id},this)">Match ✓</button>`:'';
+      return`<tr><td style="white-space:nowrap;color:${GM_COLORS[cp.status]}">${it.issue}</td><td>${it.detail}</td><td>${matchBtn}</td></tr>`;
+    }).join('');
+    const actionBtn=cp.action?`<button class="btn btn-secondary btn-sm" onclick="gmAction('${cp.action.endpoint}',this)">${cp.action.label}</button>`:'';
+    return`<div class="card" style="margin-bottom:12px;border-left:3px solid ${GM_COLORS[cp.status]}">
+      <div class="card-hdr" style="cursor:pointer" onclick="const b=$('gmcp${i}');b.style.display=b.style.display==='none'?'':'none'">
+        <span style="color:${GM_COLORS[cp.status]};font-weight:800">${GM_ICONS[cp.status]} ${cp.status}</span>&nbsp; ${cp.title}
+        <span style="margin-left:auto;font-weight:400;font-size:11.5px;color:var(--muted)">${cp.summary} ${items.length?'· click to expand':''}</span>
+        ${actionBtn}
+      </div>
+      <div id="gmcp${i}" style="display:${cp.status==='PASS'?'none':''}">
+        ${metrics?`<div style="padding:8px 16px 0">${metrics}</div>`:''}
+        ${items.length?`<div class="table-wrap"><table><thead><tr><th style="width:240px">Issue</th><th>Detail</th><th style="width:90px"></th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div style="padding:10px 16px;color:var(--muted);font-size:12px">No exceptions — control is clean.</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+function gmMsg(html){const o=$('gmActionOut');o.style.display='';o.innerHTML=html;}
+async function gmAction(endpoint,btn){
+  btn.disabled=true;btn.textContent='Running…';
+  try{const r=await api(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    gmMsg('✓ '+endpoint+' → '+JSON.stringify(r));await loadGodmode();
+  }catch(e){gmMsg('⚠ '+e);}finally{btn.disabled=false;}
+}
+async function gmRebuild(btn){
+  if(!confirm('Rebuild all ledger postings from orders, vendor invoices and reconciled bank transactions? This is idempotent and safe — VI:/BANK: references are preserved.'))return;
+  btn.disabled=true;btn.textContent='Rebuilding…';
+  try{const r=await api('/api/godmode/rebuild',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    gmMsg(`✓ Ledger rebuilt — ${r.ledger_entries} entries · ${r.vendor_invoices_reposted} vendor invoices · ${r.bank_txns_reposted} bank txns reposted.`);
+    await loadGodmode();
+  }catch(e){gmMsg('⚠ Rebuild failed: '+e);}
+  finally{btn.disabled=false;btn.textContent='⚒ Rebuild Ledger';}
+}
+async function gmMatchCheck(checkId,txnId,btn){
+  btn.disabled=true;
+  const r=await api('/api/godmode/match-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({check_id:checkId,bank_txn_id:txnId})});
+  if(r.ok){gmMsg(`✓ Check matched to bank transaction (posted as ${r.category}).`);loadGodmode();}
+  else{gmMsg('⚠ '+(r.error||'match failed'));btn.disabled=false;}
+}
+
+// ── Tax Filing Packages ─────────────────────────────────────────────────────────
+const TP_COLORS={OVERDUE:'var(--red)',UPCOMING:'var(--accent)',FILED:'var(--green)',GENERATED:'var(--green)','N/A':'var(--muted)'};
+async function loadTaxpkg(){
+  const sel=$('tpYear');
+  if(!sel.options.length){const y=new Date().getFullYear();
+    for(let i=y;i>=y-3;i--)sel.add(new Option(i,i));}
+  const year=sel.value||new Date().getFullYear();
+  const [cal,pkgs]=await Promise.all([api('/api/tax-package/calendar?year='+year),api('/api/tax-package/list')]);
+  $('tp-overdue').textContent=cal.overdue;$('tp-upcoming').textContent=cal.upcoming_30d;$('tp-pkgs').textContent=pkgs.length;
+  $('tpCalBody').innerHTML=cal.rows.map(r=>`<tr style="${r.status==='N/A'?'opacity:.45':''}">
+    <td style="font-weight:600">${r.form}</td><td>${r.agency}</td><td>${r.frequency}</td><td>${r.period}</td>
+    <td style="white-space:nowrap;${r.status==='OVERDUE'?'color:var(--red);font-weight:700':''}">${fmtDate(r.due)}</td>
+    <td class="num">${r.amount!=null?money(r.amount):'—'}</td>
+    <td><span style="color:${TP_COLORS[r.status]||'var(--text)'};font-weight:700;font-size:11px">${r.status}</span></td>
+    <td style="font-size:11px;color:var(--muted)">${r.note||''}</td></tr>`).join('');
+  $('tpPkgBody').innerHTML=pkgs.length?pkgs.map(p=>`<tr>
+    <td style="white-space:nowrap">${(p.created_at||'').slice(0,16)}</td>
+    <td style="font-weight:600">${p.period} ${p.tax_year}</td>
+    <td class="num">${money(p.figures.gross_revenue)}</td>
+    <td class="num">${money(p.figures.sales_tax_collected)}</td>
+    <td class="num">${money(p.figures.net_income_est)}</td>
+    <td>${p.file_count} files · ${(p.bytes/1024).toFixed(0)} KB</td>
+    <td style="font-family:monospace;font-size:9.5px">${(p.sha256||'').slice(0,16)}…</td>
+    <td>${p.exists?`<a class="btn btn-primary btn-xs" href="/api/tax-package/${p.id}/download">⬇ ZIP</a>`:'<span style="color:var(--red);font-size:11px">missing</span>'}</td>
+  </tr>`).join(''):'<tr><td colspan="8" style="padding:18px;color:var(--muted)">No packages yet — pick a period and build one.</td></tr>';
+}
+async function tpGenerate(){
+  const btn=$('tpGenBtn');btn.disabled=true;btn.textContent='Building…';
+  try{
+    const r=await api('/api/tax-package/generate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({year:$('tpYear').value,period:$('tpPeriod').value})});
+    if(r.error)alert('Error: '+r.error);
+    await loadTaxpkg();
+  }finally{btn.disabled=false;btn.textContent='📦 Build Filing Package';}
+}
+
+// ── Reminders ──────────────────────────────────────────────────────────────────
+async function loadReminders(){
+  const d=await api('/api/reminders');
+  $('reminderList').innerHTML=d.length?d.map(r=>{
+    const days=Math.ceil((new Date(r.due_date)-new Date())/86400000);
+    const c=days<=7?'urgent':days<=30?'soon':'ok';
+    return`<div class="reminder ${c}"><div class="reminder-dot"></div>
+      <div class="reminder-body"><div class="reminder-title">${r.title}</div><div class="reminder-desc">${r.description}</div></div>
+      <div style="text-align:right;white-space:nowrap">
+        <div style="font-size:11px;color:var(--muted)">${fmtDate(r.due_date)}</div>
+        <div style="font-size:11px;color:${days<=7?'var(--red)':days<=30?'var(--accent)':'var(--green)'}">${days>0?days+' days':'TODAY'}</div>
+      </div>
+      <button class="btn btn-secondary btn-xs" onclick="dismissR(${r.id},this)">✕</button>
+    </div>`;
+  }).join(''):'<div style="color:var(--muted);padding:16px">No active reminders.</div>';
+}
+async function dismissR(id,btn){await fetch('/api/reminders/dismiss/'+id,{method:'POST'});btn.closest('.reminder').remove();}
+
+// ── Assumptions ────────────────────────────────────────────────────────────────
+let assumData=[];
+async function loadAssumptions(){
+  assumData=await api('/api/assumptions');
+  $('assumptionsBody').innerHTML=assumData.map(a=>`
+    <div class="assumption-row">
+      <div class="assumption-label"><strong>${a.label}</strong><span>${a.notes||''}</span></div>
+      <input class="assumption-input" type="number" step="0.01" data-key="${a.key}" value="${a.value}" style="width:110px;text-align:right;padding:5px 8px">
+    </div>`).join('');
+}
+async function saveAssumptions(){
+  const vals={};
+  document.querySelectorAll('.assumption-input').forEach(e=>vals[e.dataset.key]=e.value);
+  await fetch('/api/assumptions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(vals)});
+  alert('Saved & recalculated.');
+}
+
+// ── Federal Tax Forms ──────────────────────────────────────────────────────────
+async function loadTaxForms(){
+  const [cfg,payer,payees,gen]=await Promise.all([
+    api('/api/tax-forms/config'),api('/api/tax-forms/payer'),
+    api('/api/tax-forms/payees'),api('/api/tax-forms/generated')]);
+  $('tfYearSub').textContent=`Audit-level generation engine · Tax Year ${cfg.tax_year}`;
+  if(cfg.disclaimer)$('tfDisclaimer').textContent=cfg.disclaimer;
+  if(payer&&payer.legal_name){
+    $('tfPLegal').value=payer.legal_name||'';$('tfPEin').value=payer.ein||'';
+    $('tfPAddr').value=payer.address||'';$('tfPState').value=payer.state_id||'';$('tfPLoc').value=payer.locality||'';
+  }
+  renderTfPayees(payees);
+  renderTfGenerated(gen);
+}
+function renderTfPayees(payees){
+  $('tfPayeeBody').innerHTML=payees.length?payees.map(p=>{
+    const emp=p.kind==='EMPLOYEE';
+    const amt=emp?p.gross_wages:p.total_paid;
+    const form=emp?'W-2':(Number(p.total_paid)>=600?'1099-NEC':'— (under $600)');
+    const w9=emp?'n/a':(p.w9_on_file?'<span class="badge ok">Yes</span>':'<span class="badge warn">No → 24%</span>');
+    return `<tr><td><span class="badge ${emp?'info':'open'}">${p.kind}</span></td>
+      <td style="font-weight:600">${p.legal_name}</td><td style="font-family:monospace;font-size:10px">${p.tin||'—'}</td>
+      <td>${w9}</td><td class="num">${money(amt)}</td><td class="num">${money(p.fed_wh)}</td>
+      <td style="font-size:11px">${form}</td>
+      <td><button class="btn btn-secondary btn-xs" onclick="delTfPayee(${p.id})">✕</button></td></tr>`;
+  }).join(''):'<tr><td colspan="8" style="padding:18px;color:var(--muted)">No payees yet — add employees or contractors.</td></tr>';
+}
+function renderTfGenerated(gen){
+  $('tfGenBody').innerHTML=gen.length?gen.map(g=>{
+    let flags='';try{flags=(JSON.parse(g.flags||'[]')).map(f=>`<span class="badge ${f.severity==='WARN'?'warn':'info'}">${f.severity}</span>`).join(' ');}catch{}
+    return `<tr><td><strong>${g.form_type}</strong></td><td>${g.legal_name||'—'}</td><td>${g.tax_year}</td>
+      <td style="font-family:monospace;font-size:10px;color:var(--muted)">${(g.checksum_pdf||'').slice(0,24)}…</td>
+      <td>${flags||'<span style="color:var(--muted)">—</span>'}</td>
+      <td style="white-space:nowrap">
+        <a class="btn btn-secondary btn-xs" href="/api/tax-forms/${g.id}/pdf" target="_blank">📄 PDF</a>
+        <a class="btn btn-green btn-xs" href="/api/tax-forms/${g.id}/audit-zip">📦 Audit ZIP</a>
+      </td></tr>`;
+  }).join(''):'<tr><td colspan="6" style="padding:18px;color:var(--muted)">Nothing generated yet.</td></tr>';
+}
+async function saveTfPayer(){
+  const r=await fetch('/api/tax-forms/payer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    legal_name:$('tfPLegal').value,ein:$('tfPEin').value,address:$('tfPAddr').value,
+    state_id:$('tfPState').value,locality:$('tfPLoc').value})}).then(x=>x.json());
+  const m=$('tfPayerMsg');m.textContent='✓ Saved';setTimeout(()=>m.textContent='',2500);
+}
+function tfKindToggle(){
+  const emp=$('tfKind').value==='EMPLOYEE';
+  $('tfEmployeeFields').style.display=emp?'block':'none';
+  $('tfContractorFields').style.display=emp?'none':'block';
+}
+function tfNote(){
+  const v=+$('tfTotalPaid').value||0, w9=$('tfW9').value==='1';
+  const n=$('tfBwhNote');
+  if(!w9&&v>0){n.style.display='block';n.textContent=`⚠ No W-9 → backup withholding ${money(v*0.24)} (24%) will be applied on the 1099.`;}
+  else n.style.display='none';
+}
+function prepTfPayee(){
+  ['tfLegal','tfTin','tfAddr'].forEach(i=>$(i).value='');
+  ['tfTotalPaid','tfStateWhC','tfGross','tfFedWh','tfSec125','tf401k','tfStateWh','tfLocalWh'].forEach(i=>$(i).value='0');
+  $('tfKind').value='CONTRACTOR';$('tfW9').value='0';$('tfPayeeErr').style.display='none';$('tfBwhNote').style.display='none';
+  tfKindToggle();
+}
+async function saveTfPayee(){
+  const err=$('tfPayeeErr');err.style.display='none';
+  if(!$('tfLegal').value.trim()){err.textContent='Legal name is required.';err.style.display='block';return;}
+  if(!$('tfTin').value.trim()){err.textContent='TIN/SSN is required.';err.style.display='block';return;}
+  const emp=$('tfKind').value==='EMPLOYEE';
+  const payments=emp?{gross_wages:+$('tfGross').value,fed_wh:+$('tfFedWh').value,pretax_sec125:+$('tfSec125').value,
+      pretax_401k:+$('tf401k').value,state_wh:+$('tfStateWh').value,local_wh:+$('tfLocalWh').value}
+    :{total_paid:+$('tfTotalPaid').value,state_wh:+$('tfStateWhC').value};
+  const r=await fetch('/api/tax-forms/payees',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    kind:$('tfKind').value,legal_name:$('tfLegal').value,tin:$('tfTin').value,address:$('tfAddr').value,
+    w9_on_file:+$('tfW9').value,payments})}).then(x=>x.json());
+  if(r.error){err.textContent=r.error;err.style.display='block';return;}
+  closeM('tfPayeeModal');loadTaxForms();
+}
+async function delTfPayee(id){
+  await fetch('/api/tax-forms/payees/'+id,{method:'DELETE'});loadTaxForms();
+}
+async function tfValidate(){
+  const out=$('tfValidateOut');out.innerHTML='<span class="spinner"></span> Running cross-validation…';
+  const d=await api('/api/tax-forms/validate');
+  if(!d.exceptions.length){out.innerHTML='<div class="callout" style="border-left-color:var(--green)">✓ No exceptions. '+d.payee_count+' payee(s) validated.</div>';return;}
+  out.innerHTML='<div style="font-size:12px"><strong>Cross-validation report ('+d.exceptions.length+'):</strong></div>'+
+    d.exceptions.map(e=>`<div class="reminder ${e.severity==='ERROR'?'urgent':'soon'}" style="margin-top:6px">
+      <div class="reminder-dot"></div><div class="reminder-body"><div class="reminder-title">${e.severity} · ${e.entity} — ${e.name||''}</div>
+      <div class="reminder-desc">${e.issue}</div></div></div>`).join('');
+}
+async function tfGenerate(){
+  const btn=$('tfGenBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Generating (~30–60s)…';
+  const out=$('tfGenOut');out.innerHTML='';
+  try{
+    const d=await fetch('/api/tax-forms/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})}).then(x=>x.json());
+    if(d.error){out.innerHTML=`<div class="callout warn">${d.error}</div>`;return;}
+    out.innerHTML=`<div class="callout" style="border-left-color:var(--green)">✓ Generated ${d.count} form(s).`+
+      (d.skipped.length?` Skipped ${d.skipped.length}: `+d.skipped.map(s=>`${s.name} (${s.reason})`).join('; '):'')+`</div>`;
+    loadTaxForms();
+  }catch(e){out.innerHTML=`<div class="callout warn">Generation failed: ${e}</div>`;}
+  finally{btn.disabled=false;btn.innerHTML='Generate All Forms';}
+}
+
+// ── Product Margins ────────────────────────────────────────────────────────────
+let _marginView='category';
+function setMarginView(v){_marginView=v;loadMargins();}
+async function loadMargins(){
+  $('mgCatBtn').className='btn btn-sm '+(_marginView==='category'?'btn-primary':'btn-secondary');
+  $('mgProdBtn').className='btn btn-sm '+(_marginView==='product'?'btn-primary':'btn-secondary');
+  $('marginTitle').textContent='Margin by '+(_marginView==='category'?'Category':'Product');
+  $('marginBody').innerHTML='<tr><td colspan="7" style="padding:20px;color:var(--muted)"><span class="spinner"></span> Loading…</td></tr>';
+  let d;
+  try{ d=await api('/api/margins?by='+_marginView); }
+  catch(e){ $('marginBody').innerHTML=`<tr><td colspan="7" style="padding:20px;color:var(--red)">Failed to load margins: ${e}</td></tr>`; return; }
+  const rows=d.rows||[];
+  const anyCost=rows.some(r=>r.cogs>0);
+  $('marginEmpty').style.display=anyCost?'none':'block';
+  $('marginCard').style.display=anyCost?'block':'none';
+  if(!anyCost)return;
+  if(_marginView==='category'){
+    $('marginHead').innerHTML='<tr><th>Category</th><th class="num">Products</th><th class="num">Revenue</th><th class="num">COGS</th><th class="num">Margin $</th><th class="num">Margin %</th></tr>';
+    let tR=0,tC=0,tM=0;
+    $('marginBody').innerHTML=rows.map(r=>{tR+=r.revenue;tC+=r.cogs;tM+=r.margin;
+      return `<tr><td style="font-weight:600">${r.category}</td><td class="num">${r.products}</td>
+        <td class="num">${money(r.revenue)}</td><td class="num" style="color:#e84393">${money(r.cogs)}</td>
+        <td class="num" style="font-weight:700;color:${r.margin>=0?'var(--green)':'var(--red)'}">${money(r.margin)}</td>
+        <td class="num" style="color:${marginColor(r.margin_pct)}">${r.margin_pct==null?'—':r.margin_pct+'%'}</td></tr>`;}).join('');
+    const tp=tR?(tM/tR*100).toFixed(1):'—';
+    $('marginFoot').innerHTML=`<tr><td>TOTAL</td><td></td><td class="num">${money(tR)}</td><td class="num" style="color:#e84393">${money(tC)}</td><td class="num" style="color:${tM>=0?'var(--green)':'var(--red)'}">${money(tM)}</td><td class="num">${tp}%</td></tr>`;
+  }else{
+    $('marginHead').innerHTML='<tr><th>Product</th><th>Category</th><th class="num">Sold</th><th class="num">Revenue</th><th class="num">COGS</th><th class="num">Margin $</th><th class="num">Margin %</th></tr>';
+    let tR=0,tC=0,tM=0;
+    $('marginBody').innerHTML=rows.map(r=>{tR+=r.revenue;tC+=r.cogs;tM+=r.margin;
+      return `<tr><td style="font-weight:500">${r.product}${r.has_cost?'':' <span class="badge warn" title="No cost posted">no cost</span>'}</td>
+        <td style="color:var(--muted)">${r.category}</td><td class="num">${r.units_sold}</td>
+        <td class="num">${money(r.revenue)}</td><td class="num" style="color:#e84393">${money(r.cogs)}</td>
+        <td class="num" style="font-weight:700;color:${r.margin>=0?'var(--green)':'var(--red)'}">${money(r.margin)}</td>
+        <td class="num" style="color:${marginColor(r.margin_pct)}">${r.margin_pct==null?'—':r.margin_pct+'%'}</td></tr>`;}).join('');
+    const tp=tR?(tM/tR*100).toFixed(1):'—';
+    $('marginFoot').innerHTML=`<tr><td>TOTAL</td><td></td><td></td><td class="num">${money(tR)}</td><td class="num" style="color:#e84393">${money(tC)}</td><td class="num" style="color:${tM>=0?'var(--green)':'var(--red)'}">${money(tM)}</td><td class="num">${tp}%</td></tr>`;
+  }
+}
+function marginColor(p){if(p==null)return 'var(--muted)';if(p>=30)return 'var(--green)';if(p>=15)return 'var(--accent)';return 'var(--red)';}
+
+// ── Cost Scenarios ─────────────────────────────────────────────────────────────
+async function loadScenarios(){
+  const d=await api('/api/cost-scenarios');
+  const STATUS_META={'OVERSTATED':'amber','LOSS':'red','BREAK-EVEN':'blue','ACTUAL':'green'};
+  $('scnGrid').innerHTML=d.scenarios.map(s=>`
+    <div class="scn-card ${s.color}">
+      <div class="scn-title">${s.title}<span class="scn-badge">${s.status}</span></div>
+      <div class="scn-desc">${s.desc}</div>
+      <div class="scn-nums">
+        <div class="scn-num"><div class="l">COGS Assumed</div><div class="v" style="color:var(--muted)">${money(s.cogs)}</div></div>
+        <div class="scn-num" style="text-align:right"><div class="l">Net Income</div><div class="v" style="color:${s.net>=0?'var(--green)':'var(--red)'}">${money(s.net)}</div></div>
+      </div>
+    </div>`).join('');
+  $('scnTable').innerHTML=d.scenarios.map(s=>`<tr>
+    <td style="font-weight:600">${s.title}</td>
+    <td class="num">${money(s.cogs)}</td>
+    <td class="num" style="font-weight:700;color:${s.net>=0?'var(--green)':'var(--red)'}">${money(s.net)}</td>
+    <td><span class="badge ${s.net>0?'ok':s.net===0?'info':'bad'}">${s.status}</span></td>
+    <td style="color:var(--muted);font-size:11px">${s.desc}</td>
+  </tr>`).join('');
+  setTimeout(()=>{ if(window.renderMathInElement) renderMathInElement($('tab-scenarios'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false}); },80);
+}
+
+// ── Docs (trigger KaTeX re-render after tab loads) ─────────────────────────────
+function loadDocs(){
+  setTimeout(()=>{
+    if(window.renderMathInElement){
+      renderMathInElement($('tab-docs'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+    }
+  },100);
+}
+
+// ── Modal helpers ──────────────────────────────────────────────────────────────
+const openM=id=>$(id).classList.add('open');
+const closeM=id=>$(id).classList.remove('open');
+window.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
+
+function openFilingModal(i){
+  const q=taxData[i];
+  $('fPS').value=q.start;$('fPE').value=q.end;$('fPL').value=q.label;$('fDue').value=q.due;
+  $('fGross').value=q.revenue;$('fTax').value=q.tax;$('fPay').value=q.tax;
+  $('fFiled').value=new Date().toISOString().slice(0,10);
+  openM('fileModal');
+}
+async function submitFiling(){
+  await fetch('/api/tax/file',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    period_start:$('fPS').value,period_end:$('fPE').value,filing_due:$('fDue').value,
+    gross_sales:+$('fGross').value,taxable_sales:+$('fGross').value,tax_collected:+$('fTax').value,
+    filed_on:$('fFiled').value,payment_amount:+$('fPay').value,payment_ref:$('fRef').value,notes:$('fNotes').value,
+  })});
+  closeM('fileModal');loadTax();
+}
+
+async function saveVendor(){
+  if(!$('vName').value)return alert('Name required');
+  await fetch('/api/vendors',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    name:$('vName').value,contact:$('vContact').value,email:$('vEmail').value,
+    phone:$('vPhone').value,terms:$('vTerms').value,notes:$('vNotes').value,
+  })});
+  closeM('vendorModal');loadAP();populateVS();
+}
+async function populateVS(){
+  const d=await api('/api/vendors');
+  $('viVendor').innerHTML=d.length?d.map(v=>`<option value="${v.id}">${v.name}</option>`).join('')
+    :'<option value="">— add a vendor first —</option>';
+}
+
+// ── Vendor invoice line-item editor ────────────────────────────────────────────
+let _soldProducts=[];
+async function prepViModal(){
+  // (re)load datalists + reset rows whenever the modal opens
+  if(!_soldProducts.length){
+    try{ _soldProducts=await api('/api/products/sold'); }catch{ _soldProducts=[]; }
+  }
+  $('soldProductsList').innerHTML=_soldProducts.map(p=>`<option value="${(p.product||'').replace(/"/g,'&quot;')}">`).join('');
+  const cats=[...new Set(_soldProducts.map(p=>p.category).filter(Boolean))];
+  $('catList').innerHTML=cats.map(c=>`<option value="${c}">`).join('');
+  $('viError').style.display='none';
+  $('viLines').innerHTML='';
+  addViLine();
+  $('viDate').value=$('viDate').value||new Date().toISOString().slice(0,10);
+  recalcVi();
+}
+function addViLine(){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input list="soldProductsList" class="vil-prod" oninput="onProdPick(this)" placeholder="Type or pick…" style="min-width:160px"></td>
+    <td><input class="vil-sku" style="width:70px"></td>
+    <td><input list="catList" class="vil-cat" style="width:100px"></td>
+    <td><input type="number" class="vil-qty" value="1" min="0" step="any" oninput="recalcVi()" style="width:60px;text-align:right"></td>
+    <td><input type="number" class="vil-unit" value="0" min="0" step="0.01" oninput="recalcVi()" style="width:80px;text-align:right"></td>
+    <td><input type="number" class="vil-tax" value="0" min="0" step="0.01" oninput="recalcVi()" style="width:62px;text-align:right"></td>
+    <td><input type="number" class="vil-ship" value="0" min="0" step="0.01" oninput="recalcVi()" style="width:62px;text-align:right"></td>
+    <td><input type="number" class="vil-fee" value="0" min="0" step="0.01" oninput="recalcVi()" style="width:62px;text-align:right"></td>
+    <td class="num vil-total" style="font-weight:700">$0.00</td>
+    <td><button class="btn btn-secondary btn-xs" onclick="this.closest('tr').remove();recalcVi()">✕</button></td>`;
+  $('viLines').appendChild(tr);
+}
+function onProdPick(inp){
+  // auto-fill SKU + category + suggested unit cost when a known product is chosen
+  const p=_soldProducts.find(x=>x.product===inp.value);
+  const tr=inp.closest('tr');
+  if(p){
+    if(p.sku&&!tr.querySelector('.vil-sku').value)tr.querySelector('.vil-sku').value=p.sku;
+    if(p.category&&!tr.querySelector('.vil-cat').value)tr.querySelector('.vil-cat').value=p.category;
+  }
+}
+function recalcVi(){
+  let goods=0,extra=0;
+  $('viLines').querySelectorAll('tr').forEach(tr=>{
+    const q=+tr.querySelector('.vil-qty').value||0, u=+tr.querySelector('.vil-unit').value||0;
+    const t=+tr.querySelector('.vil-tax').value||0, s=+tr.querySelector('.vil-ship').value||0, f=+tr.querySelector('.vil-fee').value||0;
+    const g=q*u, lt=g+t+s+f;
+    goods+=g; extra+=t+s+f;
+    tr.querySelector('.vil-total').textContent=money(lt);
+  });
+  $('viGoods').textContent=money(goods);
+  $('viExtra').textContent=money(extra);
+  $('viTotal').textContent=money(goods+extra);
+}
+function collectViLines(){
+  const lines=[];
+  $('viLines').querySelectorAll('tr').forEach(tr=>{
+    const name=tr.querySelector('.vil-prod').value.trim();
+    if(!name)return;
+    lines.push({
+      product_name:name, sku:tr.querySelector('.vil-sku').value.trim(),
+      category:tr.querySelector('.vil-cat').value.trim(),
+      quantity:+tr.querySelector('.vil-qty').value||0,
+      unit_cost:+tr.querySelector('.vil-unit').value||0,
+      line_tax:+tr.querySelector('.vil-tax').value||0,
+      line_shipping:+tr.querySelector('.vil-ship').value||0,
+      line_fee:+tr.querySelector('.vil-fee').value||0,
+    });
+  });
+  return lines;
+}
+async function saveVI(){
+  const err=$('viError');err.style.display='none';
+  if(!$('viVendor').value)return showViErr('Select a vendor (add one with + Vendor if the list is empty).');
+  if(!$('viDate').value)return showViErr('Invoice date is required.');
+  const lines=collectViLines();
+  if(!lines.length)return showViErr('Add at least one line item with a product name.');
+  for(let i=0;i<lines.length;i++){
+    if(lines[i].quantity<=0)return showViErr(`Line ${i+1}: quantity must be greater than 0.`);
+    if(lines[i].unit_cost<0)return showViErr(`Line ${i+1}: unit cost cannot be negative.`);
+  }
+  const btn=$('viSaveBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Saving…';
+  try{
+    const r=await fetch('/api/vendor_invoices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      vendor_id:$('viVendor').value,invoice_number:$('viNum').value,invoice_date:$('viDate').value,
+      due_date:$('viDue').value,order_id:$('viOrder').value,description:$('viDesc').value,
+      reconciled:+$('viRecon').value, lines,
+    })}).then(x=>x.json());
+    if(r.error){showViErr(r.error);return;}
+    closeM('viModal');loadAP();
+    if(document.querySelector('#tab-dashboard.active'))loadDashboard();
+  }catch(e){showViErr('Save failed: '+e);}
+  finally{btn.disabled=false;btn.innerHTML='Save &amp; Post COGS';}
+}
+function showViErr(m){const e=$('viError');e.textContent=m;e.style.display='block';}
+function openPayModal(id,vName,rem){
+  $('payViId').value=id;$('payAmt').value=rem.toFixed(2);$('payPayee').value=vName;
+  $('payDate').value=new Date().toISOString().slice(0,10);$('payCkNum').value='';$('payMemo').value='';
+  openM('payModal');
+}
+async function submitPayment(){
+  await fetch(`/api/vendor_invoices/${$('payViId').value}/pay`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    amount:+$('payAmt').value,paid_on:$('payDate').value,method:$('payMethod').value,
+    check_number:$('payCkNum').value,payee:$('payPayee').value,memo:$('payMemo').value,
+  })});
+  closeM('payModal');loadAP();loadChecks();
+}
+async function saveCheck(){
+  if(!$('chkPayee').value||!$('chkAmt').value)return alert('Payee and amount required');
+  await fetch('/api/checks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    check_date:$('chkDate').value,check_number:$('chkNum').value,payee:$('chkPayee').value,
+    amount:+$('chkAmt').value,memo:$('chkMemo').value,bank_account:$('chkBank').value,category:$('chkCat').value,
+  })});
+  closeM('checkModal');loadChecks();
+}
+async function clearCheck(id){
+  await fetch(`/api/checks/${id}/clear`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cleared_on:new Date().toISOString().slice(0,10)})});
+  loadChecks();
+}
+async function saveReminder(){
+  if(!$('remDate').value||!$('remTitle').value)return alert('Date and title required');
+  await fetch('/api/reminders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    due_date:$('remDate').value,category:$('remCat').value,title:$('remTitle').value,description:$('remDesc').value,
+  })});
+  closeM('reminderModal');loadReminders();
+}
+
+async function syncNow(){
+  $('syncSpinner').style.display='inline';$('syncLabel').textContent='Syncing…';
+  try{
+    const d=await fetch('/api/sync',{method:'POST'}).then(r=>r.json());
+    $('syncLabel').textContent=`Synced ${d.synced||0} orders · ${new Date().toLocaleTimeString()}`;
+    $('syncDot').style.background='var(--green)';
+    if(document.querySelector('#tab-dashboard.active'))loadDashboard();
+  }catch{$('syncLabel').textContent='Sync failed';$('syncDot').style.background='var(--red)';}
+  $('syncSpinner').style.display='none';
+}
+
+// ── TD Bank / Plaid ────────────────────────────────────────────────────────────
+let bankPage=1,bankSearchTimer,_plaidItemId=null,_plaidHandler=null;
+
+async function loadBank(){
+  const sum=await api('/api/bank/summary');
+  const connected=sum.connected;
+  $('bankSetupBanner').style.display=connected?'none':'block';
+  $('connectBankBtn').textContent=connected?'+ Add Account':'+ Connect TD Bank';
+  if(connected&&sum.items.length){
+    const item=sum.items[0];
+    $('bk-acct').textContent=item.account_name||(item.account_mask?'x'+item.account_mask:'Connected');
+    $('bk-type').textContent=item.account_type||'Business Checking';
+    $('bk-last-sync').textContent=item.last_synced?'Last sync: '+new Date(item.last_synced).toLocaleString():'Not yet synced';
+    _plaidItemId=item.item_id;
+  }
+  $('bk-credits').textContent=money(sum.total_credits);
+  $('bk-debits').textContent=money(sum.total_debits);
+  $('bk-unrecon').textContent=sum.unreconciled||'0';
+  $('bk-range').textContent=sum.date_range||'—';
+  // badge in nav
+  const badge=$('bankBadge');
+  if(badge){badge.style.display=sum.unreconciled>0?'inline':'none';badge.textContent=sum.unreconciled;}
+
+  const q=$('bankSearch').value;
+  const cat=$('bankCatFilter').value;
+  const recon=$('bankReconFilter').value;
+  const params=new URLSearchParams({page:bankPage,limit:50});
+  if(q)params.set('q',q);if(cat)params.set('category',cat);if(recon!=='')params.set('reconciled',recon);
+  const d=await api('/api/bank/transactions?'+params);
+
+  const ERP_COLORS={REVENUE:'var(--green)',COGS:'#e84393',EXPENSE:'var(--orange)',
+    TAX:'var(--accent)',FEE:'var(--purple)',TRANSFER:'var(--accent2)',OTHER:'var(--muted)'};
+  $('bankBody').innerHTML=d.transactions.length?d.transactions.map(t=>{
+    const isCredit=t.amount<0;
+    const amtColor=isCredit?'var(--green)':'var(--red)';
+    const amtSign=isCredit?'+':'−';
+    const catColor=ERP_COLORS[t.erp_category]||'var(--muted)';
+    const reconciled=t.reconciled===1||t.reconciled===true;
+    const pending=t.pending===1||t.pending===true;
+    return`<tr style="${reconciled?'opacity:.6':''}">
+      <td style="white-space:nowrap">${t.date}</td>
+      <td><div style="font-weight:600;font-size:12px">${t.merchant_name||t.name}</div>
+          ${t.name!==t.merchant_name?`<div style="font-size:10px;color:var(--muted)">${t.name}</div>`:''}
+      </td>
+      <td style="color:var(--muted);font-size:11px;max-width:180px">${t.memo||'<span style="color:var(--border)">— add memo —</span>'}</td>
+      <td>${t.erp_category?`<span style="color:${catColor};font-size:10px;font-weight:700">${t.erp_category}</span>`:'<span style="color:var(--border);font-size:10px">—</span>'}</td>
+      <td class="num" style="font-weight:700;color:${amtColor}">${amtSign}${money(Math.abs(t.amount))}</td>
+      <td>${pending?'<span class="badge warn">Pending</span>':reconciled?'<span class="badge ok">✓ Reconciled</span>':'<span class="badge open">Review</span>'}</td>
+      <td style="font-size:10px;color:var(--muted)">${t.matched_order_id?'Order: '+t.matched_order_id:''}</td>
+      <td><button class="btn btn-secondary btn-xs" onclick="openBankMemo(${t.id},'${(t.merchant_name||t.name).replace(/'/g,"\\'")}',${t.amount},'${t.date}','${t.memo||''}','${t.erp_category||''}',${t.reconciled||0},'${t.matched_order_id||''}')">Edit</button></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="8" style="color:var(--muted);padding:24px;text-align:center">'+(connected?'No transactions found — click Sync to pull from TD Bank':'Connect your TD Bank account to see transactions')+'</td></tr>';
+
+  const pages=Math.ceil(d.total/50);
+  $('bkInfo').textContent=`Page ${bankPage}/${pages||1} (${d.total})`;
+  $('bkPrev').disabled=bankPage<=1;$('bkNext').disabled=bankPage>=(pages||1);
+}
+
+function dBankSearch(){clearTimeout(bankSearchTimer);bankSearchTimer=setTimeout(()=>{bankPage=1;loadBank();},300);}
+
+async function bankSync(){
+  $('syncLabel').textContent='Syncing bank…';
+  try{
+    const d=await api('/api/plaid/sync',{method:'POST'});
+    $('syncLabel').textContent=`Bank sync: ${d.synced_items} item(s) synced`;
+    loadBank();
+  }catch(e){alert('Sync failed: '+e);}
+}
+
+// ── Plaid Link OAuth flow ──────────────────────────────────────────────────────
+async function bankConnect(){
+  // Load Plaid Link JS if not already loaded
+  if(!window.Plaid){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdn.plaid.com/link/v2/stable/link-initialize.js';
+      s.onload=res;s.onerror=rej;
+      document.head.appendChild(s);
+    });
+  }
+  // Get a link token from our server
+  let lt;
+  try{
+    const r=await api('/api/plaid/link-token',{method:'POST'});
+    if(r.error){alert('Could not get Plaid link token: '+r.error+'\n\nMake sure PLAID_CLIENT_ID and PLAID_SECRET are set in start_erp.sh and the service is restarted.');return;}
+    lt=r.link_token;
+  }catch(e){alert('Server error: '+e);return;}
+
+  _plaidHandler=window.Plaid.create({
+    token: lt,
+    onSuccess: async(public_token, metadata)=>{
+      // Exchange for access token
+      const r=await api('/api/plaid/exchange-token',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({public_token})});
+      if(r.error){alert('Exchange failed: '+r.error);return;}
+      _plaidItemId=r.item_id;
+      // Show account picker to select x9102
+      showAccountPicker(r.item_id, r.accounts);
+    },
+    onExit:(err)=>{if(err)console.warn('Plaid exit',err);}
+  });
+  _plaidHandler.open();
+}
+
+function showAccountPicker(item_id, accounts){
+  $('bankAccountList').innerHTML=accounts.map(a=>`
+    <div style="border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center"
+         onclick="selectBankAccount('${item_id}','${a.account_id}','${a.name}','${a.mask}','${a.type}')">
+      <div>
+        <div style="font-weight:700">${a.name}</div>
+        <div style="font-size:11px;color:var(--muted)">${a.official_name||a.subtype} · x${a.mask}</div>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:var(--green)">${money(a.balance)}</div>
+    </div>`).join('');
+  openM('bankAccountModal');
+}
+
+async function selectBankAccount(item_id,acct_id,name,mask,type){
+  await api('/api/plaid/set-account',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({item_id,account_id:acct_id,account_name:name,account_mask:mask,account_type:type})});
+  closeM('bankAccountModal');
+  // Kick off first sync
+  await bankSync();
+}
+
+// ── Memo / reconciliation modal ────────────────────────────────────────────────
+function openBankMemo(id,name,amount,date,memo,cat,reconciled,orderId){
+  $('bmTxnId').value=id;
+  $('bmName').textContent=name;
+  const isCredit=amount<0;
+  $('bmAmount').textContent=(isCredit?'+':'−')+money(Math.abs(amount));
+  $('bmAmount').style.color=isCredit?'var(--green)':'var(--red)';
+  $('bmDate').textContent=date;
+  $('bmMemo').value=memo||'';
+  $('bmCat').value=cat||'';
+  $('bmRecon').value=String(reconciled||0);
+  $('bmOrderId').value=orderId||'';
+  $('bmSuggestions').innerHTML='';
+  openM('bankMemoModal');
+  // Async: load smart match suggestions
+  api('/api/bank/suggest-matches/'+id).then(s=>{
+    const all=[
+      ...s.orders.map(o=>`<div class="suggestion-item" onclick="bmLinkOrder('${o.id}')">
+        📦 Order ${o.order_number} — ${o.customer_name} — ${money(o.grand_total)} — ${o.created_on}</div>`),
+      ...s.vendor_invoices.map(v=>`<div class="suggestion-item" onclick="bmLinkVI(${v.id})">
+        🧾 VI #${v.invoice_number} — ${v.vendor_name} — ${money(v.amount)} — ${v.invoice_date}</div>`),
+    ];
+    if(all.length)$('bmSuggestions').innerHTML=
+      `<div style="font-size:11px;color:var(--muted);margin-bottom:6px">Smart matches (same amount ±$2, ±7 days):</div>`+
+      all.map(h=>`${h}`).join('');
+  });
+}
+function bmLinkOrder(orderId){$('bmOrderId').value=orderId;$('bmCat').value='REVENUE';$('bmRecon').value='1';}
+function bmLinkVI(viId){$('bmOrderId').value='VI:'+viId;$('bmCat').value='COGS';$('bmRecon').value='1';}
+async function bmSave(){
+  const id=$('bmTxnId').value;
+  await api(`/api/bank/transactions/${id}`,{method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      memo:$('bmMemo').value,
+      erp_category:$('bmCat').value||null,
+      reconciled:parseInt($('bmRecon').value),
+      matched_order_id:$('bmOrderId').value||null,
+    })});
+  closeM('bankMemoModal');loadBank();
+}
+async function bmIgnore(){
+  const id=$('bmTxnId').value;
+  await api(`/api/bank/transactions/${id}`,{method:'PATCH',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({ignored:1})});
+  closeM('bankMemoModal');loadBank();
+}
+
+loadDashboard();
+populateVS();
+document.querySelectorAll('input[type="date"]').forEach(el=>{if(!el.value)el.value=new Date().toISOString().slice(0,10);});
+</script>
+</body>
+</html>
