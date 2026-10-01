@@ -9,17 +9,6 @@ import {
   mergeRegistryOverlay,
 } from "@/lib/registry/load";
 
-/**
- * Publicly listed products that PRODUCT_REGISTRY.yaml records without a
- * route path (null or UNREVIEWED) as of the 2026-10-01 registry sync. This is a
- * ratchet: remove an id once its route is registered; never add one silently.
- */
-const KNOWN_ROUTELESS_PUBLIC_PRODUCTS = [
-  "atlas-handcrafted-guru-selection", // canonical_route: null (rescue, no route yet)
-  "artemis-nomad", // canonical_route: UNREVIEWED (two levara-l28 surfaces)
-  "dayos", // canonical_route: null (static assets only, no app/ route)
-];
-
 describe("product registry loader", () => {
   it("loads at least ten products with unique ids", () => {
     const products = loadProducts();
@@ -35,12 +24,31 @@ describe("product registry loader", () => {
     expect(loadDivisions().map((division) => division.id)).toContain("core-platform");
   });
 
-  it("every publicly listed product has a canonical route path, except the known gaps", () => {
-    const missing = loadProducts()
-      .filter((product) => isPubliclyListed(product) && linkableRoute(product) === null)
-      .map((product) => product.id)
-      .sort();
-    expect(missing).toEqual([...KNOWN_ROUTELESS_PUBLIC_PRODUCTS].sort());
+  it("lists a product only when it is public, routed, and has a reviewed lifecycle", () => {
+    for (const product of loadProducts()) {
+      const expected =
+        product.visibility === "public" &&
+        typeof product.canonical_route === "string" &&
+        product.canonical_route.startsWith("/") &&
+        product.lifecycle !== "UNREVIEWED";
+      expect(isPubliclyListed(product), product.id).toBe(expected);
+    }
+  });
+
+  it("excludes public_safe_demo, routeless, and UNREVIEWED-lifecycle products", () => {
+    for (const id of [
+      "utility-field-claims", // public_safe_demo
+      "tax-architecture-2026", // public_safe_demo (still rendered via editorial)
+      "dayos", // public, canonical_route null
+      "artemis-nomad", // canonical_route UNREVIEWED
+      "pinar-evleri", // lifecycle UNREVIEWED
+      "diana-moonshot", // lifecycle UNREVIEWED
+      "bidroom-exemplary-contractor", // lifecycle UNREVIEWED
+    ]) {
+      const product = getProduct(id);
+      expect(product, id).toBeDefined();
+      expect(isPubliclyListed(product!), id).toBe(false);
+    }
   });
 });
 
@@ -52,6 +60,21 @@ describe("/labs registry and editorial merge", () => {
     for (const product of products.filter(isPubliclyListed)) {
       expect(entries.filter((entry) => entry.product?.id === product.id)).toHaveLength(1);
     }
+  });
+
+  it("adds default cards only for products that pass the listing rule", () => {
+    const defaults = entries.filter((entry) => entry.editorial === null);
+    expect(defaults.length).toBeGreaterThan(0);
+    for (const entry of defaults) {
+      expect(entry.product && isPubliclyListed(entry.product), entry.product?.id).toBe(true);
+      expect(linkableRoute(entry.product!)).not.toBeNull();
+    }
+  });
+
+  it("keeps every editorial entry, even when its registry entry would not be listed", () => {
+    const workbench = entries.find((entry) => entry.product?.id === "geometric-workbench");
+    expect(workbench?.editorial).not.toBeNull();
+    expect(isPubliclyListed(workbench!.product!)).toBe(false);
   });
 
   it("keeps every editorial entry, including editorial-only ones", () => {

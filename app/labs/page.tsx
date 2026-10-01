@@ -1,4 +1,4 @@
-import { ArrowRight, ListChecks, ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
@@ -19,6 +19,7 @@ import { labsEditorial, type LabEditorial } from "@/data/labs-editorial";
 import { proofModules } from "@/data/proofLibrary";
 import {
   linkableRoute,
+  loadDivisions,
   loadProducts,
   mergeRegistryOverlay,
   type RegistryProduct,
@@ -110,7 +111,13 @@ function EditorialLabCard({ module }: { module: LabEditorial }) {
   );
 }
 
-function RegistryLabCard({ product }: { product: RegistryProduct }) {
+function RegistryLabCard({
+  product,
+  divisionName,
+}: {
+  product: RegistryProduct;
+  divisionName: string;
+}) {
   const route = linkableRoute(product);
   return (
     <article className="group relative min-w-0 overflow-hidden rounded-lg border border-border/70 bg-navy-deep/50 p-6 shadow-panel transition-colors hover:border-gold/45">
@@ -118,35 +125,12 @@ function RegistryLabCard({ product }: { product: RegistryProduct }) {
         className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-silver/50 to-transparent opacity-70"
         aria-hidden
       />
-      <div className="flex flex-wrap items-center gap-3">
-        <StatusBadge tone="reference">{product.lifecycle}</StatusBadge>
-        <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
-          Product Registry
-        </span>
-      </div>
+      <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+        {divisionName}
+      </span>
       <h2 className="display-serif mt-4 text-balance text-2xl text-parchment sm:text-3xl">
         {product.name}
       </h2>
-
-      <dl className="mt-6 grid gap-4 md:grid-cols-2">
-        <div className="rounded-md border border-border/60 bg-background/30 p-4">
-          <dt className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
-            Canonical Route
-          </dt>
-          <dd className="mt-2 break-words font-mono text-sm text-muted-foreground">
-            {product.canonical_route ?? "None registered"}
-          </dd>
-        </div>
-        <div className="rounded-md border border-border/60 bg-background/30 p-4">
-          <dt className="flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
-            <ListChecks className="h-4 w-4" aria-hidden />
-            Next Gate
-          </dt>
-          <dd className="mt-2 break-words font-mono text-sm text-muted-foreground">
-            {product.next_gate ?? "None registered"}
-          </dd>
-        </div>
-      </dl>
 
       {route ? (
         <div className="mt-7 flex flex-wrap gap-3">
@@ -165,6 +149,7 @@ function RegistryLabCard({ product }: { product: RegistryProduct }) {
 
 export default function LabsPage() {
   const labEntries = mergeRegistryOverlay(loadProducts(), labsEditorial);
+  const divisionNames = new Map(loadDivisions().map((division) => [division.id, division.name]));
   return (
     <>
       <PageHero
@@ -212,7 +197,11 @@ export default function LabsPage() {
               entry.editorial ? (
                 <EditorialLabCard key={entry.editorial.href} module={entry.editorial} />
               ) : entry.product ? (
-                <RegistryLabCard key={entry.product.id} product={entry.product} />
+                <RegistryLabCard
+                  key={entry.product.id}
+                  product={entry.product}
+                  divisionName={divisionNames.get(entry.product.division) ?? "Unclassified"}
+                />
               ) : null,
             )}
           </div>

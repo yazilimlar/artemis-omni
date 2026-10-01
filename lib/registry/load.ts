@@ -7,6 +7,15 @@
  *
  * `UNREVIEWED` is a valid value for any classified field: it marks a field that
  * repository evidence or an owner decision has not yet established.
+ *
+ * Public listing rule (isPubliclyListed, used for /labs default cards):
+ * a registry product gets a default card only when ALL of these hold:
+ *   - visibility is exactly "public"
+ *   - canonical_route is a route path (a string starting with "/"; null and
+ *     UNREVIEWED do not qualify)
+ *   - lifecycle is not UNREVIEWED
+ * Editorial entries (data/labs-editorial.ts) always render, whatever their
+ * registry entry says, so curated content is never dropped by this filter.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -80,9 +89,6 @@ export type RegistryDivision = {
   product_families: string[];
   public_routes: string[];
 };
-
-/** Visibility classes that may be listed on public index pages such as /labs. */
-export const PUBLIC_LISTING_VISIBILITY: readonly Visibility[] = ["public", "public_safe_demo"];
 
 const REGISTRY_DIR = path.join(process.cwd(), "ENGINEERING");
 
@@ -207,14 +213,19 @@ export function loadDivisions(): RegistryDivision[] {
   return divisionCache;
 }
 
-export function isPubliclyListed(product: RegistryProduct): boolean {
-  return PUBLIC_LISTING_VISIBILITY.includes(product.visibility);
-}
-
 /** The product's canonical route when it is a real path, otherwise null. */
 export function linkableRoute(product: RegistryProduct): string | null {
   const route = product.canonical_route;
   return route && route.startsWith("/") ? route : null;
+}
+
+/** Applies the public listing rule documented at the top of this file. */
+export function isPubliclyListed(product: RegistryProduct): boolean {
+  return (
+    product.visibility === "public" &&
+    linkableRoute(product) !== null &&
+    product.lifecycle !== UNREVIEWED
+  );
 }
 
 export type RegistryOverlayEntry<E> = {
@@ -228,7 +239,8 @@ export type RegistryOverlayEntry<E> = {
  * Merges registry products with an editorial overlay keyed by `registryId`.
  *
  * Every editorial entry is kept, in editorial order, so no reviewed content is
- * dropped. Publicly listed products without an overlay follow in registry order.
+ * dropped. Products passing isPubliclyListed without an overlay follow in
+ * registry order.
  * Throws when an overlay names an unknown or duplicate registry id.
  */
 export function mergeRegistryOverlay<E extends { registryId: string | null }>(
