@@ -22,6 +22,10 @@
 #   publication:               owner publication intent (public | noindex | mixed)
 #   distribution:              delivery channel when the product is not a route
 #   observed_routes:           every delivery surface when more than one exists
+#
+# 2026-10-01 refinement (branch governance/registry-refinement-2026-10):
+# bucket, subclass, operator and end_customer are now applied on selected entries
+# per ADR-008 and ADR-009. The other fields above remain proposals.
 # ---------------------------------------------------------------------------
 
 schema_version: 1
@@ -242,13 +246,13 @@ products:
 
   - id: bidroom-suite
     name: BidRoom Product Suite
-    division: UNREVIEWED  # candidate infrastructure-construction (inventory Table B, confidence C)
-    product_family: UNREVIEWED  # candidate civicbid; not confirmed
-    lifecycle: UNREVIEWED
+    division: infrastructure-construction  # ADR-010
+    product_family: bidroom  # ADR-010; distinct from civicbid
+    lifecycle: rescue  # ADR-010: until a deployed-route review is recorded
     maturity: UNREVIEWED
-    visibility: UNREVIEWED  # observed mixed: /labs/bidroom-verity noindex; other surfaces indexable
+    visibility: noindex_review  # ADR-010: until deployed-route review; observed mixed: /labs/bidroom-verity noindex, other surfaces indexable
     data_mode: UNREVIEWED
-    canonical_route: UNREVIEWED
+    canonical_route: /products/bidroom  # ADR-010: to be verified
     # surfaces: /products/bidroom, /products/bidroom/{atlasiq,contractor,evidence-engine,live,switchboard},
     #           /labs/bidroom-atlasiq, /labs/bidroom-verity
     canonical_branch: main
@@ -271,13 +275,15 @@ products:
 
   - id: bidroom-exemplary-contractor
     name: BidRoom for Exemplary Contractor
+    bucket: internal_asset
+    subclass: placeholder_persona
     # owner: bucket=internal_asset, subclass=placeholder_persona,
     #        data_boundary=artemis_owned, publication=public, confidence=B
     division: UNREVIEWED  # owner bucket sets ownership type, not division
-    product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    product_family: bidroom
+    lifecycle: active_lab
     maturity: UNREVIEWED
-    visibility: public  # owner publication=public
+    visibility: public_safe_demo  # placeholder persona, not a client (ADR-008)
     data_mode: UNREVIEWED
     canonical_route: /labs/bidroom-exemplary-contractor
     canonical_branch: main
@@ -290,16 +296,18 @@ products:
 
   - id: artemis-nomad
     name: Artemis Nomad (LEVARA L28 reference demo)
+    bucket: internal_asset
+    subclass: reference_demo
     # owner: bucket=internal_asset, subclass=reference_demo, current_name="Artemis Nomad",
     #        external_brand_referenced="Levara (manufacturer)", data_boundary=artemis_owned,
     #        publication=public, confidence=B
-    division: UNREVIEWED
-    product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    division: studio-media
+    product_family: reference-demo
+    lifecycle: active_lab
     maturity: UNREVIEWED
-    visibility: public  # owner publication=public
+    visibility: public_safe_demo  # owner publication=public; downgraded to safe demo
     data_mode: UNREVIEWED
-    canonical_route: UNREVIEWED
+    canonical_route: /labs/levara-l28-financial-twin
     # surfaces: /labs/levara-l28-financial-twin, /labs/levara-l28-success-gate-immersive
     canonical_branch: main
     related_prs:
@@ -314,13 +322,15 @@ products:
 
   - id: diana-moonshot
     name: Diana Moonshot
+    bucket: internal_asset
+    subclass: demo
     # owner: bucket=internal_asset, subclass=demo, data_boundary=artemis_owned,
     #        publication=public, confidence=A
-    division: UNREVIEWED
-    product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    division: studio-media
+    product_family: demo
+    lifecycle: active_lab
     maturity: UNREVIEWED
-    visibility: public  # owner publication=public
+    visibility: public_safe_demo
     data_mode: UNREVIEWED
     canonical_route: /labs/diana-moonshot
     canonical_branch: main
@@ -331,11 +341,13 @@ products:
 
   - id: anastasia-fantasia-demo
     name: Anastasia Fantasia
+    bucket: internal_asset
+    subclass: personal_demo
     # owner: bucket=internal_asset, subclass=personal_demo, data_boundary=artemis_owned,
     #        publication=noindex, confidence=A. Personal project, not client work.
-    division: UNREVIEWED
-    product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    division: studio-media
+    product_family: personal-demo
+    lifecycle: active_lab
     maturity: UNREVIEWED
     visibility: noindex_review  # owner publication=noindex; route emits robots noindex,follow
     data_mode: UNREVIEWED
@@ -352,14 +364,15 @@ products:
 
   - id: dayos
     name: DayOS
+    bucket: internal_product
     # owner: bucket=internal_product,
     #        distribution=tbd_public_app_or_skill_or_connector_or_open_repo,
     #        data_boundary=artemis_owned, publication=public, confidence=B
     division: UNREVIEWED
     product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    lifecycle: concept
     maturity: UNREVIEWED
-    visibility: public  # owner publication=public; currently static assets only
+    visibility: UNREVIEWED  # distribution remains UNREVIEWED
     data_mode: UNREVIEWED
     canonical_route: null  # no app/ route on main
     canonical_branch: UNREVIEWED
@@ -373,14 +386,16 @@ products:
 
   - id: pinar-evleri
     name: Pınar Evleri
+    bucket: client_or_owner_related
     # owner: bucket=client_or_owner_related, data_boundary=to_be_confirmed,
     #        publication=public, confidence=B
     # UNREVIEWED: data_boundary=to_be_confirmed (inventory U2, C13).
     division: UNREVIEWED
     product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    lifecycle: active_lab
     maturity: UNREVIEWED
-    visibility: public  # owner publication=public; route has no noindex (observed)
+    visibility: noindex_review  # ADR-008: not exposed publicly until client-work status is resolved.
+    # Observed 2026-10-01: the /pinarevleri route has no noindex yet; route change pending.
     data_mode: UNREVIEWED
     canonical_route: /pinarevleri
     canonical_branch: main
@@ -404,16 +419,19 @@ products:
 
   - id: prime-industrial-erp
     name: Prime Industrial ERP
+    bucket: internal_product
+    operator: great_order  # ADR-009
+    end_customer: external
     # owner: bucket=internal_product, operator=great_order, end_customer=external,
     #        data_boundary=to_be_confirmed, publication=mixed, confidence=B
     # UNREVIEWED: data_boundary=to_be_confirmed; Great Order relationship unresolved (inventory U1, U3).
-    division: UNREVIEWED
-    product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    division: finance-decision-systems
+    product_family: erp
+    lifecycle: active_lab
     maturity: UNREVIEWED
-    visibility: UNREVIEWED  # owner publication=mixed; /labs/prime-erp noindex, /erp and /apps/prime-erp indexable (observed)
+    visibility: noindex_review  # /labs/prime-erp noindex; /erp and /apps/prime-erp still indexable (observed)
     data_mode: UNREVIEWED
-    canonical_route: UNREVIEWED
+    canonical_route: /labs/prime-erp
     # surfaces: /erp, /apps/prime-erp, /labs/prime-erp
     canonical_branch: main
     related_prs:
@@ -432,11 +450,11 @@ products:
 
   - id: geometric-workbench
     name: ARTEMIS Geometric Workbench
-    division: UNREVIEWED  # candidate core-platform/visualization or studio-media (inventory, confidence C)
-    product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    division: core-platform
+    product_family: visualization
+    lifecycle: active_lab
     maturity: UNREVIEWED
-    visibility: UNREVIEWED  # routes indexable (observed); class not decided
+    visibility: public_safe_demo
     data_mode: UNREVIEWED
     canonical_route: /workbench/app  # per docs/workbench/CANONICAL_ROUTE.md; product route /workbench
     canonical_branch: main
@@ -466,9 +484,9 @@ products:
     name: Octavian Rotunda (Sala Rotonda)
     # owner decision (PR #67): add noindex, keep the route, do not change the iframe
     # target, do not delete; follow-up ADR required.
-    division: UNREVIEWED  # "departments/art" is outside the division model (inventory C9)
+    division: UNREVIEWED  # ADR-007: owner follow-up pending; "departments/art" is not a division
     product_family: UNREVIEWED
-    lifecycle: UNREVIEWED
+    lifecycle: active_lab
     maturity: UNREVIEWED
     visibility: noindex_review  # applied in PR #68; verified in built HTML
     data_mode: UNREVIEWED  # embeds external content

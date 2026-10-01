@@ -128,6 +128,11 @@ divisions:
     data_classification: noindex_review_or_public_approved
     commercial_stage: draft
 
+# `incubation` is NOT a division (ADR-006: "Artemis Labs is not automatically a
+# commercial division and does not grant production status"). A Product Registry
+# entry may name `artemis-labs` as its owner (e.g. artemisix19, a testbed); that is
+# a valid incubation owner, not a division id, so it is intentionally absent from
+# `divisions` above. Tests pin this as a known non-division owner.
 incubation:
   id: artemis-labs
   name: Artemis Labs
