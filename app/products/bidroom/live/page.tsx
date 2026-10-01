@@ -17,6 +17,7 @@ export const metadata = createMetadata({
   path: "/products/bidroom/live",
   description:
     "Public BidRoom entry point for opportunity discovery, official source portals, deadlines, and pursuit triage.",
+  noIndex: true,
 });
 
 const officialSources = [

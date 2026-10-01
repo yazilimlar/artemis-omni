@@ -5,6 +5,7 @@ export const metadata = createMetadata({
   title: "BidRoom AtlasIQ",
   path: "/products/bidroom/atlasiq",
   description: "Federated public-works opportunity intelligence with scope, qualification, permit, addendum, and bid-type filters.",
+  noIndex: true,
 });
 
 export default BidRoomAtlasIQPage;

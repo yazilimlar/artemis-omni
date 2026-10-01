@@ -11,6 +11,7 @@ export const metadata = createMetadata({
   title: "Prime Industrial ERP | Artemis Apps",
   description:
     "Controlled client access point for the live Prime Industrial ERP operating dashboard.",
+  noIndex: true,
 });
 
 export default function PrimeErpAccessPage() {

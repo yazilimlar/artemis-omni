@@ -8,6 +8,7 @@ export const metadata = createMetadata({
   path: "/products/bidroom/switchboard",
   description:
     "A unified review page for toggling between the preserved CivicBid interface and BidRoom Live official-source workflow.",
+  noIndex: true,
 });
 
 export default function BidRoomSwitchboardPage() {
