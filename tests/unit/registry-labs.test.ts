@@ -17,7 +17,7 @@ describe("product registry loader", () => {
   });
 
   it("accepts UNREVIEWED as a field value", () => {
-    expect(getProduct("geometric-workbench")?.visibility).toBe("UNREVIEWED");
+    expect(getProduct("dayos")?.visibility).toBe("UNREVIEWED");
   });
 
   it("loads divisions from DIVISION_REGISTRY.yaml", () => {

@@ -10,13 +10,10 @@ import {
 
 /**
  * Products with visibility "public" that PRODUCT_REGISTRY.yaml records without
- * a route path, as of the 2026-10-01 registry sync. Ratchet: remove an id once
- * its route is registered; never add one silently.
+ * a route path. Empty since the 2026-10-01 registry refinement: artemis-nomad
+ * now has a route and dayos is no longer public. Ratchet: never add one silently.
  */
-const KNOWN_ROUTELESS_PUBLIC_PRODUCTS = [
-  "artemis-nomad", // canonical_route: UNREVIEWED (two levara-l28 surfaces)
-  "dayos", // canonical_route: null (static assets only, no app/ route)
-];
+const KNOWN_ROUTELESS_PUBLIC_PRODUCTS: string[] = [];
 
 /**
  * Owners that products reference but loadDivisions() does not return.
