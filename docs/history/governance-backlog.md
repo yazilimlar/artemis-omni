@@ -25,3 +25,16 @@ Items that surfaced during sessions but are not blocking milestones.
   Authentication → Emails → SMTP Settings.
 - /login shows both error and success messages simultaneously. Split into
   mutually exclusive states.
+
+## M3 deferred item (2026-10-01)
+- Magic-link email delivery not yet verified end-to-end. Auth code is merged,
+  deployed, and smoke-tested (redirect from /control to /login works). The
+  remaining gap is Supabase auth email delivery, likely one of:
+    * gokmen1313@gmail.com not yet a User in Supabase (shouldCreateUser: false)
+    * Resend onboarding@resend.dev only delivers to the Resend signup email
+    * Resend API key missing Sending access permission
+- Debug steps documented in Supabase → Authentication → Logs and Resend → Emails.
+- TRIGGER to fix: first time the owner or a teammate needs to open /control or
+  /system-map. Fix time estimate: ~10 minutes.
+- Until then: /control and /system-map are effectively private (redirect to
+  /login, and no one can complete sign-in). Fail-closed by design.
