@@ -25,6 +25,7 @@ export const metadata = createMetadata({
   title: "Prime Industrial ERP | Artemis",
   description:
     "A public-safe MVP for industrial operations, project controls, finance, procurement, equipment, compliance, and executive decision support.",
+  noIndex: true,
 });
 
 const metrics = [

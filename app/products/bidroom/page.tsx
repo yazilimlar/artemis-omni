@@ -6,6 +6,7 @@ export const metadata = createMetadata({
   title: "BidRoom Product Suite",
   path: "/products/bidroom",
   description: "Stable public entry point for BidRoom Live, specialty contractor pursuit, AtlasIQ procurement intelligence, and the Evidence Engine.",
+  noIndex: true,
 });
 
 const variants = [

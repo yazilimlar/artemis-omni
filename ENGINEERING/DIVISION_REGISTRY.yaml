@@ -42,6 +42,7 @@ divisions:
       - forecasting
       - cashflow
       - claims-and-risk
+      - bidroom
     public_routes:
       - /labs/civicbid-intelligence-bridge
       - /labs/construction-intelligence-workbench
@@ -82,6 +83,9 @@ divisions:
       - storytelling
       - brand-systems
       - product-visualization
+      - reference-demo
+      - demo
+      - personal-demo
     public_routes: []
     data_classification: public_safe_or_private_source_protected
     commercial_stage: candidate
@@ -110,6 +114,7 @@ divisions:
       - tax-architecture
       - financial-modeling
       - decision-support
+      - erp
     public_routes:
       - /labs/tax-architecture-2026
     data_classification: educational_or_private_approved
