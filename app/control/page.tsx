@@ -9,6 +9,7 @@ import {
   loadProducts,
   type RegistryProduct,
 } from "@/lib/registry/load";
+import { requireAuth } from "@/lib/auth/require-auth";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -90,7 +91,8 @@ const columns = [
   "next_gate",
 ];
 
-export default function ControlPage() {
+export default async function ControlPage() {
+  await requireAuth();
   const products = loadProducts();
   const divisions = loadDivisions();
   const groups = groupByDivision(products);
