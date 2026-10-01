@@ -18,3 +18,10 @@ Items that surfaced during sessions but are not blocking milestones.
 ## From PR #72 (2026-10-01, ADR batch)
 - ADR-008 bucket name: `client_or_owner_related` (PR #67) vs
   `client_or_partner_work` (ADR-008). Pick one, update the other.
+
+## From M3 (2026-10-01, continued)
+- Supabase free-tier email rate limit blocks rapid testing. Resolution: custom
+  SMTP via Resend (free tier, 3,000 emails/month). Configured in Supabase
+  Authentication → Emails → SMTP Settings.
+- /login shows both error and success messages simultaneously. Split into
+  mutually exclusive states.
