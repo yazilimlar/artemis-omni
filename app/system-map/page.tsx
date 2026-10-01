@@ -10,6 +10,7 @@ import {
   loadProducts,
   type RegistryProduct,
 } from "@/lib/registry/load";
+import { requireAuth } from "@/lib/auth/require-auth";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -70,7 +71,8 @@ function BranchCard({ branch }: { branch: Branch }) {
   );
 }
 
-export default function SystemMapPage() {
+export default async function SystemMapPage() {
+  await requireAuth();
   const products = loadProducts();
   const divisions = loadDivisions();
   const known = new Set(divisions.map((division) => division.id));
