@@ -30,7 +30,7 @@ Items that surfaced during sessions but are not blocking milestones.
 - Magic-link email delivery not yet verified end-to-end. Auth code is merged,
   deployed, and smoke-tested (redirect from /control to /login works). The
   remaining gap is Supabase auth email delivery, likely one of:
-    * gokmen1313@gmail.com not yet a User in Supabase (shouldCreateUser: false)
+    * <owner-email> not yet a User in Supabase (shouldCreateUser: false)
     * Resend onboarding@resend.dev only delivers to the Resend signup email
     * Resend API key missing Sending access permission
 - Debug steps documented in Supabase → Authentication → Logs and Resend → Emails.
