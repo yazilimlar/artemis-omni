@@ -4,6 +4,7 @@ export const metadata = {
   title: "Octavian Rotunda | Artemis Art",
   description:
     "An embedded Artemis art experience for the Vatican Museums, Greco-Roman bodies, and octagonal spatial memory.",
+  robots: { index: false, follow: false },
 };
 
 export default function SalaRotondaArtPage() {
