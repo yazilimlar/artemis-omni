@@ -1,6 +1,32 @@
+# ---------------------------------------------------------------------------
+# 2026-10-01 registry sync (branch governance/registry-sync-2026-10)
+# Source: docs/history/phase-1-inventory-proposal.md (PR #67)
+#
+# UNREVIEWED is used as a field value where division, family, lifecycle,
+# maturity, visibility, data mode or canonical route is not established by
+# repository evidence or an owner decision (AI_AGENT_RULES.md: "Use UNREVIEWED
+# or propose registry correction rather than guessing"). It is a review marker,
+# not a member of any status_definitions list.
+#
+# Owner classifications are recorded as `# owner:` comments on each entry,
+# because the current schema has no fields for them.
+#
+# PROPOSED schema additions (NOT applied; for a later governance PR):
+#   subclass:                  variant within a bucket
+#                              (demo | reference_demo | placeholder_persona | personal_demo)
+#   external_brand_referenced: third-party brand an artifact references but does not own
+#   operator:                  organization that runs the product
+#   end_customer:              who the product ultimately serves
+#   bucket:                    internal_product | internal_asset | client_or_owner_related
+#   data_boundary:             artemis_owned | to_be_confirmed
+#   publication:               owner publication intent (public | noindex | mixed)
+#   distribution:              delivery channel when the product is not a route
+#   observed_routes:           every delivery surface when more than one exists
+# ---------------------------------------------------------------------------
+
 schema_version: 1
 registry_status: provisional_evidence_based
-last_reviewed: 2026-07-11
+last_reviewed: 2026-10-01
 
 status_definitions:
   lifecycle:
@@ -64,11 +90,17 @@ products:
     api_route: /api/civicbid/signal-forge
     canonical_branch: main
     validated_rescue_commit: 7b0cd8b72be908b66ea648a1ac3791db87292306
-    active_integration_branch: feature/civicbid-canonical-bridge-integration-v1
+    # 2026-10-01 sync: PR #13 merged to main on 2026-07-11 (squash 7d620ff); the
+    # integration branch is no longer active. Lifecycle stays `rescue` and next_gate
+    # is unchanged because no active_lab review or deployed-route review is recorded.
+    # PR #19 (Bid Room public visibility and release safety) is open.
+    active_integration_branch: null
     rescue_issue: 11
     related_prs:
       - 12
       - 13
+      - 16  # The Bid Room v2.1 review interface (ENGINEERING/FEATURE_PASSPORTS/CIVICBID_BID_ROOM_V2_1_UI.md)
+      - 18  # deadline-sanity hotfix
     donor_branches:
       - feature/civicbid-sourceledger-command-deck
       - test/civicbid-signal-forge
@@ -196,12 +228,260 @@ products:
     visibility: noindex_review
     data_mode: sample
     canonical_route: null
+    # 2026-10-01 sync: /evolution and /api/public/artemis-structure exist on main
+    # (added 2026-07-11) and are indexable. Whether they are this product is
+    # UNREVIEWED (inventory C6, U7); canonical_route left unchanged.
     donor_branches:
       - claude/evolution-console
     known_blockers:
       - operational_claims_require_factual_review
       - public_tool_and_workflow_disclosure_requires_owner_approval
     next_gate: factual_and_commercial_review
+
+  # --- 2026-10-01 sync: entries added from the Phase 1 inventory (PR #67) ---
+
+  - id: bidroom-suite
+    name: BidRoom Product Suite
+    division: UNREVIEWED  # candidate infrastructure-construction (inventory Table B, confidence C)
+    product_family: UNREVIEWED  # candidate civicbid; not confirmed
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: UNREVIEWED  # observed mixed: /labs/bidroom-verity noindex; other surfaces indexable
+    data_mode: UNREVIEWED
+    canonical_route: UNREVIEWED
+    # surfaces: /products/bidroom, /products/bidroom/{atlasiq,contractor,evidence-engine,live,switchboard},
+    #           /labs/bidroom-atlasiq, /labs/bidroom-verity
+    canonical_branch: main
+    related_prs:
+      - 25
+      - 26
+      - 27
+      - 28
+      - 29
+    status_evidence: >-
+      Routes app/products/bidroom/* and app/labs/bidroom-atlasiq, app/labs/bidroom-verity
+      exist on main. Docs: docs/atlasiq/EVIDENCE_ENGINE_V1.md, docs/verity/DECISION_LEDGER.md.
+      A shadow copy exists at src/app/labs/bidroom-atlasiq (inventory C8). Distinct from
+      The Bid Room v2.1 interface, which belongs to civicbid per
+      ENGINEERING/FEATURE_PASSPORTS/CIVICBID_BID_ROOM_V2_1_UI.md.
+    known_blockers:
+      - ownership_and_division_unconfirmed
+      - no_single_canonical_route
+    next_gate: bidroom_registry_review
+
+  - id: bidroom-exemplary-contractor
+    name: BidRoom for Exemplary Contractor
+    # owner: bucket=internal_asset, subclass=placeholder_persona,
+    #        data_boundary=artemis_owned, publication=public, confidence=B
+    division: UNREVIEWED  # owner bucket sets ownership type, not division
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: public  # owner publication=public
+    data_mode: UNREVIEWED
+    canonical_route: /labs/bidroom-exemplary-contractor
+    canonical_branch: main
+    related_prs:
+      - 24
+    status_evidence: >-
+      Route app/labs/bidroom-exemplary-contractor exists on main. "Exemplary Contractor"
+      is a placeholder persona, not a client (owner decision recorded in PR #67).
+    next_gate: division_assignment
+
+  - id: artemis-nomad
+    name: Artemis Nomad (LEVARA L28 reference demo)
+    # owner: bucket=internal_asset, subclass=reference_demo, current_name="Artemis Nomad",
+    #        external_brand_referenced="Levara (manufacturer)", data_boundary=artemis_owned,
+    #        publication=public, confidence=B
+    division: UNREVIEWED
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: public  # owner publication=public
+    data_mode: UNREVIEWED
+    canonical_route: UNREVIEWED
+    # surfaces: /labs/levara-l28-financial-twin, /labs/levara-l28-success-gate-immersive
+    canonical_branch: main
+    related_prs:
+      - 20
+      - 21
+      - 22
+    status_evidence: >-
+      Routes app/labs/levara-l28-financial-twin and app/labs/levara-l28-success-gate-immersive
+      serve standalone runtimes from public/standalone/levara-l28-*. Route, asset and branch
+      names still use "levara-l28" (inventory C17).
+    next_gate: division_assignment
+
+  - id: diana-moonshot
+    name: Diana Moonshot
+    # owner: bucket=internal_asset, subclass=demo, data_boundary=artemis_owned,
+    #        publication=public, confidence=A
+    division: UNREVIEWED
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: public  # owner publication=public
+    data_mode: UNREVIEWED
+    canonical_route: /labs/diana-moonshot
+    canonical_branch: main
+    status_evidence: >-
+      Route app/labs/diana-moonshot exists on main (added 2026-06-30, a01a173). No merging
+      PR identified.
+    next_gate: division_assignment
+
+  - id: anastasia-fantasia-demo
+    name: Anastasia Fantasia
+    # owner: bucket=internal_asset, subclass=personal_demo, data_boundary=artemis_owned,
+    #        publication=noindex, confidence=A. Personal project, not client work.
+    division: UNREVIEWED
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: noindex_review  # owner publication=noindex; route emits robots noindex,follow
+    data_mode: UNREVIEWED
+    canonical_route: /apps/anastasia-fantasia-demo
+    canonical_branch: main
+    related_prs:
+      - 60
+      - 61
+    # PR #62 (editorial chapters) is open.
+    status_evidence: >-
+      Route handler app/apps/anastasia-fantasia-demo/route.ts exists on main and serves
+      HTML with a robots noindex meta tag.
+    next_gate: division_assignment
+
+  - id: dayos
+    name: DayOS
+    # owner: bucket=internal_product,
+    #        distribution=tbd_public_app_or_skill_or_connector_or_open_repo,
+    #        data_boundary=artemis_owned, publication=public, confidence=B
+    division: UNREVIEWED
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: public  # owner publication=public; currently static assets only
+    data_mode: UNREVIEWED
+    canonical_route: null  # no app/ route on main
+    canonical_branch: UNREVIEWED
+    # PRs #54, #55, #56 (v0.9.8a/b/c) are open; #57 closed unmerged.
+    status_evidence: >-
+      Static assets public/dayos, public/dayos-v050, public/dayos-v090 and public/dayos-v097
+      exist on main and are directly reachable. Branches feature/dayos-* hold further work.
+    known_blockers:
+      - distribution_channel_undecided
+    next_gate: distribution_decision
+
+  - id: pinar-evleri
+    name: Pınar Evleri
+    # owner: bucket=client_or_owner_related, data_boundary=to_be_confirmed,
+    #        publication=public, confidence=B
+    # UNREVIEWED: data_boundary=to_be_confirmed (inventory U2, C13).
+    division: UNREVIEWED
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: public  # owner publication=public; route has no noindex (observed)
+    data_mode: UNREVIEWED
+    canonical_route: /pinarevleri
+    canonical_branch: main
+    related_prs:
+      - 45
+      - 46
+      - 47
+      - 48
+      - 49
+      - 50
+      - 51
+    # PR #52 (Manager Operations MVP) is open.
+    status_evidence: >-
+      Route app/pinarevleri with components/pinarevleri, lib/pinarevleri and
+      public/images/pinarevleri exists on main. The page links to external booking,
+      location and video services.
+    known_blockers:
+      - data_boundary_to_be_confirmed
+      - client_work_classification_requires_adr
+    next_gate: client_work_adr
+
+  - id: prime-industrial-erp
+    name: Prime Industrial ERP
+    # owner: bucket=internal_product, operator=great_order, end_customer=external,
+    #        data_boundary=to_be_confirmed, publication=mixed, confidence=B
+    # UNREVIEWED: data_boundary=to_be_confirmed; Great Order relationship unresolved (inventory U1, U3).
+    division: UNREVIEWED
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: UNREVIEWED  # owner publication=mixed; /labs/prime-erp noindex, /erp and /apps/prime-erp indexable (observed)
+    data_mode: UNREVIEWED
+    canonical_route: UNREVIEWED
+    # surfaces: /erp, /apps/prime-erp, /labs/prime-erp
+    canonical_branch: main
+    related_prs:
+      - 23
+      - 58
+      - 59
+    status_evidence: >-
+      Routes app/erp, app/apps/prime-erp and app/labs/prime-erp and backend services/prime-erp
+      exist on main. PR #59 prepared a persistent backend, so ADR-004 applies.
+    known_blockers:
+      - data_boundary_to_be_confirmed
+      - great_order_relationship_requires_adr
+      - persistent_backend_requires_adr_004_review
+      - no_single_canonical_route
+    next_gate: prime_erp_registry_review
+
+  - id: geometric-workbench
+    name: ARTEMIS Geometric Workbench
+    division: UNREVIEWED  # candidate core-platform/visualization or studio-media (inventory, confidence C)
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: UNREVIEWED  # routes indexable (observed); class not decided
+    data_mode: UNREVIEWED
+    canonical_route: /workbench/app  # per docs/workbench/CANONICAL_ROUTE.md; product route /workbench
+    canonical_branch: main
+    related_prs:
+      - 33
+      - 34
+      - 35
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 41
+      - 43
+    # PRs #42 and #44 are open.
+    status_evidence: >-
+      docs/workbench/CANONICAL_ROUTE.md names /workbench and /workbench/app and says legacy
+      /labs/geometric-workbench/v5-8 URLs redirect to /workbench/app. Code also lives in
+      artemis-workbench/, workbench-foundation/, archive/workbench, reference/geometric-workbench
+      and public/labs/geometric-workbench.
+    known_blockers:
+      - duplicate_code_locations
+      - ownership_and_division_unconfirmed
+    next_gate: workbench_consolidation
+
+  - id: sala-rotonda
+    name: Octavian Rotunda (Sala Rotonda)
+    # owner decision (PR #67): add noindex, keep the route, do not change the iframe
+    # target, do not delete; follow-up ADR required.
+    division: UNREVIEWED  # "departments/art" is outside the division model (inventory C9)
+    product_family: UNREVIEWED
+    lifecycle: UNREVIEWED
+    maturity: UNREVIEWED
+    visibility: noindex_review  # applied in PR #68; verified in built HTML
+    data_mode: UNREVIEWED  # embeds external content
+    canonical_route: /departments/art/sala-rotonda
+    canonical_branch: main
+    related_prs:
+      - 68
+    status_evidence: >-
+      app/departments/art/sala-rotonda/page.tsx iframes an external *.chatgpt.site host and
+      exports robots index:false, follow:false (PR #68).
+    known_blockers:
+      - external_iframe_content_and_hosting_require_adr
+    next_gate: sala_rotonda_adr
 
 registry_rules:
   - A branch status must never be used as the sole evidence for product retirement.
