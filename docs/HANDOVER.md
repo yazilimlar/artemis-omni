@@ -89,3 +89,25 @@ Closed without merge: #57.
 5. Prime ERP registry review after data boundary and Great Order are resolved.
 6. Workbench consolidation: resolve duplicate code locations.
 7. CivicBid: record the deployed-route review and decide on `rescue` → `active_lab`.
+
+## Session 2026-10-01 — ADR batch 2026-10
+
+- Branch: `governance/adr-batch-2026-10` (from `main` @ `6a5ad66`)
+- Division: core-platform · Product: none (governance) · Visibility: internal_operations · Data mode: mixed_explicit · Change type: governance
+- Files: `decisions/ADR-007-sala-rotonda.md`, `decisions/ADR-008-client-work.md`, `decisions/ADR-009-great-order.md`, `decisions/ADR-010-bidroom-registry.md`, `decisions/ADR-INDEX.md`, `docs/HANDOVER.md`
+- Closes PR #67 items: C9 (Sala Rotonda), C13 (client work), U1 (Great Order), C10/C8 (BidRoom).
+- Not changed: no code, no routes, no registry YAML. The ADRs decide values that the registry does not record yet:
+  - ownership bucket and `operator` fields;
+  - BidRoom division, family and lifecycle `rescue` (the registry currently says `UNREVIEWED`).
+- Open items:
+  - mapping Pınar Evleri's `client_or_owner_related` to `client_or_partner_work`;
+  - where signed relationship records are stored;
+  - whether `bidroom-exemplary-contractor` joins the `bidroom` family.
+
+### Next recommended tasks
+
+1. Registry refinement (governance):
+   - apply ADR-008/009/010 values;
+   - record visibility and canonical routes for hidden products;
+   - resolve `artemis-labs` (incubation vs division) for `artemisix19`.
+2. M3: auth for `/control` and `/system-map`.
