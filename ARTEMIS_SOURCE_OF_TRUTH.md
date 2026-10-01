@@ -1,142 +1,80 @@
 # ARTEMIS SOURCE OF TRUTH
 
 Last updated: 2026-10-01
-Owner: George (yazilimlar)
-Status: ACTIVE — this file overrides all AI conversations and memory.
+Status: ACTIVE — this file is a top-level INDEX.
+It points to existing governance. It does not duplicate it.
 
 ## Rule
-No AI, chat, memory, or suggestion overrides this file.
-Updates require: (1) an explicit decision, (2) a decision-log entry, (3) a commit.
+Do not restate rules here. Point to where they live.
+If a rule is needed, read the file it points to.
+If two sources disagree, the one higher in the Source of Truth Order wins.
 
-## 1. Parent system
-AgoraXAI (agoraxai.com, Squarespace DNS)
-
-## 2. Artemis role
-Engineering / construction / software / media / AI adoption agora.
-Artemis is a department of AgoraXAI, not a competitor to it.
-
-## 3. Canonical repo
-- Local path: ~/Projects/artemis-omni
+## Canonical location
+- Repo: ~/Projects/artemis-omni
 - Remote: git@github.com:yazilimlar/artemis-omni.git
 - Branch: main
-- This is the ONLY canonical Artemis repo.
-- Desktop copies, Documents copies, worktrees, and Codex clones are NOT canonical.
+- All other clones (Desktop, Documents, Codex, worktrees) are NOT canonical.
 
-## 4. Stack
-- Next.js (App Router)
-- TypeScript
-- Tailwind CSS
-- MDX
-- Vitest
-- Deployed to Vercel (public site)
-- Prime ERP backend on Render (services/prime-erp)
+## Where the rules actually live
+| Topic | File |
+|---|---|
+| AI behavior | ENGINEERING/AI_AGENT_RULES.md |
+| AI session start | ENGINEERING/AI_SESSION_START_PROTOCOL.md |
+| Architecture | ENGINEERING/ARCHITECTURE.md |
+| Engineering DNA | ENGINEERING/ENGINEERING_DNA.md |
+| Branch lifecycle | ENGINEERING/BRANCH_LIFECYCLE.md |
+| Recovery matrix | ENGINEERING/RECOVERY_MATRIX.md |
+| System index | ENGINEERING/SYSTEM_INDEX.md |
+| Divisions | ENGINEERING/DIVISION_REGISTRY.yaml |
+| Products | ENGINEERING/PRODUCT_REGISTRY.yaml |
+| Capabilities | ENGINEERING/CAPABILITY_REGISTRY.md |
+| Project genome | ENGINEERING/PROJECT_GENOME.yaml |
+| Testbed migration | ENGINEERING/TESTBED_MIGRATION_REGISTRY.yaml |
+| Feature passports | ENGINEERING/FEATURE_PASSPORT_TEMPLATE.md |
+| Security | docs/SecurityRules.md |
+| Handover | docs/HANDOVER.md |
+| Brand | docs/BrandArchitecture.md |
+| Decisions (ADRs) | decisions/ADR-INDEX.md |
 
-## 5. Public domain
-artemis.agoraxai.com
+## Source of truth order
+1. decisions/ADRs — locked decisions
+2. ENGINEERING/ governance files
+3. data/artemis-registry.json — to be created in Phase 1
+4. Repo files on main
+5. Deployment config (vercel.json, render.yaml, .github/workflows)
+6. Terminal output
+7. AI memory and conversation
 
-## 6. Hosting map
-| Layer | Tool | Purpose |
-|---|---|---|
-| DNS | Squarespace | Owns agoraxai.com and subdomains |
-| Public site | Vercel | artemis.agoraxai.com |
-| Source control | GitHub | yazilimlar/artemis-omni |
-| Private backend | Render | services/prime-erp |
-| Private tools | Render / Oracle / Tailscale | TBD per service |
-| Registry | Repo file | data/artemis-registry.json |
-
-## 7. Canonical public routes (v0.1)
-- /
-- /departments
-- /labs
-- /control
-- /system-map
-
-Notes:
-- /departments and /labs already exist and are canonical.
-- /control and /system-map do not exist yet and must be created in v0.1.
-- All other existing routes are provisional. They will be classified as:
-  canonical, restore, archive, private, or discard-candidate.
-- No route is deleted without a decision-log entry.
-
-## 8. Client and brand work living inside this repo
-These are real deliverables and must be tracked as artifacts, not lost:
-
-| Name | Where | Status |
-|---|---|---|
-| Anastasia | app/apps, demo/* branches | active demo |
-| Pınar Evleri | app/pinarevleri, feat/pinar-* branches | active client |
-| Dayos | public/dayos*, feature/dayos-* branches | active product |
-| Rainbow Botanics | app/rainbowbotanics*, components/rainbow | active brand |
-| CivicBid | lib/civicbid, public/civicbid | TBD |
-| AtlasIQ | docs/atlasiq, schemas/atlasiq | TBD |
-| Prime ERP | services/prime-erp, app/erp, app/labs/prime-erp | active |
-| Verity | docs/verity | TBD |
-| GEOMETRIC Workbench | artemis-workbench/, workbench-foundation/, archive/workbench/ | duplicated — needs classification |
-
-## 9. Registry
-- File: data/artemis-registry.json
-- Required fields per artifact:
-  id, slug, title, type, status, visibility, owner,
-  source, current_path, public_route, deployment, version,
-  risk, next_action, created_at, updated_at, tags
-- Statuses: canonical, restore, archive, duplicate, discard-candidate, private
-
-## 10. Source of truth order
-1. This file
-2. data/artemis-registry.json
-3. Repo files on main branch
-4. Deployment config (vercel.json, render.yaml, .github/workflows)
-5. Terminal output
-6. AI memory and conversation
-
-## 11. AI collaboration
-- Claude Code: coordinator and executor (local repo work)
-- ChatGPT/GPT: strategic review and implementation backup
-- Claude (web): architecture critique only
-- Gemini: strategy challenge
-- CodeRabbit: PR review
-- Rule: one AI writes at a time. Others review.
-
-## 12. Experience layer (3D / immersive)
-- 3D is an experience layer, not a site-wide rewrite.
-- Public brand site stays fast and 2D-first.
-- 3D lives in: /labs/*, /departments/* showcases, and specific hero sections.
-- Rendering stack: React Three Fiber (R3F) + drei — to be confirmed in decision log.
-- 3D assets live in public/models/, public/textures/.
-- Every 3D route must have a 2D fallback.
-- Every 3D route must declare its asset budget in the registry.
-- A "scene registry" (data/artemis-scenes.json) will mirror the artifact registry.
-- No 3D work starts until Phase 2. Phase 1 is inventory only.
-
-## 13. Current phase
+## Current phase
 Phase 1 — Inventory and Registry.
 No homepage redesign. No new departments. No new client features. No 3D yet.
 
-## 14. Phase 1 tasks (in order)
-1. Classify all 70 app/ route directories into registry statuses.
-2. Classify all client/brand work into registry entries.
-3. Resolve the 4 duplicate workbench locations.
-4. Create data/artemis-registry.json v0.1.
-5. Create /control route and /system-map route.
-6. Build registry-powered page for /labs.
-7. Deploy preview to Vercel.
+## Phase 1 tasks (in order)
+1. Read the existing ENGINEERING/ files fully. Do not modify them yet.
+2. Classify all 70 app/ route directories into registry statuses.
+3. Classify client/brand work into registry entries.
+4. Resolve the 4 duplicate workbench locations.
+5. Create data/artemis-registry.json v0.1 — extending, not replacing, DIVISION_REGISTRY.yaml and PRODUCT_REGISTRY.yaml.
+6. Create /control and /system-map routes.
+7. Build registry-powered /labs page.
 
-## 15. Phase 2 (later)
-- Confirm 3D rendering stack.
-- Create data/artemis-scenes.json.
-- Build one immersive scene in /labs as proof of concept.
-- Define performance budget and mobile fallback policy.
+## Hosting map
+| Layer | Tool |
+|---|---|
+| DNS | Squarespace |
+| Public site | Vercel |
+| Source control | GitHub |
+| Private backend | Render |
+| Registry | data/artemis-registry.json |
 
-## 16. Do not
-- Do not publish secrets, .env files, tokens, or client data.
-- Do not delete branches without a decision-log entry.
-- Do not rename routes without updating this file.
-- Do not let AI memory override this file.
-- Do not start Claude Code without reading CLAUDE.md.
-- Do not rebuild the site from scratch.
-- Do not add 3D libraries in Phase 1.
+## What this file is NOT
+- Not a replacement for ENGINEERING/AI_AGENT_RULES.md
+- Not a replacement for decisions/ADR-INDEX.md
+- Not a replacement for docs/SecurityRules.md
+- Not a place to invent new rules
 
-## 17. Change log
-| Date | Change | By |
-|---|---|---|
-| 2026-10-01 | Initial source of truth created | George + ChatGPT |
+## Change log
+| Date | Change |
+|---|---|
+| 2026-10-01 | v1 created (superseded) |
+| 2026-10-01 | v2 — converted to index to avoid duplication with ENGINEERING/ |
