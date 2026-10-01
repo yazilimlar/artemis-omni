@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isEmailAllowed, parseAllowedEmails } from "./allowlist";
+import { getProfile, type UserProfile } from "./profile";
 
 /** Server-only allowlist variable named in ADR-011. */
 export const ALLOWLIST_ENV = "ARTEMIS_INTERNAL_ALLOWLIST";
@@ -9,8 +10,13 @@ export const ALLOWLIST_ENV = "ARTEMIS_INTERNAL_ALLOWLIST";
  * Gate for internal routes (ADR-011). Call at the top of a Server Component
  * before reading any protected data. Fails closed: no user, an unverifiable
  * user, a missing allowlist, or an unlisted email all end in a redirect.
+ * A missing profile (ADR-012) does not redirect; callers handle `profile: null`.
  */
-export async function requireAuth(): Promise<{ email: string }> {
+export async function requireAuth(): Promise<{
+  email: string;
+  userId: string;
+  profile: UserProfile | null;
+}> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -24,5 +30,6 @@ export async function requireAuth(): Promise<{ email: string }> {
     redirect("/login?error=not_allowed");
   }
 
-  return { email: user.email };
+  const profile = await getProfile(user.id);
+  return { email: user.email, userId: user.id, profile };
 }
