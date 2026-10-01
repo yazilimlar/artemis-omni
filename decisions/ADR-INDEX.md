@@ -17,6 +17,7 @@ work. Accepted ADRs are binding unless replaced by a later accepted ADR.
 | ADR-008 | Client work | Accepted. Adds the `client_or_partner_work` bucket; client work needs an explicit data boundary and a signed relationship record, and must respect ADR-006 import boundaries. |
 | ADR-009 | Great Order | Accepted (operational; legal review deferred). Great Order is an operator organization, not a division; Prime Industrial ERP records `operator: great_order`. |
 | ADR-010 | BidRoom registry | Accepted. BidRoom is one product family (`bidroom`) under infrastructure-construction, distinct from civicbid; lifecycle `rescue` until a deployed-route review. |
+| ADR-011 | Internal route auth | Accepted. `/control` and `/system-map` become internal_operations behind Supabase Auth magic link and a server-side email allowlist; fail closed; no service-role key; amends ADR-004 for these routes only. |
 
 ## Touchpoint Guide
 
