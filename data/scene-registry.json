@@ -16,5 +16,23 @@
     "passport": "components/scenes/hello-orb/passport.md",
     "created_at": "2026-10-01",
     "updated_at": "2026-10-01"
+  },
+  {
+    "id": "spatial-proof-surface",
+    "title": "Spatial Proof Surface",
+    "division": "studio-media",
+    "route": "/labs/scenes/spatial-proof-surface",
+    "visibility": "public_safe_demo",
+    "data_mode": "synthetic",
+    "approved_public": true,
+    "entry_component": "components/scenes/spatial-proof-surface/index.tsx",
+    "fallback_2d": "public/textures/spatial-proof-surface/fallback.svg",
+    "assets_dir": "public/textures/spatial-proof-surface",
+    "asset_budget_mb": 1,
+    "owner": "studio-media",
+    "resource_limits": { "max_session_seconds": 120, "fps_floor": 20 },
+    "passport": "components/scenes/spatial-proof-surface/passport.md",
+    "created_at": "2026-10-02",
+    "updated_at": "2026-10-02"
   }
 ]

@@ -24,7 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return createMetadata({
     title: scene?.title ?? "Scene not found",
     path: `/labs/scenes/${id}`,
-    noIndex: !scene || scene.visibility !== "public",
+    // Public scenes and explicitly approved public_safe_demo scenes are indexable,
+    // matching other public_safe_demo labs; everything else stays noindex.
+    noIndex:
+      !scene ||
+      !(scene.visibility === "public" || (scene.visibility === "public_safe_demo" && scene.approved_public)),
   });
 }
 

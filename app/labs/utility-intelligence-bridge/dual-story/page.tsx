@@ -134,7 +134,7 @@ export default function UtilityDualStoryPage() {
                 <Split className="h-4 w-4" aria-hidden />
               </Button>
               <Button href="#live-cockpit" variant="outline" size="lg">
-                Open Live Cockpit
+                Open Synthetic Cockpit
               </Button>
               <Button href="/labs/utility-intelligence-bridge/field-claims" variant="ghost" size="lg">
                 Compare RC8.3
@@ -361,7 +361,7 @@ export default function UtilityDualStoryPage() {
       <section id="live-cockpit" className="py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
-            eyebrow="Live Cockpit"
+            eyebrow="Synthetic Cockpit"
             title="Run the synthetic RC8 operating proof"
             description="Use the same public-safe workbench as the RC8.3 field-claims page. The difference is the RC8.4 narrative wrapper: choose the operational proof or Cockpit Classic path, then land on the same source chain."
           />

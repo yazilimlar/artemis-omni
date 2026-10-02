@@ -111,10 +111,19 @@ export default function ProductsPage() {
               subtitle="The module portfolio is presented as a connected implementation system rather than a collection of disconnected demos."
               organizationName="Artemis Product Portfolio"
             />
-            <GeodesicRenderCard
-              title="Spatial proof surface"
-              caption="Geometry, fabrication logic, and project visualization stay public-safe here while signaling the direction of deeper private workbench systems."
-            />
+<div className="flex flex-col gap-3">
+              <GeodesicRenderCard
+                title="Spatial proof surface"
+                caption="Geometry, fabrication logic, and project visualization stay public-safe here while signaling the direction of deeper private workbench systems."
+              />
+              <Link
+                href="/labs/scenes/spatial-proof-surface"
+                className="inline-flex items-center gap-2 self-start text-sm text-gold-soft underline-offset-4 hover:underline"
+              >
+                Explore in 3D
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
           </div>
         </Container>
       </section>
