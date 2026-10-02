@@ -20,6 +20,7 @@ work. Accepted ADRs are binding unless replaced by a later accepted ADR.
 | ADR-011 | Internal route auth | Accepted. `/control` and `/system-map` become internal_operations behind Supabase Auth magic link and a server-side email allowlist; fail closed; no service-role key; amends ADR-004 for these routes only. |
 | ADR-012 | User profiles and roles | Accepted. Adds `public.user_profiles` (owner/admin/client/viewer, default viewer) with RLS; users read their own row and may edit only `display_name`; roles are owner-assigned; roles are additive to the ADR-011 allowlist; amends ADR-011's no-tables non-goal. |
 | ADR-013 | Registry proposals | Accepted. Owner-role users propose one-field registry changes from /control/propose; the app opens a GitHub PR via a server-only fine-grained token and never writes main; token identity must not bypass main protection; PR audit cites user id, not email. |
+| ADR-014 | Sandboxed artifact execution | Accepted. Registered HTML/JS artifacts run in an opaque-origin sandbox (iframe `allow-scripts` without same-origin, plus CSP `sandbox` on the served response); sources live outside `public/`; no network by default; no bridge in v1; executions audited in `execution_logs` without the service-role key. |
 
 ## Touchpoint Guide
 
