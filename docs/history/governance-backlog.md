@@ -53,3 +53,10 @@ Items that surfaced during sessions but are not blocking milestones.
 - components/cinematic/ is present but unmounted; carry forward per ADR-015.
 
 - M1–M7 shipped (PRs #67–#86); HANDOVER synced and CI moved to Node 22 in `governance/handover-m1-m7`. Unresolved items above remain open.
+
+## Correction (2026-10-01, post-M7)
+- M3 email delivery IS working. Confirmed: Supabase user gokmen1313@gmail.com,
+  Last signed in 2026-10-01 20:10. The "M3 email delivery verification" and
+  "M5 live test blocked" notes above are resolved conditions, not open items.
+- M5 live test can be run: sign in at /control, click "Propose a change",
+  propose dayos.maturity -> internal_experiment, verify single-line diff, close PR.
