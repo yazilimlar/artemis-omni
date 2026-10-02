@@ -2,6 +2,63 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## Session 2026-10-01 21:45 — M1–M7 programme closure
+
+- State at closure: `main` @ `ed955e9` (PR #86). PRs #66–#86 are all merged.
+- Branch for this record: `governance/handover-m1-m7`. The sections below this one are earlier same-day records, kept as history; their "current state" lines are superseded by this section.
+
+### What shipped
+- M0: governance foundation:
+  - CLAUDE.md pointer (PR #66);
+  - Phase 1 inventory (PR #67);
+  - Sala Rotonda noindex (PR #68);
+  - registry sync (PR #69);
+  - governance backlog (`docs/history/governance-backlog.md`).
+- M1: /labs reads PRODUCT_REGISTRY.yaml (PR #70)
+- M2: /control and /system-map (PR #71)
+- M3: magic-link auth with allowlist (PR #76, ADR-011 via PR #75)
+- M4: per-user profiles and roles, /dashboard per role (PR #78, ADR-012 via PR #77)
+- M5: /control/propose opens GitHub PRs (PR #80, ADR-013 via PR #79)
+- M6: sandboxed HTML execution with audit log (PR #83, ADR-014 via PR #81)
+- M7: /labs/scenes/[id] immersive layer (PR #86, ADR-015 via PR #84; supersedes ADR-002)
+- Governance:
+  - ADRs:
+    - ADR-007 through ADR-010 (PR #72)
+    - ADR-011 (PR #75)
+    - ADR-012 (PR #77)
+    - ADR-013 (PR #79)
+    - ADR-014 (PR #81)
+    - ADR-015 (PR #84)
+  - registry refinement (PR #73);
+  - route noindex and division families alignment (PR #74);
+  - docs (PRs #82, #85).
+- Registries: 20 products, 7 divisions, 1 scene (`hello-orb`), 0 sandbox artifacts.
+- CI: `governance-check.yml` moved from Node 20 to Node 22 (this PR; Vercel deprecated Node 20 on 2026-10-01).
+
+### Known open items (backlog)
+- M5 live end-to-end test deferred
+- M3 magic-link email delivery not yet verified end to end (it blocks the M5 live test and the signed-in paths of M4–M6)
+- Standalone labs load CDN Three.js and run same-origin (security follow-up)
+- ~~Vercel Node 20 deprecation — bump CI to Node 22 or 24~~ (done in this PR: CI on Node 22)
+- Component fallbacks for scenes (ADR-015 future)
+- Drei installed but unused (useGLTF/Text need self-hosted DRACO/font)
+- /login error and success messages render simultaneously
+- ADR-008 bucket naming: client_or_owner_related vs client_or_partner_work
+- BidRoom canonical URL (`/products/bidroom/contractor` vs `/labs/bidroom-exemplary-contractor`)
+- `src/app/labs/bidroom-atlasiq` is live code imported by three routes (ADR-010 archive needs a move first)
+- prime-industrial-erp still lists the `great_order_relationship_requires_adr` blocker after ADR-009
+
+### Owner setup still required for M6
+- `ARTEMIS_IP_SALT` in Vercel and `.env.local`
+- The `execution_logs` migration applied
+
+These are needed before any sandbox artifact is registered.
+
+### Next recommended work
+- Standalone-lab dispositions (sandbox or accept risk)
+- Add a second real scene
+- Migrate /labs/scenes/hello-orb to a real deliverable or remove
+
 ## Current State
 
 - Repo: `yazilimlar/artemis-omni`
