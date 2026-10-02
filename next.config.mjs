@@ -90,6 +90,24 @@ const nextConfig = {
     // Keep MDX rendering on the modern compiler path.
     mdxRs: false,
   },
+  // Raw standalone HTML is reachable at its file URL as well as inside its Labs
+  // wrapper page. Keep the raw copies out of search indexes (site audit E-1).
+  // Scoped to exact public/ paths: a "/labs/:path*" rule would also de-index the
+  // indexable Next.js Labs pages that share that URL space.
+  async headers() {
+    const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
+    return [
+      "/standalone/:path*",
+      "/labs/geometric-workbench/:path*",
+      "/labs/artemis-meander/:path*",
+      "/labs/artemis-meander-classic-archive/:path*",
+      "/labs/auremeander/:path*",
+      "/labs/rainbow-house-botanical-field-v9.html",
+      "/labs/rainbow-house-owner-cockpit-m8.html",
+      "/prime-erp/:path*",
+      "/workbench/runtime/:path*",
+    ].map((source) => ({ source, headers: noindex }));
+  },
   async redirects() {
     return [
       {
