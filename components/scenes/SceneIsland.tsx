@@ -80,6 +80,7 @@ type SceneProps = { paused?: boolean };
 const SCENES: Record<string, ComponentType<SceneProps>> = {
   "hello-orb": dynamic(() => import("./hello-orb"), { ssr: false }),
   "spatial-proof-surface": dynamic(() => import("./spatial-proof-surface"), { ssr: false }),
+  "botanical-garden": dynamic(() => import("./botanical-garden"), { ssr: false }),
 };
 
 class SceneErrorBoundary extends Component<{ onError: () => void; children: ReactNode }, { failed: boolean }> {
