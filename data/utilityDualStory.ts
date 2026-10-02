@@ -97,7 +97,7 @@ export const utilitySynthesisPipeline = [
 
 export const utilityDualStoryLaunch = [
   {
-    title: "Live cockpit",
+    title: "Synthetic cockpit",
     href: "#live-cockpit",
     description: "Run scenario, ground, and water-table choices against synthetic cost and schedule signals.",
   },
