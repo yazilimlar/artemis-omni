@@ -15,6 +15,7 @@ import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
+import { HeroVideo } from "@/components/home/HeroVideo";
 import { HomeHeroScene } from "@/components/scenes/site-hero/HomeHeroScene";
 import { createMetadata } from "@/lib/seo/metadata";
 import { companyPositioning } from "@/lib/artemis/positioning";
@@ -102,6 +103,12 @@ export default function HomePage() {
           />
         </Container>
         <div className="meander-divider" aria-hidden />
+      </section>
+
+      <section className="border-b border-border/60 py-16 lg:py-20" aria-label="Artemis system visualization">
+        <Container>
+          <HeroVideo />
+        </Container>
       </section>
 
       {heroScene ? (
