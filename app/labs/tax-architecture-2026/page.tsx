@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
+import { labSandbox } from "@/lib/standalone-labs";
 
 export const metadata = createMetadata({
   title: "1040 Finance Architecture",
@@ -10,6 +11,9 @@ export const metadata = createMetadata({
 export default function TaxArchitecture2026Page() {
   return (
     <iframe
+      sandbox={labSandbox("tax-architecture-2026")}
+      referrerPolicy="no-referrer"
+      loading="lazy"
       title="1040 Finance Architecture - True 3D Tax Parametric Model 2026"
       src="/standalone/tax-architecture-2026.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#050813]"

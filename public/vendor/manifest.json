@@ -1,0 +1,51 @@
+{
+  "description": "Self-hosted three.js for standalone labs (Batch 5, ADR-014 follow-up). Byte-identical copies of the npm package files; served with Cache-Control immutable and CORS for sandboxed (opaque-origin) labs.",
+  "packages": [
+    {
+      "name": "three",
+      "version": "0.160.0",
+      "tarball": "https://registry.npmjs.org/three/-/three-0.160.0.tgz",
+      "tarball_integrity": "sha512-DLU8lc0zNIPkM7rH5/e1Ks1Z8tWCGRq6g8mPowdDJpw1CFBJMU7UoJjC6PefXW7z//SSl0b2+GCw14LB+uDhng==",
+      "files": [
+        {
+          "path": "/vendor/three@0.160.0/build/three.module.js",
+          "sha256": "76dea8151bc9352aef3528b4262e249b2604f62543828328db978d060d61a495",
+          "bytes": 1272972
+        },
+        {
+          "path": "/vendor/three@0.160.0/examples/jsm/controls/OrbitControls.js",
+          "sha256": "5a44a9e86a2a0fb11933eed69bc2cd33c76a496854c1aed6ed776efa87d7b064",
+          "bytes": 29868
+        },
+        {
+          "path": "/vendor/three@0.160.0/examples/jsm/renderers/CSS2DRenderer.js",
+          "sha256": "a4f0f79184c043f6b9d2654d8ba051e49a7d631d34e8f437c1804798a68c379f",
+          "bytes": 4407
+        }
+      ]
+    },
+    {
+      "name": "three",
+      "version": "0.164.1",
+      "tarball": "https://registry.npmjs.org/three/-/three-0.164.1.tgz",
+      "tarball_integrity": "sha512-iC/hUBbl1vzFny7f5GtqzVXYjMJKaTPxiCxXfrvVdBi1Sf+jhd1CAkitiFwC7mIBFCo3MrDLJG97yisoaWig0w==",
+      "files": [
+        {
+          "path": "/vendor/three@0.164.1/build/three.module.js",
+          "sha256": "a97ec6852978949b7941c070b81292b842473a37549222353fa0a70c18d7285a",
+          "bytes": 1274691
+        },
+        {
+          "path": "/vendor/three@0.164.1/examples/jsm/controls/OrbitControls.js",
+          "sha256": "f260591ef315aa04888152e7f121865214e33fb54727145cf4e4445058db1297",
+          "bytes": 32250
+        },
+        {
+          "path": "/vendor/three@0.164.1/examples/jsm/renderers/CSS2DRenderer.js",
+          "sha256": "a4f0f79184c043f6b9d2654d8ba051e49a7d631d34e8f437c1804798a68c379f",
+          "bytes": 4407
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "$comment": "Batch 5 standalone-lab isolation (ADR-014 follow-up). Single source of truth for sandbox tokens: next.config.mjs emits `Content-Security-Policy: sandbox <tokens>` on every raw and served path, and the app/ iframe wrappers use the same tokens via lib/standalone-labs.ts. No lab gets allow-same-origin. Labs with \"sandbox\": null are exempt (recorded reason) and excluded from the /standalone catch-all.",
+  "labs": [
+    {
+      "id": "tax-architecture-2026",
+      "sandbox": "allow-scripts allow-downloads allow-modals",
+      "paths": [
+        "/standalone/tax-architecture-2026.html"
+      ],
+      "reason": "CSV export (download); print review and copy-URL dialogs (modals)"
+    },
+    {
+      "id": "finance-architecture-5d",
+      "sandbox": "allow-scripts allow-downloads allow-modals",
+      "paths": [
+        "/standalone/finance-architecture-5d.html"
+      ],
+      "reason": "CSV export (download); print review and copy-URL dialogs (modals)"
+    },
+    {
+      "id": "troy-time-atlas-600bc",
+      "sandbox": "allow-scripts allow-downloads",
+      "paths": [
+        "/standalone/troy-time-atlas-600bc.html",
+        "/standalone/troy-time-atlas-600bc.kml"
+      ],
+      "reason": "KML source download"
+    },
+    {
+      "id": "artemis-atlas-kings-highway-v0",
+      "sandbox": "allow-scripts allow-downloads",
+      "paths": [
+        "/standalone/artemis-atlas-kings-highway-v0.html",
+        "/standalone/artemis-atlas-kings-highway-v0.kml"
+      ],
+      "reason": "KML download"
+    },
+    {
+      "id": "turkiye-atlas",
+      "sandbox": "allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/turkiye-atlas.html"
+      ],
+      "reason": "exports and PNG snapshot (downloads); external links opened noopener (popups that leave the sandbox)"
+    },
+    {
+      "id": "george-aegean-quest",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/george-aegean-quest.html"
+      ],
+      "reason": "no extra capabilities needed (storage guarded in Batch 5)"
+    },
+    {
+      "id": "levara-l28-financial-twin",
+      "sandbox": null,
+      "paths": [
+        "/standalone/levara-l28-financial-twin/:path*"
+      ],
+      "reason": "EXEMPT, could not be isolated without breaking. The app is a gzip+base64 payload in index.html that runtime.html decodes and document.writes; it calls localStorage unguarded (theme init, theme switch, evidence checklist) and print(). Sandboxed, the init throws SecurityError: theme, checklist and Print/PDF break (verified in headless Chrome). Same-origin, no external origins. Follow-up: guard storage inside the payload, then sandbox with allow-scripts allow-modals."
+    },
+    {
+      "id": "levara-l28-success-gate-immersive",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/levara-l28-success-gate-immersive/:path*"
+      ],
+      "reason": "no extra capabilities needed"
+    },
+    {
+      "id": "utility-3d-model",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/utility-intelligence-bridge/3d-model/:path*",
+        "/labs/utility-intelligence-bridge/3d-model",
+        "/labs/utility-intelligence-bridge/3d-model/app"
+      ],
+      "reason": "served top-level via rewrite; isolated by response header only"
+    },
+    {
+      "id": "geometric-workbench-runtime",
+      "sandbox": "allow-scripts allow-downloads allow-modals allow-popups",
+      "paths": [
+        "/labs/geometric-workbench/:path+",
+        "/workbench/runtime/:path+"
+      ],
+      "reason": "PNG/JSON exports (downloads); alerts (modals); print views opened in new windows (popups)"
+    },
+    {
+      "id": "artemis-meander",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/labs/artemis-meander/:path+"
+      ],
+      "reason": "URL-only; direct visits isolated"
+    },
+    {
+      "id": "artemis-meander-classic-archive",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/labs/artemis-meander-classic-archive/:path+"
+      ],
+      "reason": "URL-only; direct visits isolated"
+    },
+    {
+      "id": "rainbow-house-botanical-field-v9",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/labs/rainbow-house-botanical-field-v9.html"
+      ],
+      "reason": "URL-only; direct visits isolated"
+    }
+  ]
+}

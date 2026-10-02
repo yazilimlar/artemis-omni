@@ -86,7 +86,7 @@ describe("GET /api/sandbox/[id]", () => {
       expect(response.status).toBe(404);
       expect(await response.json()).toEqual({ error: "not_found" });
     }
-  });
+  }, 30_000); // cold import of the route (Supabase SSR + Next server modules) flaked past 5 s in full runs
 });
 
 describe("response headers", () => {

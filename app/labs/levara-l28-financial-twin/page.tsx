@@ -10,6 +10,9 @@ export const metadata = createMetadata({
 export default function LevaraL28FinancialTwinPage() {
   return (
     <iframe
+      // Exempt from sandboxing: see data/standalone-labs.json (levara-l28-financial-twin).
+      referrerPolicy="no-referrer"
+      loading="lazy"
       title="LEVARA L28 Financial Twin"
       src="/standalone/levara-l28-financial-twin/runtime.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#fffaf4]"
