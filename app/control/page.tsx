@@ -92,7 +92,7 @@ const columns = [
 ];
 
 export default async function ControlPage() {
-  await requireAuth();
+  const { profile } = await requireAuth();
   const products = loadProducts();
   const divisions = loadDivisions();
   const groups = groupByDivision(products);
@@ -115,6 +115,11 @@ export default async function ControlPage() {
           <Badge>noindex</Badge>
           <Badge>read-only</Badge>
           <Badge>registry facts only</Badge>
+          {profile?.role === "owner" ? (
+            <a href="/control/propose" className="text-sm text-gold-soft underline-offset-4 hover:underline">
+              Propose a change →
+            </a>
+          ) : null}
         </div>
       </PageHero>
 

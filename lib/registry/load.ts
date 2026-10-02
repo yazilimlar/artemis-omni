@@ -220,6 +220,31 @@ export function linkableRoute(product: RegistryProduct): string | null {
 }
 
 /** Applies the public listing rule documented at the top of this file. */
+export type RegistrySchema = {
+  lifecycles: string[];
+  maturities: string[];
+  visibilityClasses: string[];
+};
+
+/** Allowed values from `status_definitions` in PRODUCT_REGISTRY.yaml (no UNREVIEWED). */
+export function loadRegistrySchema(): RegistrySchema {
+  const definitions = readYaml("PRODUCT_REGISTRY.yaml").status_definitions as
+    | Record<string, unknown>
+    | undefined;
+  const list = (key: string): string[] => {
+    const value = definitions?.[key];
+    if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+      throw new Error(`PRODUCT_REGISTRY.yaml status_definitions.${key} is not a string list.`);
+    }
+    return value as string[];
+  };
+  return {
+    lifecycles: list("lifecycle"),
+    maturities: list("maturity"),
+    visibilityClasses: list("visibility"),
+  };
+}
+
 export function isPubliclyListed(product: RegistryProduct): boolean {
   return (
     product.visibility === "public" &&
