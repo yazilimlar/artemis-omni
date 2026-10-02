@@ -77,6 +77,11 @@ const nextConfig = {
   // Pin tracing to this app so the sibling Remotion lockfile at the parent dir
   // doesn't get selected as the workspace root.
   outputFileTracingRoot: __dirname,
+  // ADR-014: artifact sources are read at request time from sandbox/ (outside public/),
+  // so they must be traced into the /api/sandbox/[id] function bundle explicitly.
+  outputFileTracingIncludes: {
+    "/api/sandbox/[id]": ["./sandbox/**/*"],
+  },
   images: {
     // Prepare for remote/optimized imagery later. Add remotePatterns when needed.
     formats: ["image/avif", "image/webp"],
