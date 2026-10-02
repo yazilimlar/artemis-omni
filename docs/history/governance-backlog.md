@@ -38,3 +38,8 @@ Items that surfaced during sessions but are not blocking milestones.
   /system-map. Fix time estimate: ~10 minutes.
 - Until then: /control and /system-map are effectively private (redirect to
   /login, and no one can complete sign-in). Fail-closed by design.
+
+## M5 (2026-10-01)
+- /control/propose end-to-end not yet tested live. Code merged; test blocked
+  during M5 session. First live test: propose dayos.maturity -> internal_experiment,
+  verify single-line diff, close PR without merging.
