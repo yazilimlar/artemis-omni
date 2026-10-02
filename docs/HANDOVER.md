@@ -132,3 +132,27 @@ M6 implementation:
 - `/labs/run/[id]`;
 - an `execution_logs` migration with a `security definer` logging and rate-limit function;
 - the `/control` artifact list.
+
+## Session 2026-10-01: ADR-015 (immersive 3D layer)
+
+- Branch: `governance/adr-015-immersive-layer` (from `main` @ `9de52be`)
+- Division: studio-media (cross-division: core-platform rendering island) · Product: site-shell · Change type: governance
+- Files: `decisions/ADR-015-immersive-layer.md`, `decisions/ADR-INDEX.md` (ADR-015 row; ADR-002 row marked superseded), `docs/HANDOVER.md`
+- Not changed: no code, no dependencies, no registries.
+- Facts recorded:
+  - ADR-002 Phase 1 exists in `components/cinematic/` but no route mounts it;
+  - the R3F path was never built;
+  - `public/models` and `public/textures` are empty;
+  - the standalone labs load Three.js from third-party CDNs at mixed versions;
+  - `app/labs/[slug]` occupies the `/labs` dynamic segment, so scenes use `/labs/scenes/[id]`.
+- Known risk (ADR-014 track): CDN-loaded Three.js in same-origin standalone labs.
+
+### Next recommended task
+
+M7 implementation:
+- dependencies (fiber, drei, three);
+- `data/scene-registry.json` and `scripts/validate-scenes.ts` wired into CI and the build;
+- the island with runtime fallbacks;
+- `/labs/scenes/[id]`;
+- a synthetic first scene with a passport;
+- self-hosted DRACO decoder and font.

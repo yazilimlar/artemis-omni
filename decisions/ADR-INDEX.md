@@ -8,7 +8,7 @@ work. Accepted ADRs are binding unless replaced by a later accepted ADR.
 | ADR | Area | Summary |
 | --- | --- | --- |
 | ADR-001 | Domain and deployment | Artemis is a separate Next.js app deployed to Vercel; DNS is owner-managed. |
-| ADR-002 | Cinematic/WebGL layer | Phase 1 hero uses lightweight HTML/SVG/CSS with a stable lazy boundary for future 3D. |
+| ADR-002 | Cinematic/WebGL layer | **Superseded by ADR-015.** Phase 1 hero uses lightweight HTML/SVG/CSS with a stable lazy boundary for future 3D. |
 | ADR-003 | Content system | MDX files plus typed frontmatter power Academy, Labs, and Case Study content. |
 | ADR-004 | Security and secrets | No secrets in source or chat; AI tools do not own accounts or credentials. |
 | ADR-005 | AI engineering OS | Repository truth, ADRs, feature passports, and validation govern multi-agent work. |
@@ -21,6 +21,7 @@ work. Accepted ADRs are binding unless replaced by a later accepted ADR.
 | ADR-012 | User profiles and roles | Accepted. Adds `public.user_profiles` (owner/admin/client/viewer, default viewer) with RLS; users read their own row and may edit only `display_name`; roles are owner-assigned; roles are additive to the ADR-011 allowlist; amends ADR-011's no-tables non-goal. |
 | ADR-013 | Registry proposals | Accepted. Owner-role users propose one-field registry changes from /control/propose; the app opens a GitHub PR via a server-only fine-grained token and never writes main; token identity must not bypass main protection; PR audit cites user id, not email. |
 | ADR-014 | Sandboxed artifact execution | Accepted. Registered HTML/JS artifacts run in an opaque-origin sandbox (iframe `allow-scripts` without same-origin, plus CSP `sandbox` on the served response); sources live outside `public/`; no network by default; no bridge in v1; executions audited in `execution_logs` without the service-role key. |
+| ADR-015 | Immersive 3D layer | Accepted; supersedes ADR-002. 3D is a progressive enhancement in registered scenes only (`data/scene-registry.json`, `/labs/scenes/[id]`): R3F + drei locked for v1, lazy client island, mandatory 2D fallback, code-enforced budgets, no third-party runtime fetches, no 3D on the homepage in v1. |
 
 ## Touchpoint Guide
 
