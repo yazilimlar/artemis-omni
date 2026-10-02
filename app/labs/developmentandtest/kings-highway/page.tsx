@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
+import { labSandbox } from "@/lib/standalone-labs";
 
 export const metadata = createMetadata({
   title: "Artemis Atlas — King's Highway v0 (Dev & Test)",
@@ -10,6 +11,9 @@ export const metadata = createMetadata({
 export default function KingsHighwayPage() {
   return (
     <iframe
+      sandbox={labSandbox("artemis-atlas-kings-highway-v0")}
+      referrerPolicy="no-referrer"
+      loading="lazy"
       title="Artemis Atlas — King's Highway v0"
       src="/standalone/artemis-atlas-kings-highway-v0.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#1c1626]"

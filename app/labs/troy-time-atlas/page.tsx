@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
+import { labSandbox } from "@/lib/standalone-labs";
 
 export const metadata = createMetadata({
   title: "Artemis Time Atlas — Troy · Ilion, 600 BC",
@@ -10,6 +11,9 @@ export const metadata = createMetadata({
 export default function TroyTimeAtlasPage() {
   return (
     <iframe
+      sandbox={labSandbox("troy-time-atlas-600bc")}
+      referrerPolicy="no-referrer"
+      loading="lazy"
       title="Artemis Time Atlas — Troy · Ilion, 600 BC"
       src="/standalone/troy-time-atlas-600bc.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#241a2e]"

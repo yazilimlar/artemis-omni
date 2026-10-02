@@ -1858,6 +1858,11 @@
       },
     ];
 
+    // Sandboxed (opaque-origin) frames block Web Storage; degrade to a fresh session (Batch 5).
+    const safeStore = {
+      get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    };
     const storageKeys = {
       route: "george_aegean_route_v2",
       character: "george_aegean_character_v2",
@@ -2003,7 +2008,7 @@
 
     function readRoute() {
       try {
-        const saved = JSON.parse(localStorage.getItem(storageKeys.route) || "null");
+        const saved = JSON.parse(safeStore.get(storageKeys.route) || "null");
         if (Array.isArray(saved) && saved.length && saved.every((stop) => stop && stop.name)) {
           const mapped = saved.slice(0, 48).map((stop, index) => ({
             name: String(stop.name).slice(0, 32),
@@ -2033,8 +2038,8 @@
       auto: false,
       timer: null,
       drawerOpen: "",
-      characterId: localStorage.getItem(storageKeys.character) || "george-strong",
-      troyVisible: localStorage.getItem(storageKeys.troy) !== "false",
+      characterId: safeStore.get(storageKeys.character) || "george-strong",
+      troyVisible: safeStore.get(storageKeys.troy) !== "false",
     };
 
     const routeLine = document.getElementById("routeLine");
@@ -2089,7 +2094,7 @@
     const troyAnchorList = document.getElementById("troyAnchorList");
 
     function saveRoute() {
-      localStorage.setItem(storageKeys.route, JSON.stringify(routeStops));
+      safeStore.set(storageKeys.route, JSON.stringify(routeStops));
     }
 
     function routeTotalDistance(stops = routeStops) {
@@ -2422,7 +2427,7 @@
     function applyCharacter(id, userAction) {
       state.characterId = characters.some((character) => character.id === id) ? id : "george-strong";
       const character = activeCharacter();
-      localStorage.setItem(storageKeys.character, state.characterId);
+      safeStore.set(storageKeys.character, state.characterId);
       [tokenImg, portraitImg].forEach((img) => {
         img.src = character.image;
         img.alt = character.name;
@@ -2527,7 +2532,7 @@
 
     function toggleTroy() {
       state.troyVisible = !state.troyVisible;
-      localStorage.setItem(storageKeys.troy, String(state.troyVisible));
+      safeStore.set(storageKeys.troy, String(state.troyVisible));
       drawTroyLayer();
       if (state.troyVisible) {
         setDrawer("troy");

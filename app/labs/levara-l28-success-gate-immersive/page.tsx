@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
+import { labSandbox } from "@/lib/standalone-labs";
 
 export const metadata = createMetadata({
   title: "LEVARA L28 Success Gate Immersive",
@@ -10,6 +11,9 @@ export const metadata = createMetadata({
 export default function LevaraL28SuccessGateImmersivePage() {
   return (
     <iframe
+      sandbox={labSandbox("levara-l28-success-gate-immersive")}
+      referrerPolicy="no-referrer"
+      loading="lazy"
       title="LEVARA L28 Success Gate Immersive"
       src="/standalone/levara-l28-success-gate-immersive/index.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#fffaf4]"

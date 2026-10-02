@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import createMDX from "@next/mdx";
@@ -5,6 +6,11 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Standalone-lab sandbox tokens (Batch 5); also read by lib/standalone-labs.ts.
+const standaloneLabs = JSON.parse(
+  readFileSync(path.join(__dirname, "data", "standalone-labs.json"), "utf8"),
+);
 
 // Prime ERP showcase (/labs/prime-erp): the vendored dashboard at
 // public/prime-erp/prime_industrial_erp.html calls these relative /api/* paths.
@@ -96,17 +102,54 @@ const nextConfig = {
   // indexable Next.js Labs pages that share that URL space.
   async headers() {
     const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
-    return [
+    const noindexRules = [
       "/standalone/:path*",
       "/labs/geometric-workbench/:path*",
       "/labs/artemis-meander/:path*",
       "/labs/artemis-meander-classic-archive/:path*",
-      "/labs/auremeander/:path*",
       "/labs/rainbow-house-botanical-field-v9.html",
-      "/labs/rainbow-house-owner-cockpit-m8.html",
       "/prime-erp/:path*",
       "/workbench/runtime/:path*",
     ].map((source) => ({ source, headers: noindex }));
+
+    // Batch 5 (ADR-014 follow-up): every raw standalone lab, whether framed or
+    // visited directly, runs in an opaque-origin sandbox, so it can never read the
+    // Artemis session cookie. Tokens come from data/standalone-labs.json (shared
+    // with the iframe wrappers). CORS lets sandboxed labs fetch their own public
+    // files. The strict catch-all comes first; later, specific rules override it.
+    // Exempt labs (sandbox: null) are excluded from the strict catch-all by prefix.
+    const exemptPrefixes = standaloneLabs.labs
+      .filter((lab) => lab.sandbox === null)
+      .flatMap((lab) => lab.paths)
+      .map((p) => p.replace(/^\/standalone\//, "").replace(/:path\*$/, "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    const catchAll = exemptPrefixes.length
+      ? `/standalone/:path((?!${exemptPrefixes.join("|")}).*)`
+      : "/standalone/:path*";
+    const sandboxRules = [
+      { source: catchAll, tokens: "allow-scripts" },
+      ...standaloneLabs.labs
+        .filter((lab) => lab.sandbox !== null)
+        .flatMap((lab) => lab.paths.map((source) => ({ source, tokens: lab.sandbox }))),
+    ].map(({ source, tokens }) => ({
+      source,
+      headers: [
+        { key: "Content-Security-Policy", value: `sandbox ${tokens}` },
+        { key: "Access-Control-Allow-Origin", value: "*" },
+      ],
+    }));
+
+    // Self-hosted, version-pinned vendor files (public/vendor/manifest.json).
+    const vendorRules = [
+      {
+        source: "/vendor/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+    ];
+
+    return [...noindexRules, ...sandboxRules, ...vendorRules];
   },
   async redirects() {
     return [

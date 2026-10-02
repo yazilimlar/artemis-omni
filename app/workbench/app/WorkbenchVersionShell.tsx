@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { labSandbox } from "@/lib/standalone-labs";
 
 const versions = {
   latest: {
@@ -63,6 +64,9 @@ export function WorkbenchVersionShell() {
 
       <section className="relative min-h-0 flex-1">
         <iframe
+          sandbox={labSandbox("geometric-workbench-runtime")}
+          referrerPolicy="no-referrer"
+          loading="lazy"
           key={frameKey}
           title={`ARTEMIS Geometric Workbench ${selected.label}`}
           src={selected.src}

@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
+import { labSandbox } from "@/lib/standalone-labs";
 
 export const metadata = createMetadata({
   title: "ARTEMIS Turkiye Atlas",
@@ -10,6 +11,9 @@ export const metadata = createMetadata({
 export default function TurkiyeAtlasPage() {
   return (
     <iframe
+      sandbox={labSandbox("turkiye-atlas")}
+      referrerPolicy="no-referrer"
+      loading="lazy"
       title="ARTEMIS Turkiye Atlas"
       src="/standalone/turkiye-atlas.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#101713]"

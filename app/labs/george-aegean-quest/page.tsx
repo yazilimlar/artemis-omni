@@ -1,4 +1,5 @@
 import { createMetadata } from "@/lib/seo/metadata";
+import { labSandbox } from "@/lib/standalone-labs";
 
 export const metadata = createMetadata({
   title: "George Aegean Quest",
@@ -10,6 +11,9 @@ export const metadata = createMetadata({
 export default function GeorgeAegeanQuestPage() {
   return (
     <iframe
+      sandbox={labSandbox("george-aegean-quest")}
+      referrerPolicy="no-referrer"
+      loading="lazy"
       title="George Aegean Quest - Artemis Atlas iPhone Game"
       src="/standalone/george-aegean-quest.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#071016]"
