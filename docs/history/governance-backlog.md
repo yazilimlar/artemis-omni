@@ -43,3 +43,11 @@ Items that surfaced during sessions but are not blocking milestones.
 - /control/propose end-to-end not yet tested live. Code merged; test blocked
   during M5 session. First live test: propose dayos.maturity -> internal_experiment,
   verify single-line diff, close PR without merging.
+
+## ADR-015 follow-up (2026-10-01)
+- Standalone labs in public/standalone and public/labs load Three.js from
+  jsDelivr (three@0.128.0, 0.160.0, 0.164.1) and cdnjs (r128), mixed versions,
+  no integrity pinning. Since M3, a compromised CDN response can read Supabase
+  sessions. Belongs to the ADR-014 standalone-lab disposition follow-up.
+- Existing iframe labs run same-origin without sandbox= attribute.
+- components/cinematic/ is present but unmounted; carry forward per ADR-015.
