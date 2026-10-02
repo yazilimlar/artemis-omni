@@ -3,7 +3,15 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 // Plain .mjs build script; types are inferred through allowJs.
-import { ISLAND_BUDGET_GZIP_BYTES, glbIsCompressed, measureIslandBundle, pngSize, validateScenes } from "../../scripts/validate-scenes.mjs";
+import {
+  HERO_BUDGET_GZIP_BYTES,
+  ISLAND_BUDGET_GZIP_BYTES,
+  glbIsCompressed,
+  measureHeroBundle,
+  measureIslandBundle,
+  pngSize,
+  validateScenes,
+} from "../../scripts/validate-scenes.mjs";
 import { decideRender } from "@/components/scenes/SceneIsland";
 import registry from "@/data/scene-registry.json";
 
@@ -131,6 +139,51 @@ describe("island bundle budget", () => {
     expect(result.files.map((f: { file: string }) => f.file)).toEqual([".next/static/chunks/scene.js"]);
     expect(result.gzip).toBeGreaterThan(0);
     expect(ISLAND_BUDGET_GZIP_BYTES).toBe(400 * 1024);
+  });
+});
+
+describe("ADR-016 homepage hero", () => {
+  const hero = { ...valid, route: "/", visibility: "public_safe_demo", approved_public: true };
+
+  it("accepts one approved hero scene with route \"/\" without the /labs/scenes rule", () => {
+    expect(validateScenes([hero], fixture())).toEqual([]);
+  });
+
+  it("rejects a second hero and an unapproved hero", () => {
+    const root = fixture();
+    expect(validateScenes([hero, { ...hero, id: "demo2" }], root).join("\n")).toMatch(/at most one homepage hero/);
+    expect(validateScenes([{ ...hero, approved_public: false }], root).join("\n")).toMatch(
+      /homepage hero must be public or an approved public_safe_demo/,
+    );
+  });
+
+  it("measures only hero chunks and reports any chunk shared with R3F scenes", () => {
+    const root = fixture();
+    fs.mkdirSync(path.join(root, ".next/static/chunks"), { recursive: true });
+    for (const name of ["three.js", "hero.js", "island.js"]) {
+      fs.writeFileSync(path.join(root, ".next/static/chunks", name), name.repeat(200));
+    }
+    const write = (manifest: object) =>
+      fs.writeFileSync(path.join(root, ".next/react-loadable-manifest.json"), JSON.stringify(manifest));
+    write({
+      "components/scenes/SceneIsland.tsx -> ./demo": { files: ["static/chunks/hero.js"] },
+      "components/scenes/demo/HomeHeroScene.tsx -> @/components/scenes/SceneIsland": { files: ["static/chunks/island.js"] },
+      "components/scenes/SceneIsland.tsx -> ./orb": { files: ["static/chunks/three.js"] },
+    });
+    const clean = measureHeroBundle(root, ["demo"]);
+    if (!clean) throw new Error("expected a hero measurement");
+    expect(clean.files.map((f: { file: string }) => f.file).sort()).toEqual([
+      ".next/static/chunks/hero.js",
+      ".next/static/chunks/island.js",
+    ]);
+    expect(clean.sharedWithR3F).toEqual([]);
+    expect(HERO_BUDGET_GZIP_BYTES).toBe(100 * 1024);
+
+    write({
+      "components/scenes/SceneIsland.tsx -> ./demo": { files: ["static/chunks/hero.js", "static/chunks/three.js"] },
+      "components/scenes/SceneIsland.tsx -> ./orb": { files: ["static/chunks/three.js"] },
+    });
+    expect(measureHeroBundle(root, ["demo"])?.sharedWithR3F).toEqual(["static/chunks/three.js"]);
   });
 });
 

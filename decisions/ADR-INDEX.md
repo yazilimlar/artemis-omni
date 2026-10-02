@@ -22,6 +22,7 @@ work. Accepted ADRs are binding unless replaced by a later accepted ADR.
 | ADR-013 | Registry proposals | Accepted. Owner-role users propose one-field registry changes from /control/propose; the app opens a GitHub PR via a server-only fine-grained token and never writes main; token identity must not bypass main protection; PR audit cites user id, not email. |
 | ADR-014 | Sandboxed artifact execution | Accepted. Registered HTML/JS artifacts run in an opaque-origin sandbox (iframe `allow-scripts` without same-origin, plus CSP `sandbox` on the served response); sources live outside `public/`; no network by default; no bridge in v1; executions audited in `execution_logs` without the service-role key. |
 | ADR-015 | Immersive 3D layer | Accepted; supersedes ADR-002. 3D is a progressive enhancement in registered scenes only (`data/scene-registry.json`, `/labs/scenes/[id]`): R3F + drei locked for v1, lazy client island, mandatory 2D fallback, code-enforced budgets, no third-party runtime fetches, no 3D on the homepage in v1. |
+| ADR-016 | Homepage 3D hero | Accepted; amends ADR-015. One registered hero scene (`route: "/"`) may render below the homepage fold, loaded after idle, under 5,000 vertices and 100 KB gz incremental (validator-enforced); native Canvas 2D allowed for the hero only (R3F costs 240 KB gz); 2D fallback on reduced motion, slow network, low device. |
 
 ## Touchpoint Guide
 
