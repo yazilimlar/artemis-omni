@@ -16,6 +16,7 @@ import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
 import { labsEditorial, type LabEditorial } from "@/data/labs-editorial";
+import sceneRegistry from "@/data/scene-registry.json";
 import { proofModules } from "@/data/proofLibrary";
 import {
   linkableRoute,
@@ -207,6 +208,46 @@ export default function LabsPage() {
           </div>
         </Container>
       </section>
+
+      {sceneRegistry.length > 0 ? (
+        <section className="border-b border-border/60 py-16 lg:py-20">
+          <Container>
+            <ExecutiveSectionHeader
+              eyebrow="Immersive Scenes"
+              title="Registered 3D scenes"
+              description="Progressive 3D scenes from the scene registry (ADR-015). Each upgrades from a static image only when the device allows it."
+            />
+            <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+              {sceneRegistry.map((scene) => (
+                <article
+                  key={scene.id}
+                  className="group relative min-w-0 overflow-hidden rounded-lg border border-border/70 bg-navy-deep/50 p-6 shadow-panel transition-colors hover:border-gold/45"
+                >
+                  <div
+                    className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-silver/50 to-transparent opacity-70"
+                    aria-hidden
+                  />
+                  <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+                    Scene Registry · {scene.data_mode}
+                  </span>
+                  <h2 className="display-serif mt-4 text-balance text-2xl text-parchment sm:text-3xl">
+                    {scene.title}
+                  </h2>
+                  <div className="mt-7 flex flex-wrap gap-3">
+                    <Button href={scene.route}>
+                      Open Scene
+                      <ArrowRight
+                        className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                        aria-hidden
+                      />
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
       <section className="py-16 lg:py-20">
         <Container>
