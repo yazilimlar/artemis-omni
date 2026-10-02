@@ -371,7 +371,7 @@ products:
     division: UNREVIEWED
     product_family: UNREVIEWED
     lifecycle: concept
-    maturity: UNREVIEWED
+    maturity: internal_experiment
     visibility: UNREVIEWED  # distribution remains UNREVIEWED
     data_mode: UNREVIEWED
     canonical_route: null  # no app/ route on main
