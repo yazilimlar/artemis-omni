@@ -52,5 +52,23 @@
     "passport": "components/scenes/botanical-garden/passport.md",
     "created_at": "2026-10-02",
     "updated_at": "2026-10-02"
+  },
+  {
+    "id": "site-hero",
+    "title": "Artemis System",
+    "division": "core-platform",
+    "route": "/",
+    "visibility": "public_safe_demo",
+    "data_mode": "synthetic",
+    "approved_public": true,
+    "entry_component": "components/scenes/site-hero/index.tsx",
+    "fallback_2d": "public/textures/site-hero/fallback.svg",
+    "assets_dir": "public/textures/site-hero",
+    "asset_budget_mb": 1,
+    "owner": "core-platform",
+    "resource_limits": { "max_session_seconds": 30, "fps_floor": 24 },
+    "passport": "components/scenes/site-hero/passport.md",
+    "created_at": "2026-10-02",
+    "updated_at": "2026-10-02"
   }
 ]

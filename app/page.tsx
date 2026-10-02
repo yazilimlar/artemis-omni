@@ -15,10 +15,12 @@ import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
+import { HomeHeroScene } from "@/components/scenes/site-hero/HomeHeroScene";
 import { createMetadata } from "@/lib/seo/metadata";
 import { companyPositioning } from "@/lib/artemis/positioning";
 import { getFeaturedAudiences } from "@/data/audiences";
 import { getProofModules, homepageProofSlugs } from "@/data/proofLibrary";
+import sceneRegistry from "@/data/scene-registry.json";
 
 export const metadata = createMetadata({
   path: "/",
@@ -52,6 +54,9 @@ const implementationPhases = [
     bullets: ["Public-safe demo", "Private pilot", "Adoption metrics"],
   },
 ];
+
+// ADR-016: the single registered homepage hero scene (route "/"), if any.
+const heroScene = sceneRegistry.find((scene) => scene.route === "/") ?? null;
 
 export default function HomePage() {
   return (
@@ -98,6 +103,19 @@ export default function HomePage() {
         </Container>
         <div className="meander-divider" aria-hidden />
       </section>
+
+      {heroScene ? (
+        <section className="border-b border-border/60 py-12 lg:py-16" aria-label={heroScene.title}>
+          <Container className="flex justify-center">
+            <HomeHeroScene
+              fallbackSrc={heroScene.fallback_2d.replace(/^public(?=\/)/, "")}
+              fallbackAlt={`${heroScene.title}: static preview`}
+              maxSessionSeconds={heroScene.resource_limits.max_session_seconds}
+              fpsFloor={heroScene.resource_limits.fps_floor}
+            />
+          </Container>
+        </section>
+      ) : null}
 
       <section className="border-b border-border/60 py-16 lg:py-20">
         <Container>

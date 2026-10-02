@@ -35,7 +35,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ScenePage({ params }: Props) {
   const { id } = await params;
   const scene = findScene(id);
-  if (!scene) notFound();
+  // Hero-only scenes (route "/", ADR-016) have no standalone page.
+  if (!scene || scene.route !== `/labs/scenes/${scene.id}`) notFound();
 
   // ADR-015: public_safe_demo scenes need explicit approval; everything else needs a session.
   if (scene.visibility === "public_safe_demo" && !scene.approved_public) notFound();

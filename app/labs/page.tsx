@@ -17,7 +17,7 @@ import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
 import { labsEditorial, type LabEditorial } from "@/data/labs-editorial";
-import sceneRegistry from "@/data/scene-registry.json";
+import allScenes from "@/data/scene-registry.json";
 import { proofModules } from "@/data/proofLibrary";
 import {
   linkableRoute,
@@ -148,6 +148,9 @@ function RegistryLabCard({
     </article>
   );
 }
+
+// Only scenes with a /labs/scenes page; the homepage hero (route "/", ADR-016) is excluded.
+const sceneRegistry = allScenes.filter((scene) => scene.route.startsWith("/labs/scenes/"));
 
 const MORE_LAB_REGISTRY_IDS = ["artemis-nomad", "bidroom-exemplary-contractor"];
 

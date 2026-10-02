@@ -4,7 +4,8 @@
  *
  *   node scripts/validate-scenes.mjs            registry checks (prebuild)
  *   node scripts/validate-scenes.mjs --bundle   island JS budget check (postbuild, reads
- *                                               .next/react-loadable-manifest.json)
+ *                                               .next/react-loadable-manifest.json), plus
+ *                                               the ADR-016 homepage hero budget
  *
  * Plain .mjs so it runs on every Node version CI uses (CI runs Node 20, which
  * cannot execute .ts natively) without adding tsx. Exits 1 with clear errors.
@@ -20,6 +21,13 @@ const DATA_MODES = ["live_official", "live_derived", "synthetic", "sample", "sam
 const MAX_TEXTURE_PX = 2048;
 const COMPRESSION_THRESHOLD_BYTES = 500 * 1024;
 export const ISLAND_BUDGET_GZIP_BYTES = 400 * 1024;
+/** ADR-016: total incremental JS the homepage hero may lazy-load. */
+export const HERO_BUDGET_GZIP_BYTES = 100 * 1024;
+
+/** ADR-016: a hero scene renders on the homepage only and has no /labs/scenes page. */
+export function isHeroRoute(route) {
+  return route === "/" || route === null;
+}
 
 /** True when `child` (absolute) is strictly inside `parent` (absolute). */
 function isInside(parent, child) {
@@ -61,6 +69,10 @@ export function validateScenes(registry, root) {
   const errors = [];
   if (!Array.isArray(registry)) return ["data/scene-registry.json must be a JSON array."];
   const seen = new Set();
+  const heroes = registry.filter((scene) => scene && isHeroRoute(scene.route));
+  if (heroes.length > 1) {
+    errors.push(`at most one homepage hero scene (route "/") is allowed (ADR-016); found ${heroes.length}`);
+  }
 
   for (const [index, scene] of registry.entries()) {
     const label = `scene[${index}]${scene && typeof scene.id === "string" ? ` "${scene.id}"` : ""}`;
@@ -85,8 +97,12 @@ export function validateScenes(registry, root) {
       fail("owner must be a team or role, not an email");
     }
 
-    // Route: only /labs/scenes/<id> (ADR-015).
-    if (typeof scene.route !== "string" || !scene.route.startsWith("/labs/scenes/")) {
+    // Route: /labs/scenes/<id> (ADR-015), or "/"/null for the homepage hero (ADR-016).
+    if (isHeroRoute(scene.route)) {
+      if (!(scene.visibility === "public" || (scene.visibility === "public_safe_demo" && scene.approved_public === true))) {
+        fail("the homepage hero must be public or an approved public_safe_demo scene (ADR-016)");
+      }
+    } else if (typeof scene.route !== "string" || !scene.route.startsWith("/labs/scenes/")) {
       fail(`route must start with /labs/scenes/ (got ${JSON.stringify(scene.route)})`);
     } else if (scene.route !== `/labs/scenes/${id}`) {
       fail(`route must be /labs/scenes/${id}`);
@@ -190,6 +206,39 @@ export function measureIslandBundle(root) {
   return { gzip, files };
 }
 
+/**
+ * ADR-016 homepage hero budget: every chunk loaded by dynamic imports of the hero
+ * scene (from SceneIsland) and from its own directory (the homepage mount), counted
+ * once. Also returns any chunk shared with non-hero scenes, which must be empty so
+ * three.js/R3F never reach the homepage.
+ */
+export function measureHeroBundle(root, heroIds) {
+  const manifestPath = path.join(root, ".next", "react-loadable-manifest.json");
+  if (!fs.existsSync(manifestPath) || heroIds.length === 0) return null;
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  const isHeroKey = (key) =>
+    heroIds.some((id) => key.endsWith(`-> ./${id}`) || key.startsWith(`components/scenes/${id}/`));
+  const hero = new Set();
+  const others = new Set();
+  for (const [key, entry] of Object.entries(manifest)) {
+    if (!key.startsWith("components/scenes/")) continue;
+    for (const file of entry.files ?? []) {
+      if (!file.endsWith(".js")) continue;
+      (isHeroKey(key) ? hero : others).add(file);
+    }
+  }
+  // Chunks reached through the hero mount include SceneIsland itself; that is part of the cost.
+  let gzip = 0;
+  const files = [];
+  for (const file of hero) {
+    const size = zlib.gzipSync(fs.readFileSync(path.join(root, ".next", file))).length;
+    gzip += size;
+    files.push({ file: `.next/${file}`, gzip: size });
+  }
+  const sharedWithR3F = [...hero].filter((file) => others.has(file));
+  return { gzip, files, sharedWithR3F };
+}
+
 function main() {
   const root = process.cwd();
   if (process.argv.includes("--bundle")) {
@@ -209,6 +258,22 @@ function main() {
       process.exit(1);
     }
     console.log(`validate-scenes: 3D island ${kb(result.gzip)} gzipped (budget ${kb(ISLAND_BUDGET_GZIP_BYTES)}). OK`);
+
+    const registry = JSON.parse(fs.readFileSync(path.join(root, "data", "scene-registry.json"), "utf8"));
+    const heroIds = registry.filter((scene) => isHeroRoute(scene.route)).map((scene) => scene.id);
+    const hero = measureHeroBundle(root, heroIds);
+    if (hero) {
+      for (const f of hero.files) console.log(`  hero: ${f.file}  ${kb(f.gzip)} gz`);
+      if (hero.sharedWithR3F.length > 0) {
+        console.error(`validate-scenes: homepage hero shares chunks with R3F scenes (ADR-016 forbids three.js on the homepage): ${hero.sharedWithR3F.join(", ")}`);
+        process.exit(1);
+      }
+      if (hero.gzip > HERO_BUDGET_GZIP_BYTES) {
+        console.error(`validate-scenes: homepage hero is ${kb(hero.gzip)} gzipped; budget ${kb(HERO_BUDGET_GZIP_BYTES)} (ADR-016).`);
+        process.exit(1);
+      }
+      console.log(`validate-scenes: homepage hero ${kb(hero.gzip)} gzipped (budget ${kb(HERO_BUDGET_GZIP_BYTES)}), no three.js chunks. OK`);
+    }
     return;
   }
 
