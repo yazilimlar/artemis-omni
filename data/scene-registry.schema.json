@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "artemis/scene-registry.schema.json",
+  "title": "Artemis immersive scene registry (ADR-015)",
+  "description": "data/scene-registry.json is an array of these objects. Changes go through reviewed PRs. Enforced by scripts/validate-scenes.mjs (prebuild + postbuild). owner is a team or role, never a personal email (the repository is public).",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "title", "division", "route", "visibility", "data_mode", "approved_public", "entry_component", "fallback_2d", "assets_dir", "asset_budget_mb", "owner", "resource_limits", "passport", "created_at", "updated_at"],
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+      "title": { "type": "string", "minLength": 1 },
+      "division": { "type": "string", "description": "Owning division id from ENGINEERING/DIVISION_REGISTRY.yaml." },
+      "route": { "type": "string", "pattern": "^/labs/scenes/[a-z0-9][a-z0-9-]{0,63}$", "description": "Must be /labs/scenes/<id> (ADR-015)." },
+      "visibility": { "enum": ["public", "public_safe_demo", "noindex_review", "authenticated", "private_pilot", "internal_operations"] },
+      "data_mode": { "enum": ["live_official", "live_derived", "synthetic", "sample", "sample_fallback", "private_approved", "mixed_explicit"] },
+      "approved_public": { "type": "boolean", "description": "Required true for public_safe_demo (ADR-015); the approving PR is recorded in the passport." },
+      "entry_component": { "type": "string", "pattern": "^components/scenes/[a-z0-9-]+/[A-Za-z0-9._-]+\\.tsx$", "description": "Must live under components/scenes/<id>/." },
+      "fallback_2d": { "type": "string", "pattern": "^public/.+\\.(png|jpe?g|webp|avif|svg)$", "description": "v1: a same-origin static image under public/ (ADR-015 also allows 2D components; SceneIsland support is a follow-up)." },
+      "assets_dir": { "type": "string", "pattern": "^public/", "description": "Same-origin asset directory under public/ (ADR-015 asset policy)." },
+      "asset_budget_mb": { "type": "number", "exclusiveMinimum": 0 },
+      "owner": { "type": "string", "minLength": 1, "not": { "pattern": "@" } },
+      "resource_limits": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["max_session_seconds", "fps_floor"],
+        "properties": {
+          "max_session_seconds": { "type": "integer", "minimum": 10, "maximum": 3600 },
+          "fps_floor": { "type": "integer", "minimum": 1, "maximum": 60 }
+        }
+      },
+      "passport": { "type": "string", "description": "Feature passport path (ENGINEERING/FEATURE_PASSPORT_TEMPLATE.md)." },
+      "created_at": { "type": "string", "format": "date" },
+      "updated_at": { "type": "string", "format": "date" }
+    }
+  }
+}
