@@ -111,3 +111,24 @@ Closed without merge: #57.
    - record visibility and canonical routes for hidden products;
    - resolve `artemis-labs` (incubation vs division) for `artemisix19`.
 2. M3: auth for `/control` and `/system-map`.
+
+## Session 2026-10-01: ADR-014 (sandboxed artifact execution)
+
+- Branch: `governance/adr-014-sandboxed-execution` (from `main` @ `87789f3`)
+- Division: core-platform · Product: site-shell · Change type: governance · Visibility: internal_operations
+- Files: `decisions/ADR-014-sandboxed-artifact-execution.md`, `decisions/ADR-INDEX.md`, `docs/HANDOVER.md`
+- Not changed: no code, no routes, no registries.
+- Facts recorded in ADR-014:
+  - no existing iframe uses `sandbox`;
+  - Supabase session cookies are JS-readable (`httpOnly: false`);
+  - `public/` files bypass route-handler headers.
+- Known risk: existing standalone labs run same-origin and can read the session cookie. A per-lab disposition is a follow-up.
+
+### Next recommended task
+
+M6 implementation:
+- `sandbox/<id>/` sources and `data/artifact-registry.json`;
+- `/api/sandbox/[id]` with strict CSP including `sandbox allow-scripts`;
+- `/labs/run/[id]`;
+- an `execution_logs` migration with a `security definer` logging and rate-limit function;
+- the `/control` artifact list.
