@@ -10,6 +10,7 @@ import {
   type RegistryProduct,
 } from "@/lib/registry/load";
 import { requireAuth } from "@/lib/auth/require-auth";
+import { listArtifacts } from "@/lib/sandbox/artifacts";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -209,6 +210,26 @@ export default async function ControlPage() {
               ) : null}
             </div>
           ))}
+        </Container>
+      </section>
+
+      <section className="border-t border-border/60 py-16 lg:py-20">
+        <Container>
+          <SectionHeading
+            eyebrow="Sandbox"
+            title="Registered artifacts"
+            description={`${listArtifacts().length} registered in data/artifact-registry.json (ADR-014).`}
+          />
+          {listArtifacts().length > 0 ? (
+            <p className="mt-6 text-sm">
+              <a
+                href={`/labs/run/${listArtifacts()[0].id}`}
+                className="text-gold-soft underline-offset-4 hover:underline"
+              >
+                Run {listArtifacts()[0].title} →
+              </a>
+            </p>
+          ) : null}
         </Container>
       </section>
     </>

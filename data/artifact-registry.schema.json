@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "artemis/artifact-registry.schema.json",
+  "title": "Artemis sandboxed artifact registry (ADR-014)",
+  "description": "data/artifact-registry.json is an array of these objects. Changes go through reviewed PRs. owner is a role or team, never a personal email (the repository is public).",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "title", "source_path", "entry", "visibility", "data_mode", "allow_outbound", "resource_limits", "owner", "created_at", "updated_at", "notes"],
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+      "title": { "type": "string", "minLength": 1 },
+      "source_path": { "type": "string", "pattern": "^sandbox/[a-z0-9][a-z0-9-]{0,63}/$", "description": "Must be sandbox/<id>/." },
+      "entry": { "type": "string", "pattern": "^[A-Za-z0-9._-]+\\.html$", "description": "A file name inside source_path, e.g. index.html. No slashes." },
+      "visibility": { "enum": ["public", "public_safe_demo", "noindex_review", "authenticated", "private_pilot", "internal_operations"] },
+      "data_mode": { "enum": ["live_official", "live_derived", "synthetic", "sample", "sample_fallback", "private_approved", "mixed_explicit"] },
+      "allow_outbound": {
+        "description": "false, or an allowlist of https origins for connect-src. Outbound artifacts are owner-only and cannot be public_safe_demo.",
+        "oneOf": [
+          { "const": false },
+          { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^https://[A-Za-z0-9.-]+(:[0-9]+)?$" } }
+        ]
+      },
+      "resource_limits": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "max_session_seconds": { "type": "integer", "minimum": 10, "maximum": 3600, "description": "Enforced by /labs/run (default 300)." },
+          "cpu": { "type": "string", "description": "Declared at review; not enforceable in browsers (ADR-014)." },
+          "memory": { "type": "string", "description": "Declared at review; not enforceable in browsers (ADR-014)." }
+        }
+      },
+      "owner": { "type": "string", "minLength": 1 },
+      "created_at": { "type": "string", "format": "date" },
+      "updated_at": { "type": "string", "format": "date" },
+      "notes": { "type": "string" }
+    }
+  }
+}
