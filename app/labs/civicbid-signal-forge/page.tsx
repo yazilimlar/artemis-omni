@@ -117,12 +117,6 @@ export default function CivicBidSignalForgePage() {
               review and does not convert it into an official procurement record.
             </p>
           </div>
-          <Link
-            href="/products/bidroom/signal-forge-classic"
-            className="inline-flex items-center gap-2 font-mono text-[0.66rem] font-bold uppercase tracking-[0.12em] text-[#1d5fbf] hover:text-[#153e75] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1d5fbf]"
-          >
-            View stable Classic route <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-          </Link>
         </div>
       </aside>
     </main>

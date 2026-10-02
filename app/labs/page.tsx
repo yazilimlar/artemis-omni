@@ -1,4 +1,5 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/layout/PageHero";
@@ -148,8 +149,22 @@ function RegistryLabCard({
   );
 }
 
+const MORE_LAB_REGISTRY_IDS = ["artemis-nomad", "bidroom-exemplary-contractor"];
+
 export default function LabsPage() {
-  const labEntries = mergeRegistryOverlay(loadProducts(), labsEditorial);
+  const products = loadProducts();
+  const labEntries = mergeRegistryOverlay(products, labsEditorial);
+  // Site audit F-2 / B-1: registered public_safe_demo labs with no other inbound
+  // link (not added to the sitemap: not "public"), plus Botanical, which moved
+  // out of the header into Labs.
+  const moreLabs = [
+    ...MORE_LAB_REGISTRY_IDS.flatMap((id) => {
+      const product = products.find((item) => item.id === id);
+      const href = product ? linkableRoute(product) : null;
+      return product && href ? [{ title: product.name, href }] : [];
+    }),
+    { title: "Rainbow House Botanical Encyclopedia", href: "/labs/rainbow-house-botanical" },
+  ];
   const divisionNames = new Map(loadDivisions().map((division) => [division.id, division.name]));
   return (
     <>
@@ -206,6 +221,22 @@ export default function LabsPage() {
               ) : null,
             )}
           </div>
+          {moreLabs.length > 0 ? (
+            <p className="mt-8 flex flex-wrap items-baseline gap-x-5 gap-y-2 text-sm">
+              <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+                More from Labs
+              </span>
+              {moreLabs.map((lab) => (
+                <Link
+                  key={lab.href}
+                  href={lab.href}
+                  className="text-gold-soft underline-offset-4 hover:underline"
+                >
+                  {lab.title}
+                </Link>
+              ))}
+            </p>
+          ) : null}
         </Container>
       </section>
 
