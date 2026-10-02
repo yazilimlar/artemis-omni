@@ -51,3 +51,5 @@ Items that surfaced during sessions but are not blocking milestones.
   sessions. Belongs to the ADR-014 standalone-lab disposition follow-up.
 - Existing iframe labs run same-origin without sandbox= attribute.
 - components/cinematic/ is present but unmounted; carry forward per ADR-015.
+
+- M1–M7 shipped (PRs #67–#86); HANDOVER synced and CI moved to Node 22 in `governance/handover-m1-m7`. Unresolved items above remain open.
