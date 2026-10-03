@@ -28,7 +28,7 @@ describe("PRODUCT_REGISTRY.yaml CST round trip (ADR-013 hard gate)", () => {
   const cases = [
     { id: "civicbid", field: "lifecycle", from: "rescue", to: "active_lab" },
     { id: "bidroom-suite", field: "visibility", from: "noindex_review", to: "public_safe_demo" },
-    { id: "dayos", field: "canonical_route", from: "null", to: "/dayos" },
+    { id: "atlas-handcrafted-guru-selection", field: "canonical_route", from: "null", to: "/atlas" },
   ] as const;
 
   for (const { id, field, from, to } of cases) {

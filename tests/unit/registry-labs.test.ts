@@ -17,7 +17,7 @@ describe("product registry loader", () => {
   });
 
   it("accepts UNREVIEWED as a field value", () => {
-    expect(getProduct("dayos")?.visibility).toBe("UNREVIEWED");
+    expect(getProduct("dayos")?.maturity).toBe("UNREVIEWED");
   });
 
   it("loads divisions from DIVISION_REGISTRY.yaml", () => {
@@ -39,7 +39,7 @@ describe("product registry loader", () => {
     for (const id of [
       "utility-field-claims", // public_safe_demo
       "tax-architecture-2026", // public_safe_demo (still rendered via editorial)
-      "dayos", // public, canonical_route null
+      "dayos", // noindex_review
       "artemis-nomad", // canonical_route UNREVIEWED
       "pinar-evleri", // lifecycle UNREVIEWED
       "diana-moonshot", // lifecycle UNREVIEWED
