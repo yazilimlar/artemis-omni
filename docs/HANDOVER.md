@@ -2,6 +2,14 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-03 update — DayOS v0.9.8b rebased (PR #55, stack part 2 of 3)
+
+- Branch: `feature/dayos-v098b-telemetry-critical-timing`, rebased onto `main` after #54 was squash-merged. Only #55's own nine commits were replayed (`git rebase --onto origin/main 3697d91`); the six old #54 commits were dropped. The owner merges.
+- `/dayos-v098b` is `noindex` through a new `layout.tsx`. It is not in the sitemap or navigation. There was no duplicate `src/app` copy of this page.
+- Open-Meteo: the runtime fetch to `api.open-meteo.com` in `src/dayos/connectors/openMeteo.ts` is kept and now carries a comment. Accepted at noindex_review; it must be blocked or replaced before any public_safe_demo upgrade.
+- Registry: only a comment on the existing `dayos` entry records `/dayos-v098b` as an additional route; `canonical_route` is unchanged and no second entry was added.
+- Next: #56 (scenario overlay).
+
 ## 2026-10-03 update — DayOS v0.9.8a rebased (PR #54, stack part 1 of 3)
 
 - Branch: `feature/dayos-v098a-spatial-intelligence`, rebased onto `main` (core-platform, dayos, active_lab, noindex_review, product-specific). The owner merges from `~/Projects/artemis-admin`.

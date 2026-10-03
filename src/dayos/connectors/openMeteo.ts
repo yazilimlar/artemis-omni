@@ -20,6 +20,8 @@ export async function fetchOpenMeteoSnapshot(coord:Coord):Promise<OpenMeteoSnaps
     timezone:'auto',
     forecast_days:'2'
   });
+  // Runtime fetch to api.open-meteo.com. Accepted at noindex_review.
+  // Blocking this fetch is required before any public_safe_demo upgrade.
   const res=await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`,{cache:'no-store'});
   if(!res.ok) throw new Error(`Open-Meteo HTTP ${res.status}`);
   const data=await res.json();
