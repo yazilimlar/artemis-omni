@@ -2,6 +2,14 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-02 update — ADR-018 (Evolution Archive) proposed
+
+- Branch: `governance/adr-018-evolution-archive` (core-platform, site-shell, governance, internal_operations). Draft PR; ADR-018 takes effect on merge.
+- ADR-018 authorizes a generated archive at `/evolution` (`data/evolution.json`, `scripts/extract-evolution.mjs`) and fixes the v1 visualization stack and approved dependencies.
+- The `/evolution` route will be reclassified from UNREVIEWED to internal_operations and noindex. Today it is a public, indexable page listed in the sitemap; that change, the fate of `/api/public/artemis-structure`, and the registry entry are implementation-PR work.
+- Not changed: no code, no dependencies, no `data/evolution.json`, no route or registry changes.
+- Next recommended task: implementation PR (extractor + data file + route reclassification), then the visuals one at a time.
+
 ## 2026-10-02 update — corrections to stale facts
 
 Full acceptance state: see docs/VERIFICATION.md
