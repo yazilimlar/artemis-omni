@@ -15,7 +15,7 @@ yet fully verified.
 
 | Capability | Verified by | Date | Evidence |
 | --- | --- | --- | --- |
-| Magic-link auth (Supabase + Resend) | owner | 2026-10-02 | Signed in as gokmen1313@gmail.com; PR #97 opened from /control/propose |
+| Magic-link auth (Supabase + Resend) | owner | 2026-10-02 | Signed in as <owner>; PR #97 opened from /control/propose |
 | Proposal workflow (/control/propose -> GitHub PR) | owner | 2026-10-02 | PR #97 with single-line diff |
 | Dashboard (/dashboard, role=owner) | owner | 2026-10-02 | 20 products rendered |
 | Scenes /labs/scenes/hello-orb, /spatial-proof-surface, /botanical-garden | owner | 2026-10-02 | Render with 3D or fallback |
