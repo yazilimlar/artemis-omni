@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-03T03:41:49.000Z",
+    "generated_at": "2026-10-03T03:58:24.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-03T03:41:49.000Z",
+  "generated_at": "2026-10-03T03:58:24.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -3119,6 +3119,48 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-107",
+      "type": "pr_merged",
+      "date": "2026-10-03T03:56:46.000Z",
+      "title": "docs: add PR triage report (15 stale PRs)",
+      "summary": "docs: add PR triage report (15 stale PRs) (1 files changed).",
+      "references": [
+        "PR#107",
+        "b46d673"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-62",
+      "type": "pr_merged",
+      "date": "2026-10-03T03:58:11.000Z",
+      "title": "Add editorial chapters and prepare Anastasia portfolio for new media",
+      "summary": "Add editorial chapters and prepare Anastasia portfolio for new media (1 files changed).",
+      "references": [
+        "PR#62",
+        "0e9c663"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-44",
+      "type": "pr_merged",
+      "date": "2026-10-03T03:58:24.000Z",
+      "title": "feat(workbench): begin Gate B geometry kernel",
+      "summary": "feat(workbench): begin Gate B geometry kernel (8 files changed).",
+      "references": [
+        "PR#44",
+        "1d97923"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
     }
   ],
   "stats": {
@@ -3134,7 +3176,7 @@
     },
     "scenes_total": 5,
     "milestones_shipped": 7,
-    "prs_merged": 51,
+    "prs_merged": 54,
     "verified_capabilities": 8
   }
 }
