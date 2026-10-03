@@ -2,6 +2,15 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-03 update — DayOS v0.9.8a rebased (PR #54, stack part 1 of 3)
+
+- Branch: `feature/dayos-v098a-spatial-intelligence`, rebased onto `main` (core-platform, dayos, active_lab, noindex_review, product-specific). The owner merges from `~/Projects/artemis-admin`.
+- `/dayos-v098a` is now `noindex` through a new `layout.tsx` (the page is a client component). It is not in the sitemap or navigation.
+- Removed the dead duplicate `src/app/dayos-v098a/page.tsx` (C8); nothing imported it. `src/dayos/` stays: the `app/` page imports it.
+- Registry `dayos`: `lifecycle: active_lab`, `visibility: noindex_review` (owner decision), `canonical_route: /dayos-v098a`, `canonical_branch: main`. Maturity, data mode, division and family are still UNREVIEWED.
+- Remaining item: the page loads Leaflet from unpkg at runtime. Acceptable under noindex_review; it must be self-hosted or pinned with SRI before any public_safe_demo upgrade.
+- Next: #55 (telemetry; Open-Meteo runtime fetch), then #56.
+
 ## 2026-10-03 update — Evolution Archive visualization layer
 
 - Branch: `feat/evolution-visualization` (core-platform, artemis-evolution-archive, active_lab, internal_operations, live_derived). Draft PR; builds on ADR-018, PRs #99-#102.

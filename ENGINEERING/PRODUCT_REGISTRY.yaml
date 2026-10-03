@@ -379,12 +379,12 @@ products:
     #        data_boundary=artemis_owned, publication=public, confidence=B
     division: UNREVIEWED
     product_family: UNREVIEWED
-    lifecycle: concept
+    lifecycle: active_lab
     maturity: UNREVIEWED
-    visibility: UNREVIEWED  # distribution remains UNREVIEWED
+    visibility: noindex_review  # owner decision 2026-10-03; distribution remains UNREVIEWED
     data_mode: UNREVIEWED
-    canonical_route: null  # no app/ route on main
-    canonical_branch: UNREVIEWED
+    canonical_route: /dayos-v098a  # noindex review route added by PR #54
+    canonical_branch: main
     # PRs #54, #55, #56 (v0.9.8a/b/c) are open; #57 closed unmerged.
     status_evidence: >-
       Static assets public/dayos, public/dayos-v050, public/dayos-v090 and public/dayos-v097
