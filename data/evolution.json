@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-03T02:16:57.000Z",
+    "generated_at": "2026-10-03T02:43:27.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-03T02:16:57.000Z",
+  "generated_at": "2026-10-03T02:43:27.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -3061,6 +3061,50 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-103",
+      "type": "pr_merged",
+      "date": "2026-10-03T02:43:27.000Z",
+      "title": "feat(evolution): timeline, ADR lineage, registry flow, architecture map",
+      "summary": "feat(evolution): timeline, ADR lineage, registry flow, architecture map (23 files changed).",
+      "references": [
+        "PR#103",
+        "b135e2d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-b135e2d-api-evolution-data",
+      "type": "route_added",
+      "date": "2026-10-03T02:43:27.000Z",
+      "title": "Route added: /api/evolution-data",
+      "summary": "app/api/evolution-data/route.ts added in b135e2d.",
+      "references": [
+        "b135e2d",
+        "app/api/evolution-data/route.ts",
+        "PR#103"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-scene-evolution-architecture-map",
+      "type": "scene_registered",
+      "date": "2026-10-03T02:43:27.000Z",
+      "title": "Scene registered: Evolution Architecture Map",
+      "summary": "Scene evolution-architecture-map registered at /labs/scenes/evolution-architecture-map.",
+      "references": [
+        "b135e2d",
+        "data/scene-registry.json",
+        "PR#103"
+      ],
+      "division": "core-platform",
+      "product": null,
+      "outcome": "visibility=internal_operations; data_mode=mixed_explicit"
     }
   ],
   "stats": {
@@ -3074,9 +3118,9 @@
       "rescue": 3,
       "testbed": 1
     },
-    "scenes_total": 4,
+    "scenes_total": 5,
     "milestones_shipped": 7,
-    "prs_merged": 49,
+    "prs_merged": 50,
     "verified_capabilities": 8
   }
 }
