@@ -23,6 +23,7 @@ work. Accepted ADRs are binding unless replaced by a later accepted ADR.
 | ADR-014 | Sandboxed artifact execution | Accepted. Registered HTML/JS artifacts run in an opaque-origin sandbox (iframe `allow-scripts` without same-origin, plus CSP `sandbox` on the served response); sources live outside `public/`; no network by default; no bridge in v1; executions audited in `execution_logs` without the service-role key. |
 | ADR-015 | Immersive 3D layer | Accepted; supersedes ADR-002. 3D is a progressive enhancement in registered scenes only (`data/scene-registry.json`, `/labs/scenes/[id]`): R3F + drei locked for v1, lazy client island, mandatory 2D fallback, code-enforced budgets, no third-party runtime fetches, no 3D on the homepage in v1. |
 | ADR-016 | Homepage 3D hero | Accepted; amends ADR-015. One registered hero scene (`route: "/"`) may render below the homepage fold, loaded after idle, under 5,000 vertices and 100 KB gz incremental (validator-enforced); native Canvas 2D allowed for the hero only (R3F costs 240 KB gz); 2D fallback on reduced motion, slow network, low device. |
+| ADR-017 | Contextual design language | Accepted; extends ADR-006 and ADR-015. Every page presents its subject in a visual grammar native to that subject; products and divisions declare an optional `native_visuals` field (proposed here, applied in a follow-up registry PR); 3D scenes must map to a native visual type; the site shell stays brand-consistent. |
 
 ## Touchpoint Guide
 

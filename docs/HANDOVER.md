@@ -2,6 +2,17 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-02 update — corrections to stale facts
+
+Full acceptance state: see docs/VERIFICATION.md
+
+- Branch for this record: `governance/verification-and-design-language` (governance, core-platform, site-shell, internal_operations, mixed_explicit).
+- Scenes: the "1 scene (`hello-orb`)" line in the M1–M7 closure below is stale. `data/scene-registry.json` now registers 4 scenes: hello-orb, spatial-proof-surface, botanical-garden, site-hero.
+- Auth and proposals: "M3 magic-link email delivery not yet verified" and "M5 live end-to-end test deferred" are closed. The owner verified both on 2026-10-02 (PR #97 opened from /control/propose).
+- Since the closure record: ADR-016 and the homepage hero scene (#93), standalone lab sandboxing and CDN pins (#94), role-aware AGENTS.md (#95), and the homepage video section and /integrate page (#96) are merged.
+- New: ADR-017 (contextual design language) is accepted. The `native_visuals` registry field is proposed only; a follow-up registry PR applies it.
+- Not changed in this update: no code, no schema, no registry YAML. Everything below is preserved as history.
+
 ## Session 2026-10-01 21:45 — M1–M7 programme closure
 
 - State at closure: `main` @ `ed955e9` (PR #86). PRs #66–#86 are all merged.
