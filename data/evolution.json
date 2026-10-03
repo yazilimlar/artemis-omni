@@ -1,0 +1,3024 @@
+{
+  "_meta": {
+    "generated_by": "scripts/extract-evolution.mjs",
+    "generated_at": "2026-10-03T01:03:25.000Z",
+    "do_not_edit": true
+  },
+  "version": 1,
+  "generated_at": "2026-10-03T01:03:25.000Z",
+  "events": [
+    {
+      "id": "EVT-adr-001",
+      "type": "adr_added",
+      "date": "2026-06-28T00:00:00.000Z",
+      "title": "ADR-001: ADR-001 — Temporary Domain Strategy",
+      "summary": "Artemis is a separate Next.js app deployed to Vercel; DNS is owner-managed.",
+      "references": [
+        "ADR-001",
+        "decisions/ADR-001-temporary-domain-strategy.md",
+        "0fed419"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-002",
+      "type": "adr_added",
+      "date": "2026-06-28T00:00:00.000Z",
+      "title": "ADR-002: ADR-002 — Cinematic / WebGL Layer",
+      "summary": "Superseded by ADR-015. Phase 1 hero uses lightweight HTML/SVG/CSS with a stable lazy boundary for future 3D.",
+      "references": [
+        "ADR-002",
+        "decisions/ADR-002-cinematic-webgl-layer.md",
+        "0fed419"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-003",
+      "type": "adr_added",
+      "date": "2026-06-28T00:00:00.000Z",
+      "title": "ADR-003: ADR-003 — Content & MDX System",
+      "summary": "MDX files plus typed frontmatter power Academy, Labs, and Case Study content.",
+      "references": [
+        "ADR-003",
+        "decisions/ADR-003-content-and-mdx-system.md",
+        "0fed419"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-004",
+      "type": "adr_added",
+      "date": "2026-06-28T00:00:00.000Z",
+      "title": "ADR-004: ADR-004 — Security & Secrets",
+      "summary": "No secrets in source or chat; AI tools do not own accounts or credentials.",
+      "references": [
+        "ADR-004",
+        "decisions/ADR-004-security-and-secrets.md",
+        "0fed419"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-route-added-0fed419-about",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /about",
+      "summary": "app/about/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/about/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-academy",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /academy",
+      "summary": "app/academy/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/academy/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-academy-slug",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /academy/[slug]",
+      "summary": "app/academy/[slug]/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/academy/[slug]/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-case-studies",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /case-studies",
+      "summary": "app/case-studies/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/case-studies/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-case-studies-slug",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /case-studies/[slug]",
+      "summary": "app/case-studies/[slug]/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/case-studies/[slug]/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-contact",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /contact",
+      "summary": "app/contact/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/contact/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-labs",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /labs",
+      "summary": "app/labs/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/labs/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-labs-slug",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /labs/[slug]",
+      "summary": "app/labs/[slug]/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/labs/[slug]/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-root",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /",
+      "summary": "app/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-solutions",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /solutions",
+      "summary": "app/solutions/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/solutions/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-tools",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /tools",
+      "summary": "app/tools/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/tools/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fed419-tools-fuel-price-adjustment",
+      "type": "route_added",
+      "date": "2026-06-28T05:27:18.000Z",
+      "title": "Route added: /tools/fuel-price-adjustment",
+      "summary": "app/tools/fuel-price-adjustment/page.tsx added in 0fed419.",
+      "references": [
+        "0fed419",
+        "app/tools/fuel-price-adjustment/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-demo",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /demo",
+      "summary": "app/demo/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/demo/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-departments",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /departments",
+      "summary": "app/departments/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/departments/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-library",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /library",
+      "summary": "app/library/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/library/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-portfolio",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /portfolio",
+      "summary": "app/portfolio/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/portfolio/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-products",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /products",
+      "summary": "app/products/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/products/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-products-connect",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /products/connect",
+      "summary": "app/products/connect/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/products/connect/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-products-construct",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /products/construct",
+      "summary": "app/products/construct/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/products/construct/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-products-docs",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /products/docs",
+      "summary": "app/products/docs/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/products/docs/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-products-flow",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /products/flow",
+      "summary": "app/products/flow/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/products/flow/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-products-twin-atlas",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /products/twin-atlas",
+      "summary": "app/products/twin-atlas/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/products/twin-atlas/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-solutions-ai-business-systems",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /solutions/ai-business-systems",
+      "summary": "app/solutions/ai-business-systems/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/solutions/ai-business-systems/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-solutions-construction-intelligence",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /solutions/construction-intelligence",
+      "summary": "app/solutions/construction-intelligence/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/solutions/construction-intelligence/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-03c1c3e-solutions-engineering-visualization",
+      "type": "route_added",
+      "date": "2026-06-28T18:22:34.000Z",
+      "title": "Route added: /solutions/engineering-visualization",
+      "summary": "app/solutions/engineering-visualization/page.tsx added in 03c1c3e.",
+      "references": [
+        "03c1c3e",
+        "app/solutions/engineering-visualization/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-ed3d019-labs-construction-intelligence-workbench",
+      "type": "route_added",
+      "date": "2026-06-28T22:40:12.000Z",
+      "title": "Route added: /labs/construction-intelligence-workbench",
+      "summary": "app/labs/construction-intelligence-workbench/page.tsx added in ed3d019.",
+      "references": [
+        "ed3d019",
+        "app/labs/construction-intelligence-workbench/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-adr-005",
+      "type": "adr_added",
+      "date": "2026-06-30T00:00:00.000Z",
+      "title": "ADR-005: AI Engineering Operating System",
+      "summary": "Repository truth, ADRs, feature passports, and validation govern multi-agent work.",
+      "references": [
+        "ADR-005",
+        "decisions/ADR-005-ai-engineering-operating-system.md",
+        "a1ed5d9",
+        "PR#4"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-pr-1",
+      "type": "pr_merged",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "feat: elevate ArtemisIX19 command workbench",
+      "summary": "feat: elevate ArtemisIX19 command workbench (57 files changed).",
+      "references": [
+        "PR#1",
+        "a01a173"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-a01a173-for-slug",
+      "type": "route_added",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "Route added: /for/[slug]",
+      "summary": "app/for/[slug]/page.tsx added in a01a173.",
+      "references": [
+        "a01a173",
+        "app/for/[slug]/page.tsx",
+        "PR#1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-a01a173-insights",
+      "type": "route_added",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "Route added: /insights",
+      "summary": "app/insights/page.tsx added in a01a173.",
+      "references": [
+        "a01a173",
+        "app/insights/page.tsx",
+        "PR#1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-a01a173-labs-artemisix19",
+      "type": "route_added",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "Route added: /labs/artemisix19",
+      "summary": "app/labs/artemisix19/page.tsx added in a01a173.",
+      "references": [
+        "a01a173",
+        "app/labs/artemisix19/page.tsx",
+        "PR#1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-a01a173-labs-diana-moonshot",
+      "type": "route_added",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "Route added: /labs/diana-moonshot",
+      "summary": "app/labs/diana-moonshot/page.tsx added in a01a173.",
+      "references": [
+        "a01a173",
+        "app/labs/diana-moonshot/page.tsx",
+        "PR#1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-a01a173-labs-geodesic-intelligence",
+      "type": "route_added",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "Route added: /labs/geodesic-intelligence",
+      "summary": "app/labs/geodesic-intelligence/page.tsx added in a01a173.",
+      "references": [
+        "a01a173",
+        "app/labs/geodesic-intelligence/page.tsx",
+        "PR#1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-a01a173-labs-utility-intelligence-bridge",
+      "type": "route_added",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "Route added: /labs/utility-intelligence-bridge",
+      "summary": "app/labs/utility-intelligence-bridge/page.tsx added in a01a173.",
+      "references": [
+        "a01a173",
+        "app/labs/utility-intelligence-bridge/page.tsx",
+        "PR#1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-a01a173-library-programs",
+      "type": "route_added",
+      "date": "2026-06-30T15:16:31.000Z",
+      "title": "Route added: /library/programs",
+      "summary": "app/library/programs/page.tsx added in a01a173.",
+      "references": [
+        "a01a173",
+        "app/library/programs/page.tsx",
+        "PR#1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-27d18ee-labs-tax-architecture-2026",
+      "type": "route_added",
+      "date": "2026-06-30T21:51:57.000Z",
+      "title": "Route added: /labs/tax-architecture-2026",
+      "summary": "app/labs/tax-architecture-2026/page.tsx added in 27d18ee.",
+      "references": [
+        "27d18ee",
+        "app/labs/tax-architecture-2026/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-27d18ee-labs-turkiye-atlas",
+      "type": "route_added",
+      "date": "2026-06-30T21:51:57.000Z",
+      "title": "Route added: /labs/turkiye-atlas",
+      "summary": "app/labs/turkiye-atlas/page.tsx added in 27d18ee.",
+      "references": [
+        "27d18ee",
+        "app/labs/turkiye-atlas/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-ca7ed5e-rainbowbotanics-2026-slug",
+      "type": "route_added",
+      "date": "2026-07-01T12:28:55.000Z",
+      "title": "Route added: /rainbowbotanics-2026/[slug]",
+      "summary": "app/rainbowbotanics-2026/[slug]/page.tsx added in ca7ed5e.",
+      "references": [
+        "ca7ed5e",
+        "app/rainbowbotanics-2026/[slug]/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-1723318-labs-finance-architecture-5d",
+      "type": "route_added",
+      "date": "2026-07-01T12:56:41.000Z",
+      "title": "Route added: /labs/finance-architecture-5d",
+      "summary": "app/labs/finance-architecture-5d/page.tsx added in 1723318.",
+      "references": [
+        "1723318",
+        "app/labs/finance-architecture-5d/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-81feb31-rainbowbotanics",
+      "type": "route_added",
+      "date": "2026-07-01T14:34:44.000Z",
+      "title": "Route added: /rainbowbotanics",
+      "summary": "app/rainbowbotanics/page.tsx added in 81feb31.",
+      "references": [
+        "81feb31",
+        "app/rainbowbotanics/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-81feb31-rainbowbotanics-slug",
+      "type": "route_added",
+      "date": "2026-07-01T14:34:44.000Z",
+      "title": "Route added: /rainbowbotanics/[slug]",
+      "summary": "app/rainbowbotanics/[slug]/page.tsx added in 81feb31.",
+      "references": [
+        "81feb31",
+        "app/rainbowbotanics/[slug]/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-4",
+      "type": "pr_merged",
+      "date": "2026-07-01T14:58:34.000Z",
+      "title": "Governance: Add AIEOS foundation and AI safety protocol",
+      "summary": "Governance: Add AIEOS foundation and AI safety protocol (16 files changed).",
+      "references": [
+        "PR#4",
+        "a1ed5d9"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-7708be9-labs-george-aegean-quest",
+      "type": "route_added",
+      "date": "2026-07-02T05:49:36.000Z",
+      "title": "Route added: /labs/george-aegean-quest",
+      "summary": "app/labs/george-aegean-quest/page.tsx added in 7708be9.",
+      "references": [
+        "7708be9",
+        "app/labs/george-aegean-quest/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-72c5aa1-labs-developmentandtest-troy-time-atlas",
+      "type": "route_added",
+      "date": "2026-07-04T14:53:25.000Z",
+      "title": "Route added: /labs/developmentandtest/troy-time-atlas",
+      "summary": "app/labs/developmentandtest/troy-time-atlas/page.tsx added in 72c5aa1.",
+      "references": [
+        "72c5aa1",
+        "app/labs/developmentandtest/troy-time-atlas/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-1ab95df-labs-artemis-tax-efficacy-alpha",
+      "type": "route_added",
+      "date": "2026-07-04T15:48:34.000Z",
+      "title": "Route added: /labs/artemis-tax-efficacy-alpha",
+      "summary": "app/labs/artemis-tax-efficacy-alpha/page.tsx added in 1ab95df.",
+      "references": [
+        "1ab95df",
+        "app/labs/artemis-tax-efficacy-alpha/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-9c68c35-labs-troy-time-atlas",
+      "type": "route_added",
+      "date": "2026-07-05T00:31:44.000Z",
+      "title": "Route added: /labs/troy-time-atlas",
+      "summary": "app/labs/troy-time-atlas/page.tsx added in 9c68c35.",
+      "references": [
+        "9c68c35",
+        "app/labs/troy-time-atlas/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-ba39ac4-favicon-ico",
+      "type": "route_added",
+      "date": "2026-07-05T18:41:59.000Z",
+      "title": "Route added: /favicon.ico",
+      "summary": "app/favicon.ico/route.ts added in ba39ac4.",
+      "references": [
+        "ba39ac4",
+        "app/favicon.ico/route.ts"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-ba39ac4-labs-civicbid-intelligence-bridge",
+      "type": "route_added",
+      "date": "2026-07-05T18:41:59.000Z",
+      "title": "Route added: /labs/civicbid-intelligence-bridge",
+      "summary": "app/labs/civicbid-intelligence-bridge/page.tsx added in ba39ac4.",
+      "references": [
+        "ba39ac4",
+        "app/labs/civicbid-intelligence-bridge/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-ba39ac4-labs-utility-intelligence-bridge-dual-story",
+      "type": "route_added",
+      "date": "2026-07-05T18:41:59.000Z",
+      "title": "Route added: /labs/utility-intelligence-bridge/dual-story",
+      "summary": "app/labs/utility-intelligence-bridge/dual-story/page.tsx added in ba39ac4.",
+      "references": [
+        "ba39ac4",
+        "app/labs/utility-intelligence-bridge/dual-story/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-ba39ac4-labs-utility-intelligence-bridge-field-claims",
+      "type": "route_added",
+      "date": "2026-07-05T18:41:59.000Z",
+      "title": "Route added: /labs/utility-intelligence-bridge/field-claims",
+      "summary": "app/labs/utility-intelligence-bridge/field-claims/page.tsx added in ba39ac4.",
+      "references": [
+        "ba39ac4",
+        "app/labs/utility-intelligence-bridge/field-claims/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-b08f686-api-pilot-requests",
+      "type": "route_added",
+      "date": "2026-07-05T19:17:04.000Z",
+      "title": "Route added: /api/pilot-requests",
+      "summary": "app/api/pilot-requests/route.ts added in b08f686.",
+      "references": [
+        "b08f686",
+        "app/api/pilot-requests/route.ts"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0fa1338-labs-developmentandtest-kings-highway",
+      "type": "route_added",
+      "date": "2026-07-06T21:30:33.000Z",
+      "title": "Route added: /labs/developmentandtest/kings-highway",
+      "summary": "app/labs/developmentandtest/kings-highway/page.tsx added in 0fa1338.",
+      "references": [
+        "0fa1338",
+        "app/labs/developmentandtest/kings-highway/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-adr-006",
+      "type": "adr_added",
+      "date": "2026-07-10T00:00:00.000Z",
+      "title": "ADR-006: Artemis Multi-Division Product Architecture",
+      "summary": "Artemis is an umbrella platform of divisions, products, shared capabilities, and Labs/testbeds; branch and product status are separate.",
+      "references": [
+        "ADR-006",
+        "decisions/ADR-006-artemis-multidivision-product-architecture.md",
+        "989d468"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-product-artemis-evolution-console-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: artemis-evolution-console",
+      "summary": "artemis-evolution-console entered PRODUCT_REGISTRY.yaml (lifecycle concept).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "knowledge-academy",
+      "product": "artemis-evolution-console",
+      "outcome": "lifecycle=concept"
+    },
+    {
+      "id": "EVT-product-artemisix19-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: artemisix19",
+      "summary": "artemisix19 entered PRODUCT_REGISTRY.yaml (lifecycle testbed).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "artemis-labs",
+      "product": "artemisix19",
+      "outcome": "lifecycle=testbed"
+    },
+    {
+      "id": "EVT-product-atlas-handcrafted-guru-selection-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: atlas-handcrafted-guru-selection",
+      "summary": "atlas-handcrafted-guru-selection entered PRODUCT_REGISTRY.yaml (lifecycle rescue).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "atlas-places",
+      "product": "atlas-handcrafted-guru-selection",
+      "outcome": "lifecycle=rescue"
+    },
+    {
+      "id": "EVT-product-civicbid-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: civicbid",
+      "summary": "civicbid entered PRODUCT_REGISTRY.yaml (lifecycle rescue).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "infrastructure-construction",
+      "product": "civicbid",
+      "outcome": "lifecycle=rescue"
+    },
+    {
+      "id": "EVT-product-construction-intelligence-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: construction-intelligence",
+      "summary": "construction-intelligence entered PRODUCT_REGISTRY.yaml (lifecycle active_lab).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "infrastructure-construction",
+      "product": "construction-intelligence",
+      "outcome": "lifecycle=active_lab"
+    },
+    {
+      "id": "EVT-product-rainbow-botanics-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: rainbow-botanics",
+      "summary": "rainbow-botanics entered PRODUCT_REGISTRY.yaml (lifecycle noindex_draft).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "natural-systems",
+      "product": "rainbow-botanics",
+      "outcome": "lifecycle=noindex_draft"
+    },
+    {
+      "id": "EVT-product-tax-architecture-2026-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: tax-architecture-2026",
+      "summary": "tax-architecture-2026 entered PRODUCT_REGISTRY.yaml (lifecycle active_lab).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "finance-decision-systems",
+      "product": "tax-architecture-2026",
+      "outcome": "lifecycle=active_lab"
+    },
+    {
+      "id": "EVT-product-time-atlas-troy-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: time-atlas-troy",
+      "summary": "time-atlas-troy entered PRODUCT_REGISTRY.yaml (lifecycle active_lab).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "atlas-places",
+      "product": "time-atlas-troy",
+      "outcome": "lifecycle=active_lab"
+    },
+    {
+      "id": "EVT-product-turkiye-atlas-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: turkiye-atlas",
+      "summary": "turkiye-atlas entered PRODUCT_REGISTRY.yaml (lifecycle active_lab).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "atlas-places",
+      "product": "turkiye-atlas",
+      "outcome": "lifecycle=active_lab"
+    },
+    {
+      "id": "EVT-product-utility-field-claims-registered",
+      "type": "product_registered",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Product registered: utility-field-claims",
+      "summary": "utility-field-claims entered PRODUCT_REGISTRY.yaml (lifecycle active_lab).",
+      "references": [
+        "989d468",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml"
+      ],
+      "division": "infrastructure-construction",
+      "product": "utility-field-claims",
+      "outcome": "lifecycle=active_lab"
+    },
+    {
+      "id": "EVT-registry-989d468",
+      "type": "registry_changed",
+      "date": "2026-07-11T04:15:23.000Z",
+      "title": "Registry changed: governance: extend AIEOS for multi-division Artemis",
+      "summary": "Touched ENGINEERING/DIVISION_REGISTRY.yaml, ENGINEERING/PRODUCT_REGISTRY.yaml, ENGINEERING/TESTBED_MIGRATION_REGISTRY.yaml.",
+      "references": [
+        "989d468",
+        "ENGINEERING/DIVISION_REGISTRY.yaml",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "ENGINEERING/TESTBED_MIGRATION_REGISTRY.yaml"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-513a034-evolution",
+      "type": "route_added",
+      "date": "2026-07-11T04:18:35.000Z",
+      "title": "Route added: /evolution",
+      "summary": "app/evolution/page.tsx added in 513a034.",
+      "references": [
+        "513a034",
+        "app/evolution/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-a731f31-api-public-artemis-structure",
+      "type": "route_added",
+      "date": "2026-07-11T04:18:42.000Z",
+      "title": "Route added: /api/public/artemis-structure",
+      "summary": "app/api/public/artemis-structure/route.ts added in a731f31.",
+      "references": [
+        "a731f31",
+        "app/api/public/artemis-structure/route.ts"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-9",
+      "type": "pr_merged",
+      "date": "2026-07-11T04:38:05.000Z",
+      "title": "Public record: Artemis Evolution & Structure",
+      "summary": "Public record: Artemis Evolution & Structure (0 files changed).",
+      "references": [
+        "PR#9",
+        "8a5435e"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-12",
+      "type": "pr_merged",
+      "date": "2026-07-11T05:09:51.000Z",
+      "title": "CivicBid rescue: live official Signal Forge cockpit",
+      "summary": "CivicBid rescue: live official Signal Forge cockpit (11 files changed).",
+      "references": [
+        "PR#12",
+        "7b0cd8b"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-7b0cd8b",
+      "type": "registry_changed",
+      "date": "2026-07-11T05:09:51.000Z",
+      "title": "Registry changed: CivicBid rescue: live official Signal Forge cockpit",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "7b0cd8b",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#12"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-7b0cd8b-api-civicbid-signal-forge",
+      "type": "route_added",
+      "date": "2026-07-11T05:09:51.000Z",
+      "title": "Route added: /api/civicbid/signal-forge",
+      "summary": "app/api/civicbid/signal-forge/route.ts added in 7b0cd8b.",
+      "references": [
+        "7b0cd8b",
+        "app/api/civicbid/signal-forge/route.ts",
+        "PR#12"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-7b0cd8b-labs-civicbid-signal-forge",
+      "type": "route_added",
+      "date": "2026-07-11T05:09:51.000Z",
+      "title": "Route added: /labs/civicbid-signal-forge",
+      "summary": "app/labs/civicbid-signal-forge/page.tsx added in 7b0cd8b.",
+      "references": [
+        "7b0cd8b",
+        "app/labs/civicbid-signal-forge/page.tsx",
+        "PR#12"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-13",
+      "type": "pr_merged",
+      "date": "2026-07-11T05:20:36.000Z",
+      "title": "CivicBid: integrate live cockpit into canonical bridge",
+      "summary": "CivicBid: integrate live cockpit into canonical bridge (4 files changed).",
+      "references": [
+        "PR#13",
+        "7d620ff"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-product-civicbid-status-7d620ff",
+      "type": "product_status_changed",
+      "date": "2026-07-11T05:20:36.000Z",
+      "title": "Product status changed: civicbid",
+      "summary": "visibility: public_safe_demo -> public",
+      "references": [
+        "7d620ff",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#13"
+      ],
+      "division": "infrastructure-construction",
+      "product": "civicbid",
+      "outcome": "visibility=public"
+    },
+    {
+      "id": "EVT-registry-7d620ff",
+      "type": "registry_changed",
+      "date": "2026-07-11T05:20:36.000Z",
+      "title": "Registry changed: CivicBid: integrate live cockpit into canonical bridge",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "7d620ff",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#13"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-pr-16",
+      "type": "pr_merged",
+      "date": "2026-07-11T11:06:55.000Z",
+      "title": "CivicBid: publish The Bid Room v2.1 interface",
+      "summary": "CivicBid: publish The Bid Room v2.1 interface (7 files changed).",
+      "references": [
+        "PR#16",
+        "9e7fb84"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-20",
+      "type": "pr_merged",
+      "date": "2026-07-12T03:59:25.000Z",
+      "title": "LEVARA L28: publish Marlboro Rainbow Financial Twin",
+      "summary": "LEVARA L28: publish Marlboro Rainbow Financial Twin (2 files changed).",
+      "references": [
+        "PR#20",
+        "d2e4fec"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-d2e4fec-labs-levara-l28-financial-twin",
+      "type": "route_added",
+      "date": "2026-07-12T03:59:25.000Z",
+      "title": "Route added: /labs/levara-l28-financial-twin",
+      "summary": "app/labs/levara-l28-financial-twin/page.tsx added in d2e4fec.",
+      "references": [
+        "d2e4fec",
+        "app/labs/levara-l28-financial-twin/page.tsx",
+        "PR#20"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-21",
+      "type": "pr_merged",
+      "date": "2026-07-12T04:11:54.000Z",
+      "title": "LEVARA: repair public runtime loader",
+      "summary": "LEVARA: repair public runtime loader (2 files changed).",
+      "references": [
+        "PR#21",
+        "460ccbd"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-22",
+      "type": "pr_merged",
+      "date": "2026-07-12T04:55:37.000Z",
+      "title": "LEVARA: publish v10 Success Gate Immersive edition",
+      "summary": "LEVARA: publish v10 Success Gate Immersive edition (4 files changed).",
+      "references": [
+        "PR#22",
+        "9725b62"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-9725b62-labs-levara-l28-success-gate-immersive",
+      "type": "route_added",
+      "date": "2026-07-12T04:55:37.000Z",
+      "title": "Route added: /labs/levara-l28-success-gate-immersive",
+      "summary": "app/labs/levara-l28-success-gate-immersive/page.tsx added in 9725b62.",
+      "references": [
+        "9725b62",
+        "app/labs/levara-l28-success-gate-immersive/page.tsx",
+        "PR#22"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-23",
+      "type": "pr_merged",
+      "date": "2026-07-13T21:58:04.000Z",
+      "title": "Add Prime Industrial ERP public MVP",
+      "summary": "Add Prime Industrial ERP public MVP (1 files changed).",
+      "references": [
+        "PR#23",
+        "6d358e8"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-6d358e8-erp",
+      "type": "route_added",
+      "date": "2026-07-13T21:58:04.000Z",
+      "title": "Route added: /erp",
+      "summary": "app/erp/page.tsx added in 6d358e8.",
+      "references": [
+        "6d358e8",
+        "app/erp/page.tsx",
+        "PR#23"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-7a2e0fd-labs-bidroom-exemplary-contractor",
+      "type": "route_added",
+      "date": "2026-07-14T01:52:06.000Z",
+      "title": "Route added: /labs/bidroom-exemplary-contractor",
+      "summary": "app/labs/bidroom-exemplary-contractor/page.tsx added in 7a2e0fd.",
+      "references": [
+        "7a2e0fd",
+        "app/labs/bidroom-exemplary-contractor/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-6ce4ded-labs-bidroom-atlasiq",
+      "type": "route_added",
+      "date": "2026-07-14T03:14:12.000Z",
+      "title": "Route added: /labs/bidroom-atlasiq",
+      "summary": "src/app/labs/bidroom-atlasiq/page.tsx added in 6ce4ded.",
+      "references": [
+        "6ce4ded",
+        "src/app/labs/bidroom-atlasiq/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-39a642d-labs-bidroom-atlasiq",
+      "type": "route_added",
+      "date": "2026-07-14T03:17:04.000Z",
+      "title": "Route added: /labs/bidroom-atlasiq",
+      "summary": "app/labs/bidroom-atlasiq/page.tsx added in 39a642d.",
+      "references": [
+        "39a642d",
+        "app/labs/bidroom-atlasiq/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-28",
+      "type": "pr_merged",
+      "date": "2026-07-14T12:49:42.000Z",
+      "title": "fix: fully isolate AtlasIQ colors and typography",
+      "summary": "fix: fully isolate AtlasIQ colors and typography (1 files changed).",
+      "references": [
+        "PR#28",
+        "a715f5a"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-e840be3-products-bidroom",
+      "type": "route_added",
+      "date": "2026-07-14T15:04:46.000Z",
+      "title": "Route added: /products/bidroom",
+      "summary": "app/products/bidroom/page.tsx added in e840be3.",
+      "references": [
+        "e840be3",
+        "app/products/bidroom/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-d0b1250-products-bidroom-contractor",
+      "type": "route_added",
+      "date": "2026-07-14T15:05:04.000Z",
+      "title": "Route added: /products/bidroom/contractor",
+      "summary": "app/products/bidroom/contractor/page.tsx added in d0b1250.",
+      "references": [
+        "d0b1250",
+        "app/products/bidroom/contractor/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-120e123-products-bidroom-atlasiq",
+      "type": "route_added",
+      "date": "2026-07-14T15:05:24.000Z",
+      "title": "Route added: /products/bidroom/atlasiq",
+      "summary": "app/products/bidroom/atlasiq/page.tsx added in 120e123.",
+      "references": [
+        "120e123",
+        "app/products/bidroom/atlasiq/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-b39a6cf-products-bidroom-evidence-engine",
+      "type": "route_added",
+      "date": "2026-07-14T15:05:38.000Z",
+      "title": "Route added: /products/bidroom/evidence-engine",
+      "summary": "app/products/bidroom/evidence-engine/page.tsx added in b39a6cf.",
+      "references": [
+        "b39a6cf",
+        "app/products/bidroom/evidence-engine/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-993e2ba-products-bidroom-live",
+      "type": "route_added",
+      "date": "2026-07-14T15:06:41.000Z",
+      "title": "Route added: /products/bidroom/live",
+      "summary": "app/products/bidroom/live/page.tsx added in 993e2ba.",
+      "references": [
+        "993e2ba",
+        "app/products/bidroom/live/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-c0ffd76-products-bidroom-switchboard",
+      "type": "route_added",
+      "date": "2026-07-15T00:48:14.000Z",
+      "title": "Route added: /products/bidroom/switchboard",
+      "summary": "app/products/bidroom/switchboard/page.tsx added in c0ffd76.",
+      "references": [
+        "c0ffd76",
+        "app/products/bidroom/switchboard/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-fb08515-labs-bidroom-verity",
+      "type": "route_added",
+      "date": "2026-07-15T04:18:49.000Z",
+      "title": "Route added: /labs/bidroom-verity",
+      "summary": "app/labs/bidroom-verity/page.tsx added in fb08515.",
+      "references": [
+        "fb08515",
+        "app/labs/bidroom-verity/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-af4cca7-labs-geometric-workbench-v5-8",
+      "type": "route_added",
+      "date": "2026-07-18T22:20:47.000Z",
+      "title": "Route added: /labs/geometric-workbench/v5-8",
+      "summary": "app/labs/geometric-workbench/v5-8/page.tsx added in af4cca7.",
+      "references": [
+        "af4cca7",
+        "app/labs/geometric-workbench/v5-8/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-da5f10d-workbench",
+      "type": "route_added",
+      "date": "2026-07-18T23:02:09.000Z",
+      "title": "Route added: /workbench",
+      "summary": "app/workbench/page.tsx added in da5f10d.",
+      "references": [
+        "da5f10d",
+        "app/workbench/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-33",
+      "type": "pr_merged",
+      "date": "2026-07-20T17:54:13.000Z",
+      "title": "feat(workbench): add v6 BOM integrity foundation",
+      "summary": "feat(workbench): add v6 BOM integrity foundation (5 files changed).",
+      "references": [
+        "PR#33",
+        "6020175"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-34",
+      "type": "pr_merged",
+      "date": "2026-07-20T18:44:20.000Z",
+      "title": "feat(navigation): surface Geometric Workbench across Artemis",
+      "summary": "feat(navigation): surface Geometric Workbench across Artemis (5 files changed).",
+      "references": [
+        "PR#34",
+        "c121417"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-0e72ebc-workbench-app",
+      "type": "route_added",
+      "date": "2026-07-21T13:05:58.000Z",
+      "title": "Route added: /workbench/app",
+      "summary": "app/workbench/app/page.tsx added in 0e72ebc.",
+      "references": [
+        "0e72ebc",
+        "app/workbench/app/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-1463f08-pinarevleri",
+      "type": "route_added",
+      "date": "2026-08-12T21:51:41.000Z",
+      "title": "Route added: /pinarevleri",
+      "summary": "app/pinarevleri/page.tsx added in 1463f08.",
+      "references": [
+        "1463f08",
+        "app/pinarevleri/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-48",
+      "type": "pr_merged",
+      "date": "2026-08-13T12:04:00.000Z",
+      "title": "feat: publish Pınar Evleri crest and vision imagery",
+      "summary": "feat: publish Pınar Evleri crest and vision imagery (3 files changed).",
+      "references": [
+        "PR#48",
+        "caff3e2"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-49",
+      "type": "pr_merged",
+      "date": "2026-08-13T14:52:04.000Z",
+      "title": "feat: embed Pınar Evleri YouTube film",
+      "summary": "feat: embed Pınar Evleri YouTube film (1 files changed).",
+      "references": [
+        "PR#49",
+        "21bcd90"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-50",
+      "type": "pr_merged",
+      "date": "2026-08-13T15:15:54.000Z",
+      "title": "feat: add immersive Pınar Evleri site plan",
+      "summary": "feat: add immersive Pınar Evleri site plan (4 files changed).",
+      "references": [
+        "PR#50",
+        "bbf07bd"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-cdfc221-labs-rainbow-house-botanical",
+      "type": "route_added",
+      "date": "2026-09-12T19:52:09.000Z",
+      "title": "Route added: /labs/rainbow-house-botanical",
+      "summary": "app/labs/rainbow-house-botanical/page.tsx added in cdfc221.",
+      "references": [
+        "cdfc221",
+        "app/labs/rainbow-house-botanical/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-949ef00-departments-art-sala-rotonda",
+      "type": "route_added",
+      "date": "2026-09-27T14:21:11.000Z",
+      "title": "Route added: /departments/art/sala-rotonda",
+      "summary": "app/departments/art/sala-rotonda/page.tsx added in 949ef00.",
+      "references": [
+        "949ef00",
+        "app/departments/art/sala-rotonda/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-3a19948-labs-utility-intelligence-bridge-3d-model",
+      "type": "route_added",
+      "date": "2026-09-27T15:53:47.000Z",
+      "title": "Route added: /labs/utility-intelligence-bridge/3d-model",
+      "summary": "app/labs/utility-intelligence-bridge/3d-model/page.tsx added in 3a19948.",
+      "references": [
+        "3a19948",
+        "app/labs/utility-intelligence-bridge/3d-model/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-0473f4b-labs-slug-path",
+      "type": "route_added",
+      "date": "2026-09-27T16:00:48.000Z",
+      "title": "Route added: /labs/[slug]/[...path]",
+      "summary": "app/labs/[slug]/[...path]/page.tsx added in 0473f4b.",
+      "references": [
+        "0473f4b",
+        "app/labs/[slug]/[...path]/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-8ccb5f5-apps-prime-erp",
+      "type": "route_added",
+      "date": "2026-09-28T17:00:25.000Z",
+      "title": "Route added: /apps/prime-erp",
+      "summary": "app/apps/prime-erp/page.tsx added in 8ccb5f5.",
+      "references": [
+        "8ccb5f5",
+        "app/apps/prime-erp/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-cd0dadc-labs-prime-erp",
+      "type": "route_added",
+      "date": "2026-09-28T19:00:53.000Z",
+      "title": "Route added: /labs/prime-erp",
+      "summary": "app/labs/prime-erp/page.tsx added in cd0dadc.",
+      "references": [
+        "cd0dadc",
+        "app/labs/prime-erp/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-4a5a639-apps-anastasia-fantasia-demo",
+      "type": "route_added",
+      "date": "2026-09-30T22:36:47.000Z",
+      "title": "Route added: /apps/anastasia-fantasia-demo",
+      "summary": "app/apps/anastasia-fantasia-demo/route.ts added in 4a5a639.",
+      "references": [
+        "4a5a639",
+        "app/apps/anastasia-fantasia-demo/route.ts"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-adr-002-superseded",
+      "type": "adr_superseded",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-002 superseded by ADR-015",
+      "summary": "ADR-015 supersedes ADR-002.",
+      "references": [
+        "ADR-002",
+        "ADR-015",
+        "fbe166d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "superseded_by=ADR-015"
+    },
+    {
+      "id": "EVT-adr-007",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-007: Sala Rotonda Retention and Review",
+      "summary": "Accepted. Sala Rotonda stays a noindex public route until a hosting and content review; the owner then keeps, redirects, or removes it.",
+      "references": [
+        "ADR-007",
+        "decisions/ADR-007-sala-rotonda.md",
+        "f5d86ef",
+        "PR#72"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-008",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-008: Client Work as a First-Class Concept",
+      "summary": "Accepted. Adds the `client_or_partner_work` bucket; client work needs an explicit data boundary and a signed relationship record, and must respect ADR-006 import boundaries.",
+      "references": [
+        "ADR-008",
+        "decisions/ADR-008-client-work.md",
+        "f5d86ef",
+        "PR#72"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-009",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-009: Great Order Operator Relationship",
+      "summary": "Accepted (operational; legal review deferred). Great Order is an operator organization, not a division; Prime Industrial ERP records `operator: great_order`.",
+      "references": [
+        "ADR-009",
+        "decisions/ADR-009-great-order.md",
+        "f5d86ef",
+        "PR#72"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted (operational). Legal review deferred."
+    },
+    {
+      "id": "EVT-adr-010",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-010: BidRoom Product Family Registration",
+      "summary": "Accepted. BidRoom is one product family (`bidroom`) under infrastructure-construction, distinct from civicbid; lifecycle `rescue` until a deployed-route review.",
+      "references": [
+        "ADR-010",
+        "decisions/ADR-010-bidroom-registry.md",
+        "f5d86ef",
+        "PR#72"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-011",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-011: Authentication for Internal Registry Routes",
+      "summary": "Accepted. `/control` and `/system-map` become internal_operations behind Supabase Auth magic link and a server-side email allowlist; fail closed; no service-role key; amends ADR-004 for these routes only.",
+      "references": [
+        "ADR-011",
+        "decisions/ADR-011-internal-route-auth.md",
+        "e43c2f2",
+        "PR#75"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-012",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-012: User Profiles, Roles, and the Dashboard",
+      "summary": "Accepted. Adds `public.user_profiles` (owner/admin/client/viewer, default viewer) with RLS; users read their own row and may edit only `display_name`; roles are owner-assigned; roles are additive to the ADR-011 allowlist; amends ADR-011's no-tables non-goal.",
+      "references": [
+        "ADR-012",
+        "decisions/ADR-012-user-profiles-and-roles.md",
+        "9ef1a14",
+        "PR#77"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-013",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-013: Registry Proposals via GitHub Pull Request",
+      "summary": "Accepted. Owner-role users propose one-field registry changes from /control/propose; the app opens a GitHub PR via a server-only fine-grained token and never writes main; token identity must not bypass main protection; PR audit cites user id, not email.",
+      "references": [
+        "ADR-013",
+        "decisions/ADR-013-registry-proposals.md",
+        "2685dbc",
+        "PR#79"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-014",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-014: Sandboxed Artifact Execution",
+      "summary": "Accepted. Registered HTML/JS artifacts run in an opaque-origin sandbox (iframe `allow-scripts` without same-origin, plus CSP `sandbox` on the served response); sources live outside `public/`; no network by default; no bridge in v1; executions audited in `execution_logs` without the service-role key.",
+      "references": [
+        "ADR-014",
+        "decisions/ADR-014-sandboxed-artifact-execution.md",
+        "bef04e8",
+        "PR#81"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-015",
+      "type": "adr_added",
+      "date": "2026-10-01T00:00:00.000Z",
+      "title": "ADR-015: Immersive 3D Layer",
+      "summary": "Accepted; supersedes ADR-002. 3D is a progressive enhancement in registered scenes only (`data/scene-registry.json`, `/labs/scenes/[id]`): R3F + drei locked for v1, lazy client island, mandatory 2D fallback, code-enforced budgets, no third-party runtime fetches, no 3D on the homepage in v1.",
+      "references": [
+        "ADR-015",
+        "decisions/ADR-015-immersive-layer.md",
+        "fbe166d",
+        "PR#84"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-pr-67",
+      "type": "pr_merged",
+      "date": "2026-10-01T17:30:37.000Z",
+      "title": "governance: add Phase 1 inventory proposal",
+      "summary": "governance: add Phase 1 inventory proposal (1 files changed).",
+      "references": [
+        "PR#67",
+        "e2b833d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-69",
+      "type": "pr_merged",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "governance: sync registries and handover to Phase 1 inventory",
+      "summary": "governance: sync registries and handover to Phase 1 inventory (2 files changed).",
+      "references": [
+        "PR#69",
+        "236d41c"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-product-anastasia-fantasia-demo-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: anastasia-fantasia-demo",
+      "summary": "anastasia-fantasia-demo entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "anastasia-fantasia-demo",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-artemis-nomad-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: artemis-nomad",
+      "summary": "artemis-nomad entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "artemis-nomad",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-bidroom-exemplary-contractor-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: bidroom-exemplary-contractor",
+      "summary": "bidroom-exemplary-contractor entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "bidroom-exemplary-contractor",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-bidroom-suite-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: bidroom-suite",
+      "summary": "bidroom-suite entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "bidroom-suite",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-dayos-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: dayos",
+      "summary": "dayos entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "dayos",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-diana-moonshot-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: diana-moonshot",
+      "summary": "diana-moonshot entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "diana-moonshot",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-geometric-workbench-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: geometric-workbench",
+      "summary": "geometric-workbench entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "geometric-workbench",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-pinar-evleri-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: pinar-evleri",
+      "summary": "pinar-evleri entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "pinar-evleri",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-prime-industrial-erp-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: prime-industrial-erp",
+      "summary": "prime-industrial-erp entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "prime-industrial-erp",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-sala-rotonda-registered",
+      "type": "product_registered",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Product registered: sala-rotonda",
+      "summary": "sala-rotonda entered PRODUCT_REGISTRY.yaml (lifecycle UNREVIEWED).",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": "UNREVIEWED",
+      "product": "sala-rotonda",
+      "outcome": "lifecycle=UNREVIEWED"
+    },
+    {
+      "id": "EVT-registry-236d41c",
+      "type": "registry_changed",
+      "date": "2026-10-01T17:55:00.000Z",
+      "title": "Registry changed: governance: sync registries and handover to Phase 1 inventory",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "236d41c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#69"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-milestone-M1",
+      "type": "milestone_shipped",
+      "date": "2026-10-01T18:35:27.000Z",
+      "title": "M1: /labs reads PRODUCT_REGISTRY.yaml",
+      "summary": "Milestone M1 shipped via PR #70.",
+      "references": [
+        "PR#70",
+        "87efe0d",
+        "docs/HANDOVER.md"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "shipped"
+    },
+    {
+      "id": "EVT-pr-70",
+      "type": "pr_merged",
+      "date": "2026-10-01T18:35:27.000Z",
+      "title": "feat(labs): render /labs from PRODUCT_REGISTRY.yaml plus editorial overlay",
+      "summary": "feat(labs): render /labs from PRODUCT_REGISTRY.yaml plus editorial overlay (4 files changed).",
+      "references": [
+        "PR#70",
+        "87efe0d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-milestone-M2",
+      "type": "milestone_shipped",
+      "date": "2026-10-01T18:43:01.000Z",
+      "title": "M2: /control and /system-map",
+      "summary": "Milestone M2 shipped via PR #71.",
+      "references": [
+        "PR#71",
+        "6a5ad66",
+        "docs/HANDOVER.md"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "shipped"
+    },
+    {
+      "id": "EVT-pr-71",
+      "type": "pr_merged",
+      "date": "2026-10-01T18:43:01.000Z",
+      "title": "feat(routes): add /control registry dashboard and /system-map from registries",
+      "summary": "feat(routes): add /control registry dashboard and /system-map from registries (3 files changed).",
+      "references": [
+        "PR#71",
+        "6a5ad66"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-6a5ad66-control",
+      "type": "route_added",
+      "date": "2026-10-01T18:43:01.000Z",
+      "title": "Route added: /control",
+      "summary": "app/control/page.tsx added in 6a5ad66.",
+      "references": [
+        "6a5ad66",
+        "app/control/page.tsx",
+        "PR#71"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-6a5ad66-system-map",
+      "type": "route_added",
+      "date": "2026-10-01T18:43:01.000Z",
+      "title": "Route added: /system-map",
+      "summary": "app/system-map/page.tsx added in 6a5ad66.",
+      "references": [
+        "6a5ad66",
+        "app/system-map/page.tsx",
+        "PR#71"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-72",
+      "type": "pr_merged",
+      "date": "2026-10-01T18:56:03.000Z",
+      "title": "governance: add ADR-007 through ADR-010 (Sala Rotonda, client work, Great Order, BidRoom)",
+      "summary": "governance: add ADR-007 through ADR-010 (Sala Rotonda, client work, Great Order, BidRoom) (6 files changed).",
+      "references": [
+        "PR#72",
+        "f5d86ef"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-73",
+      "type": "pr_merged",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "governance: refine registries (visibility, routes, client-work buckets)",
+      "summary": "governance: refine registries (visibility, routes, client-work buckets) (4 files changed).",
+      "references": [
+        "PR#73",
+        "d61ccfd"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-product-anastasia-fantasia-demo-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: anastasia-fantasia-demo",
+      "summary": "lifecycle: UNREVIEWED -> active_lab",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "studio-media",
+      "product": "anastasia-fantasia-demo",
+      "outcome": "lifecycle=active_lab"
+    },
+    {
+      "id": "EVT-product-artemis-nomad-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: artemis-nomad",
+      "summary": "lifecycle: UNREVIEWED -> active_lab; visibility: public -> public_safe_demo",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "studio-media",
+      "product": "artemis-nomad",
+      "outcome": "lifecycle=active_lab, visibility=public_safe_demo"
+    },
+    {
+      "id": "EVT-product-bidroom-exemplary-contractor-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: bidroom-exemplary-contractor",
+      "summary": "lifecycle: UNREVIEWED -> active_lab; visibility: public -> public_safe_demo",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "UNREVIEWED",
+      "product": "bidroom-exemplary-contractor",
+      "outcome": "lifecycle=active_lab, visibility=public_safe_demo"
+    },
+    {
+      "id": "EVT-product-bidroom-suite-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: bidroom-suite",
+      "summary": "lifecycle: UNREVIEWED -> rescue; visibility: UNREVIEWED -> noindex_review",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "infrastructure-construction",
+      "product": "bidroom-suite",
+      "outcome": "lifecycle=rescue, visibility=noindex_review"
+    },
+    {
+      "id": "EVT-product-dayos-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: dayos",
+      "summary": "lifecycle: UNREVIEWED -> concept; visibility: public -> UNREVIEWED",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "UNREVIEWED",
+      "product": "dayos",
+      "outcome": "lifecycle=concept, visibility=UNREVIEWED"
+    },
+    {
+      "id": "EVT-product-diana-moonshot-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: diana-moonshot",
+      "summary": "lifecycle: UNREVIEWED -> active_lab; visibility: public -> public_safe_demo",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "studio-media",
+      "product": "diana-moonshot",
+      "outcome": "lifecycle=active_lab, visibility=public_safe_demo"
+    },
+    {
+      "id": "EVT-product-geometric-workbench-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: geometric-workbench",
+      "summary": "lifecycle: UNREVIEWED -> active_lab; visibility: UNREVIEWED -> public_safe_demo",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "core-platform",
+      "product": "geometric-workbench",
+      "outcome": "lifecycle=active_lab, visibility=public_safe_demo"
+    },
+    {
+      "id": "EVT-product-pinar-evleri-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: pinar-evleri",
+      "summary": "lifecycle: UNREVIEWED -> active_lab; visibility: public -> noindex_review",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "UNREVIEWED",
+      "product": "pinar-evleri",
+      "outcome": "lifecycle=active_lab, visibility=noindex_review"
+    },
+    {
+      "id": "EVT-product-prime-industrial-erp-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: prime-industrial-erp",
+      "summary": "lifecycle: UNREVIEWED -> active_lab; visibility: UNREVIEWED -> noindex_review",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "finance-decision-systems",
+      "product": "prime-industrial-erp",
+      "outcome": "lifecycle=active_lab, visibility=noindex_review"
+    },
+    {
+      "id": "EVT-product-sala-rotonda-status-d61ccfd",
+      "type": "product_status_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Product status changed: sala-rotonda",
+      "summary": "lifecycle: UNREVIEWED -> active_lab",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": "UNREVIEWED",
+      "product": "sala-rotonda",
+      "outcome": "lifecycle=active_lab"
+    },
+    {
+      "id": "EVT-registry-d61ccfd",
+      "type": "registry_changed",
+      "date": "2026-10-01T18:56:28.000Z",
+      "title": "Registry changed: governance: refine registries (visibility, routes, client-work buckets)",
+      "summary": "Touched ENGINEERING/DIVISION_REGISTRY.yaml, ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "d61ccfd",
+        "ENGINEERING/DIVISION_REGISTRY.yaml",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#73"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-pr-74",
+      "type": "pr_merged",
+      "date": "2026-10-01T19:01:49.000Z",
+      "title": "governance: align route noindex with registry and sync division families",
+      "summary": "governance: align route noindex with registry and sync division families (11 files changed).",
+      "references": [
+        "PR#74",
+        "03e1265"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-03e1265",
+      "type": "registry_changed",
+      "date": "2026-10-01T19:01:49.000Z",
+      "title": "Registry changed: governance: align route noindex with registry and sync division families",
+      "summary": "Touched ENGINEERING/DIVISION_REGISTRY.yaml.",
+      "references": [
+        "03e1265",
+        "ENGINEERING/DIVISION_REGISTRY.yaml",
+        "PR#74"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-pr-75",
+      "type": "pr_merged",
+      "date": "2026-10-01T21:54:29.000Z",
+      "title": "governance: add ADR-011 (Supabase auth for /control and /system-map)",
+      "summary": "governance: add ADR-011 (Supabase auth for /control and /system-map) (2 files changed).",
+      "references": [
+        "PR#75",
+        "e43c2f2"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-milestone-M3",
+      "type": "milestone_shipped",
+      "date": "2026-10-01T22:16:12.000Z",
+      "title": "M3: magic-link auth with allowlist",
+      "summary": "Milestone M3 shipped via PR #76.",
+      "references": [
+        "PR#76",
+        "f8ddd20",
+        "docs/HANDOVER.md"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "shipped"
+    },
+    {
+      "id": "EVT-pr-76",
+      "type": "pr_merged",
+      "date": "2026-10-01T22:16:12.000Z",
+      "title": "feat(auth): magic-link auth with allowlist for /control and /system-map",
+      "summary": "feat(auth): magic-link auth with allowlist for /control and /system-map (14 files changed).",
+      "references": [
+        "PR#76",
+        "f8ddd20"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-f8ddd20-auth-callback",
+      "type": "route_added",
+      "date": "2026-10-01T22:16:12.000Z",
+      "title": "Route added: /auth/callback",
+      "summary": "app/auth/callback/route.ts added in f8ddd20.",
+      "references": [
+        "f8ddd20",
+        "app/auth/callback/route.ts",
+        "PR#76"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-f8ddd20-login",
+      "type": "route_added",
+      "date": "2026-10-01T22:16:12.000Z",
+      "title": "Route added: /login",
+      "summary": "app/login/page.tsx added in f8ddd20.",
+      "references": [
+        "f8ddd20",
+        "app/login/page.tsx",
+        "PR#76"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-77",
+      "type": "pr_merged",
+      "date": "2026-10-01T23:31:56.000Z",
+      "title": "governance: add ADR-012 (user profiles, roles, and the dashboard)",
+      "summary": "governance: add ADR-012 (user profiles, roles, and the dashboard) (2 files changed).",
+      "references": [
+        "PR#77",
+        "9ef1a14"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-milestone-M4",
+      "type": "milestone_shipped",
+      "date": "2026-10-01T23:32:13.000Z",
+      "title": "M4: per-user profiles and roles, /dashboard per role",
+      "summary": "Milestone M4 shipped via PR #78.",
+      "references": [
+        "PR#78",
+        "9ba8d18",
+        "docs/HANDOVER.md"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "shipped"
+    },
+    {
+      "id": "EVT-pr-78",
+      "type": "pr_merged",
+      "date": "2026-10-01T23:32:13.000Z",
+      "title": "feat(dashboard): personalized dashboard with role-based product visibility",
+      "summary": "feat(dashboard): personalized dashboard with role-based product visibility (7 files changed).",
+      "references": [
+        "PR#78",
+        "9ba8d18"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-9ba8d18-auth-signout",
+      "type": "route_added",
+      "date": "2026-10-01T23:32:13.000Z",
+      "title": "Route added: /auth/signout",
+      "summary": "app/auth/signout/route.ts added in 9ba8d18.",
+      "references": [
+        "9ba8d18",
+        "app/auth/signout/route.ts",
+        "PR#78"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-9ba8d18-dashboard",
+      "type": "route_added",
+      "date": "2026-10-01T23:32:13.000Z",
+      "title": "Route added: /dashboard",
+      "summary": "app/dashboard/page.tsx added in 9ba8d18.",
+      "references": [
+        "9ba8d18",
+        "app/dashboard/page.tsx",
+        "PR#78"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-adr-016",
+      "type": "adr_added",
+      "date": "2026-10-02T00:00:00.000Z",
+      "title": "ADR-016: Homepage 3D Hero",
+      "summary": "Accepted; amends ADR-015. One registered hero scene (`route: \"/\"`) may render below the homepage fold, loaded after idle, under 5,000 vertices and 100 KB gz incremental (validator-enforced); native Canvas 2D allowed for the hero only (R3F costs 240 KB gz); 2D fallback on reduced motion, slow network, low device.",
+      "references": [
+        "ADR-016",
+        "decisions/ADR-016-homepage-3d-hero.md",
+        "19cf6fe",
+        "PR#93"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-017",
+      "type": "adr_added",
+      "date": "2026-10-02T00:00:00.000Z",
+      "title": "ADR-017: Contextual Design Language",
+      "summary": "Accepted; extends ADR-006 and ADR-015. Every page presents its subject in a visual grammar native to that subject; products and divisions declare an optional `native_visuals` field (proposed here, applied in a follow-up registry PR); 3D scenes must map to a native visual type; the site shell stays brand-consistent.",
+      "references": [
+        "ADR-017",
+        "decisions/ADR-017-contextual-design-language.md",
+        "c44de0b",
+        "PR#98"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-adr-018",
+      "type": "adr_added",
+      "date": "2026-10-02T00:00:00.000Z",
+      "title": "ADR-018: Evolution Archive",
+      "summary": "Accepted; extends ADR-006, ADR-014, ADR-015, ADR-017. `/evolution` becomes a generated, inspectable record of project evolution (`data/evolution.json`, produced by `scripts/extract-evolution.mjs` after merges to main via an automated PR, never hand-edited); internal_operations and noindex; v1 visuals locked to GSAP, D3, Observable Plot, HTML tables and a MathBox scene; dependencies approved but not installed.",
+      "references": [
+        "ADR-018",
+        "decisions/ADR-018-evolution-archive.md",
+        "984fdda",
+        "PR#99"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-pr-79",
+      "type": "pr_merged",
+      "date": "2026-10-02T00:19:46.000Z",
+      "title": "governance: add ADR-013 (registry proposals via GitHub PR)",
+      "summary": "governance: add ADR-013 (registry proposals via GitHub PR) (2 files changed).",
+      "references": [
+        "PR#79",
+        "2685dbc"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-milestone-M5",
+      "type": "milestone_shipped",
+      "date": "2026-10-02T00:42:57.000Z",
+      "title": "M5: /control/propose opens GitHub PRs",
+      "summary": "Milestone M5 shipped via PR #80.",
+      "references": [
+        "PR#80",
+        "87789f3",
+        "docs/HANDOVER.md"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "shipped"
+    },
+    {
+      "id": "EVT-pr-80",
+      "type": "pr_merged",
+      "date": "2026-10-02T00:42:57.000Z",
+      "title": "feat(control): registry proposals via GitHub PR for owner role",
+      "summary": "feat(control): registry proposals via GitHub PR for owner role (12 files changed).",
+      "references": [
+        "PR#80",
+        "87789f3"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-87789f3-control-propose",
+      "type": "route_added",
+      "date": "2026-10-02T00:42:57.000Z",
+      "title": "Route added: /control/propose",
+      "summary": "app/control/propose/page.tsx added in 87789f3.",
+      "references": [
+        "87789f3",
+        "app/control/propose/page.tsx",
+        "PR#80"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-82",
+      "type": "pr_merged",
+      "date": "2026-10-02T00:59:12.000Z",
+      "title": "docs: defer M5 live test",
+      "summary": "docs: defer M5 live test (1 files changed).",
+      "references": [
+        "PR#82",
+        "3ad4488"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-81",
+      "type": "pr_merged",
+      "date": "2026-10-02T01:02:06.000Z",
+      "title": "governance: add ADR-014 (sandboxed artifact execution)",
+      "summary": "governance: add ADR-014 (sandboxed artifact execution) (3 files changed).",
+      "references": [
+        "PR#81",
+        "bef04e8"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-milestone-M6",
+      "type": "milestone_shipped",
+      "date": "2026-10-02T01:14:41.000Z",
+      "title": "M6: sandboxed HTML execution with audit log",
+      "summary": "Milestone M6 shipped via PR #83.",
+      "references": [
+        "PR#83",
+        "9de52be",
+        "docs/HANDOVER.md"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "shipped"
+    },
+    {
+      "id": "EVT-pr-83",
+      "type": "pr_merged",
+      "date": "2026-10-02T01:14:41.000Z",
+      "title": "feat(sandbox): sandboxed artifact execution with registry and audit log",
+      "summary": "feat(sandbox): sandboxed artifact execution with registry and audit log (19 files changed).",
+      "references": [
+        "PR#83",
+        "9de52be"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-9de52be-api-sandbox-id",
+      "type": "route_added",
+      "date": "2026-10-02T01:14:41.000Z",
+      "title": "Route added: /api/sandbox/[id]",
+      "summary": "app/api/sandbox/[id]/route.ts added in 9de52be.",
+      "references": [
+        "9de52be",
+        "app/api/sandbox/[id]/route.ts",
+        "PR#83"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-9de52be-api-sandbox-log",
+      "type": "route_added",
+      "date": "2026-10-02T01:14:41.000Z",
+      "title": "Route added: /api/sandbox-log",
+      "summary": "app/api/sandbox-log/route.ts added in 9de52be.",
+      "references": [
+        "9de52be",
+        "app/api/sandbox-log/route.ts",
+        "PR#83"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-9de52be-labs-run-id",
+      "type": "route_added",
+      "date": "2026-10-02T01:14:41.000Z",
+      "title": "Route added: /labs/run/[id]",
+      "summary": "app/labs/run/[id]/page.tsx added in 9de52be.",
+      "references": [
+        "9de52be",
+        "app/labs/run/[id]/page.tsx",
+        "PR#83"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-85",
+      "type": "pr_merged",
+      "date": "2026-10-02T01:40:40.000Z",
+      "title": "docs: log ADR-015 follow-up items",
+      "summary": "docs: log ADR-015 follow-up items (1 files changed).",
+      "references": [
+        "PR#85",
+        "09573a9"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-84",
+      "type": "pr_merged",
+      "date": "2026-10-02T01:40:48.000Z",
+      "title": "governance: add ADR-015 (immersive 3D layer, supersedes ADR-002)",
+      "summary": "governance: add ADR-015 (immersive 3D layer, supersedes ADR-002) (3 files changed).",
+      "references": [
+        "PR#84",
+        "fbe166d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-milestone-M7",
+      "type": "milestone_shipped",
+      "date": "2026-10-02T01:56:55.000Z",
+      "title": "M7: /labs/scenes/[id] immersive layer",
+      "summary": "Milestone M7 shipped via PR #86.",
+      "references": [
+        "PR#86",
+        "ed955e9",
+        "docs/HANDOVER.md"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "shipped"
+    },
+    {
+      "id": "EVT-pr-86",
+      "type": "pr_merged",
+      "date": "2026-10-02T01:56:55.000Z",
+      "title": "feat(immersive): registry-driven 3D island with fallback chain and first scene",
+      "summary": "feat(immersive): registry-driven 3D island with fallback chain and first scene (15 files changed).",
+      "references": [
+        "PR#86",
+        "ed955e9"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-ed955e9-labs-scenes-id",
+      "type": "route_added",
+      "date": "2026-10-02T01:56:55.000Z",
+      "title": "Route added: /labs/scenes/[id]",
+      "summary": "app/labs/scenes/[id]/page.tsx added in ed955e9.",
+      "references": [
+        "ed955e9",
+        "app/labs/scenes/[id]/page.tsx",
+        "PR#86"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-scene-hello-orb",
+      "type": "scene_registered",
+      "date": "2026-10-02T01:56:55.000Z",
+      "title": "Scene registered: Hello Orb",
+      "summary": "Scene hello-orb registered at /labs/scenes/hello-orb.",
+      "references": [
+        "ed955e9",
+        "data/scene-registry.json",
+        "PR#86"
+      ],
+      "division": "studio-media",
+      "product": null,
+      "outcome": "visibility=public_safe_demo; data_mode=synthetic"
+    },
+    {
+      "id": "EVT-pr-87",
+      "type": "pr_merged",
+      "date": "2026-10-02T02:10:37.000Z",
+      "title": "governance: close M1-M7 programme, update handover, bump CI Node",
+      "summary": "governance: close M1-M7 programme, update handover, bump CI Node (3 files changed).",
+      "references": [
+        "PR#87",
+        "644d030"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-88",
+      "type": "pr_merged",
+      "date": "2026-10-02T02:11:49.000Z",
+      "title": "docs: correct backlog — M3 email verified working",
+      "summary": "docs: correct backlog — M3 email verified working (1 files changed).",
+      "references": [
+        "PR#88",
+        "ea2032d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-89",
+      "type": "pr_merged",
+      "date": "2026-10-02T02:43:07.000Z",
+      "title": "docs: site quality audit (routes, nav, links, visuals, metadata)",
+      "summary": "docs: site quality audit (routes, nav, links, visuals, metadata) (1 files changed).",
+      "references": [
+        "PR#89",
+        "f8cd6d1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-90",
+      "type": "pr_merged",
+      "date": "2026-10-02T12:43:40.000Z",
+      "title": "fix(site): batch 1 audit P0 and P1 (broken link, nav, robots, products, sitemap)",
+      "summary": "fix(site): batch 1 audit P0 and P1 (broken link, nav, robots, products, sitemap) (7 files changed).",
+      "references": [
+        "PR#90",
+        "f6f780a"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-91",
+      "type": "pr_merged",
+      "date": "2026-10-02T13:09:01.000Z",
+      "title": "feat(site): batch 2 P2 cleanup and spatial proof surface 3D upgrade",
+      "summary": "feat(site): batch 2 P2 cleanup and spatial proof surface 3D upgrade (15 files changed).",
+      "references": [
+        "PR#91",
+        "bdd9198"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-removed-bdd9198-labs-geometric-workbench-v5-8",
+      "type": "route_removed",
+      "date": "2026-10-02T13:09:01.000Z",
+      "title": "Route removed: /labs/geometric-workbench/v5-8",
+      "summary": "app/labs/geometric-workbench/v5-8/page.tsx removed in bdd9198.",
+      "references": [
+        "bdd9198",
+        "app/labs/geometric-workbench/v5-8/page.tsx",
+        "PR#91"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "removed"
+    },
+    {
+      "id": "EVT-route-removed-bdd9198-labs-slug-path",
+      "type": "route_removed",
+      "date": "2026-10-02T13:09:01.000Z",
+      "title": "Route removed: /labs/[slug]/[...path]",
+      "summary": "app/labs/[slug]/[...path]/page.tsx removed in bdd9198.",
+      "references": [
+        "bdd9198",
+        "app/labs/[slug]/[...path]/page.tsx",
+        "PR#91"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "removed"
+    },
+    {
+      "id": "EVT-route-removed-bdd9198-labs-utility-intelligence-bridge-3d-model",
+      "type": "route_removed",
+      "date": "2026-10-02T13:09:01.000Z",
+      "title": "Route removed: /labs/utility-intelligence-bridge/3d-model",
+      "summary": "app/labs/utility-intelligence-bridge/3d-model/page.tsx removed in bdd9198.",
+      "references": [
+        "bdd9198",
+        "app/labs/utility-intelligence-bridge/3d-model/page.tsx",
+        "PR#91"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "removed"
+    },
+    {
+      "id": "EVT-scene-spatial-proof-surface",
+      "type": "scene_registered",
+      "date": "2026-10-02T13:09:01.000Z",
+      "title": "Scene registered: Spatial Proof Surface",
+      "summary": "Scene spatial-proof-surface registered at /labs/scenes/spatial-proof-surface.",
+      "references": [
+        "bdd9198",
+        "data/scene-registry.json",
+        "PR#91"
+      ],
+      "division": "studio-media",
+      "product": null,
+      "outcome": "visibility=public_safe_demo; data_mode=synthetic"
+    },
+    {
+      "id": "EVT-pr-92",
+      "type": "pr_merged",
+      "date": "2026-10-02T13:23:32.000Z",
+      "title": "feat(scenes): add botanical-garden 3D scene",
+      "summary": "feat(scenes): add botanical-garden 3D scene (6 files changed).",
+      "references": [
+        "PR#92",
+        "e011ede"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-scene-botanical-garden",
+      "type": "scene_registered",
+      "date": "2026-10-02T13:23:32.000Z",
+      "title": "Scene registered: Botanical Garden",
+      "summary": "Scene botanical-garden registered at /labs/scenes/botanical-garden.",
+      "references": [
+        "e011ede",
+        "data/scene-registry.json",
+        "PR#92"
+      ],
+      "division": "natural-systems",
+      "product": null,
+      "outcome": "visibility=public_safe_demo; data_mode=synthetic"
+    },
+    {
+      "id": "EVT-pr-93",
+      "type": "pr_merged",
+      "date": "2026-10-02T13:54:45.000Z",
+      "title": "feat(home): ADR-016 and homepage hero scene",
+      "summary": "feat(home): ADR-016 and homepage hero scene (16 files changed).",
+      "references": [
+        "PR#93",
+        "19cf6fe"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-scene-site-hero",
+      "type": "scene_registered",
+      "date": "2026-10-02T13:54:45.000Z",
+      "title": "Scene registered: Artemis System",
+      "summary": "Scene site-hero registered at /.",
+      "references": [
+        "19cf6fe",
+        "data/scene-registry.json",
+        "PR#93"
+      ],
+      "division": "core-platform",
+      "product": null,
+      "outcome": "visibility=public_safe_demo; data_mode=synthetic"
+    },
+    {
+      "id": "EVT-pr-94",
+      "type": "pr_merged",
+      "date": "2026-10-02T15:36:57.000Z",
+      "title": "security: sandbox standalone labs and pin CDN dependencies",
+      "summary": "security: sandbox standalone labs and pin CDN dependencies (32 files changed).",
+      "references": [
+        "PR#94",
+        "f735def"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-security-pr-94",
+      "type": "security_fix",
+      "date": "2026-10-02T15:36:57.000Z",
+      "title": "security: sandbox standalone labs and pin CDN dependencies",
+      "summary": "Security change merged in PR #94.",
+      "references": [
+        "PR#94",
+        "f735def"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-95",
+      "type": "pr_merged",
+      "date": "2026-10-02T16:11:26.000Z",
+      "title": "governance: make AGENTS.md role-aware (reviewer default, executor override)",
+      "summary": "governance: make AGENTS.md role-aware (reviewer default, executor override) (1 files changed).",
+      "references": [
+        "PR#95",
+        "f592415"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-96",
+      "type": "pr_merged",
+      "date": "2026-10-02T17:50:34.000Z",
+      "title": "feat(home): cinematic video section and /integrate page with pilot form",
+      "summary": "feat(home): cinematic video section and /integrate page with pilot form (7 files changed).",
+      "references": [
+        "PR#96",
+        "1ed892b"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-1ed892b-integrate",
+      "type": "route_added",
+      "date": "2026-10-02T17:50:34.000Z",
+      "title": "Route added: /integrate",
+      "summary": "app/integrate/page.tsx added in 1ed892b.",
+      "references": [
+        "1ed892b",
+        "app/integrate/page.tsx",
+        "PR#96"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-98",
+      "type": "pr_merged",
+      "date": "2026-10-03T00:34:16.000Z",
+      "title": "governance: add verification record, sync handover, add ADR-017 contextual design",
+      "summary": "governance: add verification record, sync handover, add ADR-017 contextual design (4 files changed).",
+      "references": [
+        "PR#98",
+        "c44de0b"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-99",
+      "type": "pr_merged",
+      "date": "2026-10-03T01:03:25.000Z",
+      "title": "governance: add ADR-018 (Evolution Archive)",
+      "summary": "governance: add ADR-018 (Evolution Archive) (3 files changed).",
+      "references": [
+        "PR#99",
+        "984fdda"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    }
+  ],
+  "stats": {
+    "adrs_total": 18,
+    "adrs_superseded": 1,
+    "products_total": 20,
+    "products_by_status": {
+      "active_lab": 14,
+      "concept": 1,
+      "noindex_draft": 1,
+      "rescue": 3,
+      "testbed": 1
+    },
+    "scenes_total": 4,
+    "milestones_shipped": 7,
+    "prs_merged": 47,
+    "verified_capabilities": 8
+  }
+}
