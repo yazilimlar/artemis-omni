@@ -2,6 +2,14 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-03 update — ADR-019 (DayOS compositional architecture)
+
+- Branch: `governance/adr-019-dayos-compositional-architecture` (core-platform, dayos, governance, internal_operations, mixed_explicit). Draft PR; takes effect on merge.
+- ADR-019: DayOS owns the Daily Ledger and correlation layer; Dawarich (location) and Immich (media) run unmodified as separate self-hosted AGPL services behind `lib/dayos/interfaces/` with adapters as the only integration code. Read-only in v1, single Mac, no public deployment, no real personal data in the repo.
+- Facts about Dawarich's MCP endpoint, Immich's API and the AGPL reading come from the owner's brief and are verified at adapter time; legal confirmation is needed before any distribution or modification.
+- Not changed: no code, no deployments, no dependencies, no registry YAML. The `dayos` registry entry (division, family, maturity, data mode) needs a follow-up registry PR; the existing v0.9.8 prototypes are unchanged.
+- Next recommended task: build step 2, deploy Dawarich and Immich locally with Docker (outside this repo's deploy path).
+
 ## 2026-10-03 update — DayOS v0.9.8c rebased (PR #56, stack part 3 of 3)
 
 - Branch: `feature/dayos-v098c-scenario-overlay`, rebased onto `main` (d961272) after #54 and #55 were squash-merged. The owner merges.
