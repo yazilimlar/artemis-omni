@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     # The extractor ignores bot commits, so merging the bot PR changes nothing;
     # this guard just skips the run.
-    if: ${{ !startsWith(github.event.head_commit.message, 'chore: regenerate evolution data') }}
+    if: "${{ !startsWith(github.event.head_commit.message, 'chore: regenerate evolution data') }}"
     steps:
       - uses: actions/checkout@v4
         with:
