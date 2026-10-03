@@ -384,6 +384,7 @@ products:
     visibility: noindex_review  # owner decision 2026-10-03; distribution remains UNREVIEWED
     data_mode: UNREVIEWED
     canonical_route: /dayos-v098a  # noindex review route added by PR #54
+    # additional noindex review route (PR #55): /dayos-v098b; canonical_route is unchanged.
     canonical_branch: main
     # PRs #54, #55, #56 (v0.9.8a/b/c) are open; #57 closed unmerged.
     status_evidence: >-

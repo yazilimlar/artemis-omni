@@ -2,6 +2,21 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-03 update — DayOS v0.9.8b test fix and vitest scope (PR #55)
+
+- Branch: `feature/dayos-v098b-telemetry-critical-timing` (core-platform, dayos, active_lab, noindex_review). The owner merges.
+- Owner decision: trust the engine. `tests/v098b_battery_projection.test.ts` now expects 29.75 (1.2 + 8.5*0.5 + 4.8 = 10.25 %/h over one hour from 40%), with the formula in a comment. `src/dayos/engines/batteryEngine.ts` is unchanged.
+- `vitest.config.ts` now includes `tests/**/*.test.ts(x)`, so the DayOS gate tests under `tests/` (v098a, v098b) run in `npm test` and CI. 218 tests run, up from 211.
+- Registry: unchanged. Next: #56.
+
+## 2026-10-03 update — DayOS v0.9.8b rebased (PR #55, stack part 2 of 3)
+
+- Branch: `feature/dayos-v098b-telemetry-critical-timing`, rebased onto `main` after #54 was squash-merged. Only #55's own nine commits were replayed (`git rebase --onto origin/main 3697d91`); the six old #54 commits were dropped. The owner merges.
+- `/dayos-v098b` is `noindex` through a new `layout.tsx`. It is not in the sitemap or navigation. There was no duplicate `src/app` copy of this page.
+- Open-Meteo: the runtime fetch to `api.open-meteo.com` in `src/dayos/connectors/openMeteo.ts` is kept and now carries a comment. Accepted at noindex_review; it must be blocked or replaced before any public_safe_demo upgrade.
+- Registry: only a comment on the existing `dayos` entry records `/dayos-v098b` as an additional route; `canonical_route` is unchanged and no second entry was added.
+- Next: #56 (scenario overlay).
+
 ## 2026-10-03 update — DayOS v0.9.8a rebased (PR #54, stack part 1 of 3)
 
 - Branch: `feature/dayos-v098a-spatial-intelligence`, rebased onto `main` (core-platform, dayos, active_lab, noindex_review, product-specific). The owner merges from `~/Projects/artemis-admin`.
