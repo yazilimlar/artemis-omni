@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-03T02:43:27.000Z",
+    "generated_at": "2026-10-03T03:41:49.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-03T02:43:27.000Z",
+  "generated_at": "2026-10-03T03:41:49.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -3105,6 +3105,20 @@
       "division": "core-platform",
       "product": null,
       "outcome": "visibility=internal_operations; data_mode=mixed_explicit"
+    },
+    {
+      "id": "EVT-pr-105",
+      "type": "pr_merged",
+      "date": "2026-10-03T03:41:49.000Z",
+      "title": "ci: provide Supabase env vars to build steps",
+      "summary": "ci: provide Supabase env vars to build steps (1 files changed).",
+      "references": [
+        "PR#105",
+        "2753aad"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
     }
   ],
   "stats": {
@@ -3120,7 +3134,7 @@
     },
     "scenes_total": 5,
     "milestones_shipped": 7,
-    "prs_merged": 50,
+    "prs_merged": 51,
     "verified_capabilities": 8
   }
 }
