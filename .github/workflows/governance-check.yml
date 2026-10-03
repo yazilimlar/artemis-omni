@@ -25,6 +25,10 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          ARTEMIS_IP_SALT: ${{ secrets.ARTEMIS_IP_SALT }}
 
   governance:
     name: Governance advisories (non-blocking)
