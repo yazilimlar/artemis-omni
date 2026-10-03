@@ -60,3 +60,16 @@ Update docs/HANDOVER.md or a durable record with: branch, division, product, fil
 ## Do not rely on this file
 
 Read the ten files listed above. This file is a signpost, not a substitute.
+
+## Directory discipline (2026-10-02)
+
+Claude Code operates ONLY in `~/Projects/artemis-omni`.
+The owner runs all git/gh/merge operations ONLY in `~/Projects/artemis-admin`.
+
+Never run `git checkout`, `git pull`, or `git switch` in `artemis-omni` while a
+Claude Code session is active. If the owner needs to check state or merge, they
+`cd ~/Projects/artemis-admin` first.
+
+If you (Claude Code) notice your working tree is unexpectedly on a different
+branch than the one you started on, stop immediately and report. Do not
+continue; the owner will resolve it.
