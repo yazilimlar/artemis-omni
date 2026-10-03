@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-03T04:04:57.000Z",
+    "generated_at": "2026-10-03T04:38:25.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-03T04:04:57.000Z",
+  "generated_at": "2026-10-03T04:38:25.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -3175,6 +3175,109 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-54",
+      "type": "pr_merged",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "DayOS v0.9.8a — Spatial Intelligence",
+      "summary": "DayOS v0.9.8a — Spatial Intelligence (10 files changed).",
+      "references": [
+        "PR#54",
+        "05bb5cf"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-product-dayos-status-05bb5cf",
+      "type": "product_status_changed",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Product status changed: dayos",
+      "summary": "lifecycle: concept -> active_lab; visibility: UNREVIEWED -> noindex_review",
+      "references": [
+        "05bb5cf",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#54"
+      ],
+      "division": "UNREVIEWED",
+      "product": "dayos",
+      "outcome": "lifecycle=active_lab, visibility=noindex_review"
+    },
+    {
+      "id": "EVT-registry-05bb5cf",
+      "type": "registry_changed",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Registry changed: DayOS v0.9.8a — Spatial Intelligence",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "05bb5cf",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#54"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-05bb5cf-dayos-v098a",
+      "type": "route_added",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Route added: /dayos-v098a",
+      "summary": "app/dayos-v098a/page.tsx added in 05bb5cf.",
+      "references": [
+        "05bb5cf",
+        "app/dayos-v098a/page.tsx",
+        "PR#54"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-55",
+      "type": "pr_merged",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "DayOS v0.9.8b — Telemetry & Critical Timing",
+      "summary": "DayOS v0.9.8b — Telemetry & Critical Timing (12 files changed).",
+      "references": [
+        "PR#55",
+        "d961272"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-d961272",
+      "type": "registry_changed",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "Registry changed: DayOS v0.9.8b — Telemetry & Critical Timing",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "d961272",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#55"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-d961272-dayos-v098b",
+      "type": "route_added",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "Route added: /dayos-v098b",
+      "summary": "app/dayos-v098b/page.tsx added in d961272.",
+      "references": [
+        "d961272",
+        "app/dayos-v098b/page.tsx",
+        "PR#55"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
     }
   ],
   "stats": {
@@ -3182,15 +3285,14 @@
     "adrs_superseded": 1,
     "products_total": 20,
     "products_by_status": {
-      "active_lab": 14,
-      "concept": 1,
+      "active_lab": 15,
       "noindex_draft": 1,
       "rescue": 3,
       "testbed": 1
     },
     "scenes_total": 5,
     "milestones_shipped": 7,
-    "prs_merged": 55,
+    "prs_merged": 57,
     "verified_capabilities": 8
   }
 }
