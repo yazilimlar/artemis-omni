@@ -2,6 +2,16 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-03 update — Evolution Archive visualization layer
+
+- Branch: `feat/evolution-visualization` (core-platform, artemis-evolution-archive, active_lab, internal_operations, live_derived). Draft PR; builds on ADR-018, PRs #99-#102.
+- `/evolution` now shows stats, a GSAP scroll timeline, an ADR lineage graph and a registry-flow area chart (Observable Plot), and a 3D architecture map. The earlier structure record moved unchanged to `components/evolution/StructureRecord.tsx` at the bottom of the page.
+- New scene `evolution-architecture-map` is registered in `data/scene-registry.json` (internal_operations) so the 3D map stays inside the ADR-015 island; MathBox is not used.
+- New dependencies: `gsap` (standard "no charge" license) and `@observablehq/plot` (ISC, depends on d3).
+- New route `/api/evolution-data` (auth, 404 otherwise, `no-store`).
+- Not verified: a signed-in browser render of `/evolution` (needs the allowlist and a session).
+- Next recommended task: browser QA of the page; decide the public home of the structure record.
+
 ## 2026-10-02 update — Evolution Archive extraction pipeline
 
 - Branch: `feat/evolution-extraction` (core-platform, site-shell, active_lab, internal_operations, live_derived). Draft PR; builds what ADR-018 (PR #99, merged) authorizes.
