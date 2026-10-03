@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-03T01:03:25.000Z",
+    "generated_at": "2026-10-03T02:16:57.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-03T01:03:25.000Z",
+  "generated_at": "2026-10-03T02:16:57.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -3003,6 +3003,64 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-100",
+      "type": "pr_merged",
+      "date": "2026-10-03T01:38:11.000Z",
+      "title": "feat(evolution): extraction pipeline, data file, registry entry, route reclassification",
+      "summary": "feat(evolution): extraction pipeline, data file, registry entry, route reclassification (8 files changed).",
+      "references": [
+        "PR#100",
+        "85e355e"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-product-artemis-evolution-console-status-85e355e",
+      "type": "product_status_changed",
+      "date": "2026-10-03T01:38:11.000Z",
+      "title": "Product status changed: artemis-evolution-console",
+      "summary": "lifecycle: concept -> active_lab; visibility: noindex_review -> internal_operations",
+      "references": [
+        "85e355e",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#100"
+      ],
+      "division": "core-platform",
+      "product": "artemis-evolution-console",
+      "outcome": "lifecycle=active_lab, visibility=internal_operations"
+    },
+    {
+      "id": "EVT-registry-85e355e",
+      "type": "registry_changed",
+      "date": "2026-10-03T01:38:11.000Z",
+      "title": "Registry changed: feat(evolution): extraction pipeline, data file, registry entry, route reclassification",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "85e355e",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#100"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-pr-101",
+      "type": "pr_merged",
+      "date": "2026-10-03T02:16:57.000Z",
+      "title": "fix(ci): quote the if condition in evolution-update.yml",
+      "summary": "fix(ci): quote the if condition in evolution-update.yml (1 files changed).",
+      "references": [
+        "PR#101",
+        "86d943f"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
     }
   ],
   "stats": {
@@ -3018,7 +3076,7 @@
     },
     "scenes_total": 4,
     "milestones_shipped": 7,
-    "prs_merged": 47,
+    "prs_merged": 49,
     "verified_capabilities": 8
   }
 }
