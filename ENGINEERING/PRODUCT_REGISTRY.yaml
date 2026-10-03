@@ -385,6 +385,7 @@ products:
     data_mode: UNREVIEWED
     canonical_route: /dayos-v098a  # noindex review route added by PR #54
     # additional noindex review route (PR #55): /dayos-v098b; canonical_route is unchanged.
+    # routes: /dayos-v098a, /dayos-v098b, /dayos-v098c (all noindex_review)
     canonical_branch: main
     # PRs #54, #55, #56 (v0.9.8a/b/c) are open; #57 closed unmerged.
     status_evidence: >-

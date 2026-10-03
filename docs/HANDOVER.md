@@ -2,6 +2,15 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-03 update — DayOS v0.9.8c rebased (PR #56, stack part 3 of 3)
+
+- Branch: `feature/dayos-v098c-scenario-overlay`, rebased onto `main` (d961272) after #54 and #55 were squash-merged. The owner merges.
+- Boundary: #55's branch was force-pushed after #56 stacked on it, so the merge-base of the two branches (`4d171ca`) is not #56's parent and would have replayed 16 stale commits. The real parent is the old #55 tip `858c7cf`; `git rebase --onto origin/main 858c7cf` replayed only #56's 7 commits, with no conflicts.
+- `/dayos-v098c` is `noindex` through a new `layout.tsx`. It is not in the sitemap or navigation. There was no duplicate `src/app` copy.
+- Registry: one comment line on the existing `dayos` entry lists all three routes; `canonical_route` is unchanged and there is no second entry.
+- With `tests/` now in the vitest include (#55), `tests/v098c_scenario_core.test.ts > recomputes timing` failed: it expected leaveBy 1900 / slack 900, which only holds if the 5-minute `prepDeltaMin` in its own input is ignored. The engine gives 1600 / 600 (transit 2100 s, prep 900 s). The test was corrected to the engine's values (same call as the owner's #55 decision); the engine is unchanged. Owner: confirm.
+- DayOS stack complete (#54, #55 merged; #56 ready for the owner). Remaining DayOS items: unpkg Leaflet (#54) and Open-Meteo (#55) runtime fetches, accepted at noindex_review only; maturity, data mode, division and family are still UNREVIEWED.
+
 ## 2026-10-03 update — DayOS v0.9.8b test fix and vitest scope (PR #55)
 
 - Branch: `feature/dayos-v098b-telemetry-critical-timing` (core-platform, dayos, active_lab, noindex_review). The owner merges.
