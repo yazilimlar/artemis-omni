@@ -2,6 +2,15 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-02 update — Evolution Archive extraction pipeline
+
+- Branch: `feat/evolution-extraction` (core-platform, site-shell, active_lab, internal_operations, live_derived). Draft PR; builds what ADR-018 (PR #99, merged) authorizes.
+- Added: `scripts/extract-evolution.mjs`, generated `data/evolution.json`, `.github/workflows/evolution-update.yml` (bot branch + PR, never pushes to main), `tests/unit/evolution-extraction.test.ts`.
+- `/evolution` is now noindex and behind `requireAuth()`, removed from the sitemap. Its existing content is kept; no UI rebuild (Session 3).
+- Registry: the existing `artemis-evolution-console` entry was updated in place (no duplicate): core-platform, platform-governance, active_lab, internal_operations, live_derived, canonical route `/evolution`.
+- Owner setup: enable "Allow GitHub Actions to create and approve pull requests" for the bot PR to open.
+- Next recommended task: Session 3 visualization layer (timeline, supersession graph, flow, matrix).
+
 ## 2026-10-02 update — ADR-018 (Evolution Archive) proposed
 
 - Branch: `governance/adr-018-evolution-archive` (core-platform, site-shell, governance, internal_operations). Draft PR; ADR-018 takes effect on merge.

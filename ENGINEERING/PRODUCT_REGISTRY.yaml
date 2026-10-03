@@ -224,23 +224,32 @@ products:
     next_gate: product_owner_review
 
   - id: artemis-evolution-console
-    name: Artemis Evolution Console
-    division: knowledge-academy
-    product_family: company-history
-    lifecycle: concept
+    name: Artemis Evolution Archive
+    division: core-platform
+    product_family: platform-governance
+    lifecycle: active_lab
     maturity: internal_experiment
-    visibility: noindex_review
-    data_mode: sample
-    canonical_route: null
-    # 2026-10-01 sync: /evolution and /api/public/artemis-structure exist on main
-    # (added 2026-07-11) and are indexable. Whether they are this product is
-    # UNREVIEWED (inventory C6, U7); canonical_route left unchanged.
+    visibility: internal_operations
+    data_mode: live_derived
+    canonical_route: /evolution
+    canonical_branch: main
+    # 2026-10-02 (ADR-018): this entry was the UNREVIEWED "Artemis Evolution
+    # Console" (knowledge-academy / company-history, concept, sample). It is
+    # updated in place rather than duplicated, and the id is kept so history and
+    # the donor branch below stay traceable. The /evolution route is now the
+    # Evolution Archive. The earlier public-record content is unchanged on the
+    # route and /api/public/artemis-structure is untouched; both remain
+    # subject to the factual review listed in known_blockers.
+    status_evidence: >-
+      Generated from git history and registries by scripts/extract-evolution.mjs.
+      Authorized by ADR-018. Internal, noindex, requires auth.
+    related_prs: [99]
     donor_branches:
       - claude/evolution-console
     known_blockers:
       - operational_claims_require_factual_review
       - public_tool_and_workflow_disclosure_requires_owner_approval
-    next_gate: factual_and_commercial_review
+    next_gate: visualization_layer
 
   # --- 2026-10-01 sync: entries added from the Phase 1 inventory (PR #67) ---
 

@@ -17,13 +17,15 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { artemisPublicStructure, type PublicRecordState } from "@/data/artemisPublicStructure";
+import { requireAuth } from "@/lib/auth/require-auth";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
   title: "Evolution & Structure",
   path: "/evolution",
   description:
-    "A public, versioned record of Artemis: its multi-division structure, operating model, branch lifecycle, review controls, milestones, and publication boundary.",
+    "Internal Evolution Archive: a generated record of how Artemis evolved, with the versioned structure record.",
+  noIndex: true,
 });
 
 const stateLabels: Record<PublicRecordState, string> = {
@@ -36,13 +38,24 @@ function StateBadge({ state }: { state: PublicRecordState }) {
   return <Badge>{stateLabels[state]}</Badge>;
 }
 
-export default function EvolutionPage() {
+export default async function EvolutionPage() {
+  await requireAuth();
   const record = artemisPublicStructure;
 
   return (
     <>
+      <div className="border-b border-gold/30 bg-gold/5 py-3 text-sm text-foreground/80">
+        <Container>
+          This is now the internal Evolution Archive (ADR-018). The visualization layer is
+          pending. The structure record below is unchanged, and its public JSON stays at{" "}
+          <a href="/api/public/artemis-structure" className="text-gold underline">
+            /api/public/artemis-structure
+          </a>
+          .
+        </Container>
+      </div>
       <PageHero
-        eyebrow="Public System Record"
+        eyebrow="Internal Evolution Archive"
         title="Artemis Evolution & Structure"
         description={record.statement}
       >

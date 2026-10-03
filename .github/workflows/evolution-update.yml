@@ -1,0 +1,58 @@
+# Evolution Archive (ADR-018): regenerate data/evolution.json after a merge to main.
+# Never pushes to main. Changes go through a bot branch and a pull request.
+# Requires the repo setting "Allow GitHub Actions to create and approve pull requests".
+# PRs opened with GITHUB_TOKEN do not trigger other workflows; a human reviews and merges.
+name: Evolution Update
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: evolution-update
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    name: Regenerate data/evolution.json
+    runs-on: ubuntu-latest
+    # The extractor ignores bot commits, so merging the bot PR changes nothing;
+    # this guard just skips the run.
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore: regenerate evolution data') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Extract
+        run: node scripts/extract-evolution.mjs
+      - name: Open a PR if the data changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          if git diff --quiet -- data/evolution.json; then
+            echo "data/evolution.json unchanged."
+            exit 0
+          fi
+          BRANCH="bot/evolution-update-${RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add data/evolution.json
+          git commit -m "chore: regenerate evolution data [skip ci]"
+          # Close older open bot PRs; this one supersedes them.
+          for n in $(gh pr list --state open --json number,headRefName \
+            --jq '.[] | select(.headRefName | startswith("bot/evolution-update-")) | .number'); do
+            gh pr close "$n" --delete-branch --comment "Superseded by ${BRANCH}."
+          done
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "chore: regenerate evolution data" \
+            --body "Automated regeneration of data/evolution.json by scripts/extract-evolution.mjs (ADR-018). Generated file; do not edit by hand. Source: ${GITHUB_SHA}."

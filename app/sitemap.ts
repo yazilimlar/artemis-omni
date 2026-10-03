@@ -36,7 +36,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/library/programs",
     "/insights",
     "/departments",
-    "/evolution",
     "/about",
     "/contact",
   ].map((path) => ({
