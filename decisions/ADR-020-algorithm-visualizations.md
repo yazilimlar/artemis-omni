@@ -179,3 +179,26 @@ proof rather than a different new dependency.
 ADR-015 (immersive layer), ADR-016 (homepage hero and budgets), ADR-017 (contextual design
 language), ADR-018 (Evolution Archive), ADR-019 (compositional architecture), ADR-014 (no
 third-party runtime content), the owner's direction on 2026-10-04.
+
+## Amendment 2026-10-04 — Tier 1 library selection
+
+MathBox failed Gate 3 (compatibility) on 2026-10-04. Findings:
+
+- `mathbox` 2.3.2-rc1 depends on `threestrap`, which imports `WebGL1Renderer` from
+  `"three"`. That class was removed in r163.
+- Two more symbols (`LuminanceFormat`, `LuminanceAlphaFormat`) are used by MathBox's
+  data-texture format table; both were removed in r163.
+- Last MathBox commit: 2023-05-05. `latest` on npm is a release candidate.
+- Bundling fails in the repo's bundler family (rolldown): `"WebGL1Renderer" is not exported
+  by three`.
+
+Per the stop rule, MathBox was not installed.
+
+**Decision:** Tier 1 uses plain React Three Fiber. No new dependency. The Gaussian surface
+formula and interactivity remain; only MathBox's axes, ticks and labels helpers are lost,
+and those may be drawn manually later if needed. The other seven gates still apply to any
+future Tier 1 library. Tiers 2 and 3 are unchanged.
+
+The first Tier 1 proof is the registered scene `gaussian-surface`: z = exp(-(x² + y²) / 2σ²)
+with σ = 1 on a 64 x 64-cell grid (4,225 vertices), built from React Three Fiber and `three`
+only. It carries the registry's new optional `type: "3d"` field.

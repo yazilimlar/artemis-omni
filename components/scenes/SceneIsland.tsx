@@ -82,6 +82,7 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
   "spatial-proof-surface": dynamic(() => import("./spatial-proof-surface"), { ssr: false }),
   "botanical-garden": dynamic(() => import("./botanical-garden"), { ssr: false }),
   "evolution-architecture-map": dynamic(() => import("./evolution-architecture-map"), { ssr: false }),
+  "gaussian-surface": dynamic(() => import("./gaussian-surface"), { ssr: false }),
   // ADR-016 homepage hero: Canvas 2D, no three.js (keeps the homepage budget).
   "site-hero": dynamic(() => import("./site-hero"), { ssr: false }),
 };
