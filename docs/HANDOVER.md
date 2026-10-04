@@ -2,6 +2,14 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-04 update — ADR-020 (algorithm visualizations)
+
+- Branch: `governance/adr-020-algorithm-visualizations` (core-platform, site-shell, governance, internal_operations). Draft PR; takes effect on merge.
+- ADR-020 picks a three-tier path: R3F + MathBox (3D surfaces, existing island), Manim-Web (2D algorithm animations, separate island with its own budget), ManimCE (pre-rendered explainer videos, offline, never in CI). Each library is adopted only after license, size, compatibility, accessibility and fallback gates in its implementing PR; no library is installed or evaluated here.
+- Amends ADR-015 (allows MathBox over the single `three` instance; scene registry gains optional `type: "3d" | "manim"`). Starting Manim island budget of 150 KB gz is an assumption for the owner to confirm.
+- Not changed: no code, no dependencies, no registry or schema files. The schema and validator update comes with the first Tier 2 PR.
+- Next recommended task: Tier 1 proof (MathBox Gaussian surface), starting with the adoption gates.
+
 ## 2026-10-04 update — native_visuals applied (ADR-017 follow-up)
 
 - Branch: `governance/adr-017-native-visuals-apply` (core-platform, site-shell, governance, internal_operations). Non-draft PR; the owner merges.
