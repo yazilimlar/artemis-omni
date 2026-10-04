@@ -36,13 +36,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/library/programs",
     "/insights",
     "/departments",
+    "/platform",
     "/about",
     "/contact",
   ].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,
     changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : 0.7,
+    priority: path === "" ? 1 : path === "/platform" ? 0.9 : 0.7,
   }));
 
   const content = (["academy", "labs", "case-studies"] as const).flatMap((collection) =>
