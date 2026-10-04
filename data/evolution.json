@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-03T04:04:57.000Z",
+    "generated_at": "2026-10-04T14:36:25.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-03T04:04:57.000Z",
+  "generated_at": "2026-10-04T14:36:25.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -2977,6 +2977,22 @@
       "outcome": "added"
     },
     {
+      "id": "EVT-adr-019",
+      "type": "adr_added",
+      "date": "2026-10-03T00:00:00.000Z",
+      "title": "ADR-019: DayOS Compositional Architecture",
+      "summary": "Accepted; extends ADR-006, ADR-011, ADR-017. DayOS owns the Daily Ledger, correlation, evidence graph and My Day UI; Dawarich (location) and Immich (media) run unmodified as separate AGPL services behind TypeScript interfaces in `lib/dayos/interfaces/` with adapters as the only integration code; read-only in v1, self-hosted, local-only, no real personal data in the repo; any modification of AGPL code needs a new ADR and legal review.",
+      "references": [
+        "ADR-019",
+        "decisions/ADR-019-dayos-compositional-architecture.md",
+        "9c8b7f1",
+        "PR#116"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
       "id": "EVT-pr-98",
       "type": "pr_merged",
       "date": "2026-10-03T00:34:16.000Z",
@@ -3175,22 +3191,211 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-54",
+      "type": "pr_merged",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "DayOS v0.9.8a — Spatial Intelligence",
+      "summary": "DayOS v0.9.8a — Spatial Intelligence (10 files changed).",
+      "references": [
+        "PR#54",
+        "05bb5cf"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-product-dayos-status-05bb5cf",
+      "type": "product_status_changed",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Product status changed: dayos",
+      "summary": "lifecycle: concept -> active_lab; visibility: UNREVIEWED -> noindex_review",
+      "references": [
+        "05bb5cf",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#54"
+      ],
+      "division": "UNREVIEWED",
+      "product": "dayos",
+      "outcome": "lifecycle=active_lab, visibility=noindex_review"
+    },
+    {
+      "id": "EVT-registry-05bb5cf",
+      "type": "registry_changed",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Registry changed: DayOS v0.9.8a — Spatial Intelligence",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "05bb5cf",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#54"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-05bb5cf-dayos-v098a",
+      "type": "route_added",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Route added: /dayos-v098a",
+      "summary": "app/dayos-v098a/page.tsx added in 05bb5cf.",
+      "references": [
+        "05bb5cf",
+        "app/dayos-v098a/page.tsx",
+        "PR#54"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-55",
+      "type": "pr_merged",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "DayOS v0.9.8b — Telemetry & Critical Timing",
+      "summary": "DayOS v0.9.8b — Telemetry & Critical Timing (12 files changed).",
+      "references": [
+        "PR#55",
+        "d961272"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-d961272",
+      "type": "registry_changed",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "Registry changed: DayOS v0.9.8b — Telemetry & Critical Timing",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "d961272",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#55"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-d961272-dayos-v098b",
+      "type": "route_added",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "Route added: /dayos-v098b",
+      "summary": "app/dayos-v098b/page.tsx added in d961272.",
+      "references": [
+        "d961272",
+        "app/dayos-v098b/page.tsx",
+        "PR#55"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-56",
+      "type": "pr_merged",
+      "date": "2026-10-03T05:04:01.000Z",
+      "title": "DayOS v0.9.8c — Scenario Overlay & Smart Controls",
+      "summary": "DayOS v0.9.8c — Scenario Overlay & Smart Controls (10 files changed).",
+      "references": [
+        "PR#56",
+        "bfab08c"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-bfab08c",
+      "type": "registry_changed",
+      "date": "2026-10-03T05:04:01.000Z",
+      "title": "Registry changed: DayOS v0.9.8c — Scenario Overlay & Smart Controls",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "bfab08c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#56"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-bfab08c-dayos-v098c",
+      "type": "route_added",
+      "date": "2026-10-03T05:04:01.000Z",
+      "title": "Route added: /dayos-v098c",
+      "summary": "app/dayos-v098c/page.tsx added in bfab08c.",
+      "references": [
+        "bfab08c",
+        "app/dayos-v098c/page.tsx",
+        "PR#56"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-116",
+      "type": "pr_merged",
+      "date": "2026-10-03T11:19:13.000Z",
+      "title": "governance: add ADR-019 (DayOS compositional architecture)",
+      "summary": "governance: add ADR-019 (DayOS compositional architecture) (3 files changed).",
+      "references": [
+        "PR#116",
+        "9c8b7f1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-118",
+      "type": "pr_merged",
+      "date": "2026-10-04T14:36:25.000Z",
+      "title": "feat(platform): public-safe mirror of the Evolution Archive",
+      "summary": "feat(platform): public-safe mirror of the Evolution Archive (7 files changed).",
+      "references": [
+        "PR#118",
+        "dd21406"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-dd21406-platform",
+      "type": "route_added",
+      "date": "2026-10-04T14:36:25.000Z",
+      "title": "Route added: /platform",
+      "summary": "app/platform/page.tsx added in dd21406.",
+      "references": [
+        "dd21406",
+        "app/platform/page.tsx",
+        "PR#118"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
     }
   ],
   "stats": {
-    "adrs_total": 18,
+    "adrs_total": 19,
     "adrs_superseded": 1,
     "products_total": 20,
     "products_by_status": {
-      "active_lab": 14,
-      "concept": 1,
+      "active_lab": 15,
       "noindex_draft": 1,
       "rescue": 3,
       "testbed": 1
     },
     "scenes_total": 5,
     "milestones_shipped": 7,
-    "prs_merged": 55,
+    "prs_merged": 60,
     "verified_capabilities": 8
   }
 }
