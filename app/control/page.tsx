@@ -90,6 +90,7 @@ const columns = [
   "canonical_route",
   "blockers",
   "next_gate",
+  "native visuals",
 ];
 
 export default async function ControlPage() {
@@ -201,6 +202,9 @@ export default async function ControlPage() {
                           </td>
                           <td className="px-4 py-3">
                             <Cell value={product.next_gate} />
+                          </td>
+                          <td className="px-4 py-3">
+                            <Cell value={product.native_visuals?.join(", ") ?? null} />
                           </td>
                         </tr>
                       ))}

@@ -79,6 +79,8 @@ export type RegistryProduct = {
   canonical_branch: string | null;
   known_blockers: string[];
   next_gate: string | null;
+  /** Visual types native to the product's subject (ADR-017); undefined when not declared. */
+  native_visuals?: string[];
 };
 
 export type RegistryDivision = {
@@ -88,6 +90,8 @@ export type RegistryDivision = {
   mission: string;
   product_families: string[];
   public_routes: string[];
+  /** Visual types native to the division's subject (ADR-017); undefined when not declared. */
+  native_visuals?: string[];
 };
 
 const REGISTRY_DIR = path.join(process.cwd(), "ENGINEERING");
@@ -125,6 +129,11 @@ function stringList(record: Record<string, unknown>, field: string, owner: strin
   return value as string[];
 }
 
+/** Like stringList, but undefined (not []) when the field is absent, so "unset" stays visible. */
+function optionalStringList(record: Record<string, unknown>, field: string, owner: string): string[] | undefined {
+  return record[field] === undefined || record[field] === null ? undefined : stringList(record, field, owner);
+}
+
 function requireEnum<T extends string>(
   record: Record<string, unknown>,
   field: string,
@@ -144,6 +153,7 @@ function parseProduct(entry: unknown): RegistryProduct {
   }
   const record = entry as Record<string, unknown>;
   const id = requireString(record, "id", "<unknown>");
+  const nativeVisuals = optionalStringList(record, "native_visuals", id);
   return {
     id,
     name: requireString(record, "name", id),
@@ -157,6 +167,7 @@ function parseProduct(entry: unknown): RegistryProduct {
     canonical_branch: optionalString(record, "canonical_branch", id),
     known_blockers: stringList(record, "known_blockers", id),
     next_gate: optionalString(record, "next_gate", id),
+    ...(nativeVisuals ? { native_visuals: nativeVisuals } : {}),
   };
 }
 
@@ -166,6 +177,7 @@ function parseDivision(entry: unknown): RegistryDivision {
   }
   const record = entry as Record<string, unknown>;
   const id = requireString(record, "id", "<unknown>");
+  const nativeVisuals = optionalStringList(record, "native_visuals", id);
   return {
     id,
     name: requireString(record, "name", id),
@@ -173,6 +185,7 @@ function parseDivision(entry: unknown): RegistryDivision {
     mission: requireString(record, "mission", id),
     product_families: stringList(record, "product_families", id),
     public_routes: stringList(record, "public_routes", id),
+    ...(nativeVisuals ? { native_visuals: nativeVisuals } : {}),
   };
 }
 
