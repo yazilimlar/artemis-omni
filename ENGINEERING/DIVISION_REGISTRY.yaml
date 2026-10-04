@@ -1,3 +1,6 @@
+# 2026-10-04 (ADR-017): `native_visuals` is an optional list of the visual types native to a
+# division's subject (e.g. [map, kml-layer]). Applied to five divisions as the first cohort.
+# Absent means the site shell grammar (text + cards).
 schema_version: 1
 registry_status: architectural_working_model
 last_reviewed: 2026-07-10
@@ -48,6 +51,7 @@ divisions:
       - /labs/construction-intelligence-workbench
       - /labs/utility-intelligence-bridge
       - /labs/utility-intelligence-bridge/field-claims
+    native_visuals: [geometry, quantity-table, cashflow-waterfall, schedule-sequence]
     data_classification: public_safe_or_private_approved
     commercial_stage: flagship_incubation
 
@@ -68,6 +72,7 @@ divisions:
       - /labs/turkiye-atlas
       - /labs/troy-time-atlas
       - /labs/george-aegean-quest
+    native_visuals: [map, kml-layer, spatial-timeline]
     data_classification: public_safe_with_source_and_accuracy_boundaries
     commercial_stage: public_labs
 
@@ -103,6 +108,7 @@ divisions:
       - /academy
       - /library
       - /insights
+    native_visuals: [taxonomy-tree, timeline, content-index]
     data_classification: public_or_controlled_research
     commercial_stage: platform_content
 
@@ -117,6 +123,7 @@ divisions:
       - erp
     public_routes:
       - /labs/tax-architecture-2026
+    native_visuals: [plot, dashboard, variance-table, cashflow-waterfall]
     data_classification: educational_or_private_approved
     commercial_stage: public_prototype
 
@@ -130,6 +137,7 @@ divisions:
       - environmental-intelligence
     public_routes:
       - /rainbowbotanics/hemerocallis-fulva
+    native_visuals: [taxonomy-tree, specimen-plate, seasonal-cycle]
     data_classification: noindex_review_or_public_approved
     commercial_stage: draft
 

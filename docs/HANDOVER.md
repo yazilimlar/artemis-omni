@@ -2,6 +2,13 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-04 update — native_visuals applied (ADR-017 follow-up)
+
+- Branch: `governance/adr-017-native-visuals-apply` (core-platform, site-shell, governance, internal_operations). Non-draft PR; the owner merges.
+- Applied the optional `native_visuals` field: five products (civicbid, construction-intelligence, utility-field-claims, artemisix19, turkiye-atlas) and five divisions (infrastructure-construction, atlas-places, finance-decision-systems, knowledge-academy, natural-systems). Every other entry is unchanged; absent means the site shell grammar.
+- `lib/registry/load.ts` types gain `native_visuals?: string[]` (undefined when unset); `/control` gains a "native visuals" column. No product page was reworked.
+- Next recommended task: extend `native_visuals` to the remaining products, one division at a time, as their pages are reworked.
+
 ## 2026-10-03 update — ADR-019 (DayOS compositional architecture)
 
 - Branch: `governance/adr-019-dayos-compositional-architecture` (core-platform, dayos, governance, internal_operations, mixed_explicit). Draft PR; takes effect on merge.

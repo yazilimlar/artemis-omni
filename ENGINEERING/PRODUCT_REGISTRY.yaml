@@ -26,6 +26,12 @@
 # 2026-10-01 refinement (branch governance/registry-refinement-2026-10):
 # bucket, subclass, operator and end_customer are now applied on selected entries
 # per ADR-008 and ADR-009. The other fields above remain proposals.
+#
+# 2026-10-04 (ADR-017, branch governance/adr-017-native-visuals-apply):
+#   native_visuals:            optional list of the visual types native to the product's
+#                              subject (ADR-017), e.g. [map, timeline, table]. Applied to
+#                              five products as the first cohort; absent means the site
+#                              shell grammar (text + cards). Not a required field.
 # ---------------------------------------------------------------------------
 
 schema_version: 1
@@ -75,6 +81,7 @@ products:
     visibility: public_safe_demo
     data_mode: synthetic
     canonical_route: /labs/utility-intelligence-bridge/field-claims
+    native_visuals: [map, table, evidence-graph]
     canonical_branch: main
     status_evidence: >-
       Interactive deterministic scenario controls recompute representative cost,
@@ -90,6 +97,7 @@ products:
     visibility: public
     data_mode: mixed_explicit
     canonical_route: /labs/civicbid-intelligence-bridge
+    native_visuals: [map, timeline, table, evidence-graph]
     review_route: /labs/civicbid-signal-forge
     api_route: /api/civicbid/signal-forge
     canonical_branch: main
@@ -130,6 +138,7 @@ products:
     visibility: public_safe_demo
     data_mode: synthetic
     canonical_route: /labs/construction-intelligence-workbench
+    native_visuals: [geometry, quantity-table, cashflow-waterfall, schedule-sequence]
     canonical_branch: main
     next_gate: product_owner_review
 
@@ -142,6 +151,7 @@ products:
     visibility: public_safe_demo
     data_mode: synthetic
     canonical_route: /labs/artemisix19
+    native_visuals: [storyboard, prompt-chain, gallery]
     canonical_branch: main
     historical_branch: feature/artemisix19-autonomous-generator
     migration_required: true
@@ -178,6 +188,7 @@ products:
     visibility: public
     data_mode: mixed_explicit
     canonical_route: /labs/turkiye-atlas
+    native_visuals: [map, kml-layer, spatial-timeline]
     canonical_branch: main
     known_boundary: public_map_tokens_must_be_url_restricted
     next_gate: security_and_data_review
