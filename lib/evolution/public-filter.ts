@@ -26,13 +26,11 @@ export const INCLUDED_TYPES: readonly EvolutionEvent["type"][] = [
 ];
 
 /** Public ADRs by number. Every other ADR is internal. */
-export const PUBLIC_ADR_NUMBERS: readonly string[] = ["006", "008", "009", "015", "017", "018", "019"];
+export const PUBLIC_ADR_NUMBERS: readonly string[] = ["006", "015", "017", "018", "019"];
 
 /** Curated public one-liners for the allowlisted ADRs. An allowlisted ADR without one is excluded. */
 export const PUBLIC_ADR_SUMMARIES: Readonly<Record<string, string>> = {
   "006": "Artemis is an umbrella platform of divisions and products; a branch is a work state, not a product identity.",
-  "008": "Client work is treated as its own category, with an explicit data boundary and a recorded relationship.",
-  "009": "Operating organizations are recorded as operators of a product, separate from Artemis divisions.",
   "015": "3D is a progressive enhancement in registered scenes only, with a mandatory 2D fallback and enforced budgets.",
   "017": "Every page presents its subject in a visual grammar native to that subject.",
   "018": "A generated, inspectable record of how the platform was built.",
@@ -57,7 +55,7 @@ export const PUBLIC_MILESTONES: Readonly<Record<string, { title: string; summary
 
 /** Public merged PRs by number. Anything else is dropped. */
 export const PUBLIC_PR_NUMBERS: readonly number[] = [
-  66, 69, 70, 71, 72, 75, 76, 78, 79, 80, 81, 83, 84, 86, 89, 90, 91, 92, 93, 96, 99, 100, 103, 107, 111, 116,
+  66, 69, 70, 71, 72, 75, 76, 78, 79, 80, 81, 83, 84, 86, 89, 90, 91, 92, 93, 96, 99, 100, 103, 111, 116,
 ];
 
 /** Text that marks an event as internal. Matched case-insensitively unless noted. */

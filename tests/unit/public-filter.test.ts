@@ -52,7 +52,7 @@ describe("filterForPublic", () => {
 
   it("includes public ADRs and excludes internal ones", () => {
     for (const num of ["006", "017"]) expect(filterForPublic([adr(num)]).map((e) => e.id)).toEqual([`EVT-adr-${num}`]);
-    for (const num of ["011", "013", "014", "012", "007", "010", "016"]) {
+    for (const num of ["011", "013", "014", "012", "007", "008", "009", "010", "016"]) {
       expect(filterForPublic([adr(num)]), num).toEqual([]);
     }
   });
@@ -80,6 +80,7 @@ describe("filterForPublic", () => {
 
   it("only includes merged PRs on the public list and drops PRs that name internal ADRs", () => {
     expect(filterForPublic([pr(70, "feat(labs): index")])).toHaveLength(1);
+    expect(filterForPublic([pr(107, "docs: add PR triage report")])).toEqual([]); // internal housekeeping
     expect(filterForPublic([pr(12, "feat(labs): index")])).toEqual([]); // not on the list
     expect(filterForPublic([pr(79, "governance: add ADR-013 (registry sync)")])).toEqual([]);
     expect(filterForPublic([pr(84, "governance: add ADR-015 (immersive 3D layer, supersedes ADR-002)")])).toHaveLength(1);
