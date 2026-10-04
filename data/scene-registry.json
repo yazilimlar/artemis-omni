@@ -107,5 +107,24 @@
     "passport": "components/scenes/gaussian-surface/passport.md",
     "created_at": "2026-10-04",
     "updated_at": "2026-10-04"
+  },
+  {
+    "id": "bubble-sort",
+    "title": "Bubble Sort",
+    "type": "canvas-2d",
+    "division": "core-platform",
+    "route": "/labs/scenes/bubble-sort",
+    "visibility": "public_safe_demo",
+    "data_mode": "synthetic",
+    "approved_public": true,
+    "entry_component": "components/scenes/bubble-sort/index.tsx",
+    "fallback_2d": "public/textures/bubble-sort/fallback.svg",
+    "assets_dir": "public/textures/bubble-sort",
+    "asset_budget_mb": 1,
+    "owner": "core-platform",
+    "resource_limits": { "max_session_seconds": 180, "fps_floor": 20 },
+    "passport": "components/scenes/bubble-sort/passport.md",
+    "created_at": "2026-10-04",
+    "updated_at": "2026-10-04"
   }
 ]

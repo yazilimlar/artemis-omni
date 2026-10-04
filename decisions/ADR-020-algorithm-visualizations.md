@@ -202,3 +202,22 @@ future Tier 1 library. Tiers 2 and 3 are unchanged.
 The first Tier 1 proof is the registered scene `gaussian-surface`: z = exp(-(x² + y²) / 2σ²)
 with σ = 1 on a 64 x 64-cell grid (4,225 vertices), built from React Three Fiber and `three`
 only. It carries the registry's new optional `type: "3d"` field.
+
+## Amendment 2026-10-04 — Tier 2 library selection
+
+Tier 2 gate evaluation ran on 2026-10-04 against npm candidates:
+
+- `manim-web` 0.3.24: failed Gates 2 (size 350 KB vs 150 KB budget), 3 (bundles a second
+  three.js copy), and 5 (runtime CDN fetches for MathJax, KaTeX CSS, and the gif.js worker).
+- `@agarwal29796/manim-js` 0.3.1: failed Gate 4 (published version has no matching source in
+  its public repo; no provenance attestation).
+
+**Decision:** use the ADR-020 fallback for Tier 2. Algorithm animations are hand-written 2D
+canvas components. No library. The scene registry's `type` field uses a new value,
+`canvas-2d`, alongside `3d`; it replaces the `manim` value that this ADR first proposed, so
+the enum is `"3d" | "canvas-2d"`. `canvas-2d` scenes do not need WebGL, so the island skips
+the WebGL check for them; every other ADR-015 rule (registration, passport, fallback image,
+budgets, reduced-motion, session limit, FPS floor) still applies.
+
+The gate report is at `docs/history/adr-020-tier2-gate-report.md`. The first Tier 2 proof is
+the registered scene `bubble-sort` (20 items, deterministic).

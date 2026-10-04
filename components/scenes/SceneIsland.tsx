@@ -74,6 +74,9 @@ function detectWebGL(): boolean {
   }
 }
 
+/** Scenes registered with `type: "canvas-2d"` (ADR-020): drawn with Canvas 2D, so WebGL is not required. */
+export const CANVAS_2D_SCENES: ReadonlySet<string> = new Set(["bubble-sort"]);
+
 type SceneProps = { paused?: boolean };
 
 /** Registered scene components; each is code-split and never server-rendered. */
@@ -83,6 +86,7 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
   "botanical-garden": dynamic(() => import("./botanical-garden"), { ssr: false }),
   "evolution-architecture-map": dynamic(() => import("./evolution-architecture-map"), { ssr: false }),
   "gaussian-surface": dynamic(() => import("./gaussian-surface"), { ssr: false }),
+  "bubble-sort": dynamic(() => import("./bubble-sort"), { ssr: false }),
   // ADR-016 homepage hero: Canvas 2D, no three.js (keeps the homepage budget).
   "site-hero": dynamic(() => import("./site-hero"), { ssr: false }),
 };
@@ -135,13 +139,13 @@ export function SceneIsland({
         ...current,
         ssr: false,
         reducedMotion: motion.matches,
-        hasWebGL: detectWebGL(),
+        hasWebGL: CANVAS_2D_SCENES.has(sceneId) || detectWebGL(),
         lowDevice: isLowDevice({ hardwareConcurrency: nav.hardwareConcurrency, deviceMemory: nav.deviceMemory }),
       }));
     measure();
     motion.addEventListener("change", measure);
     return () => motion.removeEventListener("change", measure);
-  }, []);
+  }, [sceneId]);
 
   // While the scene runs: session limit, FPS monitor, pause when hidden.
   useEffect(() => {

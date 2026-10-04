@@ -18,6 +18,8 @@ import { pathToFileURL } from "node:url";
 const ID = /^[a-z0-9][a-z0-9-]{0,63}$/;
 const VISIBILITY = ["public", "public_safe_demo", "noindex_review", "authenticated", "private_pilot", "internal_operations"];
 const DATA_MODES = ["live_official", "live_derived", "synthetic", "sample", "sample_fallback", "private_approved", "mixed_explicit"];
+/** ADR-020: "3d" (React Three Fiber, the default) or "canvas-2d" (hand-written Canvas 2D, no WebGL). */
+export const SCENE_TYPES = ["3d", "canvas-2d"];
 const MAX_TEXTURE_PX = 2048;
 const COMPRESSION_THRESHOLD_BYTES = 500 * 1024;
 export const ISLAND_BUDGET_GZIP_BYTES = 400 * 1024;
@@ -91,6 +93,9 @@ export function validateScenes(registry, root) {
 
     if (typeof scene.title !== "string" || !scene.title) fail("title is required");
     if (typeof scene.division !== "string" || !scene.division) fail("division is required");
+    if (scene.type !== undefined && !SCENE_TYPES.includes(scene.type)) {
+      fail(`unknown type ${JSON.stringify(scene.type)} (expected ${SCENE_TYPES.join(" or ")})`);
+    }
     if (!VISIBILITY.includes(scene.visibility)) fail(`unknown visibility ${JSON.stringify(scene.visibility)}`);
     if (!DATA_MODES.includes(scene.data_mode)) fail(`unknown data_mode ${JSON.stringify(scene.data_mode)}`);
     if (typeof scene.owner !== "string" || !scene.owner || scene.owner.includes("@")) {
