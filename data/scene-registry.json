@@ -88,5 +88,24 @@
     "passport": "components/scenes/evolution-architecture-map/passport.md",
     "created_at": "2026-10-03",
     "updated_at": "2026-10-03"
+  },
+  {
+    "id": "gaussian-surface",
+    "title": "Gaussian Surface",
+    "type": "3d",
+    "division": "core-platform",
+    "route": "/labs/scenes/gaussian-surface",
+    "visibility": "public_safe_demo",
+    "data_mode": "synthetic",
+    "approved_public": true,
+    "entry_component": "components/scenes/gaussian-surface/index.tsx",
+    "fallback_2d": "public/textures/gaussian-surface/fallback.svg",
+    "assets_dir": "public/textures/gaussian-surface",
+    "asset_budget_mb": 1,
+    "owner": "core-platform",
+    "resource_limits": { "max_session_seconds": 120, "fps_floor": 20 },
+    "passport": "components/scenes/gaussian-surface/passport.md",
+    "created_at": "2026-10-04",
+    "updated_at": "2026-10-04"
   }
 ]

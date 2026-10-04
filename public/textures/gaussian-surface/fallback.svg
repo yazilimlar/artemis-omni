@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" width="512" height="512" role="img" aria-label="Gaussian surface, top-down: z = exp(-(x squared + y squared) / 2 sigma squared) with sigma 1, shaded blue to gold by height with contours at z = 0.2, 0.4, 0.6, 0.8">
+  <!-- Static fallback for the gaussian-surface scene (ADR-015, ADR-020). Generated from components/scenes/gaussian-surface/surface.ts: a top-down shaded plot of z = exp(-(x^2+y^2)/(2*sigma^2)), sigma = 1, with exact iso-height circles. -->
+  <defs>
+    <radialGradient id="g" cx="260" cy="260" r="325.3" gradientUnits="userSpaceOnUse">
+      <stop offset="0.0%" stop-color="#d6a84f"/>
+      <stop offset="6.3%" stop-color="#d0aa55"/>
+      <stop offset="12.5%" stop-color="#bcae64"/>
+      <stop offset="18.8%" stop-color="#9eb57d"/>
+      <stop offset="25.0%" stop-color="#77be9d"/>
+      <stop offset="31.3%" stop-color="#4cc8c1"/>
+      <stop offset="37.5%" stop-color="#1ed2e6"/>
+      <stop offset="43.8%" stop-color="#00d1fc"/>
+      <stop offset="50.0%" stop-color="#00bcf4"/>
+      <stop offset="56.3%" stop-color="#00a9ed"/>
+      <stop offset="62.5%" stop-color="#0099e7"/>
+      <stop offset="68.8%" stop-color="#008ce3"/>
+      <stop offset="75.0%" stop-color="#0082df"/>
+      <stop offset="81.3%" stop-color="#007bdc"/>
+      <stop offset="87.5%" stop-color="#0075da"/>
+      <stop offset="93.8%" stop-color="#0072d9"/>
+      <stop offset="100.0%" stop-color="#006fd8"/>
+    </radialGradient>
+    <clipPath id="p"><rect x="30.0" y="30.0" width="460.0" height="460.0"/></clipPath>
+  </defs>
+  <rect width="520" height="520" fill="#0b1324"/>
+  <g clip-path="url(#p)">
+    <rect x="30.0" y="30.0" width="460.0" height="460.0" fill="url(#g)"/>
+  <circle cx="260" cy="260" r="206.3" fill="none" stroke="#0b1324" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text x="409.9" y="110.1" font-family="ui-monospace, monospace" font-size="11" fill="#e8edf5">z = 0.2</text>
+  <circle cx="260" cy="260" r="155.7" fill="none" stroke="#0b1324" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text x="374.1" y="145.9" font-family="ui-monospace, monospace" font-size="11" fill="#e8edf5">z = 0.4</text>
+  <circle cx="260" cy="260" r="116.2" fill="none" stroke="#0b1324" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text x="346.2" y="173.8" font-family="ui-monospace, monospace" font-size="11" fill="#e8edf5">z = 0.6</text>
+  <circle cx="260" cy="260" r="76.8" fill="none" stroke="#0b1324" stroke-opacity="0.45" stroke-width="1.5"/>
+  <text x="318.3" y="201.7" font-family="ui-monospace, monospace" font-size="11" fill="#e8edf5">z = 0.8</text>
+  </g>
+  <rect x="30.0" y="30.0" width="460.0" height="460.0" fill="none" stroke="#c9d6e6" stroke-opacity="0.35"/>
+  <text x="260" y="512" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#c9d6e6">z = exp(−(x² + y²) / 2σ²), σ = 1</text>
+</svg>

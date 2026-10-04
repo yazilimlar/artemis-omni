@@ -2,6 +2,14 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-04 update — Gaussian surface via plain R3F (ADR-020 Tier 1)
+
+- Branch: `feat/gaussian-surface-r3f` (core-platform, site-shell, active_lab, public_safe_demo, synthetic). Draft PR.
+- MathBox was rejected at Gate 3 (it imports `WebGL1Renderer`, `LuminanceFormat`, `LuminanceAlphaFormat`, all removed from three in r163; unmaintained since 2023-05). ADR-020 carries the amendment; no new dependency.
+- New registered scene `gaussian-surface` (`/labs/scenes/gaussian-surface`, approved public, `type: "3d"`): z = exp(-(x²+y²)/2σ²), σ = 1, 4,225 vertices, blue → cyan → gold, static SVG fallback generated from the same maths.
+- The scene registry schema gains the optional `type` field (`"3d" | "manim"`, default `"3d"`); the validator is unchanged until the first Tier 2 PR.
+- Next recommended task: Tier 2 gates for Manim-Web (bubble sort, 20 items).
+
 ## 2026-10-04 update — ADR-020 (algorithm visualizations)
 
 - Branch: `governance/adr-020-algorithm-visualizations` (core-platform, site-shell, governance, internal_operations). Draft PR; takes effect on merge.
