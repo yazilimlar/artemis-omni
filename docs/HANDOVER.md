@@ -2,6 +2,14 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+## 2026-10-04 update — bubble sort via hand-written canvas (ADR-020 Tier 2)
+
+- Branch: `feat/bubble-sort-canvas` (core-platform, site-shell, active_lab, public_safe_demo, synthetic). Draft PR.
+- The Tier 2 gate evaluation (`docs/history/adr-020-tier2-gate-report.md`) found no viable npm package, so Tier 2 uses the ADR-020 fallback: hand-written Canvas 2D, no library. ADR-020 carries the amendment; no new dependency.
+- New registered scene `bubble-sort` (`/labs/scenes/bubble-sort`, approved public, `type: "canvas-2d"`): 20 bars, seeded shuffle (no `Math.random`), one comparison per step, pure step generator in `algorithm.ts`, static SVG fallback of a mid-sort state.
+- Scene `type` enum is now `"3d" | "canvas-2d"` (the unused `manim` value is gone). `validate-scenes.mjs` rejects unknown types. `SceneIsland` skips the WebGL check for canvas-2d scenes (`CANVAS_2D_SCENES`), since they do not need it.
+- Next recommended task: a second Tier 2 figure (graph traversal or dynamic programming), or Tier 3 (ManimCE explainer video).
+
 ## 2026-10-04 update — Gaussian surface via plain R3F (ADR-020 Tier 1)
 
 - Branch: `feat/gaussian-surface-r3f` (core-platform, site-shell, active_lab, public_safe_demo, synthetic). Draft PR.
