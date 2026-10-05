@@ -4,6 +4,7 @@ import { labSandbox } from "@/lib/standalone-labs";
 export const metadata = createMetadata({
   title: "Time Atlas — Troy · Ilion, 600 BC (v2.1 · Dev & Test)",
   path: "/labs/developmentandtest/troy-time-atlas",
+  noIndex: true,
   description:
     "Development preview of the Artemis Time Atlas: a runtime KML-driven vertical 3D diorama of Archaic Ilion (Troy, c. 600 BC) with story mode, scholar controls, animated scene life, and evidence-graded points of interest.",
 });

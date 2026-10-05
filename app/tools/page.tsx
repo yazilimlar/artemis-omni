@@ -31,39 +31,26 @@ export default function ToolsPage() {
       <section className="py-16 lg:py-20">
         <Container>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {tools.map((tool) => {
-              const isLive = tool.status === "live";
-              const inner = (
-                <Card className={isLive ? "h-full" : "h-full opacity-70"}>
-                  <div className="flex items-center justify-between gap-2">
-                    <Badge>{tool.category}</Badge>
-                    <span className="font-mono text-[0.62rem] uppercase tracking-wider text-muted-foreground">
-                      {statusLabel[tool.status]}
-                    </span>
-                  </div>
-                  <CardTitle className="mt-4">{tool.title}</CardTitle>
-                  <CardDescription>{tool.summary}</CardDescription>
-                  {isLive ? (
+            {tools
+              .filter((tool) => tool.status === "live")
+              .map((tool) => (
+                <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group">
+                  <Card className="h-full">
+                    <div className="flex items-center justify-between gap-2">
+                      <Badge>{tool.category}</Badge>
+                      <span className="font-mono text-[0.62rem] uppercase tracking-wider text-muted-foreground">
+                        {statusLabel[tool.status]}
+                      </span>
+                    </div>
+                    <CardTitle className="mt-4">{tool.title}</CardTitle>
+                    <CardDescription>{tool.summary}</CardDescription>
                     <span className="mt-5 inline-flex items-center gap-2 text-sm text-gold">
                       Open tool
                       <ArrowRight className="h-4 w-4" />
                     </span>
-                  ) : (
-                    <span className="mt-5 inline-block text-sm text-muted-foreground">
-                      Coming soon
-                    </span>
-                  )}
-                </Card>
-              );
-
-              return isLive ? (
-                <Link key={tool.slug} href={`/tools/${tool.slug}`} className="group">
-                  {inner}
+                  </Card>
                 </Link>
-              ) : (
-                <div key={tool.slug}>{inner}</div>
-              );
-            })}
+              ))}
           </div>
         </Container>
       </section>

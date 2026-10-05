@@ -1,29 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { labSandbox } from "@/lib/standalone-labs";
 
-const versions = {
-  latest: {
-    label: "v6.0.0-alpha",
-    status: "Latest",
-    src: "/workbench/runtime/latest",
-    note: "Current ARTEMIS Geometric Workbench with v6 BOM integrity, canonical terminology, palettes, and fabrication intelligence.",
-  },
-  legacy: {
-    label: "v5.9",
-    status: "Superseded",
-    src: "/workbench/runtime/latest",
-    note: "Frozen pre-v6 production deployment retained for comparison and backward review only.",
-  },
+// Phase 1 triage: the served runtime is v5.8 (see next.config.mjs
+// /workbench/runtime/latest rewrite). The label matches the runtime;
+// the previous v6.0.0-alpha / v5.9 switcher offered two options that
+// loaded the identical file.
+const version = {
+  label: "v5.8",
+  status: "Production",
+  src: "/workbench/runtime/latest",
+  note: "Current production runtime of the ARTEMIS Geometric Workbench.",
 } as const;
 
-type VersionKey = keyof typeof versions;
-
 export function WorkbenchVersionShell() {
-  const [version, setVersion] = useState<VersionKey>("latest");
-  const selected = versions[version];
-  const frameKey = useMemo(() => `${version}-${selected.src}`, [version, selected.src]);
+  const frameKey = useMemo(() => `v5-8-${version.src}`, []);
 
   return (
     <main className="flex h-screen overflow-hidden flex-col bg-[#05080d] text-white">
@@ -34,21 +26,11 @@ export function WorkbenchVersionShell() {
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-2">
           <span className="rounded-full border border-gold/40 px-3 py-1 text-xs font-semibold text-gold">
-            {selected.label}
+            {version.label}
           </span>
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${version === "latest" ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"}`}>
-            {selected.status}
+          <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
+            {version.status}
           </span>
-          <label className="sr-only" htmlFor="workbench-version">Workbench version</label>
-          <select
-            id="workbench-version"
-            value={version}
-            onChange={(event) => setVersion(event.target.value as VersionKey)}
-            className="rounded-lg border border-white/15 bg-[#111a28] px-3 py-2 text-sm text-white"
-          >
-            <option value="latest">Latest — v6.0.0-alpha</option>
-            <option value="legacy">Superseded — v5.9</option>
-          </select>
           <a href="/workbench" className="rounded-lg border border-white/15 px-3 py-2 text-sm hover:border-gold hover:text-gold">
             Product home
           </a>
@@ -58,8 +40,8 @@ export function WorkbenchVersionShell() {
         </div>
       </header>
 
-      <div className={`border-b px-4 py-2 text-xs ${version === "latest" ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-100" : "border-amber-500/25 bg-amber-500/10 text-amber-100"}`}>
-        {selected.note}
+      <div className="border-b border-emerald-500/20 bg-emerald-500/5 px-4 py-2 text-xs text-emerald-100">
+        {version.note}
       </div>
 
       <section className="relative min-h-0 flex-1">
@@ -68,8 +50,8 @@ export function WorkbenchVersionShell() {
           referrerPolicy="no-referrer"
           loading="lazy"
           key={frameKey}
-          title={`ARTEMIS Geometric Workbench ${selected.label}`}
-          src={selected.src}
+          title={`ARTEMIS Geometric Workbench ${version.label}`}
+          src={version.src}
           className="absolute inset-0 h-full w-full border-0"
           allow="fullscreen; clipboard-read; clipboard-write"
         />

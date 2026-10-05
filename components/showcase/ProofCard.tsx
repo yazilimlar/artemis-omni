@@ -10,6 +10,10 @@ type ProofCardProps = {
 };
 
 export function ProofCard({ module, compact = false }: ProofCardProps) {
+  // Phase 1 triage: unpublished proof modules stay as data drafts in
+  // @/data/proofLibrary but are not rendered publicly until they have a destination.
+  if (!module.href) return null;
+
   const content = (
     <Card className="flex h-full flex-col">
       <div className="flex flex-wrap items-center gap-2">
