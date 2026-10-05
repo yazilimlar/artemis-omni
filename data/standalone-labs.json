@@ -109,6 +109,22 @@
         "/labs/rainbow-house-botanical-field-v9.html"
       ],
       "reason": "URL-only; direct visits isolated"
+    },
+    {
+      "id": "nyc-sewer-simulator",
+      "sandbox": "allow-scripts allow-modals allow-downloads",
+      "paths": [
+        "/standalone/nyc-sewer-simulator-v0-19.html"
+      ],
+      "reason": "printable report mode (modals); report/data downloads"
+    },
+    {
+      "id": "dep-bridge-rc7-qa",
+      "sandbox": "allow-scripts allow-modals allow-downloads",
+      "paths": [
+        "/standalone/utility-intelligence-bridge/qa-capture-studio.html"
+      ],
+      "reason": "printable screenshot deck (modals); screenshot/data downloads (createObjectURL); Leaflet GIS tiles"
     }
   ]
 }

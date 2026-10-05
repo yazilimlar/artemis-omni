@@ -116,5 +116,41 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: character-led destination quests, sponsored route packs, mobile itinerary funnels, and premium cultural game tours.",
     boundary:
       "This is a lightweight standalone iPhone game prototype with approximate lon/lat projection. It is not a full GIS dataset, navigation product, or production booking engine.",
+  },,
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "NYC Sewer Construction Simulator",
+    eyebrow: "Construction Simulation",
+    href: "/labs/nyc-sewer-simulator",
+    statusLabel: "v0.19",
+    statusTone: "test",
+    Icon: Calculator,
+    accentIcon: Landmark,
+    description:
+      "A 3D construction intelligence simulator for NYC sewer work: what-if controls, schedule and cost views, day/night themes, and a printable report mode.",
+    signals: ["Three.js 3D viewer", "What-if controls", "Printable report", "Day/night themes"],
+    commercialPath:
+      "Best pilot path: precon scenario workshops, bid strategy reviews, and executive briefing demos.",
+    boundary:
+      "Demonstration model with illustrative data. It is not a bid, a schedule of record, or engineering advice.",
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "DEP Sewer Bridge \u2014 QA Capture Studio",
+    eyebrow: "Utility Intelligence",
+    href: "/labs/utility-intelligence-bridge/qa-capture-studio",
+    statusLabel: "RC7",
+    statusTone: "test",
+    Icon: MapIcon,
+    accentIcon: Globe2,
+    description:
+      "The RC7 publication QA and capture studio for the DEP Sewer Utility Intelligence Bridge: a three-preset cockpit with Leaflet GIS and a printable screenshot deck for publication review.",
+    signals: ["Leaflet GIS", "Printable screenshot deck", "Visual presets", "QA review"],
+    commercialPath:
+      "Best pilot path: publication QA reviews, stakeholder screenshot decks, and utility program briefings.",
+    boundary:
+      "QA and capture tooling with illustrative data. Visual presets change presentation only; quantity, schedule, and cost logic are untouched.",
   },
 ];

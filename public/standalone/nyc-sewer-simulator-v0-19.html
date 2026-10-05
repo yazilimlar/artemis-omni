@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYC Sewer Construction Intelligence Simulator v0.19</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+:root{
+  --bg:#06101a;--panel:#0c1a27;--panel2:#112436;--line:#253d53;--text:#eaf3f8;
+  --muted:#9db2c5;--gold:#d6a84f;--blue:#72bbff;--red:#ff746c;--green:#7ee083;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(145deg,#05090e,#091827 55%,#06101a);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{padding:16px 22px;border-bottom:1px solid var(--line);background:rgba(6,16,26,.96);position:sticky;top:0;z-index:10}
+h1{margin:0;font-size:21px}.subtitle{color:var(--muted);font-size:12.5px;margin-top:4px}
+.app{display:grid;grid-template-columns:390px 1fr;min-height:calc(100vh - 70px)}
+.sidebar{padding:16px;border-right:1px solid var(--line);background:rgba(12,26,39,.94);overflow:auto;max-height:calc(100vh - 70px)}
+.main{padding:16px;overflow:auto}
+.card{background:rgba(12,26,39,.88);border:1px solid var(--line);border-radius:13px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.card h2{font-size:14px;margin:0;padding:11px 13px;border-bottom:1px solid var(--line);color:#fff}.card h3{font-size:13px;margin:8px 0}
+.body{padding:13px}
+label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px;font-weight:600}
+input,select,textarea{width:100%;padding:8px 9px;background:#07131e;color:var(--text);border:1px solid #2a4258;border-radius:7px;outline:none;font-size:12.5px}
+textarea{min-height:70px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row{margin-bottom:10px}
+button{background:linear-gradient(135deg,#d6a84f,#b8862f);border:0;border-radius:8px;color:#111;padding:8px 11px;font-weight:800;cursor:pointer;font-size:12.5px}
+button.secondary{background:#102337;color:var(--text);border:1px solid var(--line)}button.small{padding:5px 7px;font-size:11px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}.tab{padding:8px 11px;border:1px solid var(--line);background:#0e1b28;border-radius:999px;color:var(--muted);cursor:pointer;font-size:12.5px}.tab.active{color:#101010;background:var(--gold);border-color:var(--gold)}
+.tabContent{display:none}.tabContent.active{display:block}
+#viewer{height:560px;min-height:560px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#050b10;position:relative}
+#modelStatus{position:absolute;left:12px;bottom:10px;color:#cfe2f1;background:rgba(0,0,0,.48);padding:6px 8px;border-radius:8px;font-size:12px;z-index:3}
+#mapCanvas{width:100%;height:470px;background:#07131e;border:1px solid var(--line);border-radius:14px;display:block}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}.stat{background:#0c1824;border:1px solid var(--line);border-radius:12px;padding:12px}.stat .k{font-size:11px;color:var(--muted)}.stat .v{font-size:20px;font-weight:800;margin-top:4px}.stat .s{font-size:11px;color:var(--muted);margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:7px 6px;border-bottom:1px solid #1f3347;text-align:left;vertical-align:middle}th{color:#b8cadb;background:#0a1722;position:sticky;top:0}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}td input,td select{font-size:11.5px;padding:5px}
+.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--muted);background:#0b1722}.good{color:#b7ffd0;border-color:#2f7146}.bad{color:#ffd0cc;border-color:#9d3934}.warn{color:#ffe2a0;border-color:#9f7b32}
+.note{color:var(--muted);font-size:12.5px;line-height:1.45}.warnbox{border-left:4px solid var(--gold);padding:10px 12px;background:#101b24;border-radius:8px;color:#d9e6ef;font-size:12.5px}.code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#08131d;border:1px solid #21364a;border-radius:8px;padding:10px;color:#d9edf8;white-space:pre-wrap}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.chart{max-height:320px}.whatif-controls{background:#0a1722;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}.report{background:#fff;color:#111;border-radius:14px;padding:28px;line-height:1.42}.report h2,.report h3{color:#111;border-bottom:1px solid #ddd;padding-bottom:6px}.report table{color:#111}.report th{background:#eee;color:#111}.report td,.report th{border-bottom:1px solid #ddd}.report .rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.rkpi{border:1px solid #ddd;border-radius:10px;padding:12px;background:#fafafa}.rkpi b{display:block;font-size:20px;margin-top:4px}
+@media print{body{background:#fff;color:#111}header,.sidebar,.tabs,.toolbar,#viewer,.noPrint{display:none!important}.app{display:block}.main{padding:0}.tabContent{display:none!important}#report.tabContent{display:block!important}.card{box-shadow:none;border:0}.report{padding:0;border-radius:0}.report .rgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{max-height:none;border-right:0;border-bottom:1px solid var(--line)}.stats{grid-template-columns:repeat(2,1fr)}}
+
+body.day{background:#f3f6f8;color:#142536}
+body.day header{background:#ffffff;border-bottom:1px solid #d4dde6}
+body.day .subtitle, body.day .note, body.day label, body.day .stat .k, body.day .stat .s{color:#506274}
+body.day .sidebar{background:#f7fafc;border-right:1px solid #d4dde6}
+body.day .card{background:#ffffff;border:1px solid #d7e0e8;box-shadow:0 8px 20px rgba(30,55,75,.08)}
+body.day .card h2{color:#142536;border-bottom:1px solid #d7e0e8}
+body.day input,body.day select,body.day textarea{background:#ffffff;color:#142536;border:1px solid #bccbd8}
+body.day .tab{background:#eef3f7;border-color:#cfd9e2;color:#415366}
+body.day .tab.active{background:#d6a84f;color:#111}
+body.day .stat{background:#ffffff;border:1px solid #d7e0e8}
+body.day .stat .v{color:#142536}
+body.day th{background:#edf3f8;color:#26394c}
+body.day td, body.day th{border-bottom:1px solid #d7e0e8}
+body.day .warnbox{background:#fff8e8;color:#27384a}
+body.day .badge{background:#f4f7fa;color:#44596b;border-color:#ccd8e3}
+body.day #viewer, body.day #mapCanvas{background:#eef4f8;border-color:#cbd8e3}
+.inspectorGrid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:12px}
+.paramCard{background:rgba(10,23,34,.55);border:1px solid var(--line);border-radius:12px;padding:12px}
+body.day .paramCard{background:#f8fbfd;border:1px solid #d7e0e8}
+.paramCard .title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+body.day .paramCard .title{color:#5a6b7c}
+.paramCard .value{font-size:20px;font-weight:850;margin-top:4px}
+.paramCard .sub{font-size:11px;color:var(--muted);margin-top:2px}
+body.day .paramCard .sub{color:#607284}
+#modelAnnotationPanel{position:absolute;right:12px;top:12px;width:310px;max-height:520px;overflow:auto;background:rgba(5,11,16,.72);border:1px solid rgba(214,168,79,.55);border-radius:12px;padding:10px;z-index:4;backdrop-filter:blur(5px)}
+body.day #modelAnnotationPanel{background:rgba(255,255,255,.88);color:#142536;border:1px solid #d6a84f}
+.annotationItem{display:grid;grid-template-columns:16px 1fr;gap:8px;margin:7px 0;font-size:12px;align-items:start}
+.annotationDot{width:12px;height:12px;border-radius:50%;margin-top:2px;border:1px solid rgba(0,0,0,.25)}
+.annotationItem b{display:block;font-size:12.5px}
+.annotationItem span{color:var(--muted)}
+body.day .annotationItem span{color:#536678}
+.memberTag{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#8ecbff}
+body.day .memberTag{color:#1d5f9d}
+.toggleRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.toggleRow label{display:flex;gap:5px;align-items:center;margin:0;font-size:12px}
+.toggleRow input{width:auto}
+@media(max-width:1100px){.inspectorGrid{grid-template-columns:1fr}#modelAnnotationPanel{position:relative;right:auto;top:auto;width:auto;margin:10px}}
+
+
+.scopeHeader{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.scopeHeader .row{margin-bottom:0}
+.deltaGood{color:#177a3d;font-weight:800}
+.deltaBad{color:#b3342b;font-weight:800}
+body.day .deltaGood{color:#0f7a36}
+body.day .deltaBad{color:#b52920}
+.miniChartGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:1100px){.scopeHeader{grid-template-columns:1fr}.miniChartGrid{grid-template-columns:1fr}}
+
+
+.infoIcon{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;border:1px solid #d6a84f;color:#8a650b;background:#fff8e6;font-weight:900;font-size:11px;cursor:pointer;margin-left:5px;vertical-align:middle}
+body:not(.day) .infoIcon{background:#1e2d3c;color:#ffe2a0;border-color:#d6a84f}
+.formulaOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;display:none}
+.formulaModal{position:fixed;right:24px;top:86px;width:min(680px,calc(100vw - 48px));max-height:calc(100vh - 120px);overflow:auto;background:#ffffff;color:#142536;border:1px solid #d6a84f;border-radius:16px;box-shadow:0 20px 80px rgba(0,0,0,.35);z-index:9999;display:none}
+body:not(.day) .formulaModal{background:#07131e;color:#eaf3f8;border-color:#d6a84f}
+.formulaHeader{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid #d7e0e8}
+body:not(.day) .formulaHeader{border-color:#253d53}
+.formulaHeader h3{margin:0;font-size:16px}
+.formulaClose{border:0;background:#102337;color:#fff;border-radius:8px;padding:5px 9px;cursor:pointer}
+.formulaBody{padding:16px}
+.formulaBox{background:#f7fafc;border:1px solid #d7e0e8;border-radius:12px;padding:12px;margin:10px 0;overflow:auto}
+body:not(.day) .formulaBox{background:#0c1a27;border-color:#253d53}
+.formulaDef{font-size:13px;line-height:1.5;color:#4d6072}
+body:not(.day) .formulaDef{color:#b8cadb}
+.formulaVars{margin-top:12px}
+.formulaVars li{margin:5px 0;font-size:13px}
+
+
+.scopeChip{display:inline-flex;align-items:center;gap:4px;border:1px solid #c9d5df;background:#f5f9fc;border-radius:999px;padding:3px 8px;font-size:11px;color:#26394c}
+body:not(.day) .scopeChip{background:#0b1722;border-color:#253d53;color:#b8cadb}
+.heatLow{background:rgba(126,224,131,.14)}
+.heatMed{background:rgba(214,168,79,.16)}
+.heatHigh{background:rgba(255,116,108,.16)}
+body.day .heatLow{background:#eaf8ef}
+body.day .heatMed{background:#fff5db}
+body.day .heatHigh{background:#ffeceb}
+.stationInput{font-family:ui-monospace,Menlo,Consolas,monospace}
+
+
+.importBox{border:2px dashed #b9c8d6;border-radius:14px;padding:18px;text-align:center;background:#f8fbfd;color:#516476}
+body:not(.day) .importBox{background:#07131e;border-color:#253d53;color:#b8cadb}
+.importBox.dragover{border-color:#d6a84f;background:#fff8e8}
+body:not(.day) .importBox.dragover{background:#1b2430}
+.qaPass{color:#0f7a36;font-weight:850}
+.qaWarn{color:#a06b00;font-weight:850}
+.qaFail{color:#b52920;font-weight:850}
+.mappingGrid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:10px}
+@media(max-width:1100px){.mappingGrid{grid-template-columns:1fr}}
+
+
+.evmControlGrid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.evmMetricGrid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:12px;margin-bottom:12px}
+.evmGauge{height:14px;background:#e7edf2;border-radius:999px;overflow:hidden;border:1px solid #ccd8e3}
+body:not(.day) .evmGauge{background:#0b1722;border-color:#253d53}
+.evmGauge span{display:block;height:100%;background:linear-gradient(90deg,#ff746c,#d6a84f,#7ee083);width:50%}
+.evmStateGood{color:#0f7a36;font-weight:900}
+.evmStateWarn{color:#a06b00;font-weight:900}
+.evmStateBad{color:#b52920;font-weight:900}
+@media(max-width:1100px){.evmControlGrid,.evmMetricGrid{grid-template-columns:1fr}}
+
+
+.modelLayerGrid{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:10px}
+.modelLayerChip{border:1px solid #cfd9e2;background:#f7fafc;border-radius:12px;padding:9px;font-size:12px}
+body:not(.day) .modelLayerChip{background:#07131e;border-color:#253d53}
+@media(max-width:1100px){.modelLayerGrid{grid-template-columns:1fr}}
+
+
+.costCode{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;font-weight:800;color:#1d5f9d}
+body:not(.day) .costCode{color:#8ecbff}
+.unitWarn{font-size:11px;color:#a06b00;font-weight:800}
+body:not(.day) .unitWarn{color:#ffe2a0}
+.categoryPill{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-weight:900;font-size:12px;border:1px solid #cbd8e3;background:#f7fafc;color:#142536}
+body:not(.day) .categoryPill{background:#0b1722;color:#eaf3f8;border-color:#253d53}
+
+
+.hierarchyPath{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.pathCrumb{border:1px solid #cbd8e3;background:#f7fafc;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;color:#26394c}
+body:not(.day) .pathCrumb{background:#0b1722;border-color:#253d53;color:#d9edf8}
+.selectionHelp{font-size:12px;line-height:1.45;color:#506274}
+body:not(.day) .selectionHelp{color:#b8cadb}
+.hotkey{font-family:ui-monospace,Menlo,Consolas,monospace;border:1px solid #cbd8e3;border-radius:5px;padding:1px 5px;background:#fff}
+body:not(.day) .hotkey{background:#07131e;border-color:#253d53}
+.selectedOutline{outline:2px solid #d6a84f}
+
+
+#selectionHUD{position:absolute;left:12px;top:12px;width:360px;max-height:520px;overflow:auto;background:rgba(255,255,255,.92);color:#142536;border:1px solid #d6a84f;border-radius:14px;box-shadow:0 12px 35px rgba(0,0,0,.18);padding:12px;z-index:5;display:none}
+body:not(.day) #selectionHUD{background:rgba(7,19,30,.90);color:#eaf3f8;border-color:#d6a84f}
+#selectionHUD h3{margin:0 0 8px;font-size:14px;color:#0f4c81}
+body:not(.day) #selectionHUD h3{color:#ffe2a0}
+.hudRow{display:grid;grid-template-columns:1fr auto;gap:8px;border-bottom:1px dashed #d7e0e8;padding:5px 0;font-size:12px}
+body:not(.day) .hudRow{border-bottom-color:#253d53}
+.hudRow b{text-align:right}
+.hudActions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.hudActions button{padding:5px 8px;font-size:11px}
+.clickHint{position:absolute;right:12px;bottom:44px;background:rgba(255,255,255,.88);border:1px solid #cbd8e3;border-radius:999px;padding:6px 10px;font-size:12px;z-index:5;color:#405466}
+body:not(.day) .clickHint{background:rgba(7,19,30,.88);border-color:#253d53;color:#b8cadb}
+.timeTransport{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.timeTransport button{width:auto}
+.timeReadout{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900;font-size:16px;color:#0f4c81}
+body:not(.day) .timeReadout{color:#8ecbff}
+.simTimeline{height:18px;border-radius:999px;background:#e7edf2;border:1px solid #cbd8e3;overflow:hidden;position:relative}
+body:not(.day) .simTimeline{background:#07131e;border-color:#253d53}
+.simProgress{height:100%;background:linear-gradient(90deg,#0f4c81,#d6a84f,#1e7d4f);width:0%}
+.phaseBands{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:8px}
+.phaseBand{border:1px solid #cbd8e3;border-radius:8px;padding:6px 4px;text-align:center;font-size:10px;font-weight:850;background:#f7fafc}
+.phaseBand.active{background:#fff8e6;border-color:#d6a84f;color:#7a4d00}
+body:not(.day) .phaseBand{background:#07131e;border-color:#253d53}
+.simKpiGrid{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:10px}
+@media(max-width:1100px){#selectionHUD{position:relative;left:auto;top:auto;width:auto;margin:10px}.simKpiGrid{grid-template-columns:1fr}.timeTransport{align-items:stretch}.timeTransport button{width:100%}}
+
+</style>
+</head>
+<body class="day">
+
+<div id="formulaOverlay" class="formulaOverlay" onclick="closeFormula()"></div>
+<div id="formulaModal" class="formulaModal" role="dialog" aria-modal="true" aria-labelledby="formulaTitle">
+  <div class="formulaHeader">
+    <h3 id="formulaTitle">Formula</h3>
+    <button class="formulaClose" onclick="closeFormula()">Close</button>
+  </div>
+  <div class="formulaBody">
+    <div id="formulaLatex" class="formulaBox"></div>
+    <div id="formulaDefinition" class="formulaDef"></div>
+    <ul id="formulaVars" class="formulaVars"></ul>
+  </div>
+</div>
+
+<header>
+<h1>NYC Sewer Construction Intelligence Simulator <span class="badge">v0.19 Clickable 3D + Construction Time Simulator</span></h1>
+<div class="subtitle">DEP-standard library • advanced clickable 3D civil twin • live object inspector • construction time simulator • cashflow animation • ERP/CMiC cost codes</div>
+</header>
+
+<div class="app">
+<aside class="sidebar">
+<div class="card"><h2>1. Project Setup</h2><div class="body"><div class="toolbar"><button class="secondary" onclick="toggleTheme()">Toggle Day/Night View</button></div>
+<div class="row"><label>Project Name</label><input id="projectName" value="Sample 36-inch RCP Sewer Replacement"></div>
+<div class="row"><label>Location / Corridor</label><input id="locationName" value="Greenwich Village Side Street"></div>
+<div class="grid2"><div class="row"><label>Pipe Family</label><select id="pipeFamily"><option value="RCP_CIRCULAR" selected>Circular RCP</option><option value="VCP">Vitrified Clay Pipe</option><option value="RCP_HE">Horizontal Elliptical RCP</option></select></div><div class="row"><label>Pipe Size</label><select id="pipeSize"></select></div></div>
+<div class="grid2"><div class="row"><label>Total Length (LF)</label><input id="lengthLf" type="number" value="500" min="50" step="10"></div><div class="row"><label>Avg Cover / Trench Depth (ft)</label><input id="coverFt" type="number" value="12" min="2" step="0.5"></div></div>
+<div class="grid2"><div class="row"><label>Segments / Baseline MH Spans</label><input id="segments" type="number" value="2" min="1"></div><div class="row"><label>Markup on Cost (%)</label><input id="markupPct" type="number" value="30" step="1"></div></div>
+</div></div>
+
+<div class="card"><h2>2. Standards + Structures</h2><div class="body">
+<div class="grid2"><div class="row"><label>Manhole Type</label><select id="manholeType"><option value="A">Type A / Small Pipe Dry</option><option value="B">Type B / Small Pipe Wet</option><option value="C" selected>Type C / 36-60 in RCP</option><option value="D">Type D / 66-96 in RCP</option><option value="PRECAST">Precast Circular</option></select></div><div class="row"><label>Catch Basin Type</label><select id="catchBasinType"><option value="NONE">None</option><option value="TYPE1" selected>Type 1</option><option value="TYPE2">Type 2</option><option value="TYPE3">Type 3</option><option value="DOUBLE">Double</option><option value="PRECAST">Precast</option></select></div></div>
+<div class="grid3"><div class="row"><label>Catch Basins</label><input id="catchBasinCount" type="number" value="2" min="0"></div><div class="row"><label>House Connections</label><input id="houseConnCount" type="number" value="2" min="0"></div><div class="row"><label>Risers</label><input id="riserCount" type="number" value="0" min="0"></div></div>
+<div class="grid2"><div class="row"><label>Bedding Thickness (ft)</label><input id="beddingFt" type="number" value="0.5" step="0.1"></div><div class="row"><label>Pavement Restore Width (ft)</label><input id="paveWidthFt" type="number" value="14" step="1"></div></div>
+</div></div>
+
+<div class="card"><h2>3. Field Conditions</h2><div class="body">
+<div class="grid2"><div class="row"><label>Ground</label><select id="ground"><option>Earth</option><option>Rock</option><option>Mixed</option></select></div><div class="row"><label>Water</label><select id="water"><option>Dry</option><option selected>Wet</option></select></div></div>
+<div class="grid2"><div class="row"><label>3D Assembly Preset</label><select id="assemblyPreset"><option value="standard">Standard PM model</option><option value="signature" selected>Signature complex 3D showcase</option></select></div><div class="row"><label>Foundation Context</label><select id="foundationContext"><option value="earth">Earth / rock cradle</option><option value="pile" selected>Pile-supported visual context</option></select></div></div>
+<div class="grid2"><div class="row"><label>4D Phase Overlay</label><select id="phaseOverlay"><option value="none">None</option><option value="excavation" selected>Excavation + sheeting</option><option value="pipe">Pipe + cradle install</option><option value="structures">Manholes + catch basins</option><option value="backfill">Backfill + restoration</option><option value="asbuilt">As-built / handover</option></select></div><div class="row"><label>3D Utility / QA Layers</label><select id="utilityLayers"><option value="on" selected>Show utilities + clearance</option><option value="off">Hide utilities + clearance</option></select></div></div>
+<div class="grid2"><div class="row"><label>Shoring</label><select id="shoring"><option selected>Sheeting</option><option>Trench Box</option><option>Open Cut</option></select></div><div class="row"><label>Dewatering</label><select id="dewatering"><option>None</option><option>Light</option><option selected>Moderate</option><option>Heavy</option></select></div></div>
+<div class="grid2"><div class="row"><label>Trench Side Slope H:V</label><input id="sideSlope" type="number" value="0.25" step="0.05"></div><div class="row"><label>Trench Width Override (ft)</label><input id="trenchWidthOverride" placeholder="auto"></div></div>
+<button onclick="recalculateAll()">Recalculate / Rebuild Model</button>
+</div></div>
+
+<div class="card"><h2>4. Geo / Alignment</h2><div class="body">
+<div class="row"><label>NYC Sample Location</label><select id="geoPreset"><option value="GREENWICH" selected>Greenwich Village</option><option value="WALL">Wall Street / Financial District</option><option value="LOWEREAST">Lower East Side</option><option value="ASTORIA">Astoria Queens</option><option value="LIC">Long Island City</option><option value="CUSTOM">Custom Coordinates</option></select></div>
+<div class="grid2"><div class="row"><label>Start Lat</label><input id="startLat" type="number" value="40.73080" step="0.00001"></div><div class="row"><label>Start Lon</label><input id="startLon" type="number" value="-73.99730" step="0.00001"></div></div>
+<div class="grid2"><div class="row"><label>End Lat</label><input id="endLat" type="number" value="40.73385" step="0.00001"></div><div class="row"><label>End Lon</label><input id="endLon" type="number" value="-73.99495" step="0.00001"></div></div>
+<div class="grid2"><div class="row"><label>Auto-Length</label><select id="autoLength"><option value="YES" selected>Yes</option><option value="NO">No</option></select></div><div class="row"><label>Manhole Rule</label><select id="mhRule"><option value="AUTO" selected>Auto DEP spacing</option><option value="INTERSECTIONS">Endpoints + Intersections</option><option value="MANUAL">Manual Segments</option></select></div></div>
+<div class="grid2"><div class="row"><label>Intersections</label><input id="intersectionCount" type="number" value="1" min="0"></div><div class="row"><label>MH Spacing Override</label><input id="mhSpacingOverride" placeholder="auto"></div></div>
+<button class="secondary" onclick="applyGeoAlignment()">Apply Geo Alignment</button>
+</div></div>
+
+<div class="card"><h2>5. Forecast + What‑If</h2><div class="body">
+<div class="grid2"><div class="row"><label>Forecast Method</label><select id="forecastMethod"><option value="actual_unit_cost">Actual Unit Cost</option><option value="blend" selected>50/50 Blend</option><option value="budget_unit_cost">Budget Unit Cost</option></select></div><div class="row"><label>Scenario</label><select id="scenario"><option value="base" selected>Base</option><option value="best">Best Case</option><option value="worst">Worst Case</option><option value="recovery">Overtime Recovery</option></select></div></div>
+<div class="grid3"><div class="row"><label>Risk Runs</label><input id="mcRuns" type="number" value="1000" min="100" max="5000" step="100"></div><div class="row"><label>Billing Lag</label><input id="billingLag" type="number" value="30" step="5"></div><div class="row"><label>Retainage %</label><input id="retainagePct" type="number" value="5" step="1"></div></div>
+<button id="freezeBtn" style="background:#2b5c3e;color:white">❄️ Freeze Current Forecast</button>
+<div id="freezeStatus" class="note">No frozen forecast yet.</div>
+<div class="whatif-controls">
+<label>Future Productivity Factor</label><input type="range" id="prodFactor" min="0.5" max="1.5" step="0.01" value="1.0"><span id="prodFactorVal">1.00</span>
+<label>Future Material Cost Factor</label><input type="range" id="matFactor" min="0.7" max="1.3" step="0.01" value="1.0"><span id="matFactorVal">1.00</span>
+<label>Weather Delay Probability</label><input type="range" id="delayProb" min="0" max="0.5" step="0.01" value="0.10"><span id="delayProbVal">10%</span>
+<button class="secondary" onclick="recalcWhatIf()">Recalculate What‑If</button>
+</div>
+</div></div>
+
+<div class="card"><h2>6. Save / Load / Export</h2><div class="body">
+<div class="toolbar"><button onclick="saveScenario()">Download JSON</button><button class="secondary" onclick="document.getElementById('loadFile').click()">Load JSON</button></div>
+<input id="loadFile" type="file" accept=".json" style="display:none" onchange="loadScenarioFile(event)">
+<button class="secondary" onclick="downloadCSV()">Export Actuals CSV</button>
+</div></div>
+</aside>
+
+<main class="main">
+<div class="tabs">
+<div class="tab active" data-tab="overview">Dashboard</div><div class="tab" data-tab="model">3D Civil Twin</div><div class="tab" data-tab="map">Geo Alignment</div><div class="tab" data-tab="standards">DEP Standards</div><div class="tab" data-tab="actuals">Daily Actuals</div><div class="tab" data-tab="fieldimport">Field Import / QA</div><div class="tab" data-tab="segmentcontrols">Segment Controls</div><div class="tab" data-tab="forecast">Forecast / EVM</div><div class="tab" data-tab="cashflow">S-Curve / Cash Flow</div><div class="tab" data-tab="risk">Risk</div><div class="tab" data-tab="drilldown">Executive Drilldown</div><div class="tab" data-tab="inspector">Engineering / PM Inspector</div><div class="tab" data-tab="wages">Wages / Crews</div><div class="tab" data-tab="costcodes">ERP Cost Codes</div><div class="tab" data-tab="elementexplorer">Element Explorer</div><div class="tab" data-tab="report">Report</div><div class="tab" data-tab="formulas">Formula Help</div><div class="tab" data-tab="docs">Docs</div>
+</div>
+
+<section id="overview" class="tabContent active">
+<div class="stats" id="stats"></div>
+<div class="card"><h2>v0.9.1 Upgrade Summary</h2><div class="body"><div class="warnbox">v0.13 adds segment-coded actuals and station/component controls so PMs can assign daily quantity, MH, cost, and reason codes directly to SEG / STA range / component instead of relying only on proportional allocations.</div><p class="note" id="summaryText"></p></div></div>
+<div class="grid2"><div class="card"><h2>Budget / Actual / CTC / EAC</h2><div class="body"><canvas id="forecastChart" class="chart"></canvas></div></div><div class="card"><h2>Cumulative Risk Probability</h2><div class="body"><canvas id="riskChart" class="chart"></canvas></div></div></div>
+</section>
+
+
+<section id="evm" class="tabContent">
+<div class="card"><h2>4D/5D Earned Value Management Dashboard</h2><div class="body">
+<div class="evmControlGrid">
+<div class="row"><label>EVM Scope</label><select id="evmScope" onchange="renderEVM()"><option value="SYSTEM" selected>Entire project/system</option><option value="SEGMENT">Selected segment</option><option value="COMPONENT">Selected component</option><option value="ACTIVITY">Selected activity</option></select></div>
+<div class="row"><label>Segment</label><select id="evmSegment" onchange="renderEVM()"></select></div>
+<div class="row"><label>Component</label><select id="evmComponent" onchange="renderEVM()"><option value="ALL">All components</option><option value="PIPE">Pipe barrel</option><option value="TRENCH">Trench excavation</option><option value="SHORING">Shoring / sheeting</option><option value="BEDDING">Bedding</option><option value="CONCRETE">Concrete cradle / encasement</option><option value="MANHOLES">Manholes</option><option value="CATCH_BASINS">Catch basins</option><option value="PAVEMENT">Pavement restoration</option></select></div>
+<div class="row"><label>Activity / WBS</label><select id="evmActivity" onchange="renderEVM()"></select></div>
+<div class="row"><label>Current Project Day</label><input id="evmDay" type="range" min="1" max="120" value="30" oninput="document.getElementById('evmDayVal').textContent=this.value;renderEVM()"><span id="evmDayVal">30</span></div>
+</div>
+<div class="warnbox">This dashboard provides the same EVM logic shown in your example, but tied to the sewer simulator's WBS, quantities, actuals, segment coding, and component assemblies. It works for the whole project and selected subgroups.</div>
+</div></div>
+
+<div class="card"><h2>PV / EV / AC Curve</h2><div class="body"><canvas id="evmCurveChart" class="chart" style="max-height:430px"></canvas></div></div>
+
+<div class="evmMetricGrid" id="evmMetricCards"></div>
+
+<div class="grid2">
+<div class="card"><h2>EVM Control Metrics</h2><div class="body"><table id="evmMetricTable"></table></div></div>
+<div class="card"><h2>Subgroup EVM Comparison</h2><div class="body"><canvas id="evmSubgroupChart" class="chart"></canvas></div></div>
+</div>
+
+<div class="card"><h2>Activity-Level PV / EV / AC Detail</h2><div class="body"><table id="evmActivityTable"></table></div></div>
+</section>
+
+
+<section id="timesim" class="tabContent">
+<div class="card"><h2>Construction Time Simulation Player</h2><div class="body">
+<div class="timeTransport">
+<button onclick="simReverse()">◀ Reverse</button>
+<button onclick="simPlay()">▶ Play</button>
+<button onclick="simPause()">⏸ Pause</button>
+<button onclick="simStep(-1)">− Step</button>
+<button onclick="simStep(1)">+ Step</button>
+<button class="secondary" onclick="simReset()">Reset</button>
+<label style="width:auto">Speed</label>
+<select id="simSpeed" style="width:120px" onchange="setSimSpeed(this.value)">
+<option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="5">5×</option><option value="10">10×</option>
+</select>
+<span class="timeReadout">Day <span id="simDayReadout">1</span> / <span id="simDurationReadout">120</span></span>
+</div>
+<br>
+<input id="simDaySlider" type="range" min="1" max="120" value="1" oninput="setSimDay(+this.value)">
+<div class="simTimeline"><div id="simProgress" class="simProgress"></div></div>
+<div id="simPhaseBands" class="phaseBands"></div>
+<p class="note">This simulation is time-phased from the activity sequence. It animates planned value, earned value, actual cost, billing, cash position, active phase, and 3D construction visibility. It is a CPM/EVM-style simulator, not a replacement for Primavera P6 logic yet.</p>
+</div></div>
+
+<div class="simKpiGrid" id="simKpiCards"></div>
+
+<div class="grid2">
+<div class="card"><h2>Simulated PV / EV / AC / Billing / Cashflow</h2><div class="body"><canvas id="simCashflowChart" class="chart" style="max-height:420px"></canvas></div></div>
+<div class="card"><h2>Active Construction Sequence</h2><div class="body"><table id="simActivityTable"></table></div></div>
+</div>
+</section>
+
+<section id="model" class="tabContent">
+<div class="toolbar"><button onclick="init3D(true); buildModel3D();">Initialize / Reset 3D</button><button class="secondary" onclick="fitCamera()">Fit Model</button><button class="secondary" onclick="buildModel3D()">Rebuild Geometry</button></div>
+<div id="viewer">
+  <div id="modelAnnotationPanel">
+    <div class="toggleRow">
+      <label><input type="checkbox" id="showAnnotations" checked onchange="renderModelAnnotations()"> Show Annotations</label>
+      <label><input type="checkbox" id="showPMOverlay" checked onchange="renderModelAnnotations()"> PM Overlay</label>
+    </div>
+    <div id="modelAnnotationList"></div>
+  </div>
+  <div id="selectionHUD"></div>
+  <div class="clickHint">Click object = inspect • Double-click = parent • Triple-click = higher group • Arrow keys navigate</div>
+  <div id="modelStatus">3D status: waiting for renderer...</div>
+</div>
+<p class="note">v0.16 adds the realistic civil-twin layers from the attached DEP workbench concept: roadway/curb/sidewalk context, transparent soil, utility conflict context, clearance envelopes, section slice, pile-supported cradle context, station ticks, flow arrows, catch basin leads, house connection/riser, and 4D phase overlay.</p><div class="card"><h2>3D Model Layers</h2><div class="body"><div id="modelLayerSummary" class="modelLayerGrid"></div></div></div>
+</section>
+
+<section id="map" class="tabContent">
+<div class="card"><h2>Schematic Geographic Alignment</h2><div class="body"><canvas id="mapCanvas" width="1100" height="470"></canvas></div></div>
+<div class="grid2"><div class="card"><h2>Geo Summary</h2><div class="body"><table id="geoSummaryTable"></table></div></div><div class="card"><h2>Manhole Placement</h2><div class="body"><table id="mhPlacementTable"></table></div></div></div>
+</section>
+
+<section id="standards" class="tabContent">
+<div class="card"><h2>DEP Standards Library</h2><div class="body"><table id="standardsTable"></table></div></div>
+<div class="grid2"><div class="card"><h2>Selected Standard Interpretation</h2><div class="body" id="standardNarrative"></div></div><div class="card"><h2>Quantities</h2><div class="body"><table id="qtyTable"></table></div></div></div>
+</section>
+
+<section id="actuals" class="tabContent">
+<div class="card"><h2>Daily Actuals Register</h2><div class="body">
+<div class="toolbar"><button onclick="addActualRow()">Add Actual Row</button><button onclick="simulateDailyActuals()">Simulate Segment-Coded Actuals</button><button class="secondary" onclick="clearActuals()">Clear Actuals</button></div><div class="warnbox">v0.13 actual rows now include segment, station range, component/assembly, and reason code. Executive drilldowns use these coded fields directly instead of allocation where possible.</div>
+<table id="actualsTable"></table></div></div>
+</section>
+
+
+
+<section id="fieldimport" class="tabContent">
+<div class="card"><h2>Field Actuals Import / Mapping</h2><div class="body">
+<div id="actualDropZone" class="importBox">
+  <b>Drop a CSV file here</b><br>
+  or <button class="secondary" onclick="document.getElementById('actualCsvFile').click()">Choose CSV</button>
+  <input id="actualCsvFile" type="file" accept=".csv,text/csv" style="display:none" onchange="handleActualCsvFile(event)">
+  <p class="note">Supported headers can be native v0.13 fields or common field-log aliases such as date/day, segment, station_start, station_end, component, activity, qty, labor_mh, labor_rate, equipment, material, reason, notes.</p>
+</div>
+<br>
+<div class="toolbar">
+  <button onclick="downloadActualsTemplate()">Download Actuals CSV Template</button>
+  <button class="secondary" onclick="runDataQualityAudit()">Run Data Quality Audit</button>
+  <button class="secondary" onclick="autoRepairActualCoding()">Auto-Repair Missing Coding</button>
+</div>
+<div class="mappingGrid" id="importMappingCards"></div>
+</div></div>
+
+<div class="grid2">
+<div class="card"><h2>Import Preview / Last Import Log</h2><div class="body"><table id="importPreviewTable"></table></div></div>
+<div class="card"><h2>Data Quality Scorecard</h2><div class="body"><div class="inspectorGrid" id="qaScoreCards"></div></div></div>
+</div>
+
+<div class="card"><h2>Data Quality Findings</h2><div class="body"><table id="qaFindingsTable"></table></div></div>
+</section>
+
+<section id="segmentcontrols" class="tabContent">
+<div class="card"><h2>Segment / Station Coding Controls</h2><div class="body">
+<div class="warnbox">Use this tab to validate whether actuals are coded to segments, stations, and components. These controls are the bridge between field logs, 3D components, and executive drilldown.</div>
+<table id="segmentCodingTable"></table>
+</div></div>
+<div class="grid2">
+<div class="card"><h2>Segment Performance Heatmap</h2><div class="body"><table id="segmentHeatmapTable"></table></div></div>
+<div class="card"><h2>Component Coding Summary</h2><div class="body"><table id="componentCodingTable"></table></div></div>
+</div>
+</section>
+
+<section id="forecast" class="tabContent">
+<div class="card"><h2>Activity-Level CTC / EAC / TCPI</h2><div class="body"><table id="forecastTable"></table></div></div>
+<div class="card"><h2>Frozen Snapshots</h2><div class="body"><table id="snapshotTable"></table></div></div>
+<div class="grid2"><div class="card"><h2>Earned vs Remaining</h2><div class="body"><canvas id="progressChart" class="chart"></canvas></div></div><div class="card"><h2>Reason Code Cost</h2><div class="body"><canvas id="reasonChart" class="chart"></canvas></div></div></div>
+</section>
+
+<section id="cashflow" class="tabContent">
+<div class="card"><h2>Planned / Actual / Billing S-Curve</h2><div class="body"><canvas id="sCurveChart" class="chart"></canvas></div></div>
+<div class="grid2"><div class="card"><h2>Cash Position</h2><div class="body"><canvas id="cashChart" class="chart"></canvas></div></div><div class="card"><h2>Time-Phased Table</h2><div class="body"><table id="cashTable"></table></div></div></div>
+</section>
+
+<section id="risk" class="tabContent">
+<div class="card"><h2>Monte Carlo-Style Risk Summary</h2><div class="body"><div class="toolbar"><button onclick="runRisk()">Run Risk Forecast</button><button class="secondary" onclick="addRisk()">Add Risk / Opportunity</button></div><table id="riskTable"></table></div></div>
+<div class="card"><h2>Editable Risk Register</h2><div class="body"><table id="riskRegisterTable"></table></div></div>
+</section>
+
+
+
+<section id="drilldown" class="tabContent">
+<div class="card"><h2>Executive Drilldown Controls</h2><div class="body">
+<div class="scopeHeader">
+<div class="row"><label>View Scope</label><select id="drillScope" onchange="renderDrilldown()"><option value="SYSTEM" selected>Entire system</option><option value="SEGMENT">Selected segment / section</option><option value="COMPONENT">Selected component / assembly</option><option value="ACTIVITY">Selected activity / WBS</option></select></div>
+<div class="row"><label>Segment / Section</label><select id="drillSegment" onchange="renderDrilldown()"></select></div>
+<div class="row"><label>Component / Assembly</label><select id="drillComponent" onchange="renderDrilldown()"><option value="ALL">All components</option><option value="PIPE">Pipe barrel</option><option value="TRENCH">Trench excavation</option><option value="SHORING">Shoring / sheeting</option><option value="BEDDING">Bedding</option><option value="CONCRETE">Concrete cradle / encasement</option><option value="MANHOLES">Manholes</option><option value="CATCH_BASINS">Catch basins</option><option value="PAVEMENT">Pavement restoration</option></select></div>
+<div class="row"><label>Activity / WBS</label><select id="drillActivity" onchange="renderDrilldown()"></select></div>
+<div class="row"><label>Allocation Basis</label><select id="drillBasis" onchange="renderDrilldown()"><option value="LENGTH" selected>Length / station based</option><option value="QTY">Quantity based</option><option value="COST">Cost based</option></select></div>
+</div>
+<div class="warnbox">This tab is designed for PMs and executives. It shows actual vs estimated vs projected quantity, cost, billing, profit, variance, risk and opportunity for the whole system or any selected segment/component. Until actual rows carry a segment ID, selected-segment actuals are allocated from activity actuals using the selected allocation basis.</div>
+</div></div>
+
+<div class="card"><h2>Selected Scope KPI Board</h2><div class="body">
+<div class="inspectorGrid" id="drillKpiCards"></div>
+</div></div>
+
+<div class="miniChartGrid">
+<div class="card"><h2>Whole System vs Selected Scope</h2><div class="body"><canvas id="scopeCompareChart" class="chart"></canvas></div></div>
+<div class="card"><h2>Selected Scope Financial Stack</h2><div class="body"><canvas id="scopeFinancialChart" class="chart"></canvas></div></div>
+</div>
+
+<div class="grid2">
+<div class="card"><h2>Segment / Section Quantity-Cost Matrix</h2><div class="body"><table id="segmentMatrixTable"></table></div></div>
+<div class="card"><h2>Component / Assembly Matrix</h2><div class="body"><table id="componentMatrixTable"></table></div></div>
+</div>
+
+<div class="grid2"><div class="card"><h2>Selected Scope Unit-Aware Quantity Summary</h2><div class="body"><table id="scopeUnitQtyTable"></table></div></div><div class="card"><h2>Selected Scope Cost Code Category Summary</h2><div class="body"><table id="scopeCostCodeSummaryTable"></table></div></div></div>
+<div class="card"><h2>Selected Scope Activity Detail</h2><div class="body"><table id="scopeActivityTable"></table></div></div>
+</section>
+
+<section id="inspector" class="tabContent">
+<div class="card"><h2>Engineering Parameter Dashboard</h2><div class="body">
+<div class="inspectorGrid" id="engineeringParamCards"></div>
+</div></div>
+<div class="grid2">
+<div class="card"><h2>3D Members / Sections / Assemblies</h2><div class="body"><table id="memberSectionTable"></table></div></div>
+<div class="card"><h2>PM Dynamic Variables</h2><div class="body"><table id="pmVariableTable"></table></div></div>
+</div>
+<div class="grid2">
+<div class="card"><h2>Estimated vs Actual Quantity / Cost / MH</h2><div class="body"><table id="actualVsEstimateTable"></table></div></div>
+<div class="card"><h2>Man-Hours by Crew / Trade</h2><div class="body"><table id="tradeMhTable"></table></div></div>
+</div>
+<div class="card"><h2>Risk / Opportunity Watchlist</h2><div class="body"><table id="riskOpportunityWatchTable"></table></div></div>
+</section>
+
+<section id="wages" class="tabContent">
+<div class="grid2"><div class="card"><h2>Wage Library</h2><div class="body"><table id="wageTable"></table></div></div><div class="card"><h2>Crew Audit</h2><div class="body"><table id="crewAuditTable"></table></div></div></div>
+<div class="card"><h2>Activity Baseline</h2><div class="body"><table id="activityTable"></table></div></div>
+</section>
+
+
+<section id="costcodes" class="tabContent">
+<div class="card"><h2>ERP / CMiC Cost Code Library</h2><div class="body">
+<div class="warnbox">v0.17 introduces CMiC-style cost codes with suffix categories: <b>-L</b> labor, <b>-M</b> material, <b>-C</b> consumable, <b>-S</b> subcontract, <b>-E</b> equipment, and <b>-R</b> revenue/billing. These codes allow grouping, cross-tabs, procurement views, time tracking, equipment-hour tracking, and billing quantity comparison.</div>
+<div class="toolbar">
+  <button onclick="downloadCostCodeCSV()">Export Cost Code CSV</button>
+  <button class="secondary" onclick="downloadCostBreakdownCSV()">Export Cost Breakdown CSV</button>
+</div>
+<table id="costCodeTable"></table>
+</div></div>
+
+<div class="grid2">
+<div class="card"><h2>Estimated / Actual / Projected by Category</h2><div class="body"><table id="costCategoryTable"></table></div></div>
+<div class="card"><h2>Cost Category Cross-Tab</h2><div class="body"><canvas id="costCategoryChart" class="chart"></canvas></div></div>
+</div>
+
+<div class="card"><h2>Activity × Cost Category Matrix</h2><div class="body"><table id="activityCategoryMatrix"></table></div></div>
+</section>
+
+
+<section id="elementexplorer" class="tabContent">
+<div class="card"><h2>Element / Subgroup / Family Explorer</h2><div class="body">
+<div class="warnbox">Click a 3D element to inspect it. Double-click promotes the selection to the next larger subgroup. Triple-click promotes to the higher family/system level. Keyboard support: <span class="hotkey">↑</span> parent, <span class="hotkey">↓</span> child/detail, <span class="hotkey">←</span>/<span class="hotkey">→</span> sibling, <span class="hotkey">Esc</span> clear.</div>
+<div id="selectionPath" class="hierarchyPath"></div>
+<div class="toolbar">
+  <button onclick="promoteSelection()">Select Parent Group</button>
+  <button class="secondary" onclick="selectChildDetail()">Select Child Detail</button>
+  <button class="secondary" onclick="cycleSelection(1)">Next Sibling</button>
+  <button class="secondary" onclick="clearElementSelection()">Clear Selection</button>
+</div>
+</div></div>
+
+<div class="grid2">
+<div class="card"><h2>Selected Element Engineering Data</h2><div class="body"><table id="selectedElementTable"></table></div></div>
+<div class="card"><h2>Selected Element Financial / ERP Data</h2><div class="body"><table id="selectedElementFinanceTable"></table></div></div>
+</div>
+
+<div class="grid2">
+<div class="card"><h2>Selected Element Estimated vs Actual vs Projected</h2><div class="body"><table id="selectedElementCompareTable"></table></div></div>
+<div class="card"><h2>Selected Element Cost Category Crosstab</h2><div class="body"><table id="selectedElementCostCrosstab"></table></div></div>
+</div>
+
+<div class="card"><h2>Hierarchy Register</h2><div class="body"><table id="elementHierarchyTable"></table></div></div>
+</section>
+
+<section id="report" class="tabContent"><div class="toolbar noPrint"><button onclick="window.print()">Print / Save PDF</button><button class="secondary" onclick="buildReport()">Refresh Report</button></div><div id="reportContent" class="report"></div></section>
+
+
+<section id="formulas" class="tabContent">
+<div class="card"><h2>Formula / Definition Library</h2><div class="body">
+<div class="warnbox">Click any <b>i</b> icon in the dashboard, Executive Drilldown, Engineering / PM Inspector, or tables to see the governing formula and field definition. This library summarizes the same formulas in one place.</div>
+<table id="formulaLibraryTable"></table>
+</div></div>
+</section>
+
+<section id="docs" class="tabContent">
+<div class="card"><h2>System Architecture</h2><div class="body"><pre class="mermaid">
+graph TD
+  UI[User Inputs] --> GEO[Geo Alignment + Stationing]
+  UI --> DEP[DEP Standards Library]
+  GEO --> QTO[Quantity Takeoff]
+  DEP --> QTO
+  QTO --> WBS[Work Breakdown Structure]
+  WAGE[Wage + Crew Library] --> WBS
+  WBS --> BAC[Baseline Budget + Revenue]
+  ACT[Daily Actuals] --> EVM[Earned Value Forecast]
+  BAC --> EVM
+  EVM --> CTC[CTC / EAC / TCPI]
+  CTC --> WHATIF[Freeze + What-If]
+  BAC --> RISK[Monte Carlo Risk]
+  RISK --> P90[P10/P50/P90 + Cumulative Curve]
+  CTC --> CASH[S-Curve + Cash Flow]
+  P90 --> REPORT[Report / Export]
+</pre></div></div>
+<div class="card"><h2>Glossary + Use Notes</h2><div class="body" id="docsText"></div></div>
+</section>
+</main>
+</div>
+
+<script>
+const pipeStandards={
+RCP_CIRCULAR:{label:"Circular RCP",source:"SE3-SE7",sizes:{24:{display:'24 in RCP',A:3.5,cradle:.1124,encase:.2719,maxV:27,pipeOD:2},30:{display:'30 in RCP',A:4.083,cradle:.1414,encase:.341,maxV:27.5,pipeOD:2.5},36:{display:'36 in RCP',A:4.667,cradle:.1829,encase:.43,maxV:28,pipeOD:3},42:{display:'42 in RCP',A:5.25,cradle:.2348,encase:.5279,maxV:28,pipeOD:3.5},48:{display:'48 in RCP',A:5.833,cradle:.2928,encase:.6348,maxV:28.5,pipeOD:4},60:{display:'60 in RCP',A:7,cradle:.4219,encase:.8757,maxV:29,pipeOD:5},72:{display:'72 in RCP',A:8.167,cradle:.5808,encase:1.1526,maxV:29.5,pipeOD:6},96:{display:'96 in RCP',A:10.5,cradle:.9977,encase:1.847,maxV:30,pipeOD:8}}},
+VCP:{label:"Vitrified Clay Pipe",source:"SE1-SE2",sizes:{8:{display:'8 in VCP',A:1.5,cradle:.0408,encase:.0815,maxV:22,pipeOD:.67},10:{display:'10 in VCP',A:2,cradle:.0596,encase:.1191,maxV:20,pipeOD:.83},12:{display:'12 in VCP',A:2.25,cradle:.0708,encase:.1415,maxV:18,pipeOD:1},15:{display:'15 in VCP',A:2.5,cradle:.0831,encase:.1661,maxV:16,pipeOD:1.25},18:{display:'18 in VCP',A:2.833,cradle:.0998,encase:.1996,maxV:15,pipeOD:1.5}}},
+RCP_HE:{label:"Horizontal Elliptical RCP",source:"SE8-SE10",sizes:{2314:{display:'23W x 14H HE-RCP',A:3.5,cradle:.0961,encase:.2281,maxV:19,pipeOD:14/12,W:23,H:14},3824:{display:'38W x 24H HE-RCP',A:4.833,cradle:.151,encase:.3594,maxV:19.5,pipeOD:2,W:38,H:24},6038:{display:'60W x 38H HE-RCP',A:6.917,cradle:.2721,encase:.6207,maxV:20,pipeOD:38/12,W:60,H:38},8353:{display:'83W x 53H HE-RCP',A:9.083,cradle:.4947,encase:1.0137,maxV:20.5,pipeOD:53/12,W:83,H:53},12177:{display:'121W x 77H HE-RCP',A:12.667,cradle:.9544,encase:1.8192,maxV:21.5,pipeOD:77/12,W:121,H:77}}}
+};
+const manholeStandards={A:{label:"Type A",source:"SE11/12",unitCost:18500,diameter:4},B:{label:"Type B",source:"SE14/15",unitCost:22500,diameter:5},C:{label:"Type C",source:"SE16/17",unitCost:32500,diameter:6},D:{label:"Type D",source:"SE18/19",unitCost:48000,diameter:8},PRECAST:{label:"Precast",source:"SE28-SE32",unitCost:26500,diameter:6}};
+const cbStandards={NONE:{label:"None",source:"-",unitCost:0,excCY:0},TYPE1:{label:"Type 1 CB",source:"SE47/52",unitCost:14500,excCY:8},TYPE2:{label:"Type 2 CB",source:"SE48/53",unitCost:15500,excCY:9},TYPE3:{label:"Type 3 CB",source:"SE49/54",unitCost:17500,excCY:10},DOUBLE:{label:"Double CB",source:"SE50/55",unitCost:28500,excCY:16},PRECAST:{label:"Precast CB",source:"SE52-SE55",unitCost:16500,excCY:9}};
+let wageLibrary={Foreman:{base:72,fringe:58,payroll:12,shift:0,ot:1.5},Operator:{base:70,fringe:57,payroll:12,shift:0,ot:1.5},Laborer:{base:55,fringe:50,payroll:10,shift:0,ot:1.5},Dockbuilder:{base:62,fringe:55,payroll:11,shift:0,ot:1.5},Carpenter:{base:61,fringe:54,payroll:11,shift:0,ot:1.5},Mason:{base:60,fringe:53,payroll:11,shift:0,ot:1.5},TruckDriver:{base:57,fringe:50,payroll:10,shift:0,ot:1.5},Surveyor:{base:66,fringe:52,payroll:10,shift:0,ot:1.5},QAQC:{base:64,fringe:50,payroll:10,shift:0,ot:1.5}};
+const crewTemplates={"Survey/Layout":{Surveyor:1,Foreman:.5,Laborer:1},"Shoring/Sheeting":{Foreman:1,Dockbuilder:3,Operator:1,Laborer:2},"Excavation":{Foreman:1,Operator:2,Laborer:3,TruckDriver:3},"Concrete/Formwork":{Foreman:1,Carpenter:2,Laborer:3,Operator:1},"Pipe Install":{Foreman:1,Operator:1,Laborer:5,TruckDriver:1},"Manhole Crew":{Foreman:1,Mason:2,Laborer:3,Operator:1},"Backfill":{Foreman:1,Operator:2,Laborer:3,TruckDriver:2},"Paving":{Foreman:1,Operator:2,Laborer:4,TruckDriver:2},"QA":{Foreman:1,QAQC:1,Laborer:2}};
+const reasonCodes=["Normal Production","Utility Conflict","Weather","Dewatering","Rock/Hard Dig","Material Delay","Equipment Down","Low Productivity","Inspection Hold","Design/Field Change"];
+let activities=defaultActivities(), actuals=[], snapshots=[], risks=defaultRisks(), riskResults=[], frozenForecast=null, lastCalc=null, charts={}, scene,camera,renderer,modelGroup,mouse={down:false,x:0,y:0,rx:-0.7,ry:0.65,dist:105},eventsAttached=false,selectables=[],elementRegistry=[],selectedElementId=null,lastClickTime=0,lastClickedId=null,clickCount=0,selectionOutline=null,simTimer=null,simDirection=1,simSpeed=1,simDay=1;
+function defaultActivities(){return[
+{id:"A01",name:"Survey/Layout/MPT",driver:"LS",unit:"LS",qty:1,prod:1,crew:"Survey/Layout",equip:800,mat:4500},
+{id:"A02",name:"Shoring / Sheeting",driver:"SHORING_SF",unit:"SF",qty:null,prod:900,crew:"Shoring/Sheeting",equip:3500,mat:12},
+{id:"A03",name:"Dewatering",driver:"DAYS",unit:"DAY",qty:null,prod:1,crew:"Excavation",equip:1200,mat:250},
+{id:"A04",name:"Excavation / Disposal",driver:"EXC_CY",unit:"CY",qty:null,prod:165,crew:"Excavation",equip:5200,mat:45},
+{id:"A05",name:"Stone Bedding",driver:"BEDDING_CY",unit:"CY",qty:null,prod:85,crew:"Backfill",equip:2200,mat:82},
+{id:"A06",name:"Concrete Cradle / Encasement",driver:"CONC_CY",unit:"CY",qty:null,prod:36,crew:"Concrete/Formwork",equip:1900,mat:285},
+{id:"A07",name:"Pipe Installation",driver:"PIPE_LF",unit:"LF",qty:null,prod:55,crew:"Pipe Install",equip:3200,mat:420},
+{id:"A08",name:"Manholes",driver:"MH_EA",unit:"EA",qty:null,prod:1.1,crew:"Manhole Crew",equip:2600,mat:0},
+{id:"A09",name:"Catch Basins",driver:"CB_EA",unit:"EA",qty:null,prod:1.2,crew:"Manhole Crew",equip:1800,mat:0},
+{id:"A10",name:"House Connections / Risers",driver:"HC_RISER_EA",unit:"EA",qty:null,prod:2,crew:"Pipe Install",equip:1200,mat:4200},
+{id:"A11",name:"Backfill / Compaction",driver:"BACKFILL_CY",unit:"CY",qty:null,prod:190,crew:"Backfill",equip:4100,mat:46},
+{id:"A12",name:"Pavement Restoration",driver:"PAV_SY",unit:"SY",qty:null,prod:155,crew:"Paving",equip:4300,mat:185},
+{id:"A13",name:"QA/QC / Closeout",driver:"LS",unit:"LS",qty:1,prod:1,crew:"QA",equip:900,mat:2500}]}
+function defaultRisks(){return[["Utility conflict / relocation",.25,.03,.12],["Wet trench / dewatering escalation",.18,.02,.09],["Rock / hard dig overrun",.16,.02,.1],["Low productivity / access constraints",.25,.02,.08],["Material delay / escalation",.14,.01,.06],["Overtime recovery premium",.2,.02,.07],["Opportunity: better production",.18,-.08,-.02],["Opportunity: buyout savings",.12,-.05,-.01]]}
+function val(id){return document.getElementById(id).value} function num(id){return parseFloat(val(id))||0} function fmt(n,d=0){return(Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d})} function money(n){return"$"+fmt(n,0)} function table(h,rows){return`<thead><tr>${h.map(x=>`<th class="${x[1]?'num':''}">${x[0]}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((x,i)=>`<td class="${h[i][1]?'num':''}">${x}</td>`).join("")}</tr>`).join("")}</tbody>`}
+function initSelectors(){const pf=document.getElementById('pipeFamily'), ps=document.getElementById('pipeSize');let current=ps.value;ps.innerHTML=Object.entries(pipeStandards[pf.value].sizes).map(([k,p])=>`<option value="${k}">${p.display}</option>`).join("");if(pipeStandards[pf.value].sizes[current])ps.value=current;else ps.value=pf.value==="RCP_CIRCULAR"?"36":Object.keys(pipeStandards[pf.value].sizes)[0]}
+function selectedPipe(){let fam=val('pipeFamily'), k=val('pipeSize');return{...pipeStandards[fam].sizes[k],family:fam,familyLabel:pipeStandards[fam].label,source:pipeStandards[fam].source}}
+function wageRate(t){let w=wageLibrary[t]||{base:0,fringe:0,payroll:0,shift:0};return(+w.base)+(+w.fringe)+(+w.payroll)+(+w.shift)} function wageOT(t){let w=wageLibrary[t]||{base:0,fringe:0,payroll:0,shift:0,ot:1.5};return(+w.base)*(+w.ot)+(+w.fringe)+(+w.payroll)+(+w.shift)} function crewSize(c){return Object.values(crewTemplates[c]||{}).reduce((a,b)=>a+(+b||0),0)} function crewRate(c){let s=0;Object.entries(crewTemplates[c]||{}).forEach(([t,n])=>s+=wageRate(t)*(+n));return s}
+function calcGeo(){let lat1=num('startLat'),lon1=num('startLon'),lat2=num('endLat'),lon2=num('endLon'),R=20925524.9,p1=lat1*Math.PI/180,p2=lat2*Math.PI/180,dp=(lat2-lat1)*Math.PI/180,dl=(lon2-lon1)*Math.PI/180,a=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2,dist=2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)),bearing=(Math.atan2(Math.sin(dl)*Math.cos(p2),Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl))*180/Math.PI+360)%360;return{dist,bearing}}
+function applyGeoAlignment(){let g=calcGeo();if(val('autoLength')==="YES")document.getElementById('lengthLf').value=Math.round(g.dist);let spacing=maxMhSpacing();let cnt=val('mhRule')==="MANUAL"?parseInt(val('segments'))||1:Math.max(1,Math.ceil(g.dist/spacing));document.getElementById('segments').value=cnt;recalculateAll()}
+function maxMhSpacing(){let p=selectedPipe(),d=parseInt(val('pipeSize'))||36;if(p.family==="RCP_HE"){if((p.H||36)>=63)return 600;if((p.H||36)>=53)return 400;return 250} if(d>=78)return 600;if(d>=42)return 400;return 250}
+function geometry(){let p=selectedPipe(),length=num('lengthLf'),cover=num('coverFt'),pipeOD=p.pipeOD,trenchDepth=cover+pipeOD+num('beddingFt'),baseWidth=val('trenchWidthOverride')?num('trenchWidthOverride'):p.A+3,topWidth=baseWidth+2*num('sideSlope')*trenchDepth,avgWidth=(baseWidth+topWidth)/2,segments=Math.max(1,parseInt(val('segments'))||1),mhCount=segments+1,mh=manholeStandards[val('manholeType')],cb=cbStandards[val('catchBasinType')],cbCount=num('catchBasinCount'),hc=num('houseConnCount'),ris=num('riserCount'),encase=cover<4||cover>p.maxV,cradleCY=length*(encase?p.encase:p.cradle),excavationCY=length*avgWidth*trenchDepth/27,mhExcCY=mhCount*Math.PI*Math.pow(mh.diameter/2+1.5,2)*trenchDepth/27,cbExcCY=cbCount*cb.excCY,bedCY=length*baseWidth*num('beddingFt')/27,pipeDisplCY=Math.PI*Math.pow(pipeOD/2,2)*length/27,backfillCY=Math.max(0,excavationCY+mhExcCY+cbExcCY-cradleCY-bedCY-pipeDisplCY),sheetingSF=val('shoring')==="Open Cut"?0:length*trenchDepth*2,paveSY=length*num('paveWidthFt')/9;return{p,length,cover,pipeOD,trenchDepth,baseWidth,topWidth,avgWidth,segments,mhCount,mh,cb,cbCount,hc,ris,encase,cradleCY,excavationCY,mhExcCY,cbExcCY,bedCY,pipeDisplCY,backfillCY,sheetingSF,paveSY}}
+function qtyFor(driver,g){let dewaterDays={None:0,Light:4,Moderate:8,Heavy:14}[val('dewatering')]||0;return{LS:1,SHORING_SF:g.sheetingSF,DAYS:dewaterDays,EXC_CY:g.excavationCY+g.mhExcCY+g.cbExcCY,CONC_CY:g.cradleCY,BEDDING_CY:g.bedCY,PIPE_LF:g.length,MH_EA:g.mhCount,CB_EA:g.cbCount,HC_RISER_EA:g.hc+g.ris,BACKFILL_CY:g.backfillCY,PAV_SY:g.paveSY}[driver]||0}
+function calcActivities(g){let scenario=val('scenario'),prodF={best:1.12,base:1,worst:.82,recovery:1.18}[scenario]||1,costF={best:.96,base:1,worst:1.12,recovery:1.18}[scenario]||1,rows=activities.map(a=>{let qty=a.qty===null?qtyFor(a.driver,g):(+a.qty||0),prod=(+a.prod||1)*prodF;if(val('ground')==="Rock"&&["A04","A05","A06","A07"].includes(a.id))prod*=.75;if(val('water')==="Wet"&&["A02","A03","A04","A05","A06","A07","A11"].includes(a.id))prod*=.86;let days=qty<=0?0:qty/Math.max(.0001,prod),mh=days*8*crewSize(a.crew),labor=days*8*crewRate(a.crew)*costF,equip=days*(+a.equip||0)*costF,mat=qty*(+a.mat||0)*costF;if(a.driver==="MH_EA")mat=qty*g.mh.unitCost;if(a.driver==="CB_EA")mat=qty*g.cb.unitCost;if(a.driver==="HC_RISER_EA")mat=qty*4200;let consum=labor*.07,total=labor+equip+mat+consum;return{...a,qty,prod,days,mh,labor,equip,mat,consum,total}}),subtotal=rows.reduce((s,r)=>s+r.total,0),cont=subtotal*.05,totalCost=subtotal+cont,revenue=totalCost*(1+num('markupPct')/100);return{rows,subtotal,cont,totalCost,revenue,profit:revenue-totalCost}}
+function actualCost(a){return(+a.laborMH||0)*(+a.laborRate||0)+(+a.equipCost||0)+(+a.materialCost||0)}
+function forecast(){let by={};lastCalc.rows.forEach(r=>by[r.id]={...r,earned:0,actualCost:0});actuals.forEach(a=>{if(by[a.activity]){by[a.activity].earned+=(+a.qty||0);by[a.activity].actualCost+=actualCost(a)}});let rows=Object.values(by).map(r=>{let earned=Math.min(r.qty,r.earned),remain=Math.max(0,r.qty-earned),budgetUnit=r.qty?r.total/r.qty:0,actualUnit=earned?r.actualCost/earned:budgetUnit,method=val('forecastMethod'),forecastUnit=method==="budget_unit_cost"?budgetUnit:method==="blend"?(budgetUnit+actualUnit)/2:actualUnit,ctc=remain*forecastUnit,eac=r.actualCost+ctc,tcpi=ctc>0?(r.total-r.actualCost)/ctc:1;return{...r,earned,remain,budgetUnit,actualUnit,forecastUnit,ctc,eac,varCost:eac-r.total,tcpi,status:earned>=r.qty?"Complete":r.actualCost>0?"Active":"Not Started"}});let totals=rows.reduce((o,r)=>{o.budget+=r.total;o.actual+=r.actualCost;o.ctc+=r.ctc;o.eac+=r.eac;o.earned+=r.earned;o.qty+=r.qty;o.varCost+=r.varCost;return o},{budget:0,actual:0,ctc:0,eac:0,earned:0,qty:0,varCost:0});totals.revenue=lastCalc.revenue;totals.profit=totals.revenue-totals.eac;totals.margin=totals.profit/totals.revenue*100;totals.tcpi=(totals.budget-totals.actual)/Math.max(1,totals.ctc);return{rows,totals}}
+function recalculateAll(){let g=geometry(), e=calcActivities(g);lastCalc={...g,...e};runRisk(false);renderAll();buildModel3D()}
+function runRisk(redraw=true){let base=forecast().totals.eac||lastCalc.totalCost,runs=Math.max(100,Math.min(5000,parseInt(num('mcRuns'))||1000)),delay=+val('delayProb')||.1; riskResults=[];for(let i=0;i<runs;i++){let cost=base*(.95+Math.random()*.2);risks.forEach(r=>{if(Math.random()<Math.abs(r[1]))cost+=base*(r[2]+Math.random()*(r[3]-r[2]))});if(Math.random()<delay)cost+=base*(.03+Math.random()*.12);riskResults.push(cost)}riskResults.sort((a,b)=>a-b);if(redraw)renderAll()}
+function percentile(arr,p){if(!arr.length)return 0;let i=Math.floor((arr.length-1)*p);return arr[i]}
+function scheduleCurve(){let c=lastCalc,f=forecast(),dur=Math.max(1,Math.ceil(lastCalc.rows.reduce((s,r)=>s+r.days,0)*.75)),lag=num('billingLag'),ret=num('retainagePct')/100,actualByDay={};actuals.forEach(a=>actualByDay[a.day]=(actualByDay[a.day]||0)+actualCost(a));let rows=[],cumPlan=0,cumActual=0,cumBill=0;for(let d=1;d<=Math.max(dur+lag,...actuals.map(a=>a.day).concat([0]));d++){let x=d/dur,xp=(d-1)/dur,sig=z=>(1/(1+Math.exp(-10*(z-.5)))-1/(1+Math.exp(5)))/(1/(1+Math.exp(-5))-1/(1+Math.exp(5))),planInc=d<=dur?Math.max(0,sig(x)-sig(xp))*c.totalCost:0;cumPlan+=planInc;cumActual+=actualByDay[d]||0;let bd=d-lag,billInc=0;if(bd>0)billInc=Math.max(0,sig(bd/dur)-sig((bd-1)/dur))*c.revenue*(1-ret);cumBill+=billInc;rows.push({d,cumPlan,cumActual,cumBill,cumCash:cumBill-cumActual})}return rows}
+function recalcWhatIf(){if(!frozenForecast)freezeForecastState();let pf=+val('prodFactor'),mf=+val('matFactor'),delay=+val('delayProb'),base=frozenForecast,ctc=(base.ctc/Math.max(.1,pf))*(.7+.3*mf)*(1+delay*.35),eac=base.actual+ctc,profit=base.revenue-eac,tcpi=(base.budget-base.actual)/Math.max(1,ctc);document.getElementById('freezeStatus').innerHTML=`Frozen: AC ${money(base.actual)} | CTC ${money(base.ctc)} | EAC ${money(base.eac)}`;document.getElementById('summaryText').innerHTML+=`<br><b>What‑If:</b> Revised EAC ${money(eac)}, TCPI ${fmt(tcpi,2)}, revised profit ${money(profit)}.`}
+function freezeForecastState(){let f=forecast().totals;frozenForecast={...f,time:new Date().toLocaleString()};snapshots.push(frozenForecast);document.getElementById('freezeStatus').innerHTML=`Frozen ${frozenForecast.time}: EAC ${money(f.eac)}, AC ${money(f.actual)}, CTC ${money(f.ctc)}`;renderAll()}
+function renderAll(){renderStats();renderTables();renderSegmentControls();renderImportQA();renderInspector();renderDrilldown();renderEVM();renderCostCodes();renderSelectedElementInspector();renderSelectionHUD();renderFormulaLibrary();renderModelLayerSummary();renderCharts();drawMap();buildReport();docs()}
+function renderStats(){let f=forecast().totals,p10=percentile(riskResults,.1),p50=percentile(riskResults,.5),p90=percentile(riskResults,.9),cash=scheduleCurve().at(-1)||{cumCash:0};document.getElementById('stats').innerHTML=[["Budget "+infoIcon("budget"),money(f.budget),`Revenue ${money(f.revenue)}`],["Actual Cost "+infoIcon("actual"),money(f.actual),`${actuals.length} actual rows`],["EAC / Var. "+infoIcon("eac")+infoIcon("variance"),money(f.eac)+" / "+money(f.varCost),`TCPI ${fmt(f.tcpi,2)}`],["Risk P50 / P90 "+infoIcon("p90"),money(p50)+" / "+money(p90),`P10 ${money(p10)}`],["Projected Profit "+infoIcon("profit"),money(f.profit),`${fmt(f.margin,2)}% margin`],["Cash Position "+infoIcon("cash"),money(cash.cumCash),"billing - actual"],["Pipe",lastCalc.p.display,lastCalc.p.source],["Geo Length",fmt(calcGeo().dist)+" LF",`Bearing ${fmt(calcGeo().bearing,1)}°`]].map(x=>`<div class="stat"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="s">${x[2]}</div></div>`).join("");document.getElementById('summaryText').innerHTML=`<b>${val('projectName')}</b> is modeled as ${fmt(lastCalc.length)} LF of ${lastCalc.p.display} in ${val('locationName')}. Current EAC is <b>${money(f.eac)}</b>, P90 is <b>${money(p90)}</b>, and projected profit is <b>${money(f.profit)}</b>.`}
+function renderTables(){let f=forecast();document.getElementById('standardsTable').innerHTML=table([["Item",0],["Value",1],["Source",0]],[["Pipe",lastCalc.p.display,lastCalc.p.source],["Cradle width A",fmt(lastCalc.p.A,2)+" ft",lastCalc.p.source],["Cradle/encasement",fmt(lastCalc.cradleCY,1)+" CY",lastCalc.encase?"Encasement triggered":"Cradle"],["Manholes",`${lastCalc.mhCount} × ${lastCalc.mh.label}`,lastCalc.mh.source],["Catch basins",`${lastCalc.cbCount} × ${lastCalc.cb.label}`,lastCalc.cb.source]]);document.getElementById('standardNarrative').innerHTML=`<p class="note">The selected DEP-standard abstraction uses <b>${lastCalc.p.familyLabel}</b> with source family <b>${lastCalc.p.source}</b>. Trench geometry is now modeled with a visible trapezoidal/opening profile where applicable, not only a rectangular box.</p>`;document.getElementById('qtyTable').innerHTML=table([["Quantity",0],["Unit",0],["Value",1],["Basis",0]],[["Pipe","LF",fmt(lastCalc.length,1),lastCalc.p.display],["Mass excavation","CY",fmt(lastCalc.excavationCY,1),"avg trench width × depth × length / 27"],["Structure excavation","CY",fmt(lastCalc.mhExcCY+lastCalc.cbExcCY,1),"MH + CB allowance"],["Concrete cradle","CY",fmt(lastCalc.cradleCY,1),lastCalc.p.source],["Bedding","CY",fmt(lastCalc.bedCY,1),"stone bedding"],["Backfill","CY",fmt(lastCalc.backfillCY,1),"calculated"],["Sheeting","SF",fmt(lastCalc.sheetingSF,1),val('shoring')],["Pavement","SY",fmt(lastCalc.paveSY,1),"restoration width"]]);
+document.getElementById('actualsTable').innerHTML=table([["Day",1],["Segment "+infoIcon("codedActual"),0],["STA Start "+infoIcon("stationRange"),1],["STA End",1],["Component",0],["Activity",0],["Qty",1],["Labor MH",1],["Labor Rate",1],["Equip",1],["Mat/Sub",1],["Reason",0],["Cost",1],["",0]],actuals.map((a,i)=>{ensureActualCoding(a); const segOpts=segmentList().map(s=>`<option value="${s.id}">${s.id}</option>`).join(""); const compOpts=componentOptions().map(c=>`<option value="${c[0]}">${c[1]}</option>`).join(""); return [`<input type="number" value="${a.day}" onchange="updateActual(${i},'day',this.value)">`,`<select onchange="updateActual(${i},'segment',this.value)">${segOpts}</select>`,`<input class="stationInput" type="number" value="${a.stationStart}" onchange="updateActual(${i},'stationStart',this.value)">`,`<input class="stationInput" type="number" value="${a.stationEnd}" onchange="updateActual(${i},'stationEnd',this.value)">`,`<select onchange="updateActual(${i},'component',this.value)">${compOpts}</select>`,`<select onchange="updateActual(${i},'activity',this.value)">${lastCalc.rows.map(r=>`<option value="${r.id}">${r.id}</option>`).join("")}</select>`,`<input type="number" value="${a.qty}" step=".01" onchange="updateActual(${i},'qty',this.value)">`,`<input type="number" value="${a.laborMH}" step=".5" onchange="updateActual(${i},'laborMH',this.value)">`,`<input type="number" value="${a.laborRate}" onchange="updateActual(${i},'laborRate',this.value)">`,`<input type="number" value="${a.equipCost}" onchange="updateActual(${i},'equipCost',this.value)">`,`<input type="number" value="${a.materialCost}" onchange="updateActual(${i},'materialCost',this.value)">`,`<select onchange="updateActual(${i},'reason',this.value)">${reasonCodes.map(r=>`<option>${r}</option>`).join("")}</select>`,money(actualCost(a)),`<button class="small secondary" onclick="deleteActual(${i})">Delete</button>`]}));actuals.forEach((a,i)=>{let tr=document.querySelectorAll("#actualsTable tbody tr")[i];if(tr){let sels=tr.querySelectorAll("select"); if(sels[0])sels[0].value=a.segment; if(sels[1])sels[1].value=a.component; if(sels[2])sels[2].value=a.activity; if(sels[3])sels[3].value=a.reason;}})
+document.getElementById('forecastTable').innerHTML=table([["ID",0],["Activity",0],["Status",0],["Budget",1],["Earned",1],["Actual",1],["CTC",1],["EAC",1],["Var",1],["TCPI",1]],f.rows.map(r=>[r.id,r.name,`<span class="badge ${r.varCost>0?'bad':r.status==='Complete'?'good':'warn'}">${r.status}</span>`,money(r.total),fmt(r.earned,2),money(r.actualCost),money(r.ctc),money(r.eac),money(r.varCost),fmt(r.tcpi,2)]));
+document.getElementById('snapshotTable').innerHTML=table([["#",1],["Time",0],["Actual",1],["CTC",1],["EAC",1],["Profit",1],["TCPI",1]],snapshots.map((s,i)=>[i+1,s.time||"-",money(s.actual),money(s.ctc),money(s.eac),money(s.profit),fmt(s.tcpi,2)]));
+let cash=scheduleCurve();document.getElementById('cashTable').innerHTML=table([["Day",1],["Plan Cost",1],["Actual Cost",1],["Billing",1],["Cash Position",1]],cash.filter((_,i)=>i%Math.max(1,Math.floor(cash.length/12))===0||i===cash.length-1).map(r=>[r.d,money(r.cumPlan),money(r.cumActual),money(r.cumBill),money(r.cumCash)]));
+document.getElementById('riskTable').innerHTML=table([["Metric",0],["Value",1]],[["Runs",fmt(riskResults.length)],["P10",money(percentile(riskResults,.1))],["P50",money(percentile(riskResults,.5))],["P90",money(percentile(riskResults,.9))],["P90 Profit",money(lastCalc.revenue-percentile(riskResults,.9))]]);
+document.getElementById('riskRegisterTable').innerHTML=table([["Risk / Opportunity",0],["Probability",1],["Min Impact",1],["Max Impact",1],["",0]],risks.map((r,i)=>[`<input value="${r[0]}" onchange="updateRisk(${i},0,this.value)">`,`<input type="number" value="${r[1]}" step=".01" onchange="updateRisk(${i},1,this.value)">`,`<input type="number" value="${r[2]}" step=".01" onchange="updateRisk(${i},2,this.value)">`,`<input type="number" value="${r[3]}" step=".01" onchange="updateRisk(${i},3,this.value)">`,`<button class="small secondary" onclick="deleteRisk(${i})">Delete</button>`]));
+document.getElementById('wageTable').innerHTML=table([["Trade",0],["Base",1],["Fringe",1],["Burden",1],["Straight",1],["OT",1]],Object.keys(wageLibrary).map(t=>{let w=wageLibrary[t];return[t,`<input type="number" value="${w.base}" onchange="wageLibrary['${t}'].base=+this.value;recalculateAll()">`,`<input type="number" value="${w.fringe}" onchange="wageLibrary['${t}'].fringe=+this.value;recalculateAll()">`,`<input type="number" value="${w.payroll}" onchange="wageLibrary['${t}'].payroll=+this.value;recalculateAll()">`,money(wageRate(t)),money(wageOT(t))]}));
+document.getElementById('crewAuditTable').innerHTML=table([["Crew",0],["Size",1],["Straight $/hr",1],["Composition",0]],Object.keys(crewTemplates).map(c=>[c,fmt(crewSize(c),1),money(crewRate(c)),Object.entries(crewTemplates[c]).map(([t,n])=>`${n} ${t}`).join(", ")]));
+document.getElementById('activityTable').innerHTML=table([["ID",0],["Activity",0],["Qty",1],["Unit",0],["Days",1],["MH",1],["Budget",1]],lastCalc.rows.map(r=>[r.id,r.name,fmt(r.qty,2),r.unit,fmt(r.days,2),fmt(r.mh),money(r.total)]))}
+
+
+const formulaLibrary={
+  budget:{title:"BAC / Estimated cost",latex:"BAC=\\sum_{i=1}^{n} Budget_i",definition:"Budget at completion, or baseline estimated cost, equals the sum of all activity budget costs.",vars:["Budget_i = estimated cost for activity i","n = number of work activities"]},
+  revenue:{title:"Billing revenue",latex:"Revenue=BAC\\times(1+Markup\\%)",definition:"Projected billing revenue equals estimated cost plus markup.",vars:["BAC = baseline estimated cost","Markup% = markup entered in project setup"]},
+  actual:{title:"Actual cost",latex:"AC=\\sum(Labor\\ MH\\times Labor\\ Rate+Equipment+Material)",definition:"Actual cost is calculated from daily actuals, including labor, equipment, material, and subcontract cost.",vars:["Labor MH = actual man-hours from field log","Labor Rate = actual loaded hourly rate","Equipment and Material = daily actual costs"]},
+  earned:{title:"Earned quantity / earned value",latex:"Earned\\ Qty=\\sum Actual\\ Qty",definition:"Earned quantity is the completed quantity recorded in the daily actuals register. Earned value is the completed percentage multiplied by budget.",vars:["Actual Qty = installed or completed quantity by activity","EV = earned value where EV = % Complete × BAC"]},
+  pctComplete:{title:"Completed percentage",latex:"\\%Complete=\\frac{Earned\\ Qty}{Estimated\\ Qty}\\times100",definition:"Completion percentage compares earned/completed quantity to the estimated baseline quantity.",vars:["Earned Qty = completed quantity to date","Estimated Qty = baseline quantity"]},
+  ctc:{title:"Cost to complete",latex:"CTC=Remaining\\ Qty\\times Forecast\\ Unit\\ Cost",definition:"Cost to complete is the forecast remaining cost needed to finish the scope.",vars:["Remaining Qty = Estimated Qty - Earned Qty","Forecast Unit Cost = budget, actual, or blended unit cost depending on selected forecast method"]},
+  eac:{title:"Estimate at completion",latex:"EAC=AC+CTC",definition:"Estimate at completion is the projected final cost, equal to actual cost to date plus cost to complete.",vars:["AC = actual cost","CTC = cost to complete"]},
+  variance:{title:"Cost variance at completion",latex:"Variance=EAC-BAC",definition:"A positive variance means projected overrun versus the baseline budget. A negative variance means projected underrun.",vars:["EAC = estimate at completion","BAC = baseline estimated cost"]},
+  profit:{title:"Projected profit",latex:"Profit=Revenue-EAC",definition:"Projected profit equals billing revenue minus projected final cost.",vars:["Revenue = projected billing revenue","EAC = estimate at completion"]},
+  margin:{title:"Projected gross margin",latex:"Margin=\\frac{Profit}{Revenue}\\times100",definition:"Projected gross margin measures profit as a percentage of billing revenue.",vars:["Profit = revenue minus EAC","Revenue = projected billing revenue"]},
+  tcpi:{title:"TCPI",latex:"TCPI=\\frac{BAC-AC}{CTC}",definition:"To-complete performance index measures the cost efficiency required on remaining work to meet the target budget.",vars:["BAC = baseline budget","AC = actual cost","CTC = cost to complete"]},
+  p90:{title:"Risk P90",latex:"P90=Q_{0.90}(Simulated\\ Final\\ Cost)",definition:"P90 is the 90th percentile of simulated final cost outcomes. Roughly 90% of simulated outcomes are at or below this value.",vars:["Q0.90 = 90th percentile","Simulated Final Cost = EAC adjusted by risk/opportunity events"]},
+  mhVariance:{title:"Man-hour variance",latex:"\\Delta MH=Actual\\ MH-Estimated\\ MH",definition:"Man-hour variance compares actual labor hours to estimated/budget labor hours.",vars:["Actual MH = actual man-hours from field log","Estimated MH = baseline crew-hours from estimate"]},
+  unitCost:{title:"Forecast unit cost",latex:"Forecast\\ Unit\\ Cost\\in\\{Budget\\ Unit,Actual\\ Unit,Blend\\}",definition:"Forecast unit cost depends on selected method: budget, actual, or a 50/50 blend of budget and actual unit costs.",vars:["Budget Unit = Budget / Estimated Qty","Actual Unit = Actual Cost / Actual Qty","Blend = (Budget Unit + Actual Unit)/2"]},
+  cash:{title:"Cash position",latex:"Cash\\ Position=Cumulative\\ Billing-Cumulative\\ Actual\\ Cost",definition:"Cash position estimates whether billing/cash receipts are ahead of or behind actual cost spending.",vars:["Cumulative Billing = time-phased revenue less retainage and lag","Cumulative Actual Cost = actual cost by day"]},
+  segmentAllocation:{title:"Segment allocation",latex:"Selected\\ Segment\\ Share=\\frac{Segment\\ Length}{Total\\ Length}",definition:"When daily actuals do not yet carry segment IDs, selected segment values are allocated by segment length or selected allocation basis.",vars:["Segment Length = selected segment station length","Total Length = full alignment length"]},
+  quantity:{title:"Quantity variance",latex:"Qty\\ Variance=Actual\\ Qty-Estimated\\ Qty",definition:"Quantity variance compares actual installed/completed quantity to estimated baseline quantity.",vars:["Actual Qty = completed quantity from actuals","Estimated Qty = baseline takeoff quantity"]},
+  codedActual:{title:"Segment-coded actual",latex:"Actual_{seg,comp}=\\sum Actual\\ Rows(seg,comp)",definition:"Segment-coded actuals sum only the daily field rows assigned to the selected segment and component.",vars:["seg = selected segment or station range","comp = selected component/assembly","Actual Rows = daily actual register rows"]},
+  stationRange:{title:"Station range length",latex:"Length_{seg}=STA_{end}-STA_{start}",definition:"A segment or section length is calculated from its beginning and ending station.",vars:["STAend = ending station in feet","STAstart = starting station in feet"]},
+  dataQuality:{title:"Data quality score",latex:"DQ=\frac{Valid\ Rows}{Total\ Rows}\times100",definition:"Data quality score measures how many actual rows pass core coding checks for day, segment, station, component, activity, quantity, man-hours, cost, and reason code.",vars:["Valid Rows = actual rows without critical findings","Total Rows = all actual rows in the register"]},
+  burnIndex:{title:"Burn index",latex:"Burn\ Index=\frac{Actual\ Cost}{Allocated\ Budget}",definition:"Burn index compares coded actual cost to the budget allocated to the selected segment or scope.",vars:["Actual Cost = coded cost from daily actuals","Allocated Budget = proportional budget for segment/scope"]}
+};
+function infoIcon(key){
+  return `<span class="infoIcon" title="Formula / definition" onclick="event.stopPropagation();openFormula('${key}')">i</span>`;
+}
+function openFormula(key){
+  const f=formulaLibrary[key]||formulaLibrary.eac;
+  document.getElementById('formulaTitle').textContent=f.title;
+  const latex=document.getElementById('formulaLatex');
+  latex.innerHTML="";
+  if(window.katex){
+    try{katex.render(f.latex,latex,{throwOnError:false,displayMode:true});}
+    catch(e){latex.textContent=f.latex;}
+  }else{latex.textContent=f.latex;}
+  document.getElementById('formulaDefinition').textContent=f.definition;
+  document.getElementById('formulaVars').innerHTML=(f.vars||[]).map(v=>`<li>${v}</li>`).join('');
+  document.getElementById('formulaOverlay').style.display='block';
+  document.getElementById('formulaModal').style.display='block';
+}
+function closeFormula(){
+  document.getElementById('formulaOverlay').style.display='none';
+  document.getElementById('formulaModal').style.display='none';
+}
+function renderFormulaLibrary(){
+  const el=document.getElementById('formulaLibraryTable');
+  if(!el) return;
+  el.innerHTML=table([["Field",0],["Formula",0],["Definition",0]],Object.entries(formulaLibrary).map(([k,f])=>[
+    `${f.title} ${infoIcon(k)}`,
+    `<span class="memberTag">${f.latex.replaceAll('\\\\','\\')}</span>`,
+    f.definition
+  ]));
+}
+
+function toggleTheme(){
+  document.body.classList.toggle('day');
+  setTimeout(()=>{resize3DToViewer();drawMap();},60);
+}
+function actualsByActivity(){
+  const by={};
+  actuals.forEach(a=>{
+    if(!by[a.activity]) by[a.activity]={qty:0,mh:0,cost:0};
+    by[a.activity].qty+=(+a.qty||0);
+    by[a.activity].mh+=(+a.laborMH||0);
+    by[a.activity].cost+=actualCost(a);
+  });
+  return by;
+}
+function estimatedMhByTrade(){
+  const out={};
+  if(!lastCalc) return out;
+  lastCalc.rows.forEach(r=>{
+    const crew=crewTemplates[r.crew]||{};
+    const totalCrew=crewSize(r.crew)||1;
+    Object.entries(crew).forEach(([trade,count])=>{
+      if(!out[trade]) out[trade]={est:0,actual:0,cost:0};
+      out[trade].est += r.mh*((+count||0)/totalCrew);
+      out[trade].cost += r.labor*((+count||0)/totalCrew);
+    });
+  });
+  return out;
+}
+function actualMhByTrade(){
+  const out=estimatedMhByTrade();
+  const activityMap={};
+  if(lastCalc) lastCalc.rows.forEach(r=>activityMap[r.id]=r);
+  actuals.forEach(a=>{
+    const r=activityMap[a.activity]; if(!r) return;
+    const crew=crewTemplates[r.crew]||{}, totalCrew=crewSize(r.crew)||1;
+    Object.entries(crew).forEach(([trade,count])=>{
+      if(!out[trade]) out[trade]={est:0,actual:0,cost:0};
+      out[trade].actual += (+a.laborMH||0)*((+count||0)/totalCrew);
+    });
+  });
+  return out;
+}
+function renderModelAnnotations(){
+  const panel=document.getElementById('modelAnnotationPanel'), list=document.getElementById('modelAnnotationList');
+  if(!panel||!list||!lastCalc) return;
+  const show=document.getElementById('showAnnotations')?.checked!==false;
+  const pm=document.getElementById('showPMOverlay')?.checked!==false;
+  panel.style.display=show?'block':'none';
+  const f=forecast().totals;
+  const items=[
+    ['#8fa5b5','PIPE-001 Barrel',`${lastCalc.p.display} | ${fmt(lastCalc.length)} LF | OD ${fmt(lastCalc.pipeOD,2)} ft`],
+    ['#c9c3b8','CONC-CRADLE-001',`${lastCalc.encase?'Encasement':'Cradle'} | ${fmt(lastCalc.cradleCY,1)} CY`],
+    ['#b7b0a1','BEDDING-001',`${fmt(lastCalc.bedCY,1)} CY bedding | width ${fmt(lastCalc.baseWidth,2)} ft`],
+    ['#6b4a33','EXC-TR-001 Trench Section',`${fmt(lastCalc.excavationCY,1)} CY | depth ${fmt(lastCalc.trenchDepth,1)} ft | top ${fmt(lastCalc.topWidth,1)} ft`],
+    ['#6f8ba3','SHORING-001',`${val('shoring')} | ${fmt(lastCalc.sheetingSF,0)} SF`],
+    ['#5e6f7d','MH-ASSEMBLY',`${lastCalc.mhCount} EA | ${lastCalc.mh.label}`],
+    ['#4e6c80','CB-ASSEMBLY',`${lastCalc.cbCount} EA | ${lastCalc.cb.label}`],
+    ['#3aa0ff','WATER/DEWATERING',`${val('water')} / ${val('dewatering')}`],
+    ['#f59e0b','UTILITY-CONTEXT','Gas / water / electric / telecom placeholder utilities'],
+    ['#22c55e','CLEARANCE-ENV','1-ft visual clearance buffers around pipe and structures'],
+    ['#7a4d2a','PILE-CONTEXT',`${val('foundationContext')==='pile'?'Pile-supported cradle visual context':'Earth/rock cradle context'}`],
+    ['#c99a2e','4D-PHASE',`${val('phaseOverlay')} construction phase overlay`]
+  ];
+  if(pm){
+    items.push(['#7ee083','PM: Earned / Complete',`${fmt(f.earned,1)} earned units | ${fmt((f.earned/Math.max(1,f.qty))*100,1)}% complete`]);
+    items.push(['#ff746c','PM: EAC / Variance',`${money(f.eac)} EAC | ${money(f.varCost)} variance | TCPI ${fmt(f.tcpi,2)}`]);
+  }
+  list.innerHTML=items.map(i=>`<div class="annotationItem"><div class="annotationDot" style="background:${i[0]}"></div><div><b>${i[1]}</b><span>${i[2]}</span></div></div>`).join('');
+}
+function renderInspector(){
+  if(!document.getElementById('engineeringParamCards')||!lastCalc) return;
+  const f=forecast().totals, p90=percentile(riskResults,.9), pct=f.earned/Math.max(1,f.qty)*100;
+  document.getElementById('engineeringParamCards').innerHTML=[
+    ['Pipe / Standard',lastCalc.p.display,lastCalc.p.source],
+    ['Station Length',fmt(lastCalc.length)+' LF',`bearing ${fmt(calcGeo().bearing,1)}°`],
+    ['Trench Section',`${fmt(lastCalc.trenchDepth,1)} ft deep`,`${fmt(lastCalc.baseWidth,1)} ft base / ${fmt(lastCalc.topWidth,1)} ft top`],
+    ['Concrete / Bedding',`${fmt(lastCalc.cradleCY,1)} CY`,`${fmt(lastCalc.bedCY,1)} CY bedding`],
+    ['Estimated Cost',money(f.budget),`revenue ${money(f.revenue)}`],
+    ['Actual Cost',money(f.actual),`${actuals.length} actual rows`],
+    ['Completed %',fmt(pct,1)+'%',`${fmt(f.earned,1)} / ${fmt(f.qty,1)} earned units`],
+    ['System EAC',money(f.eac),`variance ${money(f.varCost)}`],
+    ['Risk P90',money(p90),`P90 profit ${money(f.revenue-p90)}`]
+  ].map(c=>`<div class="paramCard"><div class="title">${c[0]}</div><div class="value">${c[1]}</div><div class="sub">${c[2]}</div></div>`).join('');
+  const members=[
+    ['PIPE-001','Pipe Barrel',lastCalc.p.display,`${fmt(lastCalc.length)} LF`,`OD ${fmt(lastCalc.pipeOD,2)} ft`],
+    ['TR-SEC-001','Trench Cut',val('shoring'),`${fmt(lastCalc.excavationCY,1)} CY`,`Depth ${fmt(lastCalc.trenchDepth,1)} ft`],
+    ['BED-001','Bedding Layer','Stone bedding',`${fmt(lastCalc.bedCY,1)} CY`,`Thickness ${val('beddingFt')} ft`],
+    ['CONC-001','Cradle / Encasement',lastCalc.encase?'Encasement':'Cradle',`${fmt(lastCalc.cradleCY,1)} CY`,lastCalc.p.source],
+    ['SHOR-001','Shoring System',val('shoring'),`${fmt(lastCalc.sheetingSF,0)} SF`,val('water')],
+    ['MH-ASM','Manhole Assembly',lastCalc.mh.label,`${lastCalc.mhCount} EA`,lastCalc.mh.source],
+    ['CB-ASM','Catch Basin Assembly',lastCalc.cb.label,`${lastCalc.cbCount} EA`,lastCalc.cb.source],
+    ['PVMT-001','Pavement Restoration','Roadway',`${fmt(lastCalc.paveSY,1)} SY`,`${val('paveWidthFt')} ft width`]
+  ];
+  document.getElementById('memberSectionTable').innerHTML=table([["Tag",0],["Member / Section",0],["Type",0],["Quantity",1],["Engineering Note",0]],members.map(m=>[`<span class="memberTag">${m[0]}</span>`,m[1],m[2],m[3],m[4]]));
+  document.getElementById('pmVariableTable').innerHTML=table([["Variable",0],["Current Value",1],["Meaning",0]],[
+    ["BAC / Estimated Cost "+infoIcon("budget"),money(f.budget),"Budget at completion from activity baseline"],
+    ["Actual Cost "+infoIcon("actual"),money(f.actual),"Captured from daily actuals"],
+    ["CTC "+infoIcon("ctc"),money(f.ctc),"Forecast remaining cost"],
+    ["EAC "+infoIcon("eac"),money(f.eac),"Actual cost + CTC"],
+    ["Cost Variance "+infoIcon("variance"),money(f.varCost),"EAC - estimated cost"],
+    ["Revenue "+infoIcon("revenue"),money(f.revenue),"Estimated cost plus markup"],
+    ["Projected Profit "+infoIcon("profit"),money(f.profit),"Revenue - EAC"],
+    ["TCPI "+infoIcon("tcpi"),fmt(f.tcpi,2),"Required cost efficiency for remaining work"],
+    ["Completed % "+infoIcon("pctComplete"),fmt(pct,1)+"%","Earned quantity / estimated quantity"],
+    ["Risk P90 "+infoIcon("p90"),money(p90),"90th percentile simulated final cost"]
+  ]);
+  const by=actualsByActivity();
+  document.getElementById('actualVsEstimateTable').innerHTML=table([["Activity",0],["Est Qty "+infoIcon("quantity"),1],["Actual Qty "+infoIcon("earned"),1],["% Complete "+infoIcon("pctComplete"),1],["Est MH",1],["Actual MH "+infoIcon("mhVariance"),1],["Budget "+infoIcon("budget"),1],["Actual Cost "+infoIcon("actual"),1]],lastCalc.rows.map(r=>{
+    const a=by[r.id]||{qty:0,mh:0,cost:0};
+    return [r.id+" "+r.name,fmt(r.qty,2),fmt(a.qty,2),fmt((a.qty/Math.max(1,r.qty))*100,1)+"%",fmt(r.mh,0),fmt(a.mh,0),money(r.total),money(a.cost)];
+  }));
+  const mh=actualMhByTrade();
+  document.getElementById('tradeMhTable').innerHTML=table([["Trade",0],["Estimated MH",1],["Actual MH",1],["Delta MH "+infoIcon("mhVariance"),1],["Estimated Labor Cost",1]],Object.entries(mh).map(([t,v])=>[t,fmt(v.est,0),fmt(v.actual,0),fmt(v.actual-v.est,0),money(v.cost)]));
+  document.getElementById('riskOpportunityWatchTable').innerHTML=table([["Risk / Opportunity",0],["Probability",1],["Min Impact",1],["Max Impact",1],["Type",0]],risks.map(r=>[r[0],fmt(Math.abs(r[1])*100,0)+"%",fmt(r[2]*100,1)+"%",fmt(r[3]*100,1)+"%",r[3]<0?'<span class="badge good">Opportunity</span>':'<span class="badge warn">Risk</span>']));
+  renderModelAnnotations();
+}
+
+
+function segmentList(){
+  if(!lastCalc) return [];
+  const n=Math.max(1,lastCalc.segments||1), len=lastCalc.length/n;
+  return Array.from({length:n},(_,i)=>({id:`SEG-${i+1}`,index:i+1,start:i*len,end:(i+1)*len,length:len,label:`SEG-${i+1} STA ${Math.floor((i*len)/100)}+${String(Math.round((i*len)%100)).padStart(2,'0')} to ${Math.floor(((i+1)*len)/100)}+${String(Math.round(((i+1)*len)%100)).padStart(2,'0')}`}));
+}
+function populateDrillSelectors(){
+  const segSel=document.getElementById('drillSegment'), actSel=document.getElementById('drillActivity');
+  if(segSel){
+    const current=segSel.value;
+    segSel.innerHTML=segmentList().map(s=>`<option value="${s.id}">${s.label}</option>`).join('');
+    if([...segSel.options].some(o=>o.value===current)) segSel.value=current;
+  }
+  if(actSel && lastCalc){
+    const current=actSel.value;
+    actSel.innerHTML='<option value="ALL">All activities</option>'+lastCalc.rows.map(r=>`<option value="${r.id}">${r.id} ${r.name}</option>`).join('');
+    if([...actSel.options].some(o=>o.value===current)) actSel.value=current;
+  }
+}
+function componentActivityMap(component){
+  const m={
+    PIPE:["A07"],TRENCH:["A04"],SHORING:["A02"],BEDDING:["A05"],CONCRETE:["A06"],MANHOLES:["A08"],CATCH_BASINS:["A09"],PAVEMENT:["A12"],ALL:null
+  };
+  return m[component]||null;
+}
+function allocationFactorForScope(){
+  if(!lastCalc) return 1;
+  const scope=val('drillScope')||'SYSTEM';
+  if(scope==='SYSTEM') return 1;
+  if(scope==='SEGMENT'){
+    const segs=segmentList(), selected=segs.find(s=>s.id===val('drillSegment'))||segs[0];
+    return selected ? selected.length/Math.max(1,lastCalc.length) : 1;
+  }
+  if(scope==='COMPONENT'){
+    const comp=val('drillComponent')||'ALL';
+    const acts=componentActivityMap(comp);
+    if(!acts) return 1;
+    const total=lastCalc.rows.reduce((s,r)=>s+r.total,0);
+    const selected=lastCalc.rows.filter(r=>acts.includes(r.id)).reduce((s,r)=>s+r.total,0);
+    return selected/Math.max(1,total);
+  }
+  if(scope==='ACTIVITY'){
+    const aid=val('drillActivity');
+    if(!aid||aid==='ALL') return 1;
+    const total=lastCalc.rows.reduce((s,r)=>s+r.total,0);
+    const r=lastCalc.rows.find(x=>x.id===aid);
+    return r ? r.total/Math.max(1,total) : 1;
+  }
+  return 1;
+}
+function filteredRowsForScope(){
+  if(!lastCalc) return [];
+  const scope=val('drillScope')||'SYSTEM', comp=val('drillComponent')||'ALL', aid=val('drillActivity');
+  let rows=[...lastCalc.rows];
+  if(scope==='COMPONENT' && comp!=='ALL'){
+    const acts=componentActivityMap(comp);
+    if(acts) rows=rows.filter(r=>acts.includes(r.id));
+  }
+  if(scope==='ACTIVITY' && aid && aid!=='ALL') rows=rows.filter(r=>r.id===aid);
+  return rows;
+}
+
+function componentOptions(){
+  return [
+    ["PIPE","Pipe barrel"],["TRENCH","Trench excavation"],["SHORING","Shoring / sheeting"],["BEDDING","Bedding"],["CONCRETE","Concrete cradle / encasement"],
+    ["MANHOLES","Manholes"],["CATCH_BASINS","Catch basins"],["PAVEMENT","Pavement restoration"],["GENERAL","General / unassigned"]
+  ];
+}
+function inferComponentFromActivity(aid){
+  const map={A02:"SHORING",A04:"TRENCH",A05:"BEDDING",A06:"CONCRETE",A07:"PIPE",A08:"MANHOLES",A09:"CATCH_BASINS",A12:"PAVEMENT"};
+  return map[aid]||"GENERAL";
+}
+function stationText(ft){return `${Math.floor(ft/100)}+${String(Math.round(ft%100)).padStart(2,'0')}`}
+function defaultActualSegment(){
+  const segs=segmentList();
+  return segs[0]?.id || "SEG-1";
+}
+function segmentById(id){
+  return segmentList().find(s=>s.id===id)||segmentList()[0]||{id:"SEG-1",start:0,end:lastCalc?lastCalc.length:0,length:lastCalc?lastCalc.length:0};
+}
+function codedActualsFor(scope={}){
+  return actuals.filter(a=>{
+    if(scope.segment && scope.segment!=="ALL" && (a.segment||"")!==scope.segment) return false;
+    if(scope.component && scope.component!=="ALL" && (a.component||inferComponentFromActivity(a.activity))!==scope.component) return false;
+    if(scope.activity && scope.activity!=="ALL" && a.activity!==scope.activity) return false;
+    return true;
+  });
+}
+function codedMetricsForScope(){
+  if(!lastCalc) return null;
+  const scope=val('drillScope')||'SYSTEM', comp=val('drillComponent')||'ALL', aid=val('drillActivity')||'ALL';
+  let segment = scope==='SEGMENT' ? val('drillSegment') : "ALL";
+  let component = scope==='COMPONENT' ? comp : "ALL";
+  let activity = scope==='ACTIVITY' ? aid : "ALL";
+  const rows=codedActualsFor({segment,component,activity});
+  return rows.reduce((o,a)=>{o.qty+=(+a.qty||0);o.mh+=(+a.laborMH||0);o.cost+=actualCost(a);return o},{qty:0,mh:0,cost:0,count:rows.length});
+}
+function segmentActualMetrics(segId){
+  const rows=codedActualsFor({segment:segId});
+  return rows.reduce((o,a)=>{o.qty+=(+a.qty||0);o.mh+=(+a.laborMH||0);o.cost+=actualCost(a);return o},{qty:0,mh:0,cost:0,count:rows.length});
+}
+function componentActualMetrics(compId){
+  const rows=codedActualsFor({component:compId});
+  return rows.reduce((o,a)=>{o.qty+=(+a.qty||0);o.mh+=(+a.laborMH||0);o.cost+=actualCost(a);return o},{qty:0,mh:0,cost:0,count:rows.length});
+}
+function ensureActualCoding(a){
+  if(!a.segment) a.segment=defaultActualSegment();
+  const seg=segmentById(a.segment);
+  if(a.stationStart===undefined) a.stationStart=Math.round(seg.start);
+  if(a.stationEnd===undefined) a.stationEnd=Math.round(Math.min(seg.end,seg.start+seg.length*.25));
+  if(!a.component) a.component=inferComponentFromActivity(a.activity);
+  return a;
+}
+
+let lastImportPreview=[], lastQAFindingRows=[];
+const actualFieldAliases={
+  day:["day","date","work_day","workday"],
+  segment:["segment","seg","section","section_id","segment_id"],
+  stationStart:["stationstart","station_start","sta_start","start_station","startsta","station_from","sta_from"],
+  stationEnd:["stationend","station_end","sta_end","end_station","endsta","station_to","sta_to"],
+  component:["component","assembly","member","component_tag","componenttype"],
+  activity:["activity","wbs","activity_id","wbs_code","cost_code"],
+  qty:["qty","quantity","actual_qty","installed_qty","completed_qty"],
+  laborMH:["labormh","labor_mh","mh","manhours","man_hours","actual_mh"],
+  laborRate:["laborrate","labor_rate","rate","loaded_rate"],
+  equipCost:["equipcost","equipment","equipment_cost","equip_cost"],
+  materialCost:["materialcost","material","material_cost","sub_cost","subcontract","mat_sub"],
+  reason:["reason","reason_code","variance_reason"],
+  notes:["notes","note","comment","comments"]
+};
+function normHeader(h){return String(h||"").toLowerCase().replace(/[^a-z0-9]/g,"");}
+function parseCSV(text){
+  const rows=[]; let cur=[], val="", inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i], n=text[i+1];
+    if(c=='"' && inQ && n=='"'){val+='"';i++;continue}
+    if(c=='"'){inQ=!inQ;continue}
+    if(c===',' && !inQ){cur.push(val);val="";continue}
+    if((c==='\n'||c==='\r') && !inQ){if(c==='\r'&&n==='\n')i++;cur.push(val); if(cur.some(x=>String(x).trim()!=="")) rows.push(cur); cur=[]; val=""; continue}
+    val+=c;
+  }
+  cur.push(val); if(cur.some(x=>String(x).trim()!=="")) rows.push(cur);
+  return rows;
+}
+function mapHeaders(headers){
+  const normalized=headers.map(normHeader), map={};
+  Object.entries(actualFieldAliases).forEach(([field,aliases])=>{
+    const idx=normalized.findIndex(h=>aliases.map(normHeader).includes(h));
+    if(idx>=0) map[field]=idx;
+  });
+  return map;
+}
+function rowToActual(row,map){
+  const get=(f,def="")=>map[f]!==undefined?String(row[map[f]]??"").trim():def;
+  const n=(f,def=0)=>{const x=parseFloat(get(f,"").replace(/[$,]/g,"")); return Number.isFinite(x)?x:def};
+  const activity=get("activity","A04")||"A04";
+  const seg=get("segment",defaultActualSegment())||defaultActualSegment();
+  const s=segmentById(seg);
+  const a={day:n("day",actuals.length+1),segment:seg,stationStart:n("stationStart",Math.round(s.start)),stationEnd:n("stationEnd",Math.round(s.end)),component:get("component",inferComponentFromActivity(activity))||inferComponentFromActivity(activity),activity,qty:n("qty",0),laborMH:n("laborMH",0),laborRate:n("laborRate",125),equipCost:n("equipCost",0),materialCost:n("materialCost",0),reason:get("reason","Normal Production")||"Normal Production",notes:get("notes","")};
+  return ensureActualCoding(a);
+}
+function handleActualCsvFile(ev){
+  const file=ev.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>importActualsCSV(String(reader.result||""));
+  reader.readAsText(file);
+}
+function importActualsCSV(text){
+  const parsed=parseCSV(text);
+  if(parsed.length<2){alert("CSV appears empty or missing data rows.");return}
+  const headers=parsed[0], map=mapHeaders(headers);
+  const imported=parsed.slice(1).map(r=>rowToActual(r,map));
+  lastImportPreview=imported.slice(0,25);
+  actuals=actuals.concat(imported);
+  runDataQualityAudit();
+  renderAll();
+}
+function setupDropZone(){
+  const dz=document.getElementById("actualDropZone"); if(!dz||dz.dataset.ready==="1") return;
+  dz.dataset.ready="1";
+  dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("dragover")});
+  dz.addEventListener("dragleave",()=>dz.classList.remove("dragover"));
+  dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("dragover"); const f=e.dataTransfer.files[0]; if(f){const r=new FileReader();r.onload=()=>importActualsCSV(String(r.result||""));r.readAsText(f);}});
+}
+function downloadActualsTemplate(){
+  const csv="day,segment,stationStart,stationEnd,component,activity,qty,laborMH,laborRate,equipCost,materialCost,reason,notes\n1,SEG-1,0,100,PIPE,A07,55,64,125,3200,23100,Normal Production,template row\n";
+  downloadText(csv,"sewer_actuals_import_template_v0_14.csv","text/csv");
+}
+function validateActualRow(a,i){
+  const findings=[], segIds=segmentList().map(s=>s.id), acts=lastCalc?lastCalc.rows.map(r=>r.id):[], comps=componentOptions().map(c=>c[0]);
+  if(!a.day||a.day<1)findings.push(["critical","Missing/invalid day"]);
+  if(!a.segment||!segIds.includes(a.segment))findings.push(["critical","Missing/invalid segment"]);
+  if(a.stationStart===undefined||a.stationEnd===undefined||(+a.stationEnd)<(+a.stationStart))findings.push(["critical","Invalid station range"]);
+  if(!a.component||!comps.includes(a.component))findings.push(["warning","Missing/invalid component"]);
+  if(!a.activity||!acts.includes(a.activity))findings.push(["critical","Missing/invalid activity"]);
+  if((+a.qty||0)<0)findings.push(["critical","Negative quantity"]);
+  if((+a.laborMH||0)<0)findings.push(["critical","Negative man-hours"]);
+  if((+a.laborRate||0)<=0)findings.push(["warning","Missing labor rate"]);
+  if(!a.reason)findings.push(["warning","Missing reason code"]);
+  const seg=segmentById(a.segment);
+  if(seg && ((+a.stationStart)<seg.start-1 || (+a.stationEnd)>seg.end+1)) findings.push(["warning","Station range outside selected segment"]);
+  return findings.map(f=>({row:i+1,severity:f[0],finding:f[1],segment:a.segment||"",activity:a.activity||"",component:a.component||""}));
+}
+function runDataQualityAudit(){
+  actuals.forEach(ensureActualCoding);
+  lastQAFindingRows=[];
+  actuals.forEach((a,i)=>{lastQAFindingRows=lastQAFindingRows.concat(validateActualRow(a,i));});
+  renderImportQA();
+}
+function autoRepairActualCoding(){
+  actuals.forEach(a=>{
+    if(!a.activity) a.activity="A04";
+    if(!a.segment) a.segment=defaultActualSegment();
+    const seg=segmentById(a.segment);
+    if(a.stationStart===undefined||!Number.isFinite(+a.stationStart)) a.stationStart=Math.round(seg.start);
+    if(a.stationEnd===undefined||!Number.isFinite(+a.stationEnd)||(+a.stationEnd)<(+a.stationStart)) a.stationEnd=Math.round(Math.min(seg.end,(+a.stationStart)+Math.max(10,seg.length*.2)));
+    if(!a.component) a.component=inferComponentFromActivity(a.activity);
+    if(!a.reason) a.reason="Normal Production";
+    if(!a.laborRate||(+a.laborRate)<=0) a.laborRate=125;
+  });
+  runDataQualityAudit();
+  renderAll();
+}
+function renderImportQA(){
+  if(!document.getElementById("qaScoreCards")) return;
+  setupDropZone();
+  const total=actuals.length, critical=lastQAFindingRows.filter(f=>f.severity==="critical").length, warning=lastQAFindingRows.filter(f=>f.severity==="warning").length;
+  const badRows=new Set(lastQAFindingRows.filter(f=>f.severity==="critical").map(f=>f.row)).size;
+  const valid=Math.max(0,total-badRows), score=total?valid/total*100:100;
+  document.getElementById("qaScoreCards").innerHTML=[
+    ["Rows",fmt(total),"actual rows in register"],
+    ["Valid rows",fmt(valid),`${fmt(score,1)}% data quality score ${infoIcon("dataQuality")}`],
+    ["Critical findings",fmt(critical),"must fix before reliable reporting"],
+    ["Warnings",fmt(warning),"review recommended"],
+    ["Coded segments",fmt(new Set(actuals.map(a=>a.segment).filter(Boolean)).size),"segments with actual rows"],
+    ["Coded components",fmt(new Set(actuals.map(a=>a.component).filter(Boolean)).size),"components with actual rows"]
+  ].map(c=>`<div class="paramCard"><div class="title">${c[0]}</div><div class="value">${c[1]}</div><div class="sub">${c[2]}</div></div>`).join("");
+  const preview=lastImportPreview.length?lastImportPreview:actuals.slice(-10);
+  document.getElementById("importPreviewTable").innerHTML=table([["Day",1],["Segment",0],["STA",0],["Component",0],["Activity",0],["Qty",1],["MH",1],["Cost",1],["Reason",0]],preview.map(a=>[a.day,a.segment,`${stationText(a.stationStart)}-${stationText(a.stationEnd)}`,a.component,a.activity,fmt(a.qty,2),fmt(a.laborMH,1),money(actualCost(a)),a.reason]));
+  document.getElementById("qaFindingsTable").innerHTML=table([["Row",1],["Severity",0],["Finding",0],["Segment",0],["Activity",0],["Component",0]],lastQAFindingRows.map(f=>[f.row,`<span class="${f.severity==="critical"?"qaFail":"qaWarn"}">${f.severity}</span>`,f.finding,f.segment,f.activity,f.component]));
+  const required=["day","segment","stationStart","stationEnd","component","activity","qty","laborMH","laborRate","equipCost","materialCost","reason"];
+  document.getElementById("importMappingCards").innerHTML=required.map(x=>`<div class="paramCard"><div class="title">${x}</div><div class="value" style="font-size:14px">${(actualFieldAliases[x]||[]).slice(0,3).join(", ")}</div><div class="sub">recognized import aliases</div></div>`).join("");
+}
+
+function renderSegmentControls(){
+  if(!document.getElementById('segmentCodingTable')||!lastCalc) return;
+  actuals.forEach(ensureActualCoding);
+  const segOpts=segmentList().map(s=>`<option value="${s.id}">${s.id} ${stationText(s.start)}-${stationText(s.end)}</option>`).join('');
+  const compOpts=componentOptions().map(c=>`<option value="${c[0]}">${c[1]}</option>`).join('');
+  document.getElementById('segmentCodingTable').innerHTML=table([["Row",1],["Day",1],["Activity",0],["Segment",0],["STA Start",1],["STA End",1],["Component",0],["Qty",1],["MH",1],["Cost",1],["Reason",0]],actuals.map((a,i)=>[
+    i+1,
+    a.day,
+    a.activity,
+    `<select onchange="updateActual(${i},'segment',this.value)">${segOpts}</select>`,
+    `<input class="stationInput" type="number" value="${a.stationStart}" onchange="updateActual(${i},'stationStart',this.value)">`,
+    `<input class="stationInput" type="number" value="${a.stationEnd}" onchange="updateActual(${i},'stationEnd',this.value)">`,
+    `<select onchange="updateActual(${i},'component',this.value)">${compOpts}</select>`,
+    fmt(a.qty,2),fmt(a.laborMH,1),money(actualCost(a)),a.reason
+  ]));
+  actuals.forEach((a,i)=>{const tr=document.querySelectorAll("#segmentCodingTable tbody tr")[i]; if(tr){tr.querySelectorAll("select")[0].value=a.segment;tr.querySelectorAll("select")[1].value=a.component;}});
+  const sys=forecast().totals;
+  document.getElementById('segmentHeatmapTable').innerHTML=table([["Segment",0],["Station Range",0],["Actual Cost",1],["Actual MH",1],["Rows",1],["Allocated Budget",1],["Burn Index",1]],segmentList().map(s=>{
+    const a=segmentActualMetrics(s.id), budget=sys.budget*(s.length/Math.max(1,lastCalc.length)), burn=a.cost/Math.max(1,budget);
+    const cls=burn>.9?'heatHigh':burn>.5?'heatMed':'heatLow';
+    return [`<span class="scopeChip">${s.id}</span>`,`${stationText(s.start)}-${stationText(s.end)}`,money(a.cost),fmt(a.mh,0),a.count,money(budget),`<span class="${cls}">${fmt(burn,2)}</span>`];
+  }));
+  document.getElementById('componentCodingTable').innerHTML=table([["Component",0],["Actual Qty",1],["Actual MH",1],["Actual Cost",1],["Rows",1]],componentOptions().map(c=>{const a=componentActualMetrics(c[0]);return[c[1],fmt(a.qty,2),fmt(a.mh,0),money(a.cost),a.count]}));
+}
+
+function selectedScopeMetrics(){
+  const f=forecast(), rows=filteredRowsForScope(), alloc=allocationFactorForScope();
+  const by=actualsByActivity(), coded=codedMetricsForScope();
+  let estQty=0, actQty=0, earnedQty=0, estMH=0, actMH=0, budget=0, actual=0, ctc=0, eac=0;
+  rows.forEach(r=>{
+    const a=by[r.id]||{qty:0,mh:0,cost:0};
+    const ff=f.rows.find(x=>x.id===r.id)||{};
+    estQty+=r.qty*alloc; actQty+=a.qty*alloc; earnedQty+=(ff.earned||0)*alloc; estMH+=r.mh*alloc; actMH+=a.mh*alloc;
+    budget+=r.total*alloc; actual+=a.cost*alloc; ctc+=(ff.ctc||0)*alloc; eac+=(ff.eac||0)*alloc;
+  });
+  if(coded && coded.count>0 && (val('drillScope')||'SYSTEM')!=='SYSTEM'){actQty=coded.qty;actMH=coded.mh;actual=coded.cost;}
+  if((val('drillScope')||'SYSTEM')==='SYSTEM'){budget=f.totals.budget;actual=f.totals.actual;ctc=f.totals.ctc;eac=f.totals.eac;earnedQty=f.totals.earned;estQty=f.totals.qty;}
+  const revenue=budget*(1+num('markupPct')/100), profit=revenue-eac, variance=eac-budget, pct=estQty?earnedQty/estQty*100:0, p90=percentile(riskResults,.9)*allocationFactorForScope();
+  const primaryQty=primaryScopeQuantity(rows); return {estQty,actQty,earnedQty,estMH,actMH,budget,actual,ctc,eac,revenue,profit,variance,pct,p90,alloc,primaryQty,mixedUnits:Object.keys(primaryQty.byUnit||{}).length>1};
+}
+function renderDrilldown(){
+  populateDrillSelectors();
+  if(!document.getElementById('drillKpiCards')||!lastCalc) return;
+  const m=selectedScopeMetrics(), sys=forecast().totals;
+  document.getElementById('drillKpiCards').innerHTML=[
+    ['Primary est. qty '+infoIcon('quantity')+infoIcon('mixedQty'),`${fmt(m.primaryQty.est,1)} ${m.primaryQty.unit}`,m.mixedUnits?'mixed units split below':'scope baseline quantity'],
+    ['Actual / earned qty '+infoIcon('earned'),`${fmt(m.primaryQty.actual,1)} / ${fmt(m.primaryQty.earned,1)} ${m.primaryQty.unit}`,`${fmt(m.pct,1)}% complete`],
+    ['Estimated / actual MH '+infoIcon('mhVariance'),`${fmt(m.estMH,0)} / ${fmt(m.actMH,0)}`,`delta ${fmt(m.actMH-m.estMH,0)} MH`],
+    ['Budget / actual cost '+infoIcon('budget')+infoIcon('actual'),`${money(m.budget)} / ${money(m.actual)}`,`cost variance to date ${money(m.actual-m.budget)}`],
+    ['Projected EAC '+infoIcon('eac'),money(m.eac),`final variance ${money(m.variance)}`],
+    ['Billing / profit '+infoIcon('revenue')+infoIcon('profit'),`${money(m.revenue)} / ${money(m.profit)}`,`margin ${fmt(m.profit/Math.max(1,m.revenue)*100,1)}%`],
+    ['Risk P90 allocation '+infoIcon('p90'),money(m.p90),'risk-adjusted selected scope'],
+    ['Allocation factor '+infoIcon('segmentAllocation'),fmt(m.alloc*100,1)+'%','selected / system share'],
+    ['System EAC reference',money(sys.eac),`system profit ${money(sys.profit)}`]
+  ].map(c=>`<div class="paramCard"><div class="title">${c[0]}</div><div class="value">${c[1]}</div><div class="sub">${c[2]}</div></div>`).join('');
+  renderDrilldownTables();
+  renderDrilldownCharts();
+}
+function segmentMetrics(seg){
+  const factor=seg.length/Math.max(1,lastCalc.length), f=forecast().totals;
+  return {id:seg.id,range:seg.label,length:seg.length,budget:f.budget*factor,actual:f.actual*factor,eac:f.eac*factor,revenue:f.revenue*factor,profit:f.profit*factor,pct:(f.earned/Math.max(1,f.qty))*100,p90:percentile(riskResults,.9)*factor};
+}
+function componentMetrics(){
+  const f=forecast(), by=actualsByActivity();
+  const comps=[
+    ['PIPE','Pipe barrel',componentActivityMap('PIPE')],
+    ['TRENCH','Trench excavation',componentActivityMap('TRENCH')],
+    ['SHORING','Shoring / sheeting',componentActivityMap('SHORING')],
+    ['BEDDING','Bedding',componentActivityMap('BEDDING')],
+    ['CONCRETE','Concrete cradle / encasement',componentActivityMap('CONCRETE')],
+    ['MANHOLES','Manholes',componentActivityMap('MANHOLES')],
+    ['CATCH_BASINS','Catch basins',componentActivityMap('CATCH_BASINS')],
+    ['PAVEMENT','Pavement restoration',componentActivityMap('PAVEMENT')]
+  ];
+  return comps.map(([id,name,acts])=>{
+    const rows=lastCalc.rows.filter(r=>acts&&acts.includes(r.id));
+    let budget=0,actual=0,eac=0,qty=0,actQty=0,mh=0,actMH=0;
+    rows.forEach(r=>{const a=by[r.id]||{qty:0,mh:0,cost:0}, ff=f.rows.find(x=>x.id===r.id)||{};budget+=r.total;actual+=a.cost;eac+=ff.eac||0;qty+=r.qty;actQty+=a.qty;mh+=r.mh;actMH+=a.mh;});
+    return {id,name,budget,actual,eac,qty,actQty,mh,actMH,variance:eac-budget};
+  });
+}
+function renderDrilldownTables(){
+  document.getElementById('segmentMatrixTable').innerHTML=table([["Segment",0],["Length",1],["Budget",1],["Actual",1],["EAC",1],["Billing",1],["Profit",1],["P90",1]],segmentList().map(s=>{const m=segmentMetrics(s);return [m.id,fmt(m.length,0)+' LF',money(m.budget),money(m.actual),money(m.eac),money(m.revenue),money(m.profit),money(m.p90)]}));
+  document.getElementById('componentMatrixTable').innerHTML=table([["Component",0],["Est Qty",1],["Actual Qty",1],["Est MH",1],["Actual MH",1],["Budget",1],["Actual",1],["EAC",1],["Variance",1]],componentMetrics().map(c=>[c.name,fmt(c.qty,1),fmt(c.actQty,1),fmt(c.mh,0),fmt(c.actMH,0),money(c.budget),money(c.actual),money(c.eac),`<span class="${c.variance>0?'deltaBad':'deltaGood'}">${money(c.variance)}</span>`]));
+  const rows=filteredRowsForScope(), by=actualsByActivity(), f=forecast();
+  document.getElementById('scopeActivityTable').innerHTML=table([["Activity",0],["Est Qty",1],["Unit",0],["Actual Qty",1],["% Complete",1],["Est MH",1],["Actual MH",1],["Budget",1],["Actual",1],["EAC",1],["Variance",1]],rows.map(r=>{const a=by[r.id]||{qty:0,mh:0,cost:0}, ff=f.rows.find(x=>x.id===r.id)||{};return [r.id+' '+r.name,fmt(r.qty,2),r.unit,fmt(a.qty,2),fmt((ff.earned||0)/Math.max(1,r.qty)*100,1)+'%',fmt(r.mh,0),fmt(a.mh,0),money(r.total),money(a.cost),money(ff.eac||0),money((ff.eac||0)-r.total)]}));
+  if(document.getElementById('scopeUnitQtyTable')){const q=unitAwareQuantities(rows);document.getElementById('scopeUnitQtyTable').innerHTML=table([["Unit",0],["Estimated",1],["Actual",1],["Earned",1],["Note",0]],Object.entries(q).map(([u,v])=>[u,fmt(v.est,2),fmt(v.actual,2),fmt(v.earned,2),u==='MIXED'?'<span class="unitWarn">Do not aggregate</span>':'unit-aware']));}
+  if(document.getElementById('scopeCostCodeSummaryTable')){const totals=categoryTotals();document.getElementById('scopeCostCodeSummaryTable').innerHTML=table([["Category",0],["Estimated",1],["Actual",1],["Projected",1]],Object.entries(costCategoryMeta).map(([cat,meta])=>[`<span class="categoryPill">${cat}</span> ${meta.label}`,money(totals.est[cat]),money(totals.act[cat]),money(totals.proj[cat])]));}
+}
+function renderDrilldownCharts(){
+  if(!document.getElementById('scopeCompareChart')) return;
+  if(charts.scopeCompare){try{charts.scopeCompare.destroy()}catch(e){}}
+  if(charts.scopeFinancial){try{charts.scopeFinancial.destroy()}catch(e){}}
+  const m=selectedScopeMetrics(), sys=forecast().totals;
+  charts.scopeCompare=new Chart(document.getElementById('scopeCompareChart'),{type:'bar',data:{labels:['Budget','Actual','CTC','EAC','Revenue','Profit'],datasets:[{label:'Whole system',data:[sys.budget,sys.actual,sys.ctc,sys.eac,sys.revenue,sys.profit]},{label:'Selected scope',data:[m.budget,m.actual,m.ctc,m.eac,m.revenue,m.profit]}]},options:{responsive:true,scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+  charts.scopeFinancial=new Chart(document.getElementById('scopeFinancialChart'),{type:'bar',data:{labels:['Budget','Actual','Projected EAC','Billing','Profit','Risk P90'],datasets:[{label:'Selected scope',data:[m.budget,m.actual,m.eac,m.revenue,m.profit,m.p90]}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+}
+
+
+
+const costCategoryMeta={
+  L:{label:"Labor",suffix:"-L"},
+  M:{label:"Material",suffix:"-M"},
+  C:{label:"Consumable",suffix:"-C"},
+  S:{label:"Subcontract",suffix:"-S"},
+  E:{label:"Equipment",suffix:"-E"},
+  R:{label:"Revenue / Billing",suffix:"-R"}
+};
+function baseCostCodeForActivity(id){
+  const map={A01:"0100-MOB",A02:"0220-SHOR",A03:"0250-DEW",A04:"0310-EXC",A05:"0330-BED",A06:"0340-CONC",A07:"0410-PIPE",A08:"0510-MH",A09:"0520-CB",A10:"0530-HC",A11:"0610-BACK",A12:"0710-PAVE",A13:"0900-QA"};
+  return map[id]||("0999-"+id);
+}
+function costCodeFor(activityId,cat){return `${baseCostCodeForActivity(activityId)}-${cat}`;}
+function activityCategoryEstimate(r){
+  return {
+    L:r.labor||0,
+    E:r.equip||0,
+    M:r.mat||0,
+    C:r.consum||0,
+    S:0,
+    R:(r.total||0)*(1+num('markupPct')/100)
+  };
+}
+function actualCategoryByActivity(){
+  const out={};
+  actuals.forEach(a=>{
+    if(!out[a.activity]) out[a.activity]={L:0,E:0,M:0,C:0,S:0,R:0};
+    out[a.activity].L += (+a.laborMH||0)*(+a.laborRate||0);
+    out[a.activity].E += (+a.equipCost||0);
+    out[a.activity].M += (+a.materialCost||0);
+    out[a.activity].C += 0;
+    out[a.activity].S += 0;
+  });
+  return out;
+}
+function projectedCategoryByActivity(){
+  const f=forecast();
+  const actual=actualCategoryByActivity();
+  const out={};
+  f.rows.forEach(r=>{
+    const est=activityCategoryEstimate(r), act=actual[r.id]||{L:0,E:0,M:0,C:0,S:0,R:0};
+    const completion=(r.qty?Math.min(1,(r.earned||0)/r.qty):0);
+    const remainingShare=Math.max(0,1-completion);
+    out[r.id]={};
+    ["L","E","M","C","S"].forEach(cat=>{
+      out[r.id][cat]=(act[cat]||0)+(est[cat]||0)*remainingShare;
+    });
+    out[r.id].R=est.R;
+  });
+  return out;
+}
+function categoryTotals(){
+  const est={L:0,E:0,M:0,C:0,S:0,R:0}, act={L:0,E:0,M:0,C:0,S:0,R:0}, proj={L:0,E:0,M:0,C:0,S:0,R:0};
+  const actual=actualCategoryByActivity(), projected=projectedCategoryByActivity();
+  (lastCalc?.rows||[]).forEach(r=>{
+    const e=activityCategoryEstimate(r), a=actual[r.id]||{}, p=projected[r.id]||{};
+    Object.keys(est).forEach(cat=>{est[cat]+=e[cat]||0; act[cat]+=a[cat]||0; proj[cat]+=p[cat]||0;});
+  });
+  return {est,act,proj};
+}
+function unitAwareQuantities(rows){
+  const byUnit={};
+  (rows||[]).forEach(r=>{
+    if(!byUnit[r.unit]) byUnit[r.unit]={est:0,actual:0,earned:0};
+    byUnit[r.unit].est += r.qty||0;
+  });
+  const by=actualsByActivity();
+  (rows||[]).forEach(r=>{
+    const a=by[r.id]||{qty:0};
+    if(!byUnit[r.unit]) byUnit[r.unit]={est:0,actual:0,earned:0};
+    byUnit[r.unit].actual += a.qty||0;
+    const fr=forecast().rows.find(x=>x.id===r.id);
+    byUnit[r.unit].earned += fr?.earned||0;
+  });
+  return byUnit;
+}
+function primaryScopeQuantity(rows){
+  const priority=["LF","CY","SF","EA","SY","DAY","LS"];
+  const by=unitAwareQuantities(rows);
+  const unit=priority.find(u=>by[u] && by[u].est>0) || Object.keys(by)[0] || "MIXED";
+  return {unit,...(by[unit]||{est:0,actual:0,earned:0}), byUnit:by};
+}
+function renderCostCodes(){
+  if(!document.getElementById('costCodeTable')||!lastCalc) return;
+  const totals=categoryTotals();
+  const rows=[];
+  lastCalc.rows.forEach(r=>{
+    const est=activityCategoryEstimate(r);
+    Object.entries(costCategoryMeta).forEach(([cat,meta])=>{
+      rows.push([`<span class="costCode">${costCodeFor(r.id,cat)}</span>`,r.id,r.name,`<span class="categoryPill">${cat}</span> ${meta.label}`,r.unit,fmt(r.qty,2),money(est[cat]||0)]);
+    });
+  });
+  document.getElementById('costCodeTable').innerHTML=table([["Cost Code",0],["WBS",0],["Activity",0],["Category",0],["Qty Unit",0],["Est Qty",1],["Estimated Value",1]],rows);
+  document.getElementById('costCategoryTable').innerHTML=table([["Category",0],["Estimated",1],["Actual",1],["Projected",1],["Variance to Est.",1]],Object.entries(costCategoryMeta).map(([cat,meta])=>[
+    `<span class="categoryPill">${cat}</span> ${meta.label}`,
+    money(totals.est[cat]),money(totals.act[cat]),money(totals.proj[cat]),`<span class="${(totals.proj[cat]-totals.est[cat])>0?'deltaBad':'deltaGood'}">${money(totals.proj[cat]-totals.est[cat])}</span>`
+  ]));
+  document.getElementById('activityCategoryMatrix').innerHTML=table([["Activity",0],["L Labor",1],["M Material",1],["C Consumable",1],["S Subcontract",1],["E Equipment",1],["R Revenue",1]],lastCalc.rows.map(r=>{
+    const e=activityCategoryEstimate(r); return [r.id+" "+r.name,money(e.L),money(e.M),money(e.C),money(e.S),money(e.E),money(e.R)];
+  }));
+  renderCostCategoryChart(totals);
+}
+function renderCostCategoryChart(totals){
+  if(!document.getElementById('costCategoryChart')) return;
+  if(charts.costCategory){try{charts.costCategory.destroy()}catch(e){}}
+  const labels=Object.entries(costCategoryMeta).map(([cat,m])=>`${cat} ${m.label}`);
+  charts.costCategory=new Chart(document.getElementById('costCategoryChart'),{type:'bar',data:{labels,datasets:[{label:"Estimated",data:Object.keys(costCategoryMeta).map(c=>totals.est[c])},{label:"Actual",data:Object.keys(costCategoryMeta).map(c=>totals.act[c])},{label:"Projected",data:Object.keys(costCategoryMeta).map(c=>totals.proj[c])}]},options:{responsive:true,scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+}
+function downloadCostCodeCSV(){
+  const lines=["cost_code,wbs,activity,category,unit,estimated_qty,estimated_value"];
+  (lastCalc?.rows||[]).forEach(r=>{
+    const est=activityCategoryEstimate(r);
+    Object.entries(costCategoryMeta).forEach(([cat,meta])=>lines.push([costCodeFor(r.id,cat),r.id,`"${r.name}"`,meta.label,r.unit,r.qty,(est[cat]||0).toFixed(2)].join(",")));
+  });
+  downloadText(lines.join("\n"),"erp_cmic_cost_code_library_v0_17.csv","text/csv");
+}
+function downloadCostBreakdownCSV(){
+  const totals=categoryTotals();
+  const lines=["category,estimated,actual,projected,variance_to_est"];
+  Object.entries(costCategoryMeta).forEach(([cat,meta])=>lines.push([`${cat} ${meta.label}`,totals.est[cat].toFixed(2),totals.act[cat].toFixed(2),totals.proj[cat].toFixed(2),(totals.proj[cat]-totals.est[cat]).toFixed(2)].join(",")));
+  downloadText(lines.join("\n"),"erp_cost_breakdown_v0_17.csv","text/csv");
+}
+
+function populateEVMSelectors(){
+  const seg=document.getElementById('evmSegment'), act=document.getElementById('evmActivity');
+  if(seg){
+    const cur=seg.value;
+    seg.innerHTML=segmentList().map(s=>`<option value="${s.id}">${s.id} ${stationText(s.start)}-${stationText(s.end)}</option>`).join('');
+    if([...seg.options].some(o=>o.value===cur)) seg.value=cur;
+  }
+  if(act && lastCalc){
+    const cur=act.value;
+    act.innerHTML='<option value="ALL">All activities</option>'+lastCalc.rows.map(r=>`<option value="${r.id}">${r.id} ${r.name}</option>`).join('');
+    if([...act.options].some(o=>o.value===cur)) act.value=cur;
+  }
+}
+function evmScopeRows(){
+  if(!lastCalc) return [];
+  const scope=val('evmScope')||'SYSTEM', comp=val('evmComponent')||'ALL', aid=val('evmActivity')||'ALL';
+  let rows=[...lastCalc.rows];
+  if(scope==='COMPONENT' && comp!=='ALL'){
+    const acts=componentActivityMap(comp);
+    if(acts) rows=rows.filter(r=>acts.includes(r.id));
+  }
+  if(scope==='ACTIVITY' && aid!=='ALL') rows=rows.filter(r=>r.id===aid);
+  return rows;
+}
+function evmScopeFactor(){
+  if(!lastCalc) return 1;
+  const scope=val('evmScope')||'SYSTEM';
+  if(scope==='SEGMENT'){
+    const s=segmentById(val('evmSegment'));
+    return s.length/Math.max(1,lastCalc.length);
+  }
+  if(scope==='COMPONENT'){
+    const rows=evmScopeRows(), total=lastCalc.rows.reduce((s,r)=>s+r.total,0);
+    return rows.reduce((s,r)=>s+r.total,0)/Math.max(1,total);
+  }
+  if(scope==='ACTIVITY'){
+    const rows=evmScopeRows(), total=lastCalc.rows.reduce((s,r)=>s+r.total,0);
+    return rows.reduce((s,r)=>s+r.total,0)/Math.max(1,total);
+  }
+  return 1;
+}
+function actualsForEVMScope(){
+  const scope=val('evmScope')||'SYSTEM', seg=val('evmSegment'), comp=val('evmComponent')||'ALL', aid=val('evmActivity')||'ALL';
+  return actuals.filter(a=>{
+    if(scope==='SEGMENT' && a.segment!==seg) return false;
+    if(scope==='COMPONENT' && comp!=='ALL' && (a.component||inferComponentFromActivity(a.activity))!==comp) return false;
+    if(scope==='ACTIVITY' && aid!=='ALL' && a.activity!==aid) return false;
+    return true;
+  });
+}
+function evmDuration(){
+  return Math.max(30, Math.ceil((lastCalc?.rows||[]).reduce((s,r)=>s+r.days,0)*1.1)||60);
+}
+function evmActivityPlan(rows, factor){
+  let start=1, out=[];
+  rows.forEach(r=>{
+    const dur=Math.max(1,Math.ceil(r.days));
+    out.push({...r,planStart:start,planEnd:start+dur-1,budget:r.total*factor,qtyPlan:r.qty*factor});
+    start += Math.max(1,Math.ceil(dur*.75));
+  });
+  return out;
+}
+function evmSeries(){
+  if(!lastCalc) return {series:[],snapshot:{PV:0,EV:0,AC:0,SV:0,CV:0,SPI:1,CPI:1}};
+  const rows=evmScopeRows(), factor=evmScopeFactor(), planned=evmActivityPlan(rows,factor), duration=Math.max(evmDuration(),parseInt(val('evmDay'))||1);
+  const actualRows=actualsForEVMScope();
+  const out=[];
+  for(let d=1; d<=duration; d++){
+    let PV=0, EV=0, AC=0;
+    planned.forEach(r=>{
+      const denom=Math.max(1,r.planEnd-r.planStart+1);
+      const pct=d<r.planStart?0:d>r.planEnd?1:(d-r.planStart+1)/denom;
+      PV += r.budget*pct;
+      const actualQty=actualRows.filter(a=>a.activity===r.id && (+a.day||0)<=d).reduce((s,a)=>s+(+a.qty||0),0)* (val('evmScope')==='SEGMENT'?1:1);
+      const earnedPct=Math.min(1, actualQty/Math.max(1,r.qty*factor));
+      EV += r.budget*earnedPct;
+      AC += actualRows.filter(a=>a.activity===r.id && (+a.day||0)<=d).reduce((s,a)=>s+actualCost(a),0);
+    });
+    out.push({day:d,PV,EV,AC,SV:EV-PV,CV:EV-AC,SPI:PV?EV/PV:1,CPI:AC?EV/AC:1});
+  }
+  const day=Math.min(duration,Math.max(1,parseInt(val('evmDay'))||1));
+  return {series:out,snapshot:out[day-1]||out.at(-1),plannedRows:planned};
+}
+function evmState(v){return v>=1?'evmStateGood':v>=.9?'evmStateWarn':'evmStateBad'}
+function renderEVM(){
+  populateEVMSelectors();
+  if(!document.getElementById('evmCurveChart')||!lastCalc) return;
+  const duration=evmDuration();
+  const dayEl=document.getElementById('evmDay');
+  if(dayEl){dayEl.max=duration; if(+dayEl.value>duration) dayEl.value=duration; document.getElementById('evmDayVal').textContent=dayEl.value;}
+  const evm=evmSeries(), s=evm.snapshot||{PV:0,EV:0,AC:0,SV:0,CV:0,SPI:1,CPI:1};
+  document.getElementById('evmMetricCards').innerHTML=[
+    ['Planned Value (PV) '+infoIcon('pv'),money(s.PV),'budgeted work scheduled'],
+    ['Earned Value (EV) '+infoIcon('ev'),money(s.EV),'budgeted cost of work performed'],
+    ['Actual Cost (AC) '+infoIcon('ac'),money(s.AC),'actual cost of work performed'],
+    ['Schedule Variance '+infoIcon('sv'),money(s.SV),s.SV>=0?'ahead/on plan':'behind plan'],
+    ['Cost Variance '+infoIcon('cv'),money(s.CV),s.CV>=0?'under/on budget':'over budget'],
+    ['SPI '+infoIcon('spi'),`<span class="${evmState(s.SPI)}">${fmt(s.SPI,2)}</span><div class="evmGauge"><span style="width:${Math.min(100,Math.max(0,s.SPI*100))}%"></span></div>`,'schedule efficiency'],
+    ['CPI '+infoIcon('cpi'),`<span class="${evmState(s.CPI)}">${fmt(s.CPI,2)}</span><div class="evmGauge"><span style="width:${Math.min(100,Math.max(0,s.CPI*100))}%"></span></div>`,'cost efficiency'],
+    ['Scope factor',fmt(evmScopeFactor()*100,1)+'%','selected subgroup share']
+  ].map(c=>`<div class="paramCard"><div class="title">${c[0]}</div><div class="value">${c[1]}</div><div class="sub">${c[2]}</div></div>`).join('');
+  document.getElementById('evmMetricTable').innerHTML=table([["Control Metric",0],["Amount / Index",1],["Definition",0]],[
+    ["Planned Value (PV) "+infoIcon("pv"),money(s.PV),"Budgeted work scheduled"],
+    ["Earned Value (EV) "+infoIcon("ev"),money(s.EV),"Budgeted cost of work performed"],
+    ["Actual Cost (AC) "+infoIcon("ac"),money(s.AC),"Actual cost of work performed"],
+    ["Schedule Variance (SV) "+infoIcon("sv"),money(s.SV),"SV = EV - PV; positive is good"],
+    ["Cost Variance (CV) "+infoIcon("cv"),money(s.CV),"CV = EV - AC; positive is good"],
+    ["Schedule Performance Index (SPI) "+infoIcon("spi"),fmt(s.SPI,2),"SPI = EV / PV"],
+    ["Cost Performance Index (CPI) "+infoIcon("cpi"),fmt(s.CPI,2),"CPI = EV / AC"]
+  ]);
+  document.getElementById('evmActivityTable').innerHTML=table([["Activity",0],["Plan Start",1],["Plan End",1],["Budget",1],["PV",1],["EV",1],["AC",1],["SPI",1],["CPI",1]],evm.plannedRows.map(r=>{
+    const d=parseInt(val('evmDay'))||1, pct=d<r.planStart?0:d>r.planEnd?1:(d-r.planStart+1)/Math.max(1,r.planEnd-r.planStart+1), PV=r.budget*pct;
+    const acts=actualsForEVMScope().filter(a=>a.activity===r.id && (+a.day||0)<=d), qty=acts.reduce((x,a)=>x+(+a.qty||0),0), AC=acts.reduce((x,a)=>x+actualCost(a),0), EV=r.budget*Math.min(1,qty/Math.max(1,r.qty*evmScopeFactor()));
+    return [r.id+" "+r.name,r.planStart,r.planEnd,money(r.budget),money(PV),money(EV),money(AC),fmt(PV?EV/PV:1,2),fmt(AC?EV/AC:1,2)];
+  }));
+  renderEVMCharts(evm);
+}
+function renderEVMCharts(evm){
+  if(charts.evmCurve){try{charts.evmCurve.destroy()}catch(e){}}
+  if(charts.evmSubgroup){try{charts.evmSubgroup.destroy()}catch(e){}}
+  charts.evmCurve=new Chart(document.getElementById('evmCurveChart'),{type:'line',data:{labels:evm.series.map(r=>'D'+r.day),datasets:[{label:'Planned Value (PV)',data:evm.series.map(r=>r.PV),borderDash:[6,4],fill:true},{label:'Earned Value (EV)',data:evm.series.map(r=>r.EV)},{label:'Actual Cost (AC)',data:evm.series.map(r=>r.AC)}]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+  const comps=componentMetrics().filter(c=>c.budget>0);
+  charts.evmSubgroup=new Chart(document.getElementById('evmSubgroupChart'),{type:'bar',data:{labels:comps.map(c=>c.name),datasets:[{label:'Budget',data:comps.map(c=>c.budget)},{label:'Actual',data:comps.map(c=>c.actual)},{label:'EAC',data:comps.map(c=>c.eac)}]},options:{responsive:true,scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+}
+
+function renderCharts(){let f=forecast(),cash=scheduleCurve();Object.values(charts).forEach(c=>{try{c.destroy()}catch(e){}});charts.forecast=new Chart(document.getElementById('forecastChart'),{type:'bar',data:{labels:["Budget","Actual","CTC","EAC","Revenue"],datasets:[{data:[f.totals.budget,f.totals.actual,f.totals.ctc,f.totals.eac,f.totals.revenue]}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});let riskPts=[];for(let i=0;i<=100;i+=5)riskPts.push({x:percentile(riskResults,i/100),y:i});charts.risk=new Chart(document.getElementById('riskChart'),{type:'line',data:{datasets:[{label:"Cumulative Probability %",data:riskPts,fill:true,tension:.25}]},options:{scales:{x:{type:'linear',ticks:{callback:v=>"$"+(v/1000).toFixed(0)+"k"}},y:{min:0,max:100}}}});charts.progress=new Chart(document.getElementById('progressChart'),{type:'bar',data:{labels:f.rows.map(r=>r.id),datasets:[{label:"Earned",data:f.rows.map(r=>r.earned)},{label:"Remaining",data:f.rows.map(r=>r.remain)}]},options:{scales:{x:{stacked:true},y:{stacked:true}}}});let reason={};actuals.forEach(a=>reason[a.reason]=(reason[a.reason]||0)+actualCost(a));charts.reason=new Chart(document.getElementById('reasonChart'),{type:'bar',data:{labels:Object.keys(reason),datasets:[{data:Object.values(reason)}]},options:{plugins:{legend:{display:false}}}});charts.sCurve=new Chart(document.getElementById('sCurveChart'),{type:'line',data:{labels:cash.map(r=>"D"+r.d),datasets:[{label:"Planned",data:cash.map(r=>r.cumPlan)},{label:"Actual",data:cash.map(r=>r.cumActual)},{label:"Billing",data:cash.map(r=>r.cumBill)}]},options:{scales:{y:{ticks:{callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});charts.cash=new Chart(document.getElementById('cashChart'),{type:'line',data:{labels:cash.map(r=>"D"+r.d),datasets:[{label:"Cash Position",data:cash.map(r=>r.cumCash)}]},options:{scales:{y:{ticks:{callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}})}
+
+
+function createSelectableProxy(id,type,label,parent,level,x,y,z,w,h,d,visibleColor=0xd6a84f){
+  const matVisible=new THREE.MeshStandardMaterial({color:visibleColor,transparent:true,opacity:.08,depthWrite:false,side:THREE.DoubleSide});
+  const obj=new THREE.Mesh(new THREE.BoxGeometry(Math.max(.01,w),Math.max(.01,h),Math.max(.01,d)),matVisible);
+  obj.position.set(x,y,z);
+  obj.name=`PICK-${id}`;
+  obj.userData={selectable:true,elementId:id};
+  modelGroup.add(obj);
+  selectables.push(obj);
+  if(!elementRegistry.find(e=>e.id===id)) elementRegistry.push({id,type,label,parent,level});
+  return obj;
+}
+function buildElementRegistryOverlaysV19(){
+  if(!modelGroup||!lastCalc) return;
+  const s=.18, L=lastCalc.length*s, B=lastCalc.baseWidth*s, T=lastCalc.topWidth*s, D=lastCalc.trenchDepth*s, R=lastCalc.pipeOD/2*s;
+  selectables=[]; elementRegistry=[];
+  elementRegistry.push({id:"SYS-SEWER",type:"SYSTEM",label:"Total Sewer System",parent:null,level:0});
+  for(let i=0;i<lastCalc.segments;i++){
+    const x=-L/2+(i+.5)*(L/lastCalc.segments);
+    createSelectableProxy(`SEG-${i+1}`,"SEGMENT",`Segment ${i+1}`,"SYS-SEWER",1,x,-D/2,0,L/lastCalc.segments,D,T+5*s,0x0f4c81);
+  }
+  createSelectableProxy("PIPE-001","PIPE","Main Pipe Barrel","SYS-SEWER",2,0,-D+R+.38,0,L,R*2.5,R*2.5,0x2563eb);
+  createSelectableProxy("TRN-001","TRENCH","Trench Excavation","SYS-SEWER",2,0,-D/2,0,L,D,T,0xf59e0b);
+  createSelectableProxy("SHOR-001","SHORING","Shoring / Sheeting","SYS-SEWER",2,0,-D/2,0,L,D,B+1*s,0x6f8ba3);
+  createSelectableProxy("BED-001","BEDDING","Stone Bedding","SYS-SEWER",2,0,-D+.1,0,L,.55,B,0xb7b0a1);
+  createSelectableProxy("CONC-001","CONCRETE","Concrete Cradle / Encasement","SYS-SEWER",2,0,-D+R*.55,0,L,1.0,lastCalc.p.A*s,0xc7c7c7);
+  createSelectableProxy("MH-ASM","MANHOLES","Manhole Assembly Group","SYS-SEWER",2,0,-D/2,0,L,D,(lastCalc.mh.diameter+2)*s,0x5e6f7d);
+  createSelectableProxy("CB-ASM","CATCH_BASINS","Catch Basin Assembly Group","SYS-SEWER",2,0,-D*.35,B/2+2*s,L,D*.55,5*s,0x4e6c80);
+  createSelectableProxy("UTIL-CTX","UTILITIES","Utility Conflict Context","SYS-SEWER",2,0,-2*s,0,L+8*s,3*s,T+12*s,0xf59e0b);
+  createSelectableProxy("FOUND-CTX","FOUNDATION","Foundation / Pile Context","SYS-SEWER",2,0,-D-3*s,0,L,6*s,lastCalc.p.A*s,0x7a4d2a);
+  createSelectableProxy("WATER-CTX","WATER","Water / Dewatering Context","SYS-SEWER",2,0,-D*.58,0,L,.55,B+8*s,0x3aa0ff);
+  createSelectableProxy("PVMT-001","PAVEMENT","Pavement / Roadway Restoration","SYS-SEWER",2,0,.05,0,L,.55,T+7*s,0x242830);
+}
+function highlightSelectedElementV19(){
+  if(!modelGroup||!selectedElementId) return;
+  if(selectionOutline){modelGroup.remove(selectionOutline);selectionOutline=null;}
+  const obj=selectables.find(o=>o.userData.elementId===selectedElementId);
+  if(!obj) return;
+  const box3=new THREE.Box3().setFromObject(obj);
+  selectionOutline=new THREE.Box3Helper(box3,0xffaa00);
+  modelGroup.add(selectionOutline);
+}
+function selectElementV19(id){
+  selectedElementId=id||"SYS-SEWER";
+  highlightSelectedElementV19();
+  renderSelectedElementInspector();
+  renderSelectionHUD();
+}
+function handleElementPointer(event){
+  if(!renderer||!camera||!selectables.length) return;
+  const rect=renderer.domElement.getBoundingClientRect();
+  const pointer=new THREE.Vector2(((event.clientX-rect.left)/rect.width)*2-1,-((event.clientY-rect.top)/rect.height)*2+1);
+  const ray=new THREE.Raycaster(); ray.setFromCamera(pointer,camera);
+  const hits=ray.intersectObjects(selectables,true);
+  if(!hits.length) return;
+  const id=hits[0].object.userData.elementId;
+  const now=Date.now();
+  if(id===lastClickedId && now-lastClickTime<430) clickCount++; else clickCount=1;
+  lastClickedId=id; lastClickTime=now;
+  selectedElementId=id;
+  if(clickCount===2) promoteSelection();
+  else if(clickCount>=3){promoteSelection();promoteSelection();clickCount=0;}
+  else selectElementV19(id);
+}
+function renderSelectionHUD(){
+  const hud=document.getElementById("selectionHUD");
+  if(!hud) return;
+  const meta=selectedMeta();
+  if(!meta){hud.style.display="none";return;}
+  const q=elementQtyUnit(meta.type), fin=elementFinancial(meta.type,meta.type==="SEGMENT"?meta.id:null), cross=elementCostCrosstab(meta.type,meta.type==="SEGMENT"?meta.id:null);
+  const concVol=meta.type==="CONCRETE"?lastCalc.cradleCY:meta.type==="MANHOLES"?lastCalc.mhCount*3.2:0;
+  const completion=fin.projectedCost?Math.min(100,fin.actualCost/Math.max(1,fin.projectedCost)*100):0;
+  hud.style.display="block";
+  hud.innerHTML=`<h3>${meta.label}</h3>
+    <div class="hudRow"><span>Element ID</span><b class="costCode">${meta.id}</b></div>
+    <div class="hudRow"><span>Type / level</span><b>${meta.type} / ${meta.level}</b></div>
+    <div class="hudRow"><span>Primary quantity</span><b>${fmt(q[1],2)} ${q[0]}</b></div>
+    <div class="hudRow"><span>Concrete volume</span><b>${fmt(concVol,2)} CY</b></div>
+    <div class="hudRow"><span>Completion</span><b>${fmt(completion,1)}%</b></div>
+    <div class="hudRow"><span>Estimated / actual</span><b>${money(fin.budget)} / ${money(fin.actualCost)}</b></div>
+    <div class="hudRow"><span>Projected EAC</span><b>${money(fin.projectedCost)}</b></div>
+    <div class="hudRow"><span>Billing / profit</span><b>${money(fin.revenue)} / ${money(fin.profit)}</b></div>
+    <div class="hudRow"><span>Variance</span><b class="${fin.variance>0?'deltaBad':'deltaGood'}">${money(fin.variance)}</b></div>
+    <div class="hudRow"><span>L/M/C/S/E/R</span><b>${Object.keys(cross).map(k=>`${k}:${money(cross[k].proj)}`).join(" ")}</b></div>
+    <div class="hudActions"><button onclick="promoteSelection()">Parent</button><button class="secondary" onclick="selectChildDetail()">Child</button><button class="secondary" onclick="cycleSelection(1)">Next</button><button class="secondary" onclick="openElementExplorer()">Open Explorer</button></div>`;
+}
+function openElementExplorer(){
+  document.querySelectorAll('.tab,.tabContent').forEach(x=>x.classList.remove('active'));
+  const t=[...document.querySelectorAll('.tab')].find(x=>x.dataset.tab==="elementexplorer");
+  if(t){t.classList.add('active');document.getElementById('elementexplorer').classList.add('active');}
+  renderSelectedElementInspector();
+}
+function clearElementSelection(){
+  selectedElementId=null;
+  if(selectionOutline){modelGroup.remove(selectionOutline);selectionOutline=null;}
+  const hud=document.getElementById("selectionHUD"); if(hud) hud.style.display="none";
+  renderSelectedElementInspector();
+}
+function promoteSelection(){
+  const m=selectedMeta(); 
+  if(m&&m.parent) selectElementV19(m.parent); else selectElementV19("SYS-SEWER");
+}
+function selectChildDetail(){
+  const m=selectedMeta(); if(!m) return;
+  const child=elementRegistry.find(e=>e.parent===m.id);
+  if(child) selectElementV19(child.id);
+}
+function cycleSelection(dir=1){
+  const m=selectedMeta(); if(!m) return;
+  const siblings=elementRegistry.filter(e=>e.parent===m.parent);
+  const idx=siblings.findIndex(e=>e.id===m.id);
+  if(siblings.length) selectElementV19(siblings[(idx+dir+siblings.length)%siblings.length].id);
+}
+function setupElementKeyboard(){
+  if(window.__elementKeysReady) return; window.__elementKeysReady=true;
+  window.addEventListener("keydown",e=>{
+    if(["INPUT","SELECT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
+    if(e.key==="ArrowUp"){promoteSelection();e.preventDefault();}
+    if(e.key==="ArrowDown"){selectChildDetail();e.preventDefault();}
+    if(e.key==="ArrowRight"){cycleSelection(1);e.preventDefault();}
+    if(e.key==="ArrowLeft"){cycleSelection(-1);e.preventDefault();}
+    if(e.key==="Escape"){clearElementSelection();e.preventDefault();}
+    if(e.key===" "){simPlayPause();e.preventDefault();}
+  });
+}
+function simDuration(){
+  return Math.max(30, Math.ceil((lastCalc?.rows||[]).reduce((s,r)=>s+r.days,0)*1.15)||90);
+}
+function simPlanRows(){
+  let start=1;
+  return (lastCalc?.rows||[]).map(r=>{
+    const dur=Math.max(1,Math.ceil(r.days));
+    const out={...r,planStart:start,planEnd:start+dur-1,duration:dur};
+    start += Math.max(1,Math.ceil(dur*.75));
+    return out;
+  });
+}
+function simSnapshot(day=simDay){
+  const rows=simPlanRows();
+  let PV=0,EV=0,AC=0,billing=0,earnedPct=0,active=[];
+  rows.forEach(r=>{
+    const planPct=day<r.planStart?0:day>r.planEnd?1:(day-r.planStart+1)/Math.max(1,r.duration);
+    PV += r.total*planPct;
+    if(day>=r.planStart && day<=r.planEnd) active.push(r);
+    const acts=actuals.filter(a=>a.activity===r.id && (+a.day||0)<=day);
+    const qty=acts.reduce((s,a)=>s+(+a.qty||0),0);
+    const rowEV=r.total*Math.min(1,qty/Math.max(1,r.qty));
+    EV += rowEV;
+    AC += acts.reduce((s,a)=>s+actualCost(a),0);
+    earnedPct += rowEV;
+  });
+  const lag=num('billingLag')||30, ret=(num('retainagePct')||0)/100;
+  rows.forEach(r=>{
+    const billDay=day-lag;
+    const pct=billDay<r.planStart?0:billDay>r.planEnd?1:(billDay-r.planStart+1)/Math.max(1,r.duration);
+    billing += r.total*(1+num('markupPct')/100)*Math.max(0,pct)*(1-ret);
+  });
+  return {day,PV,EV,AC,billing,cash:billing-AC,SPI:PV?EV/PV:1,CPI:AC?EV/AC:1,active};
+}
+function simSeries(){
+  const dur=simDuration(), out=[];
+  for(let d=1;d<=dur;d++) out.push(simSnapshot(d));
+  return out;
+}
+function setSimDay(d){
+  simDay=Math.max(1,Math.min(simDuration(),Math.round(d)));
+  const slider=document.getElementById("simDaySlider"); if(slider) slider.value=simDay;
+  renderTimeSimulation();
+  update3DPhaseFromSim();
+}
+function setSimSpeed(v){simSpeed=+v||1;}
+function simPlay(){simPause();simTimer=setInterval(()=>simStep(simDirection),Math.max(80,650/simSpeed));}
+function simReverse(){simDirection=-1;simPlay();}
+function simPlayPause(){if(simTimer)simPause();else simPlay();}
+function simPause(){if(simTimer){clearInterval(simTimer);simTimer=null;}}
+function simReset(){simPause();simDirection=1;setSimDay(1);}
+function simStep(dir=1){
+  const next=simDay+dir;
+  if(next<1||next>simDuration()){simPause();return;}
+  setSimDay(next);
+}
+function update3DPhaseFromSim(){
+  const s=simSnapshot(simDay);
+  const phase=s.active[0]?.id||"";
+  const phaseMap={A01:"none",A02:"excavation",A03:"excavation",A04:"excavation",A05:"pipe",A06:"pipe",A07:"pipe",A08:"structures",A09:"structures",A10:"structures",A11:"backfill",A12:"backfill",A13:"asbuilt"};
+  const el=document.getElementById("phaseOverlay");
+  if(el && phaseMap[phase] && el.value!==phaseMap[phase]){el.value=phaseMap[phase]; buildModel3D();}
+}
+function renderTimeSimulation(){
+  if(!document.getElementById("simKpiCards")||!lastCalc) return;
+  const dur=simDuration(), snap=simSnapshot(simDay), series=simSeries();
+  document.getElementById("simDurationReadout").textContent=dur;
+  document.getElementById("simDayReadout").textContent=simDay;
+  const slider=document.getElementById("simDaySlider"); if(slider){slider.max=dur;slider.value=simDay;}
+  const prog=document.getElementById("simProgress"); if(prog) prog.style.width=(simDay/dur*100)+"%";
+  document.getElementById("simKpiCards").innerHTML=[
+    ["PV",money(snap.PV),"planned value to current day"],
+    ["EV",money(snap.EV),"earned value from coded actuals"],
+    ["AC",money(snap.AC),"actual cost incurred"],
+    ["Billing",money(snap.billing),"lagged billing less retainage"],
+    ["Cash position",money(snap.cash),"billing minus actual cost"],
+    ["SPI",fmt(snap.SPI,2),"schedule efficiency"],
+    ["CPI",fmt(snap.CPI,2),"cost efficiency"],
+    ["Active phase",snap.active.map(a=>a.id).join(", ")||"none","active WBS at current day"],
+    ["Speed",simSpeed+"×","transport playback speed"],
+    ["Direction",simDirection>0?"Forward":"Reverse","playback direction"]
+  ].map(c=>`<div class="paramCard"><div class="title">${c[0]}</div><div class="value">${c[1]}</div><div class="sub">${c[2]}</div></div>`).join("");
+  const phases=["A01","A02","A04","A07","A08","A11","A12","A13"];
+  document.getElementById("simPhaseBands").innerHTML=phases.map(p=>`<div class="phaseBand ${snap.active.some(a=>a.id===p)?'active':''}">${p}</div>`).join("");
+  document.getElementById("simActivityTable").innerHTML=table([["Activity",0],["Start",1],["End",1],["Status",0],["Budget",1],["Qty",1]],simPlanRows().map(r=>[r.id+" "+r.name,r.planStart,r.planEnd,simDay<r.planStart?"Future":simDay>r.planEnd?"Complete":"Active",money(r.total),fmt(r.qty,2)+" "+r.unit]));
+  renderSimChart(series);
+}
+function renderSimChart(series){
+  if(!document.getElementById("simCashflowChart")) return;
+  if(charts.simCash){try{charts.simCash.destroy()}catch(e){}}
+  charts.simCash=new Chart(document.getElementById("simCashflowChart"),{type:"line",data:{labels:series.map(r=>"D"+r.day),datasets:[
+    {label:"PV",data:series.map(r=>r.PV),borderDash:[6,4]},
+    {label:"EV",data:series.map(r=>r.EV)},
+    {label:"AC",data:series.map(r=>r.AC)},
+    {label:"Billing",data:series.map(r=>r.billing)},
+    {label:"Cash",data:series.map(r=>r.cash)}
+  ]},options:{responsive:true,interaction:{mode:"index",intersect:false},scales:{y:{ticks:{callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});
+}
+
+function resize3DToViewer(){
+  if(!renderer||!camera) return;
+  const div=document.getElementById('viewer');
+  if(!div) return;
+  const rect=div.getBoundingClientRect();
+  const w=Math.max(400, div.clientWidth || rect.width || 400);
+  const h=Math.max(420, div.clientHeight || rect.height || 560);
+  renderer.setSize(w,h);
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+  updateCamera();
+  const status=document.getElementById('modelStatus');
+  if(status) status.textContent=`3D status: canvas resized to ${Math.round(w)} × ${Math.round(h)}. Drag to rotate, wheel to zoom.`;
+}
+
+function init3D(force=false){let div=document.getElementById('viewer'),status=document.getElementById('modelStatus');if(typeof THREE==="undefined"){if(status)status.textContent="3D status: Three.js did not load. Check internet/CDN/browser policy.";return} if(renderer&&force){renderer.dispose();div.querySelector("canvas")?.remove();renderer=null;scene=null;camera=null;modelGroup=null;} if(renderer&&!force)return;scene=new THREE.Scene();scene.background=new THREE.Color(0x050b10);camera=new THREE.PerspectiveCamera(48,Math.max(1,div.clientWidth)/560,.1,5000);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.setSize(Math.max(400,div.clientWidth),560);div.appendChild(renderer.domElement);scene.add(new THREE.AmbientLight(0xffffff,.65));let dl=new THREE.DirectionalLight(0xffffff,.85);dl.position.set(80,120,60);scene.add(dl);let grid=new THREE.GridHelper(220,22,0x24445d,0x142638);grid.position.y=-.02;scene.add(grid);modelGroup=new THREE.Group();scene.add(modelGroup);renderer.domElement.addEventListener('pointerdown',e=>{mouse.down=true;mouse.x=e.clientX;mouse.y=e.clientY});
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();mouse.dist*=e.deltaY>0?1.08:.92;mouse.dist=Math.max(25,Math.min(260,mouse.dist));updateCamera()},{passive:false});
+renderer.domElement.addEventListener('click',handleElementPointer);
+if(!eventsAttached){
+  window.addEventListener('pointerup',()=>mouse.down=false);
+  window.addEventListener('pointermove',e=>{if(!mouse.down)return;mouse.ry+=(e.clientX-mouse.x)*.008;mouse.rx+=(e.clientY-mouse.y)*.008;mouse.rx=Math.max(-1.45,Math.min(.2,mouse.rx));mouse.x=e.clientX;mouse.y=e.clientY;updateCamera()});
+  eventsAttached=true;
+}
+resize3DToViewer();
+updateCamera();
+animate3D();if(status)status.textContent="3D status: renderer initialized. Drag to rotate, wheel to zoom."}
+function updateCamera(){if(!camera)return;camera.position.set(mouse.dist*Math.sin(mouse.ry)*Math.cos(mouse.rx),mouse.dist*Math.sin(-mouse.rx),mouse.dist*Math.cos(mouse.ry)*Math.cos(mouse.rx));camera.lookAt(0,0,0)}
+function fitCamera(){mouse.dist=Math.max(55,Math.min(220,lastCalc.length*.16));mouse.rx=-.65;mouse.ry=.75;updateCamera()}
+function animate3D(){requestAnimationFrame(animate3D);if(renderer&&scene&&camera)renderer.render(scene,camera)}
+function mat(c,o=1){return new THREE.MeshStandardMaterial({color:c,transparent:o<1,opacity:o,side:THREE.DoubleSide})}function box(x,y,z,w,h,d,m){let o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);modelGroup.add(o);return o}function cylX(x,y,z,r,l,m){let o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,l,40),m);o.rotation.z=Math.PI/2;o.position.set(x,y,z);modelGroup.add(o);return o}function cylY(x,y,z,r,h,m){let o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,40),m);o.position.set(x,y,z);modelGroup.add(o);return o}
+
+
+function componentBudgetMap(){
+  const map={};
+  (lastCalc?.rows||[]).forEach(r=>{map[r.id]=r;});
+  return map;
+}
+function elementActivityIds(type){
+  const m={
+    SYSTEM:lastCalc?.rows?.map(r=>r.id)||[],
+    SEGMENT:lastCalc?.rows?.map(r=>r.id)||[],
+    PIPE:["A07"],TRENCH:["A04"],SHORING:["A02"],BEDDING:["A05"],CONCRETE:["A06"],MANHOLES:["A08"],CATCH_BASINS:["A09"],PAVEMENT:["A12"],UTILITIES:["A01"],FOUNDATION:["A06"],WATER:["A03"],HOUSE_CONNECTIONS:["A10"],GENERAL:["A01","A13"]
+  };
+  return m[type]||m.GENERAL;
+}
+function elementQtyUnit(type){
+  const q={
+    PIPE:["LF",lastCalc?.length||0],
+    TRENCH:["CY",lastCalc?.excavationCY||0],
+    SHORING:["SF",lastCalc?.sheetingSF||0],
+    BEDDING:["CY",lastCalc?.bedCY||0],
+    CONCRETE:["CY",lastCalc?.cradleCY||0],
+    MANHOLES:["EA",lastCalc?.mhCount||0],
+    CATCH_BASINS:["EA",lastCalc?.cbCount||0],
+    PAVEMENT:["SY",lastCalc?.paveSY||0],
+    WATER:["DAY",({None:0,Light:4,Moderate:8,Heavy:14}[val('dewatering')]||0)],
+    HOUSE_CONNECTIONS:["EA",(lastCalc?.hc||0)+(lastCalc?.ris||0)],
+    FOUNDATION:["EA",val('foundationContext')==='pile'?Math.max(0,Math.floor((lastCalc?.length||0)/10))*3:0],
+    UTILITIES:["LS",1],
+    SYSTEM:["LS",1],
+    SEGMENT:["LF",(lastCalc?.length||0)/Math.max(1,lastCalc?.segments||1)]
+  };
+  return q[type]||["LS",1];
+}
+function elementFinancial(type, segmentId=null){
+  const acts=elementActivityIds(type), factor=type==="SEGMENT"&&segmentId?segmentById(segmentId).length/Math.max(1,lastCalc.length):1;
+  const f=forecast(), actual=actualCategoryByActivity(), projected=projectedCategoryByActivity();
+  let budget=0, actualCost=0, projectedCost=0, laborMH=0, actualMH=0, revenue=0;
+  (lastCalc?.rows||[]).filter(r=>acts.includes(r.id)).forEach(r=>{
+    const a=actual[r.id]||{}, p=projected[r.id]||{}, ff=f.rows.find(x=>x.id===r.id)||{};
+    budget += r.total*factor;
+    actualCost += Object.values(a).reduce((s,v)=>s+(+v||0),0)*factor;
+    projectedCost += (p.L+p.M+p.C+p.S+p.E)*factor;
+    laborMH += r.mh*factor;
+    const actualRows=codedActualsFor({segment:type==="SEGMENT"?segmentId:"ALL",activity:r.id});
+    actualMH += actualRows.reduce((s,x)=>s+(+x.laborMH||0),0);
+    revenue += (r.total*(1+num('markupPct')/100))*factor;
+  });
+  if(type==="SYSTEM"){const ft=f.totals;budget=ft.budget;actualCost=ft.actual;projectedCost=ft.eac;revenue=ft.revenue;laborMH=(lastCalc?.rows||[]).reduce((s,r)=>s+r.mh,0);actualMH=actuals.reduce((s,a)=>s+(+a.laborMH||0),0);}
+  return {budget,actualCost,projectedCost,revenue,profit:revenue-projectedCost,variance:projectedCost-budget,laborMH,actualMH};
+}
+function elementCostCrosstab(type, segmentId=null){
+  const acts=elementActivityIds(type), factor=type==="SEGMENT"&&segmentId?segmentById(segmentId).length/Math.max(1,lastCalc.length):1;
+  const actual=actualCategoryByActivity(), projected=projectedCategoryByActivity();
+  const out={L:{est:0,actual:0,proj:0},M:{est:0,actual:0,proj:0},C:{est:0,actual:0,proj:0},S:{est:0,actual:0,proj:0},E:{est:0,actual:0,proj:0},R:{est:0,actual:0,proj:0}};
+  (lastCalc?.rows||[]).filter(r=>acts.includes(r.id)).forEach(r=>{
+    const e=activityCategoryEstimate(r), a=actual[r.id]||{}, p=projected[r.id]||{};
+    Object.keys(out).forEach(cat=>{out[cat].est+=(e[cat]||0)*factor; out[cat].actual+=(a[cat]||0)*factor; out[cat].proj+=(p[cat]||0)*factor;});
+  });
+  return out;
+}
+function addSelectableObject(obj, meta){
+  if(!obj) return;
+  obj.userData={...(obj.userData||{}),selectable:true,elementId:meta.id};
+  selectables.push(obj);
+  if(!elementRegistry.find(e=>e.id===meta.id)) elementRegistry.push(meta);
+}
+function resetElementRegistry(){selectables=[];elementRegistry=[];selectedElementId=null;selectionOutline=null,simTimer=null,simDirection=1,simSpeed=1,simDay=1;}
+function buildElementRegistryOverlays(){
+  if(!modelGroup||!lastCalc) return;
+  const s=.18, L=lastCalc.length*s, B=lastCalc.baseWidth*s, T=lastCalc.topWidth*s, D=lastCalc.trenchDepth*s, R=lastCalc.pipeOD/2*s;
+  const invisible=new THREE.MeshBasicMaterial({transparent:true,opacity:.02,depthWrite:false});
+  const make=(id,type,label,parent,level,x,y,z,w,h,d)=>{
+    const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),invisible.clone());
+    obj.position.set(x,y,z); modelGroup.add(obj);
+    addSelectableObject(obj,{id,type,label,parent,level});
+  };
+  addSelectableObject(modelGroup,{id:"SYS-SEWER",type:"SYSTEM",label:"Total sewer system",parent:null,level:0});
+  for(let i=0;i<lastCalc.segments;i++){
+    const x=-L/2+(i+.5)*(L/lastCalc.segments);
+    make(`SEG-${i+1}`,"SEGMENT",`Segment ${i+1}`, "SYS-SEWER",1,x,-D/2,0,L/lastCalc.segments,D,T+5*s);
+  }
+  make("PIPE-001","PIPE","Main pipe barrel","SYS-SEWER",2,0,-D+R+.38,0,L,R*2.2,R*2.2);
+  make("TRN-001","TRENCH","Trench excavation envelope","SYS-SEWER",2,0,-D/2,0,L,D,T);
+  make("SHOR-001","SHORING","Shoring / sheeting","SYS-SEWER",2,0,-D/2,0,L,D,B+1*s);
+  make("BED-001","BEDDING","Stone bedding","SYS-SEWER",2,0,-D+.1,0,L,.4,B);
+  make("CONC-001","CONCRETE","Concrete cradle / encasement","SYS-SEWER",2,0,-D+R*.55,0,L,.8,lastCalc.p.A*s);
+  make("MH-ASM","MANHOLES","Manhole assembly group","SYS-SEWER",2,0,-D/2,0,L,D,(lastCalc.mh.diameter+2)*s);
+  make("CB-ASM","CATCH_BASINS","Catch basin assembly group","SYS-SEWER",2,0,-D*.35,B/2+2*s,L,D*.55,5*s);
+  make("UTIL-CTX","UTILITIES","Existing utility context","SYS-SEWER",2,0,-2*s,0,L+8*s,3*s,T+12*s);
+  make("FOUND-CTX","FOUNDATION","Foundation / pile context","SYS-SEWER",2,0,-D-3*s,0,L,6*s,lastCalc.p.A*s);
+  make("WATER-CTX","WATER","Water / dewatering context","SYS-SEWER",2,0,-D*.58,0,L,.4,B+8*s);
+  make("PVMT-001","PAVEMENT","Pavement / roadway restoration","SYS-SEWER",2,0,.05,0,L,.4,T+7*s);
+}
+function selectedMeta(){return elementRegistry.find(e=>e.id===selectedElementId)||elementRegistry.find(e=>e.id==="SYS-SEWER");}
+function selectElement(id, mode="single"){
+  if(!id) return;
+  selectedElementId=id;
+  highlightSelectedElement();
+  renderSelectedElementInspector();
+}
+function clearElementSelection(){
+  selectedElementId=null;
+  if(selectionOutline){modelGroup.remove(selectionOutline);selectionOutline=null,simTimer=null,simDirection=1,simSpeed=1,simDay=1;}
+  renderSelectedElementInspector();
+}
+function promoteSelection(){
+  const m=selectedMeta(); if(m&&m.parent) selectElement(m.parent); else selectElement("SYS-SEWER");
+}
+function selectChildDetail(){
+  const m=selectedMeta(); if(!m) return;
+  const child=elementRegistry.find(e=>e.parent===m.id);
+  if(child) selectElement(child.id);
+}
+function cycleSelection(dir=1){
+  const m=selectedMeta(); if(!m) return;
+  const siblings=elementRegistry.filter(e=>e.parent===m.parent&&e.id!==m.parent);
+  const idx=siblings.findIndex(e=>e.id===m.id);
+  if(siblings.length) selectElement(siblings[(idx+dir+siblings.length)%siblings.length].id);
+}
+function handleElementClick(event){
+  if(!renderer||!camera||!selectables.length) return;
+  const rect=renderer.domElement.getBoundingClientRect();
+  const mouseN=new THREE.Vector2(((event.clientX-rect.left)/rect.width)*2-1,-((event.clientY-rect.top)/rect.height)*2+1);
+  const ray=new THREE.Raycaster(); ray.setFromCamera(mouseN,camera);
+  const hits=ray.intersectObjects(selectables,true);
+  if(!hits.length) return;
+  const id=hits[0].object.userData.elementId;
+  const now=Date.now();
+  if(id===lastClickedId && now-lastClickTime<420) clickCount++; else clickCount=1;
+  lastClickedId=id; lastClickTime=now;
+  selectElement(id);
+  if(clickCount===2) promoteSelection();
+  if(clickCount>=3){promoteSelection();promoteSelection();clickCount=0;}
+}
+function hierarchyPath(meta){
+  const arr=[]; let m=meta;
+  while(m){arr.unshift(m);m=elementRegistry.find(e=>e.id===m.parent);}
+  return arr;
+}
+function highlightSelectedElement(){
+  if(!modelGroup||!selectedElementId) return;
+  if(selectionOutline){modelGroup.remove(selectionOutline);selectionOutline=null,simTimer=null,simDirection=1,simSpeed=1,simDay=1;}
+  const obj=selectables.find(o=>o.userData.elementId===selectedElementId);
+  if(!obj) return;
+  const box3=new THREE.Box3().setFromObject(obj);
+  const helper=new THREE.Box3Helper(box3,0xd6a84f);
+  selectionOutline=helper; modelGroup.add(helper);
+}
+function renderSelectedElementInspector(){
+  if(!document.getElementById("selectedElementTable")) return;
+  const meta=selectedMeta();
+  if(!meta){
+    document.getElementById("selectionPath").innerHTML='<span class="pathCrumb">No element selected</span>';
+    return;
+  }
+  const q=elementQtyUnit(meta.type), fin=elementFinancial(meta.type,meta.type==="SEGMENT"?meta.id:null), cross=elementCostCrosstab(meta.type,meta.type==="SEGMENT"?meta.id:null);
+  document.getElementById("selectionPath").innerHTML=hierarchyPath(meta).map(x=>`<span class="pathCrumb" onclick="selectElement('${x.id}')">${x.label}</span>`).join("");
+  const concVol=meta.type==="CONCRETE"?lastCalc.cradleCY:meta.type==="MANHOLES"?lastCalc.mhCount*3.2:0;
+  const rebarLen=concVol?concVol*95:0;
+  const completion=fin.budget?Math.min(100,(fin.actualCost/Math.max(1,fin.projectedCost))*100):0;
+  document.getElementById("selectedElementTable").innerHTML=table([["Field",0],["Value",1],["Definition",0]],[
+    ["Element ID",`<span class="costCode">${meta.id}</span>`,"3D/BIM object tag"],
+    ["Element type",meta.type,"selected family/subfamily"],
+    ["Hierarchy level",meta.level,"0 system, 1 section, 2 component"],
+    ["Primary quantity",`${fmt(q[1],2)} ${q[0]}`,"unit-aware element quantity"],
+    ["Concrete volume",`${fmt(concVol,2)} CY`,"calculated or allowance for selected concrete/structure element"],
+    ["Rebar length allowance",`${fmt(rebarLen,0)} LF`,"placeholder: 95 LF/CY rebar density assumption"],
+    ["Completion %",`${fmt(completion,1)}%`,"actual/projected cost progress proxy"],
+    ["Related activities",elementActivityIds(meta.type).join(", "),"WBS activities linked to element"]
+  ]);
+  document.getElementById("selectedElementFinanceTable").innerHTML=table([["Metric",0],["Value",1],["Meaning",0]],[
+    ["Estimated/BAC",money(fin.budget),"baseline estimated cost"],
+    ["Actual cost",money(fin.actualCost),"coded actual cost to date"],
+    ["System projected cost/EAC",money(fin.projectedCost),"actual + forecast remaining"],
+    ["Billing revenue",money(fin.revenue),"budget plus markup / revenue view"],
+    ["Projected profit",money(fin.profit),"revenue minus projected cost"],
+    ["Variance",`<span class="${fin.variance>0?'deltaBad':'deltaGood'}">${money(fin.variance)}</span>`,"projected cost minus estimated cost"],
+    ["Estimated MH",fmt(fin.laborMH,0),"baseline labor hours"],
+    ["Actual MH",fmt(fin.actualMH,0),"coded actual labor hours"]
+  ]);
+  document.getElementById("selectedElementCompareTable").innerHTML=table([["Metric",0],["Estimated",1],["Actual",1],["Projected",1],["Variance",1]],[
+    ["Cost",money(fin.budget),money(fin.actualCost),money(fin.projectedCost),money(fin.variance)],
+    ["Man-hours",fmt(fin.laborMH,0),fmt(fin.actualMH,0),fmt(fin.laborMH*(fin.projectedCost/Math.max(1,fin.budget)),0),fmt(fin.actualMH-fin.laborMH,0)],
+    ["Billing / revenue",money(fin.revenue),"-",money(fin.revenue),"-"],
+    ["Profit",money(fin.revenue-fin.budget),"-",money(fin.profit),money(fin.profit-(fin.revenue-fin.budget))]
+  ]);
+  document.getElementById("selectedElementCostCrosstab").innerHTML=table([["Category",0],["Code Suffix",0],["Estimated",1],["Actual",1],["Projected",1]],Object.entries(costCategoryMeta).map(([cat,c])=>[
+    `<span class="categoryPill">${cat}</span> ${c.label}`,c.suffix,money(cross[cat].est),money(cross[cat].actual),money(cross[cat].proj)
+  ]));
+  document.getElementById("elementHierarchyTable").innerHTML=table([["Element",0],["Type",0],["Parent",0],["Level",1],["Actions",0]],elementRegistry.map(e=>[
+    `<span class="costCode">${e.id}</span> ${e.label}`,e.type,e.parent||"-",e.level,`<button class="small secondary" onclick="selectElement('${e.id}')">Select</button>`
+  ]));
+}
+function setupElementKeyboard(){
+  if(window.__elementKeysReady) return; window.__elementKeysReady=true;
+  window.addEventListener("keydown",e=>{
+    if(["INPUT","SELECT","TEXTAREA"].includes(document.activeElement?.tagName)) return;
+    if(e.key==="ArrowUp"){promoteSelection();e.preventDefault();}
+    if(e.key==="ArrowDown"){selectChildDetail();e.preventDefault();}
+    if(e.key==="ArrowRight"){cycleSelection(1);e.preventDefault();}
+    if(e.key==="ArrowLeft"){cycleSelection(-1);e.preventDefault();}
+    if(e.key==="Escape"){clearElementSelection();e.preventDefault();}
+  });
+}
+
+function advMat(color, opacity=1, metalness=0.02, roughness=0.75){
+  return new THREE.MeshStandardMaterial({color,transparent:opacity<1,opacity,metalness,roughness,side:THREE.DoubleSide,depthWrite:opacity>=0.35});
+}
+function cylBetween3D(start,end,radius,material,segments=32,open=false){
+  const dir=new THREE.Vector3().subVectors(end,start), len=dir.length();
+  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,len,segments,1,open),material);
+  mesh.position.copy(new THREE.Vector3().addVectors(start,end).multiplyScalar(.5));
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
+  modelGroup.add(mesh);
+  return mesh;
+}
+function coneBetween3D(start,end,radius,material){
+  const dir=new THREE.Vector3().subVectors(end,start), len=dir.length();
+  const mesh=new THREE.Mesh(new THREE.ConeGeometry(radius,len,24),material);
+  mesh.position.copy(new THREE.Vector3().addVectors(start,end).multiplyScalar(.5));
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
+  modelGroup.add(mesh);
+  return mesh;
+}
+function addFlowArrow3D(x1,y1,z1,x2,y2,z2,scale=1){
+  const m=advMat(0x2563eb,0.95,0.05,0.45);
+  cylBetween3D(new THREE.Vector3(x1,y1,z1),new THREE.Vector3(x2,y2,z2),0.06*scale,m,16,false);
+  const dx=x2-x1,dy=y2-y1,dz=z2-z1, mag=Math.max(.001,Math.sqrt(dx*dx+dy*dy+dz*dz));
+  const sx=x2-dx/mag*.45*scale, sy=y2-dy/mag*.45*scale, sz=z2-dz/mag*.45*scale;
+  coneBetween3D(new THREE.Vector3(sx,sy,sz),new THREE.Vector3(x2,y2,z2),0.22*scale,m);
+}
+function addTorusAt(x,y,z,r,tube,color,rot="x"){
+  const mesh=new THREE.Mesh(new THREE.TorusGeometry(r,tube,12,64),advMat(color,0.95,0.25,0.55));
+  if(rot==="x") mesh.rotation.x=Math.PI/2;
+  if(rot==="y") mesh.rotation.y=Math.PI/2;
+  if(rot==="z") mesh.rotation.z=Math.PI/2;
+  mesh.position.set(x,y,z);
+  modelGroup.add(mesh);
+  return mesh;
+}
+function renderModelLayerSummary(){
+  const el=document.getElementById('modelLayerSummary');
+  if(!el||!lastCalc) return;
+  const layers=[
+    ['Roadway context','asphalt slab, sidewalks, curbs'],
+    ['Transparent soil','trench/soil envelope and cutaway'],
+    ['Utility context','gas, water, electric, telecom placeholders'],
+    ['Clearance envelopes','main sewer and manhole visual buffers'],
+    ['Pile context',val('foundationContext')==='pile'?'visual pile-supported cradle':'earth/rock cradle'],
+    ['4D phase overlay',val('phaseOverlay')],
+    ['Network elements','flow arrows, CB leads, house lateral/riser'],
+    ['Section slice','typical RCP cradle section marker'],
+    ['Stationing','segment ticks and station labels']
+  ];
+  el.innerHTML=layers.map(x=>`<div class="modelLayerChip"><b>${x[0]}</b><br><span class="note">${x[1]}</span></div>`).join('');
+}
+
+function buildModel3D(){
+  if(!renderer) init3D();
+  if(!modelGroup||!lastCalc||typeof THREE==="undefined") return;
+  while(modelGroup.children.length) modelGroup.remove(modelGroup.children[0]);
+  resetElementRegistry();
+
+  const signature=val('assemblyPreset')==='signature';
+  const s=.18, L=lastCalc.length*s, B=lastCalc.baseWidth*s, T=lastCalc.topWidth*s, D=lastCalc.trenchDepth*s, R=lastCalc.pipeOD/2*s, hl=L/2;
+  const roadwayW=Math.max(T+7,34*s), sidewalkW=7*s, curbW=.45*s;
+
+  const asphalt=advMat(0x242830,1,0.01,.95), sidewalk=advMat(0xd7d7d0,1,0.01,.85), soil=advMat(0x8a6f4b,.22,0,1);
+  const concrete=advMat(0xb8b8b8,1,.02,.85), rcp=advMat(0xa6a6a6,1,.01,.75), cradleM=advMat(0xc7c7c7,1,.02,.88);
+  const iron=advMat(0x171717,1,.35,.55), waterM=advMat(0x4aa3df,.32,0,.25), clearanceM=advMat(0x22c55e,.14,0,.45);
+  const utilGas=advMat(0xf59e0b,1,0,.5), utilWater=advMat(0x0284c7,1,0,.5), utilElec=advMat(0xdc2626,1,0,.5), utilTel=advMat(0x7c3aed,1,0,.5);
+  const timber=advMat(0x7a4d2a,1,0,.75), phaseM=advMat(0xc99a2e,.35,.05,.35);
+
+  // Roadway / curb / sidewalk / transparent soil context
+  box(0,.06,0,L+28,.12,roadwayW,asphalt);
+  box(0,.16,roadwayW/2+sidewalkW/2,L+28,.18,sidewalkW,sidewalk);
+  box(0,.16,-roadwayW/2-sidewalkW/2,L+28,.18,sidewalkW,sidewalk);
+  box(0,.36,roadwayW/2,L+28,.36,curbW,sidewalk);
+  box(0,.36,-roadwayW/2,L+28,.36,curbW,sidewalk);
+  box(0,-D/2,0,L+18,D,T+10*s,soil);
+
+  // Trapezoidal trench cutaway
+  let geom=new THREE.BufferGeometry(),verts=new Float32Array([
+    -hl,0,-T/2, hl,0,-T/2, -hl,-D,-B/2, hl,0,-T/2, hl,-D,-B/2, -hl,-D,-B/2,
+    -hl,0,T/2, -hl,-D,B/2, hl,0,T/2, hl,0,T/2, -hl,-D,B/2, hl,-D,B/2,
+    -hl,-D,-B/2, hl,-D,-B/2, -hl,-D,B/2, hl,-D,-B/2, hl,-D,B/2, -hl,-D,B/2
+  ]);
+  geom.setAttribute('position',new THREE.BufferAttribute(verts,3)); geom.computeVertexNormals();
+  modelGroup.add(new THREE.Mesh(geom,advMat(0x6b4a33,.46,0,.9)));
+
+  // Shoring / sheeting walls
+  if(lastCalc.sheetingSF>0){box(0,-D/2,-B/2,L,D,.18,advMat(0x6f8ba3,.62));box(0,-D/2,B/2,L,D,.18,advMat(0x6f8ba3,.62));}
+
+  // Bedding, concrete cradle, pipe
+  box(0,-D+.1,0,L,.2,B,advMat(0xb7b0a1,.86));
+  box(0,-D+R*.55,0,L,.36,lastCalc.p.A*s,cradleM);
+  box(0,-D+R*.9,lastCalc.p.A*s/2-.12,L,.65,.16,cradleM);
+  box(0,-D+R*.9,-lastCalc.p.A*s/2+.12,L,.65,.16,cradleM);
+  cylX(0,-D+R+.38,0,R,L,rcp);
+
+  // Pile-supported cradle visual context
+  if(val('foundationContext')==='pile' || signature){
+    const rows=lastCalc.pipeOD>=4?[-lastCalc.p.A*s*.36,0,lastCalc.p.A*s*.36]:[-lastCalc.p.A*s*.33,lastCalc.p.A*s*.33];
+    for(let x=-L/2+4*s;x<=L/2-4*s;x+=10*s){
+      rows.forEach(z=>cylBetween3D(new THREE.Vector3(x,-D+.05,z),new THREE.Vector3(x,-D-7*s,z),.16*s,timber,18,false));
+    }
+  }
+
+  // Manholes with barrels, riser rings, frames/covers, invert collars
+  for(let i=0;i<=lastCalc.segments;i++){
+    let x=-L/2+i*(L/lastCalc.segments), mhR=(lastCalc.mh.diameter/2)*s;
+    cylY(x,-D/2,0,mhR,D,advMat(0x6b7c88,.56));
+    cylY(x,.18,0,mhR+.12,.22,iron);
+    cylY(x,-D+.18,0,mhR+.22,.34,concrete);
+    for(let y=-D+.8;y<-.6;y+=1.3*s){ addTorusAt(x,y,0,mhR+.02,.012,0x111111,"x");}
+    addTorusAt(x,-D+R+.38,0,R+.05,.018,0x111111,"y");
+  }
+
+  // Catch basins, lead pipes, house connection/riser
+  for(let j=0;j<lastCalc.cbCount;j++){
+    let x=-L/2+(j+1)*(L/(lastCalc.cbCount+1)), side=j%2===0?1:-1, z=side*(B/2+2.3*s);
+    box(x,-D*.35,z,1.7*s,D*.45,1.55*s,concrete);
+    box(x,.22,z,1.55*s,.12,1.55*s,iron);
+    box(x,.15,z+side*.95*s,1.6*s,.45*s,.15*s,iron);
+    cylBetween3D(new THREE.Vector3(x,-D*.47,z-side*.3*s),new THREE.Vector3(-L/2,-D+R+.4,0),.22*s,advMat(0x0f4c81,1,0,.6),32,true);
+    addFlowArrow3D(x,-D*.42,z-side*.4*s,(x-L/2)/2,-D*.55,z/2,.9);
+  }
+  cylBetween3D(new THREE.Vector3(-L*.15,-D*.1,roadwayW/2+sidewalkW*.55),new THREE.Vector3(0,-D+R+.45,0),.14*s,advMat(0x1e7d4f,1,0,.6),24,true);
+  cylBetween3D(new THREE.Vector3(0,-D+R+.45,0),new THREE.Vector3(0,-D*.72,.8*s),.18*s,advMat(0x1e7d4f,1,0,.6),24,false);
+
+  // Flow arrows along main
+  addFlowArrow3D(-L/2+8*s,-D+R+1.2*s,-1.5*s,-L/2+22*s,-D+R+1.2*s,-1.5*s,1);
+  addFlowArrow3D(L/2-24*s,-D+R+1.2*s,-1.5*s,L/2-9*s,-D+R+1.2*s,-1.5*s,1);
+
+  // Utility context and clearance envelopes
+  if(val('utilityLayers')==='on'){
+    cylBetween3D(new THREE.Vector3(-L/2-5*s,-2.7*s,roadwayW/2-3*s),new THREE.Vector3(L/2+5*s,-2.7*s,roadwayW/2-3*s),.16*s,utilGas,24,false);
+    cylBetween3D(new THREE.Vector3(-L/2-5*s,-3.8*s,-roadwayW/2+3*s),new THREE.Vector3(L/2+5*s,-3.8*s,-roadwayW/2+3*s),.24*s,utilWater,24,false);
+    cylBetween3D(new THREE.Vector3(-L/2,-1.7*s,3.8*s),new THREE.Vector3(L/2,-1.7*s,3.8*s),.12*s,utilElec,20,false);
+    cylBetween3D(new THREE.Vector3(-L/2,-2.05*s,5.0*s),new THREE.Vector3(L/2,-2.05*s,5.0*s),.09*s,utilTel,20,false);
+    cylX(0,-D+R+.38,0,R+1.0*s,L,clearanceM);
+    for(let i=0;i<=lastCalc.segments;i++){let x=-L/2+i*(L/lastCalc.segments);cylY(x,-D/2,0,(lastCalc.mh.diameter/2+1)*s,D,clearanceM);}
+  }
+
+  // Typical section slice
+  const sx=L*.22;
+  const plane=new THREE.Mesh(new THREE.PlaneGeometry(T+6*s,D+5*s),advMat(0xffffff,.45,0,.75)); plane.rotation.y=Math.PI/2; plane.position.set(sx,-D/2,0); modelGroup.add(plane);
+  addTorusAt(sx,-D+R+.38,0,R,.05*s,0x8fa5b5,"y");
+
+  // Station ticks
+  for(let x=-L/2;x<=L/2+.01;x+=Math.max(10*s,L/12)){
+    box(x,.42,0,.06,0.12,roadwayW,advMat(0x64748b,.75));
+  }
+
+  // 4D phase overlay
+  const phase=val('phaseOverlay');
+  if(phase && phase!=='none'){
+    if(phase==='excavation') box(0,-D*.45,0,L*.72,D*.6,T+1.2*s,phaseM);
+    if(phase==='pipe') cylX(0,-D+R+.38,.35*s,R+.25*s,L*.75,phaseM);
+    if(phase==='structures') for(let i=0;i<=lastCalc.segments;i++){let x=-L/2+i*(L/lastCalc.segments);cylY(x,-D/2,0,(lastCalc.mh.diameter/2+.45)*s,D*.8,phaseM);}
+    if(phase==='backfill') box(0,-D*.25,0,L*.85,D*.35,T+1.8*s,phaseM);
+    if(phase==='asbuilt') box(0,.65,0,L+8,.08,roadwayW+sidewalkW*2,phaseM);
+  }
+
+  if(val('water')==="Wet"||val('dewatering')!=="None") box(0,-D*.58,0,L+10,.04,B+8*s,waterM);
+
+  fitCamera();
+  buildElementRegistryOverlaysV19();
+  renderModelAnnotations();
+  renderModelLayerSummary();
+  renderSelectedElementInspector();
+}
+function drawMap(){let c=document.getElementById('mapCanvas');if(!c)return;let ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);ctx.fillStyle="#07131e";ctx.fillRect(0,0,w,h);for(let x=0;x<w;x+=40){ctx.strokeStyle="#102235";ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}let margin=70,x1=margin,y1=h-margin,x2=w-margin,y2=margin,geo=calcGeo();ctx.strokeStyle="#253d53";ctx.lineWidth=20;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.strokeStyle="#72bbff";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();for(let i=0;i<=lastCalc.segments;i++){let t=i/lastCalc.segments,x=x1+(x2-x1)*t,y=y1+(y2-y1)*t;ctx.fillStyle="#d6a84f";ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.font="11px Arial";ctx.fillText("MH-"+(i+1),x-14,y+24)}for(let i=0;i<lastCalc.cbCount;i++){let t=(i+1)/(lastCalc.cbCount+1),x=x1+(x2-x1)*t,y=y1+(y2-y1)*t;ctx.fillStyle="#ff746c";ctx.fillRect(x+18,y-7,14,14)}ctx.fillStyle="#eaf3f8";ctx.font="14px Arial";ctx.fillText(`${val('locationName')} | ${fmt(geo.dist)} LF | Bearing ${fmt(geo.bearing,1)}°`,22,30);document.getElementById('geoSummaryTable').innerHTML=table([["Metric",0],["Value",1]],[["Coordinate length",fmt(geo.dist,1)+" LF"],["Bearing",fmt(geo.bearing,2)+"°"],["Model length",fmt(lastCalc.length,1)+" LF"],["Manholes",fmt(lastCalc.mhCount)+" EA"],["Catch basins",fmt(lastCalc.cbCount)+" EA"]]);document.getElementById('mhPlacementTable').innerHTML=table([["MH",0],["Station",0],["Spacing",1]],Array.from({length:lastCalc.mhCount},(_,i)=>[`MH-${i+1}`,`${Math.floor((lastCalc.length*i/lastCalc.segments)/100)}+${String(Math.round((lastCalc.length*i/lastCalc.segments)%100)).padStart(2,"0")}`,i?fmt(lastCalc.length/lastCalc.segments,1)+" LF":"-"]))}
+function buildReport(){if(!lastCalc)return;let f=forecast().totals,p90=percentile(riskResults,.9);document.getElementById('reportContent').innerHTML=`<h2>NYC Sewer Construction Intelligence Report</h2><p><b>Project:</b> ${val('projectName')}<br><b>Location:</b> ${val('locationName')}<br><b>Generated:</b> ${new Date().toLocaleString()}</p><div class="rgrid"><div class="rkpi">Budget<b>${money(f.budget)}</b></div><div class="rkpi">Revenue<b>${money(f.revenue)}</b></div><div class="rkpi">EAC<b>${money(f.eac)}</b></div><div class="rkpi">P90<b>${money(p90)}</b></div><div class="rkpi">Profit<b>${money(f.profit)}</b></div><div class="rkpi">TCPI<b>${fmt(f.tcpi,2)}</b></div><div class="rkpi">Length<b>${fmt(lastCalc.length)} LF</b></div><div class="rkpi">Pipe<b>${lastCalc.p.display}</b></div></div><h3>4D/5D EVM Summary</h3><table>${table([["Metric",0],["Value",1]],[["PV",money(evmSeries().snapshot.PV)],["EV",money(evmSeries().snapshot.EV)],["AC",money(evmSeries().snapshot.AC)],["SV",money(evmSeries().snapshot.SV)],["CV",money(evmSeries().snapshot.CV)],["SPI",fmt(evmSeries().snapshot.SPI,2)],["CPI",fmt(evmSeries().snapshot.CPI,2)]])}</table><h3>Engineering / PM Summary</h3><table>${table([["Parameter",0],["Value",1]],[["Trench Depth",fmt(lastCalc.trenchDepth,1)+" ft"],["Base / Top Width",fmt(lastCalc.baseWidth,1)+" / "+fmt(lastCalc.topWidth,1)+" ft"],["Concrete",fmt(lastCalc.cradleCY,1)+" CY"],["Bedding",fmt(lastCalc.bedCY,1)+" CY"],["Completion",fmt((forecast().totals.earned/Math.max(1,forecast().totals.qty))*100,1)+"%"],["TCPI "+infoIcon("tcpi"),fmt(f.tcpi,2)],["Risk P90 "+infoIcon("p90"),money(p90)]])}</table><h3>Construction Time Simulation Summary</h3><table>${table([["Metric",0],["Value",1]],[["Simulation day",simDay],["PV",money(simSnapshot(simDay).PV)],["EV",money(simSnapshot(simDay).EV)],["AC",money(simSnapshot(simDay).AC)],["Billing",money(simSnapshot(simDay).billing)],["Cash",money(simSnapshot(simDay).cash)]])}</table><h3>Selected Element / Hierarchy Summary</h3><p>Selected element: ${selectedMeta()?.label||'Total sewer system'} (${selectedMeta()?.id||'SYS-SEWER'}). Element-level ERP and engineering breakdown is available in the Element Explorer tab.</p><h3>ERP / Cost Category Summary</h3><table>${table([["Category",0],["Estimated",1],["Actual",1],["Projected",1]],Object.entries(costCategoryMeta).map(([cat,meta])=>[cat+" "+meta.label,money(categoryTotals().est[cat]),money(categoryTotals().act[cat]),money(categoryTotals().proj[cat])]))}</table><h3>Assumptions</h3><p>This is a conceptual simulator. Verify DEP/DDC details, survey, utilities, geotechnical conditions, traffic requirements, and current wage schedules before real use.</p>`}
+function docs(){document.getElementById('docsText').innerHTML=`<p><b>v0.19 focus:</b> reliable clickable 3D and construction time simulation. Click feedback now appears directly in the 3D viewport as a HUD/info card, with selection outline and Element Explorer synchronization. A new Time Simulation tab adds play, pause, reverse, step, speed control, PV/EV/AC/billing/cashflow animation, active WBS sequence, and 3D phase overlay synchronization. 3D objects can now be selected to inspect engineering quantity, concrete volume, rebar allowance, completion, cost, billing revenue, labor hours, ERP category suffixes, and estimated vs actual vs projected values. Double-click promotes to the next larger subgroup; triple-click promotes higher. Keyboard selection is supported with arrow keys and Escape. v0.17 ERP/CMiC cost codes remain active. The Executive Drilldown no longer presents a misleading mixed-unit quantity such as LF + CY + SF + EA. It now shows a primary quantity with unit and a unit-aware quantity table. Cost codes are split into -L, -M, -C, -S, -E, and -R suffixes for labor, material, consumables, subcontract, equipment, and revenue/billing. v0.16 advanced 3D civil twin remains active. The model now adopts the best visualization concepts from the attached DEP workbench: roadway/curb/sidewalk context, transparent soil, utility context, clearance envelopes, typical section slice, pile-supported cradle context, flow arrows, station ticks, catch basin leads, house connection/riser, 4D construction phase overlay, and richer element annotations. v0.15 4D/5D EVM remains active. The app now provides PV/EV/AC curves, SPI, CPI, SV, CV, current-day controls, and subgroup EVM by system, segment, component, or activity. v0.14 field import and data quality remain active. The app can now import CSV actuals, map common field-log headers, validate missing or inconsistent segment/station/component coding, auto-repair basic coding gaps, and score the reliability of the actuals data feeding executive drilldowns. v0.13 segment-coded actuals remain active. Daily actuals now carry segment, station range, and component tags so PM/executive drilldowns can read actual vs estimated vs projected values directly for selected sections/components instead of relying only on allocation. v0.12 formula transparency remains active. Every key PM and engineering field now has an <b>i</b> information icon with a KaTeX/LaTeX governing formula, definition, and variable explanation. v0.11 executive drilldown remains active. PMs and project executives can now view whole-system and selected-scope performance by segment, section, component, or activity, including estimated vs actual vs projected quantity, cost, billing, profit, variance, risk/opportunity, completion percentage, TCPI, and man-hour variance.</p><div class="code">EAC = Actual Cost + CTC
+TCPI = (Budget - Actual Cost) / CTC
+What-If CTC = Frozen CTC / Productivity Factor × Material Factor × Delay Factor
+P90 = 90th percentile of simulated final-cost outcomes</div><p class="note">3D troubleshooting: v0.9.1 fixes the hidden-tab zero-width canvas issue, rebuilds geometry after reset, and prevents duplicate window pointer listeners. The model is rendered without external OrbitControls. If Three.js itself fails to load, the status box in the 3D tab will show the issue.</p>`}
+function addActualRow(){let r=lastCalc.rows.find(x=>x.qty>0)||lastCalc.rows[0];let seg=segmentById(defaultActualSegment()); actuals.push({day:actuals.length+1,activity:r.id,segment:seg.id,stationStart:Math.round(seg.start),stationEnd:Math.round(Math.min(seg.end,seg.start+seg.length*.25)),component:inferComponentFromActivity(r.id),qty:0,laborMH:0,laborRate:125,equipCost:0,materialCost:0,reason:"Normal Production"});renderAll()}function updateActual(i,k,v){actuals[i][k]=["day","qty","laborMH","laborRate","equipCost","materialCost","stationStart","stationEnd"].includes(k)?+v:v;renderAll()}function deleteActual(i){actuals.splice(i,1);renderAll()}function clearActuals(){actuals=[];renderAll()}function simulateDailyActuals(){actuals=[];let day=1;lastCalc.rows.forEach(r=>{if(r.qty<=0)return;let rem=r.qty;while(rem>0&&day<160){let factor=.7+Math.random()*.7,reason="Normal Production";if(Math.random()<.12){reason=["Utility Conflict","Weather","Dewatering","Rock/Hard Dig","Low Productivity"][Math.floor(Math.random()*5)];factor*=.55}let q=Math.min(rem,r.prod*factor),unit=r.total/Math.max(1,r.qty);let segs=segmentList(), seg=segs[Math.floor(Math.random()*segs.length)]||segmentById(defaultActualSegment()); let span=Math.max(10,Math.min(seg.length,seg.length*(.15+Math.random()*.35))); let st=seg.start+Math.random()*Math.max(1,seg.length-span); actuals.push({day,activity:r.id,segment:seg.id,stationStart:Math.round(st),stationEnd:Math.round(st+span),component:inferComponentFromActivity(r.id),qty:+q.toFixed(2),laborMH:+(q*crewSize(r.crew)*8/r.prod*(.8+Math.random()*.4)).toFixed(1),laborRate:125,equipCost:+(q*unit*.25).toFixed(0),materialCost:+(q*unit*.45).toFixed(0),reason});rem-=q;day++}});renderAll()}
+function updateRisk(i,k,v){risks[i][k]=k===0?v:+v;runRisk()}function addRisk(){risks.push(["New risk / opportunity",.1,.01,.05]);renderAll()}function deleteRisk(i){risks.splice(i,1);runRisk()}
+function saveScenario(){let inputs={};document.querySelectorAll("input,select").forEach(el=>{if(el.id)inputs[el.id]=el.value});downloadText(JSON.stringify({version:"0.19",inputs,activities,actuals,risks,wageLibrary},null,2),"sewer_simulator_v0_19_scenario.json","application/json")}function loadScenarioFile(ev){let file=ev.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=()=>{let d=JSON.parse(reader.result);Object.entries(d.inputs||{}).forEach(([id,v])=>{let el=document.getElementById(id);if(el)el.value=v});activities=d.activities||activities;actuals=d.actuals||[];risks=d.risks||risks;wageLibrary=d.wageLibrary||wageLibrary;initSelectors();recalculateAll()};reader.readAsText(file)}function downloadCSV(){let csv="day,segment,stationStart,stationEnd,component,activity,qty,laborMH,laborRate,equipCost,materialCost,reason,totalCost\n"+actuals.map(a=>{ensureActualCoding(a);return [a.day,a.segment,a.stationStart,a.stationEnd,a.component,a.activity,a.qty,a.laborMH,a.laborRate,a.equipCost,a.materialCost,`"${a.reason}"`,actualCost(a).toFixed(2)].join(",")}).join("\n");downloadText(csv,"sewer_actuals_v0_13_segment_coded.csv","text/csv")}function downloadText(text,name,type){let blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+function setupEvents(){document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tab,.tabContent').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');if(t.dataset.tab==="model"){setTimeout(()=>{init3D();resize3DToViewer();buildModel3D();fitCamera()},60)} if(t.dataset.tab==="docs"&&window.mermaid){try{mermaid.initialize({startOnLoad:true,theme:"dark"});mermaid.init()}catch(e){}}}));document.querySelectorAll("input,select").forEach(el=>el.addEventListener('change',()=>{if(el.id==="pipeFamily")initSelectors();recalculateAll()}));["prodFactor","matFactor","delayProb"].forEach(id=>document.getElementById(id).addEventListener('input',e=>{document.getElementById(id+"Val").textContent=id==="delayProb"?Math.round(+e.target.value*100)+"%":(+e.target.value).toFixed(2);recalcWhatIf()}));document.getElementById('freezeBtn').addEventListener('click',freezeForecastState);document.getElementById('geoPreset').addEventListener('change',()=>{let p={GREENWICH:[40.7308,-73.9973,40.73385,-73.99495,"Greenwich Village Side Street"],WALL:[40.7061,-74.0107,40.70765,-74.0084,"Wall Street / Financial District"],LOWEREAST:[40.7152,-73.9842,40.718,-73.9821,"Lower East Side Corridor"],ASTORIA:[40.7644,-73.9232,40.76735,-73.92075,"Astoria Queens Corridor"],LIC:[40.7477,-73.9462,40.7497,-73.9439,"Long Island City Utility Corridor"]}[val('geoPreset')];if(p){document.getElementById('startLat').value=p[0];document.getElementById('startLon').value=p[1];document.getElementById('endLat').value=p[2];document.getElementById('endLon').value=p[3];document.getElementById('locationName').value=p[4];applyGeoAlignment()}})}
+window.addEventListener('resize',()=>{resize3DToViewer();});
+window.addEventListener('load',()=>{initSelectors();setupEvents();setupDropZone();setupElementKeyboard();recalculateAll();init3D();buildModel3D();if(window.mermaid){try{mermaid.initialize({startOnLoad:true,theme:"dark"})}catch(e){}}});
+</script>
+</body>
+</html>

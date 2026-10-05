@@ -21,6 +21,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/utility-intelligence-bridge",
     "/labs/utility-intelligence-bridge/dual-story",
     "/labs/utility-intelligence-bridge/field-claims",
+    "/labs/utility-intelligence-bridge/qa-capture-studio",
+    "/labs/nyc-sewer-simulator",
     "/labs/geodesic-intelligence",
     "/labs/diana-moonshot",
     "/labs/tax-architecture-2026",
