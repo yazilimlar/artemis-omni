@@ -24,8 +24,7 @@ export const metadata = createMetadata({
   path: "/erp",
   title: "Prime Industrial ERP | Artemis",
   description:
-    "A public-safe MVP for industrial operations, project controls, finance, procurement, equipment, compliance, and executive decision support.",
-  noIndex: true,
+    "Prime Industrial ERP gives industrial companies one operating picture \u2014 project controls, finance, procurement, equipment, compliance, and executive decision support.",
 });
 
 const metrics = [
@@ -66,7 +65,7 @@ export default function PrimeIndustrialErpPage() {
         <Container className="py-16 lg:py-24">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-mono text-xs uppercase tracking-[0.18em] text-gold-soft">
-              Public MVP · Synthetic demonstration data
+              Live preview · Illustrative demonstration data
             </span>
             <span className="eyebrow">Artemis Operating Systems</span>
           </div>
@@ -209,9 +208,9 @@ export default function PrimeIndustrialErpPage() {
       <section className="py-16 lg:py-24">
         <Container>
           <div className="rounded-2xl border border-gold/25 bg-navy-deep/65 p-8 text-center lg:p-12">
-            <p className="eyebrow">Prime Industrial ERP · MVP 0.1</p>
-            <h2 className="display-serif mx-auto mt-4 max-w-3xl text-3xl text-parchment sm:text-4xl">A public review surface now. A governed operating system next.</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">The next implementation layer is authentication, organization tenancy, Supabase schema, live connectors, audit logs, and role-specific workflows.</p>
+            <p className="eyebrow">Prime Industrial ERP</p>
+            <h2 className="display-serif mx-auto mt-4 max-w-3xl text-3xl text-parchment sm:text-4xl">One operating picture for the whole industrial business.</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">Connect projects, costs, procurement, equipment, and finance in one governed system. Request a pilot to scope your deployment.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Button href="/contact" size="lg">Start pilot scoping</Button>
               <Button href="/labs" variant="outline" size="lg">Explore Artemis proofs</Button>
