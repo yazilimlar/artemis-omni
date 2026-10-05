@@ -189,6 +189,14 @@ const nextConfig = {
           source: "/workbench/runtime/latest/:path*",
           destination: "/labs/geometric-workbench/v5-8/:path*",
         },
+        // The runtime page is served at "/workbench/runtime/latest" (no trailing slash), so its
+        // relative assets (e.g. "./v6-integrity.js") resolve to "/workbench/runtime/<file>", not
+        // ".../latest/<file>". Without this rule they 404 (HTML), the browser blocks them (ORB),
+        // "ARTEMIS_V6 is not defined" is thrown, and the model never initializes.
+        {
+          source: "/workbench/runtime/:file(.+\\.(?:js|css|json|png|jpe?g|svg|webp|woff2?))",
+          destination: "/labs/geometric-workbench/v5-8/:file",
+        },
       ],
       // afterFiles runs after filesystem routes, so app/api/* can never be shadowed.
       afterFiles: primeErpRewrites,
