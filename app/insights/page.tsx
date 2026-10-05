@@ -136,9 +136,6 @@ export default function InsightsPage() {
           <Button href="/library/programs" size="lg">
             Open Source Catalog
           </Button>
-          <Button href="/academy" variant="outline" size="lg">
-            Academy Articles
-          </Button>
         </div>
       </PageHero>
 

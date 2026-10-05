@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Building2, FileSearch, Radar, Wrench } from "lucide-react";
+import { ArrowRight, Building2, Radar, Wrench } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
   title: "BidRoom Product Suite",
   path: "/products/bidroom",
-  description: "Stable public entry point for BidRoom Live, specialty contractor pursuit, AtlasIQ procurement intelligence, and the Evidence Engine.",
+  description: "Stable public entry point for BidRoom Live, specialty contractor pursuit, and AtlasIQ procurement intelligence.",
   noIndex: true,
 });
 
@@ -30,13 +30,6 @@ const variants = [
     label: "Multi-jurisdiction intelligence",
     description: "Federated portal registry, normalized opportunities, smart filters, qualifications, permits, and addenda.",
     icon: Building2,
-  },
-  {
-    href: "/products/bidroom/evidence-engine",
-    title: "BidRoom Evidence Engine",
-    label: "Bid-package understanding",
-    description: "Document register, drawings, specifications, addendum deltas, scope evidence, and model verification workflow.",
-    icon: FileSearch,
   },
 ];
 

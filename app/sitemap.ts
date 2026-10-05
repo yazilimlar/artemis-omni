@@ -27,10 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/turkiye-atlas",
     "/labs/troy-time-atlas",
     "/labs/george-aegean-quest",
-    "/academy",
     "/tools",
-    "/case-studies",
-    "/demo",
     "/portfolio",
     "/library",
     "/library/programs",
@@ -39,6 +36,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/platform",
     "/about",
     "/contact",
+    "/erp",
+    "/integrate",
   ].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,
@@ -46,7 +45,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : path === "/platform" ? 0.9 : 0.7,
   }));
 
-  const content = (["academy", "labs", "case-studies"] as const).flatMap((collection) =>
+  const content = (["labs"] as const).flatMap((collection) =>
     getSlugs(collection).map((slug) => ({
       url: `${base}/${collection}/${slug}`,
       lastModified: now,

@@ -168,6 +168,41 @@ const nextConfig = {
         destination: "/workbench/app",
         permanent: false,
       },
+      {
+        source: "/demo",
+        destination: "/portfolio",
+        permanent: false,
+      },
+      {
+        source: "/labs/prime-erp",
+        destination: "/erp",
+        permanent: false,
+      },
+      {
+        source: "/products/bidroom/evidence-engine",
+        destination: "/products/bidroom/atlasiq",
+        permanent: false,
+      },
+      {
+        source: "/academy",
+        destination: "/insights",
+        permanent: false,
+      },
+      {
+        source: "/academy/:slug",
+        destination: "/insights",
+        permanent: false,
+      },
+      {
+        source: "/case-studies",
+        destination: "/insights",
+        permanent: false,
+      },
+      {
+        source: "/case-studies/:slug",
+        destination: "/insights",
+        permanent: false,
+      },
     ];
   },
   async rewrites() {

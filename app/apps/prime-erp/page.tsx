@@ -8,9 +8,9 @@ const primeErpUrl = process.env.NEXT_PUBLIC_PRIME_ERP_URL || "";
 
 export const metadata = createMetadata({
   path: "/apps/prime-erp",
-  title: "Prime Industrial ERP | Artemis Apps",
+  title: "Prime ERP \u2014 Client Access | Artemis",
   description:
-    "Controlled client access point for the live Prime Industrial ERP operating dashboard.",
+    "Secure client access point for the live Prime Industrial ERP operating dashboard.",
   noIndex: true,
 });
 
@@ -34,7 +34,7 @@ export default function PrimeErpAccessPage() {
           <div className="mt-7 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div>
               <p className="font-mono text-sm uppercase tracking-[0.22em] text-gold-soft">
-                Prime Industrial ERP
+                Prime ERP \u00b7 Client Access
               </p>
               <h1 className="display-serif mt-3 max-w-4xl text-balance text-4xl leading-[1.04] text-parchment sm:text-5xl lg:text-6xl">
                 Live operating dashboard for orders, invoices, banking, tax, and reconciliation.

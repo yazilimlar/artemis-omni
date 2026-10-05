@@ -5,7 +5,6 @@ import {
   Building2,
   CheckCircle2,
   ExternalLink,
-  FileSearch,
   Radar,
   Route,
   ShieldCheck,
@@ -76,13 +75,6 @@ const workspaces = [
     title: "AtlasIQ",
     description: "Explore opportunity coverage across agencies, geographies, portals, and requirements.",
     icon: Radar,
-  },
-  {
-    href: "/products/bidroom/evidence-engine",
-    label: "Document intelligence",
-    title: "Evidence Engine",
-    description: "Trace findings back to notices, drawings, specifications, clauses, and addenda.",
-    icon: FileSearch,
   },
 ] as const;
 

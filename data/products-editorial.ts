@@ -109,38 +109,6 @@ export const productsEditorial: ProductEditorial[] = [
     ],
     audience: "IT, operations, and finance",
   },
-  {
-    slug: "ops",
-    registryId: null,
-    name: "Artemis Ops",
-    kicker: "Operating Dashboards · Analytics",
-    status: "roadmap",
-    route: null,
-    summary:
-      "Operating dashboards and business decision systems (DuckDB-style analytics). Roadmap module — no dedicated public page yet.",
-    capabilities: [
-      "Operating dashboards",
-      "Decision-oriented analytics",
-      "Department rollups",
-    ],
-    audience: "Operations and executive teams",
-  },
-  {
-    slug: "desk",
-    registryId: null,
-    name: "Artemis Desk",
-    kicker: "Support · Sales · Comms",
-    status: "roadmap",
-    route: null,
-    summary:
-      "Customer support, sales assistant, and communications automation. Roadmap module — no dedicated public page yet.",
-    capabilities: [
-      "Support automation",
-      "Sales assistance",
-      "Communications workflows",
-    ],
-    audience: "Customer-facing teams",
-  },
 ];
 
 export function getProductEditorial(slug: string): ProductEditorial | null {
