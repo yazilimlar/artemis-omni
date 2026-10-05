@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { ExternalLink, FlaskConical, Radar } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -69,9 +70,42 @@ export function BidRoomViewSwitcher() {
   };
 
   const activeView = views.find((view) => view.id === activeViewId) ?? views[0];
+  // Embedded views hide their own header chrome (?embedded=switchboard) so the
+  // switchboard is the single navigation frame — no navigation inside the box.
+  const frameSrc = `${activeView.href}?embedded=switchboard`;
 
   return (
     <div className="mx-auto max-w-[1600px] px-4 pb-8 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" className="mb-4">
+        <ol className="flex flex-wrap items-center gap-2 font-mono text-[0.62rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+          <li>
+            <Link
+              href="/products/bidroom"
+              className="transition hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              BidRoom Nexus
+            </Link>
+          </li>
+          <li aria-hidden="true" className="text-muted-foreground/60">
+            /
+          </li>
+          <li>
+            <Link
+              href="/products/bidroom/switchboard"
+              className="transition hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Review Switchboard
+            </Link>
+          </li>
+          <li aria-hidden="true" className="text-muted-foreground/60">
+            /
+          </li>
+          <li aria-current="page" className="text-gold">
+            {activeView.label}
+          </li>
+        </ol>
+      </nav>
+
       <div
         className="grid gap-3 md:grid-cols-2"
         role="tablist"
@@ -144,7 +178,7 @@ export function BidRoomViewSwitcher() {
         </div>
         <iframe
           key={activeView.id}
-          src={activeView.href}
+          src={frameSrc}
           title={`${activeView.label} interactive view`}
           className="block h-[78dvh] min-h-[720px] w-full border-0 bg-background"
           loading="lazy"
