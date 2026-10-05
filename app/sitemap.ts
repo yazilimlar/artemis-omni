@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/utility-intelligence-bridge/field-claims",
     "/labs/geodesic-intelligence",
     "/labs/lego-build-studio",
+    "/labs/lego-build-studio-music",
     "/labs/diana-moonshot",
     "/labs/tax-architecture-2026",
     "/labs/turkiye-atlas",
