@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-03T04:04:57.000Z",
+    "generated_at": "2026-10-05T21:10:42.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-03T04:04:57.000Z",
+  "generated_at": "2026-10-05T21:10:42.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -2977,6 +2977,22 @@
       "outcome": "added"
     },
     {
+      "id": "EVT-adr-019",
+      "type": "adr_added",
+      "date": "2026-10-03T00:00:00.000Z",
+      "title": "ADR-019: DayOS Compositional Architecture",
+      "summary": "Accepted; extends ADR-006, ADR-011, ADR-017. DayOS owns the Daily Ledger, correlation, evidence graph and My Day UI; Dawarich (location) and Immich (media) run unmodified as separate AGPL services behind TypeScript interfaces in `lib/dayos/interfaces/` with adapters as the only integration code; read-only in v1, self-hosted, local-only, no real personal data in the repo; any modification of AGPL code needs a new ADR and legal review.",
+      "references": [
+        "ADR-019",
+        "decisions/ADR-019-dayos-compositional-architecture.md",
+        "9c8b7f1",
+        "PR#116"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
       "id": "EVT-pr-98",
       "type": "pr_merged",
       "date": "2026-10-03T00:34:16.000Z",
@@ -3175,22 +3191,458 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-54",
+      "type": "pr_merged",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "DayOS v0.9.8a — Spatial Intelligence",
+      "summary": "DayOS v0.9.8a — Spatial Intelligence (10 files changed).",
+      "references": [
+        "PR#54",
+        "05bb5cf"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-product-dayos-status-05bb5cf",
+      "type": "product_status_changed",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Product status changed: dayos",
+      "summary": "lifecycle: concept -> active_lab; visibility: UNREVIEWED -> noindex_review",
+      "references": [
+        "05bb5cf",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#54"
+      ],
+      "division": "UNREVIEWED",
+      "product": "dayos",
+      "outcome": "lifecycle=active_lab, visibility=noindex_review"
+    },
+    {
+      "id": "EVT-registry-05bb5cf",
+      "type": "registry_changed",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Registry changed: DayOS v0.9.8a — Spatial Intelligence",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "05bb5cf",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#54"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-05bb5cf-dayos-v098a",
+      "type": "route_added",
+      "date": "2026-10-03T04:21:00.000Z",
+      "title": "Route added: /dayos-v098a",
+      "summary": "app/dayos-v098a/page.tsx added in 05bb5cf.",
+      "references": [
+        "05bb5cf",
+        "app/dayos-v098a/page.tsx",
+        "PR#54"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-55",
+      "type": "pr_merged",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "DayOS v0.9.8b — Telemetry & Critical Timing",
+      "summary": "DayOS v0.9.8b — Telemetry & Critical Timing (12 files changed).",
+      "references": [
+        "PR#55",
+        "d961272"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-d961272",
+      "type": "registry_changed",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "Registry changed: DayOS v0.9.8b — Telemetry & Critical Timing",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "d961272",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#55"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-d961272-dayos-v098b",
+      "type": "route_added",
+      "date": "2026-10-03T04:38:25.000Z",
+      "title": "Route added: /dayos-v098b",
+      "summary": "app/dayos-v098b/page.tsx added in d961272.",
+      "references": [
+        "d961272",
+        "app/dayos-v098b/page.tsx",
+        "PR#55"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-56",
+      "type": "pr_merged",
+      "date": "2026-10-03T05:04:01.000Z",
+      "title": "DayOS v0.9.8c — Scenario Overlay & Smart Controls",
+      "summary": "DayOS v0.9.8c — Scenario Overlay & Smart Controls (10 files changed).",
+      "references": [
+        "PR#56",
+        "bfab08c"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-bfab08c",
+      "type": "registry_changed",
+      "date": "2026-10-03T05:04:01.000Z",
+      "title": "Registry changed: DayOS v0.9.8c — Scenario Overlay & Smart Controls",
+      "summary": "Touched ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "bfab08c",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#56"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-route-added-bfab08c-dayos-v098c",
+      "type": "route_added",
+      "date": "2026-10-03T05:04:01.000Z",
+      "title": "Route added: /dayos-v098c",
+      "summary": "app/dayos-v098c/page.tsx added in bfab08c.",
+      "references": [
+        "bfab08c",
+        "app/dayos-v098c/page.tsx",
+        "PR#56"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-116",
+      "type": "pr_merged",
+      "date": "2026-10-03T11:19:13.000Z",
+      "title": "governance: add ADR-019 (DayOS compositional architecture)",
+      "summary": "governance: add ADR-019 (DayOS compositional architecture) (3 files changed).",
+      "references": [
+        "PR#116",
+        "9c8b7f1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-adr-020",
+      "type": "adr_added",
+      "date": "2026-10-04T00:00:00.000Z",
+      "title": "ADR-020: Algorithm Visualizations",
+      "summary": "Accepted; amends ADR-015, extends ADR-016/017/018. Three tiers: (1) 3D math surfaces with R3F + MathBox in the existing island; (2) 2D step-by-step algorithms with Manim-Web in a separate budgeted island; (3) pre-rendered ManimCE explainer videos (under 30 MB, lazy, visitor-started, rendered offline, never in CI). Libraries are chosen per tier but adopted only after license, size, compatibility, accessibility and fallback gates in the implementing PR; scene registry gains optional `type: \"3d\" | \"manim\"`. Amended 2026-10-04: MathBox failed Gate 3 (removed three symbols, unmaintained since 2023), so Tier 1 uses plain React Three Fiber with no new dependency.",
+      "references": [
+        "ADR-020",
+        "decisions/ADR-020-algorithm-visualizations.md",
+        "8b54aa8",
+        "PR#122"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "Accepted"
+    },
+    {
+      "id": "EVT-pr-118",
+      "type": "pr_merged",
+      "date": "2026-10-04T14:36:25.000Z",
+      "title": "feat(platform): public-safe mirror of the Evolution Archive",
+      "summary": "feat(platform): public-safe mirror of the Evolution Archive (7 files changed).",
+      "references": [
+        "PR#118",
+        "dd21406"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-dd21406-platform",
+      "type": "route_added",
+      "date": "2026-10-04T14:36:25.000Z",
+      "title": "Route added: /platform",
+      "summary": "app/platform/page.tsx added in dd21406.",
+      "references": [
+        "dd21406",
+        "app/platform/page.tsx",
+        "PR#118"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-120",
+      "type": "pr_merged",
+      "date": "2026-10-04T14:51:20.000Z",
+      "title": "governance: apply native_visuals per ADR-017 (5 products, 5 divisions)",
+      "summary": "governance: apply native_visuals per ADR-017 (5 products, 5 divisions) (6 files changed).",
+      "references": [
+        "PR#120",
+        "6349839"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-registry-6349839",
+      "type": "registry_changed",
+      "date": "2026-10-04T14:51:20.000Z",
+      "title": "Registry changed: governance: apply native_visuals per ADR-017 (5 products, 5 divisions)",
+      "summary": "Touched ENGINEERING/DIVISION_REGISTRY.yaml, ENGINEERING/PRODUCT_REGISTRY.yaml.",
+      "references": [
+        "6349839",
+        "ENGINEERING/DIVISION_REGISTRY.yaml",
+        "ENGINEERING/PRODUCT_REGISTRY.yaml",
+        "PR#120"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "committed"
+    },
+    {
+      "id": "EVT-pr-122",
+      "type": "pr_merged",
+      "date": "2026-10-04T15:08:03.000Z",
+      "title": "governance: add ADR-020 (algorithm visualizations, tiered approach)",
+      "summary": "governance: add ADR-020 (algorithm visualizations, tiered approach) (3 files changed).",
+      "references": [
+        "PR#122",
+        "8b54aa8"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-124",
+      "type": "pr_merged",
+      "date": "2026-10-04T15:32:39.000Z",
+      "title": "feat(scenes): Gaussian surface via plain R3F (ADR-020 Tier 1, MathBox rejected)",
+      "summary": "feat(scenes): Gaussian surface via plain R3F (ADR-020 Tier 1, MathBox rejected) (11 files changed).",
+      "references": [
+        "PR#124",
+        "ebe79fc"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-scene-gaussian-surface",
+      "type": "scene_registered",
+      "date": "2026-10-04T15:32:39.000Z",
+      "title": "Scene registered: Gaussian Surface",
+      "summary": "Scene gaussian-surface registered at /labs/scenes/gaussian-surface.",
+      "references": [
+        "ebe79fc",
+        "data/scene-registry.json",
+        "PR#124"
+      ],
+      "division": "core-platform",
+      "product": null,
+      "outcome": "visibility=public_safe_demo; data_mode=synthetic"
+    },
+    {
+      "id": "EVT-pr-126",
+      "type": "pr_merged",
+      "date": "2026-10-04T15:49:19.000Z",
+      "title": "governance: ADR-020 Tier 2 gate evaluation (Manim-Web)",
+      "summary": "governance: ADR-020 Tier 2 gate evaluation (Manim-Web) (1 files changed).",
+      "references": [
+        "PR#126",
+        "de542c2"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-128",
+      "type": "pr_merged",
+      "date": "2026-10-04T16:03:42.000Z",
+      "title": "feat(scenes): bubble-sort via hand-written canvas (ADR-020 Tier 2, no library)",
+      "summary": "feat(scenes): bubble-sort via hand-written canvas (ADR-020 Tier 2, no library) (11 files changed).",
+      "references": [
+        "PR#128",
+        "93a9fd5"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-scene-bubble-sort",
+      "type": "scene_registered",
+      "date": "2026-10-04T16:03:42.000Z",
+      "title": "Scene registered: Bubble Sort",
+      "summary": "Scene bubble-sort registered at /labs/scenes/bubble-sort.",
+      "references": [
+        "93a9fd5",
+        "data/scene-registry.json",
+        "PR#128"
+      ],
+      "division": "core-platform",
+      "product": null,
+      "outcome": "visibility=public_safe_demo; data_mode=synthetic"
+    },
+    {
+      "id": "EVT-pr-130",
+      "type": "pr_merged",
+      "date": "2026-10-05T12:37:51.000Z",
+      "title": "fix(workbench): serve runtime sibling assets so the model initializes",
+      "summary": "fix(workbench): serve runtime sibling assets so the model initializes (2 files changed).",
+      "references": [
+        "PR#130",
+        "ee4daa0"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-132",
+      "type": "pr_merged",
+      "date": "2026-10-05T17:22:37.000Z",
+      "title": "Phase 1: credibility triage (site coherence plan)",
+      "summary": "Phase 1: credibility triage (site coherence plan) (11 files changed).",
+      "references": [
+        "PR#132",
+        "c6ff154"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-136",
+      "type": "pr_merged",
+      "date": "2026-10-05T20:16:06.000Z",
+      "title": "feat(labs): publish LEGO Build Studio as /labs/lego-build-studio",
+      "summary": "feat(labs): publish LEGO Build Studio as /labs/lego-build-studio (5 files changed).",
+      "references": [
+        "PR#136",
+        "49c4afa"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-49c4afa-labs-lego-build-studio",
+      "type": "route_added",
+      "date": "2026-10-05T20:16:06.000Z",
+      "title": "Route added: /labs/lego-build-studio",
+      "summary": "app/labs/lego-build-studio/page.tsx added in 49c4afa.",
+      "references": [
+        "49c4afa",
+        "app/labs/lego-build-studio/page.tsx",
+        "PR#136"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-137",
+      "type": "pr_merged",
+      "date": "2026-10-05T20:23:44.000Z",
+      "title": "feat(labs): publish LEGO Build Studio music edition as /labs/lego-build-studio-music",
+      "summary": "feat(labs): publish LEGO Build Studio music edition as /labs/lego-build-studio-music (6 files changed).",
+      "references": [
+        "PR#137",
+        "a079c7f"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-a079c7f-labs-lego-build-studio-music",
+      "type": "route_added",
+      "date": "2026-10-05T20:23:44.000Z",
+      "title": "Route added: /labs/lego-build-studio-music",
+      "summary": "app/labs/lego-build-studio-music/page.tsx added in a079c7f.",
+      "references": [
+        "a079c7f",
+        "app/labs/lego-build-studio-music/page.tsx",
+        "PR#137"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-140",
+      "type": "pr_merged",
+      "date": "2026-10-05T21:10:42.000Z",
+      "title": "feat(labs): publish LEGO Build Studio Artemis Edition as /labs/lego-build-studio-artemis",
+      "summary": "feat(labs): publish LEGO Build Studio Artemis Edition as /labs/lego-build-studio-artemis (5 files changed).",
+      "references": [
+        "PR#140",
+        "51638a3"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-51638a3-labs-lego-build-studio-artemis",
+      "type": "route_added",
+      "date": "2026-10-05T21:10:42.000Z",
+      "title": "Route added: /labs/lego-build-studio-artemis",
+      "summary": "app/labs/lego-build-studio-artemis/page.tsx added in 51638a3.",
+      "references": [
+        "51638a3",
+        "app/labs/lego-build-studio-artemis/page.tsx",
+        "PR#140"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
     }
   ],
   "stats": {
-    "adrs_total": 18,
+    "adrs_total": 20,
     "adrs_superseded": 1,
     "products_total": 20,
     "products_by_status": {
-      "active_lab": 14,
-      "concept": 1,
+      "active_lab": 15,
       "noindex_draft": 1,
       "rescue": 3,
       "testbed": 1
     },
-    "scenes_total": 5,
+    "scenes_total": 7,
     "milestones_shipped": 7,
-    "prs_merged": 55,
+    "prs_merged": 70,
     "verified_capabilities": 8
   }
 }
