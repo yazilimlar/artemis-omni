@@ -109,6 +109,14 @@
         "/labs/rainbow-house-botanical-field-v9.html"
       ],
       "reason": "URL-only; direct visits isolated"
+    },
+    {
+      "id": "lego-build-studio",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/lego-build-studio.html"
+      ],
+      "reason": "no extra capabilities needed: no downloads, modals, popups, or storage"
     }
   ]
 }

@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEGO Build Studio — 9 Monuments · 10 Palettes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:light dark;
+    --bg:#eef0ec; --panel:#fbfcf9; --ink:#17201d; --muted:#5c6762; --line:#cbd1cc;
+    --accent:#bd3a29; --accent2:#d88b17; --rail:#dce1dc; --chip:#e8ebe7;
+    --good:#20745b; --gold:#9b6510; --shadow:0 18px 55px rgba(25,36,31,.11);
+    --canvas1:#0f2c46; --canvas2:#7fbbe8;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --bg:#101513; --panel:#171d1a; --ink:#f1f3ee; --muted:#9eaaa4; --line:#303a35;
+    --accent:#f05a42; --accent2:#eca53b; --rail:#29312d; --chip:#242c28;
+    --good:#61c29e; --gold:#f0b745; --shadow:0 22px 70px rgba(0,0,0,.4);
+    --canvas1:#151d1a; --canvas2:#3a5866;
+  }}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:Manrope,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg); color:var(--ink); overflow:hidden; -webkit-font-smoothing:antialiased}
+  #app{display:flex; height:100vh; width:100vw}
+  #stage{position:relative; flex:1 1 auto; min-width:0; overflow:hidden; background:var(--canvas1)}
+  .sky{position:absolute; inset:0; pointer-events:none; transition:opacity .75s ease}
+  .sky-day{background:radial-gradient(120% 90% at 50% 8%,#7fbbe8 0%,#4a90c8 30%,#26628f 65%,#0f2c46 100%)}
+  .sky-night{background:radial-gradient(120% 90% at 50% 8%,#1e2c4a 0%,#131e34 42%,#060b14 100%); opacity:0}
+  #stage.night .sky-night{opacity:1}
+  #scene{display:block; width:100%; height:100%; position:relative; z-index:1}
+  .stageTitle{position:absolute; top:22px; left:26px; pointer-events:none; z-index:3; text-shadow:0 2px 18px rgba(0,0,0,.55)}
+  .brandRow{display:flex; gap:6px; align-items:center; margin-bottom:12px; flex-wrap:wrap}
+  .aiBadge,.verBadge,.palBadge{
+    display:inline-flex; gap:6px; align-items:center; padding:5px 10px;
+    background:rgba(10,16,23,.62); border:1px solid rgba(255,255,255,.16);
+    border-radius:100px; color:#fff; font:500 10.5px 'DM Mono',monospace;
+    letter-spacing:.05em; backdrop-filter:blur(10px);
+  }
+  .aiBadge{font-weight:600}
+  .aiBadge .dot{width:6px; height:6px; border-radius:50%; background:#f0b745;
+    box-shadow:0 0 0 3px rgba(240,183,69,.25)}
+  .verBadge b{color:#f0b745; font-weight:600}
+  .palBadge i{width:8px; height:8px; border-radius:2px; box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+  .palBadge span{color:#f0b745; font-weight:600}
+  .stageTitle .t1{font-size:26px; font-weight:650; letter-spacing:-.4px}
+  .stageTitle .t2{font-size:12.5px; color:rgba(255,255,255,.78); margin-top:3px; letter-spacing:.3px}
+  .phasePill{display:inline-flex; align-items:center; gap:7px; margin-top:10px;
+    padding:6px 10px; background:rgba(10,16,23,.62);
+    border:1px solid rgba(255,255,255,.18); border-radius:7px;
+    color:#fff; font-size:10.5px; letter-spacing:.05em; backdrop-filter:blur(10px)}
+  .phasePill i{width:6px; height:6px; border-radius:50%; background:#f0b745;
+    box-shadow:0 0 0 3px rgba(240,183,69,.22)}
+  .hint{position:absolute; bottom:16px; left:26px; font-size:11.5px;
+    color:rgba(255,255,255,.6); letter-spacing:.3px; pointer-events:none; z-index:3; text-shadow:0 1px 8px rgba(0,0,0,.6)}
+  .hint kbd{background:rgba(0,0,0,.25); padding:1px 4px; border-radius:3px; font-family:'DM Mono',monospace; font-size:10.5px}
+  .badge{position:absolute; bottom:16px; right:22px; z-index:3; display:flex; gap:8px; align-items:center;
+    background:rgba(16,22,30,.72); border:1px solid rgba(255,255,255,.14);
+    padding:7px 13px; border-radius:100px; font-size:11.5px; color:#cfd9e6; backdrop-filter:blur(10px)}
+  .badge b{color:#f0b745; font-weight:600}
+  #side{flex:0 0 400px; width:400px; height:100vh; background:var(--panel);
+    border-left:1px solid var(--line); display:flex; flex-direction:column; overflow:hidden; z-index:10}
+  .sideHead{display:flex; align-items:center; gap:11px; padding:16px 20px 15px; border-bottom:1px solid var(--line)}
+  .logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(145deg,#ffd23f,#e83b3b 55%,#2b7fd4);
+    display:grid; place-items:center; font-size:17px; box-shadow:0 4px 14px rgba(0,0,0,.18)}
+  .brand{font-size:12px; font-weight:700; letter-spacing:1.4px}
+  .brandsub{font-size:10.5px; color:var(--muted); letter-spacing:.4px; margin-top:1px; font-family:'DM Mono',monospace}
+  .card{padding:14px 20px; border-bottom:1px solid var(--line)}
+  .card.grow{flex:1 1 auto; display:flex; flex-direction:column; min-height:0; border-bottom:none}
+  .cardTitle{font-size:10px; font-weight:700; letter-spacing:1.6px; color:var(--muted);
+    text-transform:uppercase; margin-bottom:10px; display:flex; justify-content:space-between;
+    align-items:center; font-family:'DM Mono',monospace}
+  .cardTitle .sub{font-weight:500; letter-spacing:.3px; text-transform:none; color:var(--muted); font-size:10.5px; opacity:.85}
+  .verStrip{display:flex; gap:4px; background:var(--chip); padding:4px; border-radius:10px;
+    border:1px solid var(--line); overflow-x:auto; scrollbar-width:none; margin-bottom:10px}
+  .verStrip::-webkit-scrollbar{display:none}
+  .verStrip button{flex:1; min-width:48px; border:0; background:transparent; border-radius:7px;
+    padding:8px 8px; font-size:11px; font-weight:700; cursor:pointer; color:var(--muted);
+    letter-spacing:.02em; font-family:'DM Mono',monospace; transition:.15s}
+  .verStrip button:hover{color:var(--ink)}
+  .verStrip button[aria-pressed="true"]{background:var(--ink); color:var(--panel)}
+  .changelog{font-size:11px; line-height:1.45; color:var(--muted); padding:9px 11px;
+    background:var(--chip); border-radius:8px; border-left:3px solid var(--accent)}
+  .changelog strong{color:var(--ink); font-weight:600}
+  .modelRow{display:grid; grid-template-columns:1fr 1fr; gap:5px}
+  .mbtn{display:flex; align-items:center; gap:6px; background:var(--chip); border:1px solid var(--line);
+    border-radius:8px; padding:7px 9px; cursor:pointer; transition:.14s ease; text-align:left;
+    color:var(--ink); font-family:inherit; min-width:0}
+  .mbtn:hover{background:color-mix(in srgb,var(--chip) 70%,var(--ink) 8%)}
+  .mbtn.active{background:color-mix(in srgb,var(--accent) 12%,var(--panel));
+    border-color:var(--accent); box-shadow:inset 2px 0 0 var(--accent)}
+  .mbtn[disabled]{opacity:.32; cursor:not-allowed}
+  .mi{font-size:14px; flex-shrink:0; line-height:1}
+  .mn{font-size:10.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  /* palette grid — 5 columns for 10 entries */
+  .palRow{display:grid; grid-template-columns:repeat(5,1fr); gap:4px}
+  .palBtn{display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:7px 3px 6px; background:var(--chip); border:1px solid var(--line);
+    border-radius:8px; cursor:pointer; transition:.14s; font-family:inherit;
+    color:var(--ink); gap:2px; min-width:0}
+  .palBtn:hover{background:color-mix(in srgb,var(--chip) 70%,var(--ink) 8%)}
+  .palBtn.active{background:color-mix(in srgb,var(--accent) 14%,var(--panel));
+    border-color:var(--accent);
+    box-shadow:inset 0 0 0 1px var(--accent),0 0 12px color-mix(in srgb,var(--accent) 28%,transparent)}
+  .palBtn .pi{font-size:14px; line-height:1}
+  .palBtn .pn{font-size:8px; font-weight:700; letter-spacing:.1px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+  .palSwatch{display:flex; gap:1px; margin-top:1px}
+  .palSwatch > i{display:block; width:5px; height:5px; border-radius:1.5px;
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.28), 0 0 0 1px rgba(0,0,0,.06)}
+  .palSubRow{display:flex; gap:4px; margin-top:8px; flex-wrap:wrap}
+  .palSubBtn{flex:1; min-width:0; justify-content:center; padding:6px 8px; font-size:10.5px}
+  .palSubBtn.active{background:var(--ink); color:var(--panel); border-color:var(--ink)}
+  .ctrlRow{display:flex; gap:6px; margin-bottom:9px; flex-wrap:wrap}
+  button{font-family:inherit; font-size:11.5px; font-weight:600; background:var(--panel); color:var(--ink);
+    border:1px solid var(--line); border-radius:8px; padding:8px 11px; cursor:pointer;
+    transition:.14s; display:inline-flex; align-items:center; gap:5px}
+  button:hover{background:var(--chip); border-color:var(--muted)}
+  button:active{transform:translateY(1px)}
+  button.primary{background:var(--accent); color:#fff; border-color:var(--accent);
+    box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 35%,transparent)}
+  button.primary:hover{background:color-mix(in srgb,var(--accent) 88%,#000)}
+  button.turbo{flex:1; justify-content:center}
+  button.turbo.on{background:linear-gradient(180deg,#ffcf4d,#e09b1c); color:#221a00;
+    border-color:#e0a520; box-shadow:0 0 18px rgba(227,172,63,.45)}
+  button.rewind.on{background:#7c3038; color:#fff; border-color:#c25c68}
+  button.orbit.on{background:var(--good); color:#fff; border-color:var(--good)}
+  button.skyBtn{width:100%; justify-content:center; margin-bottom:8px; background:var(--chip); border-color:var(--line); color:var(--ink)}
+  .speedRow{display:flex; align-items:center; gap:9px; margin-bottom:8px}
+  .speedRow span{font-size:11px; color:var(--muted); white-space:nowrap; font-family:'DM Mono',monospace}
+  .speedRow .mono{width:46px; text-align:right; color:var(--gold); font-weight:600}
+  input[type=range]{-webkit-appearance:none; appearance:none; flex:1; height:4px; border-radius:4px; outline:none;
+    background:linear-gradient(90deg,var(--accent) 0%,var(--accent) var(--p,50%),var(--rail) var(--p,50%),var(--rail) 100%)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:14px; height:14px;
+    border-radius:50%; background:#fff; border:3px solid var(--accent); cursor:pointer;
+    box-shadow:0 1px 6px rgba(0,0,0,.35)}
+  input[type=range]::-moz-range-thumb{width:14px; height:14px; border-radius:50%; background:#fff;
+    border:3px solid var(--accent); cursor:pointer}
+  .timelineRow{margin-bottom:10px}
+  .timelineRow input{width:100%}
+  .statRow{display:flex; gap:7px}
+  .statRow>div{flex:1; background:var(--chip); border:1px solid var(--line); border-radius:8px;
+    padding:7px 9px; display:flex; flex-direction:column; gap:2px}
+  .statRow .lbl{font-size:9px; color:var(--muted); letter-spacing:.5px; text-transform:uppercase;
+    font-family:'DM Mono',monospace}
+  .statRow .val{font-size:13px; font-weight:600; color:var(--ink)}
+  .mono{font-family:'DM Mono',monospace}
+  .stageChips{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px}
+  .stageChip{position:relative; overflow:hidden; min-height:48px; padding:7px 6px 6px 7px;
+    border-radius:7px; background:var(--chip); border:1px solid var(--line);
+    color:var(--muted); font-size:8.5px; line-height:1.18; text-align:left;
+    cursor:pointer; font-family:inherit; transition:.15s; display:flex; flex-direction:column; gap:1px}
+  .stageChip:hover{border-color:var(--muted)}
+  .stageChip .fill{position:absolute; inset:0 auto 0 0; width:0;
+    background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 24%,transparent),
+      color-mix(in srgb,var(--good) 22%,transparent)); pointer-events:none; transition:width .12s linear}
+  .stageChip .ord{display:block; font:600 8.5px 'DM Mono',monospace; color:var(--muted);
+    letter-spacing:.4px; position:relative; z-index:1}
+  .stageChip .lbl{position:relative; z-index:1; font-weight:600}
+  .stageChip.active{color:var(--ink); border-color:var(--accent); box-shadow:inset 0 -2px 0 var(--accent)}
+  .stageChip.done{color:var(--good); border-color:color-mix(in srgb,var(--good) 55%,transparent)}
+  .stageChip.done .ord{color:var(--good)}
+  .progressBlock{margin-bottom:10px}
+  .pbTop{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .pbTop span:first-child{font-size:11px; color:var(--muted)}
+  .pbTop #pct{font-size:18px; font-weight:700; color:var(--good); letter-spacing:-.5px; font-family:'DM Mono',monospace}
+  .pbOuter{height:9px; border-radius:5px; background:var(--rail); border:1px solid var(--line); overflow:hidden; position:relative}
+  .pbInner{height:100%; width:0%; border-radius:5px; background:linear-gradient(90deg,var(--accent),var(--accent2));
+    box-shadow:0 0 14px color-mix(in srgb,var(--accent) 50%,transparent); transition:width .06s linear}
+  .tableWrap{flex:1 1 auto; overflow-y:auto; margin:0 -5px; padding:0 5px; min-height:100px}
+  .tableWrap::-webkit-scrollbar{width:7px}
+  .tableWrap::-webkit-scrollbar-track{background:transparent}
+  .tableWrap::-webkit-scrollbar-thumb{background:var(--rail); border-radius:4px}
+  table{width:100%; border-collapse:collapse; font-size:11px}
+  thead th{position:sticky; top:0; z-index:2; background:var(--panel); text-align:left;
+    font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+    color:var(--muted); padding:6px 5px 7px; border-bottom:1px solid var(--line);
+    font-family:'DM Mono',monospace}
+  thead th.num{text-align:right}
+  tbody td{padding:5px; border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent); vertical-align:middle}
+  tbody tr.done{background:color-mix(in srgb,var(--good) 8%,transparent)}
+  tbody tr.unused{opacity:.3}
+  td.sw{width:13px; padding-right:0}
+  td.sw span{display:block; width:9px; height:9px; border-radius:3px;
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.06)}
+  td.nm{color:var(--ink); font-weight:500}
+  td.num{text-align:right; font-family:'DM Mono',monospace; font-size:10.5px}
+  td.num.placed{color:var(--accent); font-weight:600}
+  td.num.total{color:var(--muted)}
+  tr.done td.num.placed{color:var(--good)}
+  .infoFooter{margin:0 20px 16px; padding:10px 12px; background:var(--chip); border-radius:9px;
+    font-size:10.5px; line-height:1.5; color:var(--muted)}
+  .infoFooter strong{color:var(--ink); font-weight:600}
+  @media (max-width:900px){
+    html,body{height:auto; min-height:100%; overflow:auto}
+    #app{flex-direction:column; height:auto; min-height:100vh}
+    #side{flex:none; width:100%; height:auto; border-left:none; border-top:1px solid var(--line); overflow:visible}
+    #stage{flex:none; height:52vh; min-height:390px}
+    .stageTitle{top:17px; left:18px}
+    .stageTitle .t1{font-size:21px}
+    .badge{right:14px}
+    .modelRow{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .palRow{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .tableWrap{max-height:430px; min-height:260px}
+  }
+  @media(max-width:520px){#stage{height:47vh; min-height:330px}.card{padding:12px 16px}.badge{display:none}
+    .modelRow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <div class="sky sky-day"></div><div class="sky sky-night"></div>
+    <canvas id="scene"></canvas>
+    <div class="stageTitle">
+      <div class="brandRow">
+        <span class="aiBadge"><span class="dot"></span>✦ Built with Claude · Anthropic</span>
+        <span class="verBadge">build <b id="verBadge">v6.0</b></span>
+        <span class="palBadge"><i id="palChipA"></i><i id="palChipB"></i> palette <span id="palBadgeName">Realistic</span></span>
+      </div>
+      <div class="t1" id="modelName">Selimiye Mosque</div>
+      <div class="t2" id="modelSub">Edirne, Türkiye · 1568–1575 · Mimar Sinan</div>
+      <div class="phasePill"><i></i><span id="phaseLive">Phase 1 · Courtyard base</span></div>
+    </div>
+    <div class="hint">Drag orbit · <kbd>Space</kbd> play · <kbd>N</kbd> night · <kbd>T</kbd> turbo · <kbd>O</kbd> orbit · <kbd>P</kbd> palette</div>
+    <div class="badge">🧱 <b id="badgeCount">0</b> bricks · <span id="badgeTypes">0</span> part types</div>
+  </div>
+
+  <aside id="side">
+    <header class="sideHead">
+      <div class="logo">🧱</div>
+      <div>
+        <div class="brand">LEGO BUILD STUDIO</div>
+        <div class="brandsub">nine monuments · forty part types · ten palettes</div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="cardTitle">Version <span class="sub" id="verSub">evolution history</span></div>
+      <div class="verStrip" id="verStrip" role="tablist" aria-label="Choose version"></div>
+      <div class="changelog" id="changelog"><strong>v6.0</strong> — Shuffle + Rainbow colour modes.</div>
+    </section>
+
+    <section class="card">
+      <div class="cardTitle">Model <span class="sub" id="modelCount">9 landmarks</span></div>
+      <div class="modelRow" id="modelGrid"></div>
+    </section>
+
+    <section class="card" id="paletteCard">
+      <div class="cardTitle">Colour palette <span class="sub" id="palSub">Realistic</span></div>
+      <div class="palRow" id="paletteGrid"></div>
+      <div class="palSubRow" id="palSubRow" style="display:none"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardTitle">Playback</div>
+      <button id="dayNightBtn" class="skyBtn">🌙 Night view</button>
+      <div class="ctrlRow">
+        <button id="playBtn" class="primary">▶ Play</button>
+        <button id="restartBtn">↺ Restart</button>
+        <button id="rewindBtn" class="rewind">◀ Rewind</button>
+      </div>
+      <div class="ctrlRow">
+        <button id="turboBtn" class="turbo">» Hold to accelerate</button>
+        <button id="orbitBtn" class="orbit">Auto orbit</button>
+      </div>
+      <div class="speedRow">
+        <span>SPEED</span>
+        <input type="range" id="speed" min="0" max="6" step="1" value="2">
+        <span id="speedVal" class="mono">1.0×</span>
+      </div>
+      <div class="timelineRow">
+        <input type="range" id="timeline" min="0" max="1000" step="1" value="0">
+      </div>
+      <div class="statRow">
+        <div><span class="lbl">Placed</span><span class="val mono" id="statPlaced">0</span></div>
+        <div><span class="lbl">Total</span><span class="val mono" id="statTotal">0</span></div>
+        <div><span class="lbl">Time</span><span class="val mono" id="statTime">0.0s</span></div>
+      </div>
+    </section>
+
+    <section class="card" id="stageCard">
+      <div class="cardTitle">Stages <span class="sub" id="stageSub">5 named phases</span></div>
+      <div class="stageChips" id="stageChips"></div>
+    </section>
+
+    <section class="card grow">
+      <div class="cardTitle">Bill of Materials <span class="sub" id="bomSub">40 part types</span></div>
+      <div class="progressBlock">
+        <div class="pbTop"><span>Overall completion</span><span class="mono" id="pct">0%</span></div>
+        <div class="pbOuter"><div class="pbInner" id="pbFill"></div></div>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th></th><th>Part type</th><th class="num">Placed</th><th class="num">Total</th></tr></thead>
+          <tbody id="bomBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="infoFooter" id="modelInfo">Select a monument to begin.</div>
+  </aside>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+/* =====================================================================
+   0. COLOUR MATH + 10 PALETTES (8 transforms + shuffle + rainbow)
+   ===================================================================== */
+function hexToHsl(hex){
+  const r=((hex>>16)&0xff)/255, g=((hex>>8)&0xff)/255, b=(hex&0xff)/255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h=0, s=0;
+  const l=(max+min)/2, d=max-min;
+  if(d!==0){
+    s = d / (1 - Math.abs(2*l-1));
+    if(max===r) h = ((g-b)/d) % 6;
+    else if(max===g) h = (b-r)/d + 2;
+    else h = (r-g)/d + 4;
+    h *= 60; if(h<0) h += 360;
+  }
+  return {h,s,l};
+}
+function hslToHex(h,s,l){
+  h=((h%360)+360)%360;
+  s=Math.max(0,Math.min(1,s));
+  l=Math.max(0,Math.min(1,l));
+  const c=(1-Math.abs(2*l-1))*s;
+  const x=c*(1-Math.abs(((h/60)%2)-1));
+  const m=l-c/2;
+  let r=0,g=0,b=0;
+  if(h<60){r=c;g=x;b=0;}
+  else if(h<120){r=x;g=c;b=0;}
+  else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;}
+  else if(h<300){r=x;g=0;b=c;}
+  else{r=c;g=0;b=x;}
+  return (((Math.round((r+m)*255)<<16) | (Math.round((g+m)*255)<<8) | Math.round((b+m)*255))>>>0);
+}
+
+/* Shuffle colours — one per part type, regenerated on demand */
+let shuffleSeed = Math.random() * 9973;
+function makeShuffleColors(seed){
+  const out = [];
+  for(let i = 0; i < 40; i++){
+    const r = Math.sin((i+1)*12.9898 + seed*0.0173) * 43758.5453;
+    const frac = ((r % 1) + 1) % 1;
+    // stride hue by golden angle + frac so adjacent types differ strongly
+    const hue = (frac * 360 + i * 137.508) % 360;
+    out.push(hslToHex(hue, 0.72, 0.52));
+  }
+  return out;
+}
+let shuffleColors = makeShuffleColors(shuffleSeed);
+
+const PALETTES = {
+  realistic: { name:'Realistic', icon:'🏛️', tip:'True monument materials',
+    transform: c => c },
+  analog:    { name:'Analog',    icon:'📷', tip:'Warm 35 mm sepia film',
+    transform: c => { const {h,s,l}=hexToHsl(c);
+      return hslToHex(38 + h*0.15, 0.30 + s*0.35, 0.30 + l*0.55); } },
+  tritone:   { name:'Tritone',   icon:'🎨', tip:'Three-stop posterise',
+    transform: c => { const {l}=hexToHsl(c);
+      if(l<0.32) return 0x3a2416;
+      if(l<0.62) return 0xb8865a;
+      return 0xf2e4c8; } },
+  executive: { name:'Executive', icon:'💼', tip:'Navy slate, muted brass',
+    transform: c => { const {h,s,l}=hexToHsl(c);
+      return hslToHex(215 + (h-180)*0.08, 0.10 + s*0.20, 0.14 + l*0.55); } },
+  flamboyant:{ name:'Flamboyant',icon:'🎉', tip:'Neon candy pop',
+    transform: c => { const {h,s,l}=hexToHsl(c);
+      return hslToHex((h*1.5 + 45)%360, Math.min(1, 0.72 + s*0.35), 0.42 + l*0.40); } },
+  antique:   { name:'Antique',   icon:'🏺', tip:'Aged bronze & patina',
+    transform: c => { const {h,s,l}=hexToHsl(c);
+      return hslToHex(30 + h*0.18, 0.22 + s*0.35, 0.24 + l*0.50); } },
+  modern:    { name:'Modern',    icon:'✨', tip:'Clean Scandinavian',
+    transform: c => { const {h,s,l}=hexToHsl(c);
+      return hslToHex(200 + (h-180)*0.15, 0.08 + s*0.18, 0.52 + l*0.42); } },
+  medieval:  { name:'Medieval',  icon:'⚔️', tip:'Rustic earth & royal jewel',
+    transform: c => { const {h,s,l}=hexToHsl(c);
+      return hslToHex((h%100)*0.9 + 15, 0.35 + s*0.40, 0.20 + l*0.38); } },
+  // ---- special modes ----
+  shuffle:   { name:'Shuffle',   icon:'🎲', tip:'One colour per part type',
+    special:'shuffle' },
+  rainbow:   { name:'Rainbow',   icon:'🌈', tip:'Height-mapped rainbow · cycles over time',
+    special:'rainbow' },
+};
+const PALETTE_ORDER_BASIC = ['realistic','analog','tritone','executive','flamboyant','antique','modern','medieval'];
+const PALETTE_ORDER_FULL  = PALETTE_ORDER_BASIC.concat(['shuffle','rainbow']);
+
+/* Palette runtime state */
+let currentPalette = 'realistic';
+let allowedPalettes = PALETTE_ORDER_BASIC.slice();   // set by version
+let rainbowMode = 'height';    // 'height' | 'time'
+let rainbowPhase = 0;          // accumulated time for animated rainbow
+
+const PALETTE_PREVIEW_SEEDS = [0xd4bda8, 0x991b1b, 0x1e3a8a, 0xf1f5f9];
+
+/* =====================================================================
+   1. 40 part types
+   ===================================================================== */
+const PLATE = 0.4;
+const TYPE_DEFS = [
+  {n:'Brick 1×1',w:1,d:1,h:3,s:'brick'},{n:'Brick 1×2',w:2,d:1,h:3,s:'brick'},
+  {n:'Brick 1×3',w:3,d:1,h:3,s:'brick'},{n:'Brick 1×4',w:4,d:1,h:3,s:'brick'},
+  {n:'Brick 1×6',w:6,d:1,h:3,s:'brick'},{n:'Brick 1×8',w:8,d:1,h:3,s:'brick'},
+  {n:'Brick 2×2',w:2,d:2,h:3,s:'brick'},{n:'Brick 2×3',w:3,d:2,h:3,s:'brick'},
+  {n:'Brick 2×4',w:4,d:2,h:3,s:'brick'},{n:'Brick 2×6',w:6,d:2,h:3,s:'brick'},
+  {n:'Brick 2×8',w:8,d:2,h:3,s:'brick'},
+  {n:'Plate 1×1',w:1,d:1,h:1,s:'plate'},{n:'Plate 1×2',w:2,d:1,h:1,s:'plate'},
+  {n:'Plate 1×3',w:3,d:1,h:1,s:'plate'},{n:'Plate 1×4',w:4,d:1,h:1,s:'plate'},
+  {n:'Plate 1×6',w:6,d:1,h:1,s:'plate'},{n:'Plate 1×8',w:8,d:1,h:1,s:'plate'},
+  {n:'Plate 2×2',w:2,d:2,h:1,s:'plate'},{n:'Plate 2×4',w:4,d:2,h:1,s:'plate'},
+  {n:'Plate 2×6',w:6,d:2,h:1,s:'plate'},{n:'Plate 4×4',w:4,d:4,h:1,s:'plate'},
+  {n:'Plate 6×6',w:6,d:6,h:1,s:'plate'},
+  {n:'Tile 1×1',w:1,d:1,h:1,s:'tile'},{n:'Tile 1×2',w:2,d:1,h:1,s:'tile'},
+  {n:'Tile 2×2',w:2,d:2,h:1,s:'tile'},{n:'Tile 2×4',w:4,d:2,h:1,s:'tile'},
+  {n:'Slope 1×2',w:2,d:1,h:3,s:'slope'},{n:'Slope 2×2',w:2,d:2,h:3,s:'slope'},
+  {n:'Slope 2×4',w:4,d:2,h:3,s:'slope'},
+  {n:'Round Brick 1×1',w:1,d:1,h:3,s:'round'},{n:'Round Plate 1×1',w:1,d:1,h:1,s:'roundplate'},
+  {n:'Round Brick 2×2',w:2,d:2,h:3,s:'round'},{n:'Round Plate 2×2',w:2,d:2,h:1,s:'roundplate'},
+  {n:'Round Plate 4×4',w:4,d:4,h:1,s:'roundplate'},
+  {n:'Cone 2×2',w:2,d:2,h:3,s:'cone'},
+  {n:'Arch 1×4',w:4,d:1,h:3,s:'arch'},{n:'Arch 1×6',w:6,d:1,h:3,s:'arch'},
+  {n:'Grille 1×2',w:2,d:1,h:3,s:'grille'},{n:'Log Brick 1×2',w:2,d:1,h:3,s:'log'},
+  {n:'Corner Brick 2×2',w:2,d:2,h:3,s:'corner'},
+];
+const N_TYPES = TYPE_DEFS.length;
+const TYPE_KEY = new Map();
+TYPE_DEFS.forEach((d,i)=>TYPE_KEY.set(`${d.w}_${d.d}_${d.h}_${d.s}`,i));
+const T=(w,d,h,s)=>{const i=TYPE_KEY.get(`${w}_${d}_${h}_${s}`);if(i===undefined)throw new Error('part');return i;};
+
+function buildGeometries(){
+  const stud=(x,y,z)=>{const g=new THREE.CylinderGeometry(.30,.30,.22,14,1,false);g.translate(x,y+.11,z);return g;};
+  return TYPE_DEFS.map(def=>{
+    const parts=[],w=def.w,d=def.d,h=def.h*PLATE,s=def.s;
+    if(s==='round'||s==='roundplate'){const r=Math.min(w,d)/2;const g=new THREE.CylinderGeometry(r,r,h,24,1,false);g.translate(0,h/2,0);parts.push(g);parts.push(stud(0,h,0));}
+    else if(s==='cone'){const g=new THREE.CylinderGeometry(.30,Math.min(w,d)/2,h,24,1,false);g.translate(0,h/2,0);parts.push(g);}
+    else{const g=new THREE.BoxGeometry(w,h,d);g.translate(0,h/2,0);
+      if(s==='slope'){const pos=g.attributes.position;for(let i=0;i<pos.count;i++){const y=pos.getY(i);if(y>h*.99){const z=pos.getZ(i);pos.setY(i,h*(1-.8*((z+d/2)/d)));}}g.computeVertexNormals();}
+      parts.push(g);
+      if(s==='brick'||s==='plate'||s==='arch'||s==='corner'){for(let i=0;i<w;i++)for(let j=0;j<d;j++)parts.push(stud(i-(w-1)/2,h,j-(d-1)/2));}}
+    return mergeGeometries(parts,false);
+  });
+}
+const GEOMETRIES = buildGeometries();
+const BRICK_MAT = new THREE.MeshStandardMaterial({roughness:.55,metalness:.04});
+const OUTLINE_MAT = new THREE.MeshBasicMaterial({color:0x0a0f14, side:THREE.BackSide});
+
+/* =====================================================================
+   2. Builder helpers
+   ===================================================================== */
+class Builder{constructor(){this.bricks=[];this.seq=0}add(t,x,y,z,c,rot=0){this.bricks.push({t,x,y,z,c,rot,seq:this.seq++})}}
+function pickW(rem,opts){for(const o of opts)if(o<=rem)return o;return opts[opts.length-1];}
+const W_BRICK_2=[8,6,4,2],W_BRICK_1=[8,6,4,3,2,1];
+const W_PLATE_6=[6],W_PLATE_4=[4],W_PLATE_2=[6,4,2],W_PLATE_1=[8,6,4,3,2,1];
+function plateDepth(remZ,w){if(remZ>=6&&w%6===0)return 6;if(remZ>=4&&w%4===0)return 4;if(remZ>=2&&w%2===0)return 2;return 1;}
+function fill(b,x0,z0,y0,w,d,h,color,opts={}){
+  const skip=opts.skip||null,plateShape=opts.plateShape||'plate',evenW=(w%2===0);let y=y0;const yTop=y0+h;
+  while(y+3<=yTop){let z=z0;while(z<z0+d){const remZ=z0+d-z,dz=(remZ>=2&&evenW)?2:1;let x=x0;while(x<x0+w){const remX=x0+w-x,dx=pickW(remX,dz===2?W_BRICK_2:W_BRICK_1);const cx=x+dx/2,cz=z+dz/2;if(!skip||!skip(cx,cz,y))b.add(T(dx,dz,3,'brick'),cx,y,cz,color);x+=dx;}z+=dz;}y+=3;}
+  while(y+1<=yTop){let z=z0;while(z<z0+d){const remZ=z0+d-z,dz=plateDepth(remZ,w);let x=x0;while(x<x0+w){const remX=x0+w-x,wopts=dz===6?W_PLATE_6:dz===4?W_PLATE_4:dz===2?W_PLATE_2:W_PLATE_1,dx=pickW(remX,wopts);const cx=x+dx/2,cz=z+dz/2;if(!skip||!skip(cx,cz,y)){let ti;try{ti=T(dx,dz,1,plateShape);}catch(e){ti=T(dx,dz,1,'plate');}b.add(ti,cx,y,cz,color);}x+=dx;}z+=dz;}y+=1;}
+}
+function ringOf(b,cx,cz,y,r,n,ti,color,phase=0){for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2+phase;b.add(ti,cx+Math.cos(a)*r,y,cz+Math.sin(a)*r,color,Math.PI/2-a);}}
+function domeShell(b,cx,cz,y0,R,layers,ti,colorFn,capApex=true){
+  for(let i=0;i<layers;i++){const t=(i+.5)/layers,r=R*Math.sqrt(Math.max(0,1-t*t)),y=y0+i*3,n=Math.max(1,Math.round(2*Math.PI*r));ringOf(b,cx,cz,y,r,n,ti,colorFn(i),.35);}
+  if(capApex)b.add(ti,cx,y0+layers*3,cz,colorFn(layers-1));
+}
+
+/* =====================================================================
+   3-11. Monument builders (unchanged)
+   ===================================================================== */
+function buildSelimiye(){
+  const b=new Builder();
+  const C={stone:0xE4D8BC,stone2:0xCFBE99,stone3:0xB2A07A,dome:0x6F94A9,dome2:0x5A7E93,gold:0xE0AC42,marble:0xF5F0E6,dark:0x4E5A6B,roof:0x8E7A5E};
+  fill(b,-30,-30,0,60,60,3,C.stone2);fill(b,-26,-26,3,52,52,1,C.marble);
+  const Y0=4,HX=18,HZ=15,TH=2,WH=24;
+  fill(b,-HX,-HZ,Y0,2*HX,TH,WH,C.stone);fill(b,-HX,HZ-TH,Y0,2*HX,TH,WH,C.stone);
+  fill(b,-HX,-HZ+TH,Y0,TH,2*HZ-2*TH,WH,C.stone);fill(b,HX-TH,-HZ+TH,Y0,TH,2*HZ-2*TH,WH,C.stone);
+  for(let x=-14;x<14;x+=4){b.add(T(2,1,3,'grille'),x+1,16,-HZ+1,C.dark);b.add(T(2,1,3,'grille'),x+1,16,HZ-1,C.dark);}
+  for(let z=-11;z<12;z+=4){b.add(T(2,1,3,'grille'),-HX+1,16,z+1,C.dark,Math.PI/2);b.add(T(2,1,3,'grille'),HX-1,16,z+1,C.dark,Math.PI/2);}
+  for(const sx of[-1,1])for(const sz of[-1,1]){const cx=sx*14,cz=sz*11;fill(b,cx-4,cz-4,Y0,8,8,WH,C.stone2);domeShell(b,cx,cz,Y0+WH,4.3,5,T(1,1,3,'round'),()=>C.dome);b.add(T(2,2,3,'cone'),cx,Y0+WH+15,cz,C.gold);}
+  fill(b,-HX,-HZ,Y0+WH,2*HX,2*HZ,1,C.stone3,{skip:(x,z)=>(x*x+z*z)<121||(Math.abs(x)>9.5&&Math.abs(z)>6.5)});
+  const drumY=Y0+WH+1;
+  for(let l=0;l<6;l++)ringOf(b,0,0,drumY+l*3,11,34,T(2,2,3,'round'),l%2?C.stone2:C.stone);
+  const domeY=drumY+18;
+  domeShell(b,0,0,domeY,11.6,12,T(1,1,3,'round'),i=>(i%2?C.dome:C.dome2));
+  b.add(T(2,2,3,'cone'),0,domeY+36,0,C.gold);b.add(T(1,1,3,'round'),0,domeY+39,0,C.gold);
+  for(const[mx,mz]of[[21,18],[21,-18],[-21,18],[-21,-18]]){
+    fill(b,mx-2,mz-2,Y0,4,4,21,C.stone);
+    for(let y=Y0+21;y<91;y+=3)b.add(T(2,2,3,'round'),mx,y,mz,C.stone2);
+    for(const by of[46,64,82]){b.add(T(4,4,1,'roundplate'),mx,by,mz,C.marble);ringOf(b,mx,mz,by,2.6,16,T(1,1,1,'roundplate'),C.marble);ringOf(b,mx,mz,by+1,2.6,16,T(1,1,3,'round'),C.marble);}
+    for(let i=0;i<6;i++){const r=Math.max(.6,2.2*(1-i/6)),n=Math.max(1,Math.round(2*Math.PI*r));ringOf(b,mx,mz,91+i*3,r,n,T(1,1,3,'round'),C.dark);}
+    b.add(T(2,2,3,'cone'),mx,109,mz,C.gold);b.add(T(1,1,1,'roundplate'),mx,112,mz,C.gold);
+  }
+  const colX=[-15,-9,-3,3,9,15];
+  for(const x of colX)for(const z of[-20,-26]){for(let y=Y0;y<25;y+=3)b.add(T(2,2,3,'round'),x,y,z,C.marble);b.add(T(2,2,1,'roundplate'),x,25,z,C.stone2);}
+  for(let i=0;i<colX.length-1;i++){const mx=(colX[i]+colX[i+1])/2;b.add(T(6,1,3,'arch'),mx,22,-20,C.stone);b.add(T(6,1,3,'arch'),mx,22,-26,C.stone);}
+  fill(b,-19,-30,26,38,15,3,C.stone2);
+  for(let x=-18;x<18;x+=2)b.add(T(2,1,3,'slope'),x+1,26,-30,C.stone3,Math.PI);
+  for(const dx of[-12,-4,4,12])domeShell(b,dx,-23,29,3.6,4,T(1,1,3,'round'),()=>C.dome);
+  fill(b,-18,-30,Y0-1,36,15,1,C.roof,{plateShape:'tile'});
+  return b.bricks;
+}
+function buildPantheon(){
+  const b=new Builder();
+  const C={trav:0xEDE3D0,trav2:0xD9CDB4,trav3:0xC2B294,granite:0x8E949C,dome:0xB6AB99,dome2:0x9C9180,bronze:0x8A6F45,gold:0xD8A94A,roof:0x8C5F42};
+  fill(b,-25,-26,0,50,74,3,C.trav2);
+  const RW=21,nWall=Math.round(2*Math.PI*RW/2);
+  for(let l=0;l<11;l++)ringOf(b,0,0,3+l*3,RW,nWall,T(2,2,3,'brick'),l%2?C.trav:C.trav2);
+  const domeY=36,LAYERS=16;
+  domeShell(b,0,0,domeY,19.5,LAYERS,T(1,1,3,'round'),i=>(i%2?C.dome:C.dome2),false);
+  ringOf(b,0,0,domeY+LAYERS*3,5.1,32,T(1,1,1,'roundplate'),C.bronze);
+  const colX=[-21,-15,-9,-3,3,9,15,21];
+  for(const z of[27,35])for(const x of colX){
+    b.add(T(2,2,1,'roundplate'),x,3,z,C.trav2);
+    for(let y=4;y<34;y+=3)b.add(T(2,2,3,'round'),x,y,z,C.granite);
+    b.add(T(2,2,1,'roundplate'),x,34,z,C.trav);
+  }
+  fill(b,-25,22,35,50,18,3,C.trav);
+  const ped=[[25,50],[20,40],[15,30],[10,20],[5,10]];
+  ped.forEach(([hw,w],k)=>fill(b,-hw,22,38+k*3,w,18,3,C.trav));
+  ped.forEach(([hw],k)=>{const y=38+k*3;for(let x=-hw;x<hw;x+=2)b.add(T(2,1,3,'slope'),x+1,y,22,C.trav2,Math.PI);});
+  fill(b,-20,26,53,40,12,1,C.roof,{plateShape:'tile'});
+  for(let s=0;s<3;s++)fill(b,-24+s*3,42+s*3,0,48-s*6,3,3-s,C.trav3);
+  return b.bricks;
+}
+function buildStPeters(){
+  const b=new Builder();
+  const C={stone:0xEAE0CC,stone2:0xD6C8A8,stone3:0xB8A682,dome:0x7A8E9C,dome2:0x5E7280,gold:0xE0AC42,marble:0xF8F4EA,dark:0x5A6470};
+  fill(b,-44,-44,0,88,88,3,C.stone2);fill(b,-40,-40,3,80,80,1,C.marble);
+  const Y0=4;
+  fill(b,-25,-8,Y0,50,16,24,C.stone);fill(b,-8,-20,Y0,16,12,24,C.stone);fill(b,-8,8,Y0,16,12,24,C.stone);
+  for(let x=-22;x<22;x+=5){b.add(T(2,1,3,'grille'),x+1,12,-8,C.dark);b.add(T(2,1,3,'grille'),x+1,12,8,C.dark);b.add(T(2,1,3,'grille'),x+1,20,-8,C.dark);b.add(T(2,1,3,'grille'),x+1,20,8,C.dark);}
+  const drumY=Y0+24;
+  for(let l=0;l<8;l++)ringOf(b,0,0,drumY+l*3,11,36,T(2,2,3,'round'),l%2?C.stone:C.stone2);
+  const domeY=drumY+24;
+  domeShell(b,0,0,domeY,11.5,13,T(1,1,3,'round'),i=>(i%2?C.dome:C.dome2));
+  b.add(T(2,2,3,'cone'),0,domeY+39,0,C.gold);
+  for(const sx of[-1,1]){const cx=sx*20,cz=0;for(let l=0;l<4;l++)ringOf(b,cx,cz,drumY+l*3,4.6,20,T(2,2,3,'round'),C.stone);domeShell(b,cx,cz,drumY+12,4.9,6,T(1,1,3,'round'),()=>C.dome);b.add(T(2,2,3,'cone'),cx,drumY+30,cz,C.gold);}
+  const colX=[-22,-16,-10,-4,4,10,16,22];
+  for(const x of colX){for(let y=Y0;y<Y0+22;y+=3)b.add(T(2,2,3,'round'),x,y,-12,C.marble);b.add(T(2,2,1,'roundplate'),x,Y0+22,-12,C.stone2);}
+  fill(b,-25,-16,Y0+23,50,6,4,C.stone2);
+  for(let x=-25;x<25;x+=2)b.add(T(2,1,3,'slope'),x+1,Y0+27,-16,C.stone3,Math.PI);
+  const ped=[[25,50],[20,40],[15,30],[10,20],[5,10]];
+  ped.forEach(([hw,w],k)=>fill(b,-hw,-16,Y0+27+k*3,w,4,3,C.stone2));
+  for(const side of[-1,1])for(let r=0;r<3;r++){const radius=36+r*2;for(let i=0;i<10;i++){const a=side*(.12+(i/10)*.72);const cx=Math.sin(a)*radius,cz=-44-Math.cos(a)*radius*.45;for(let y=4;y<22;y+=3)b.add(T(2,2,3,'round'),cx,y,cz,C.marble);b.add(T(2,2,1,'roundplate'),cx,22,cz,C.stone2);b.add(T(2,2,3,'brick'),cx,23,cz,C.stone2);}}
+  return b.bricks;
+}
+function buildParisPantheon(){
+  const b=new Builder();
+  const C={stone:0xE6DCC4,stone2:0xCFC0A0,stone3:0xB0A07C,dome:0x8A9A88,dome2:0x6E7E6C,gold:0xD0A040,marble:0xF4EFE2,dark:0x505A66};
+  fill(b,-30,-30,0,60,60,3,C.stone2);fill(b,-26,-26,3,52,52,1,C.marble);
+  const Y0=4;
+  fill(b,-22,-7,Y0,44,14,22,C.stone);fill(b,-7,-22,Y0,14,15,22,C.stone);fill(b,-7,7,Y0,14,15,22,C.stone);
+  const drumY=Y0+22;
+  for(let l=0;l<8;l++)ringOf(b,0,0,drumY+l*3,9,30,T(2,2,3,'round'),l%2?C.stone:C.stone2);
+  const domeY=drumY+24;
+  domeShell(b,0,0,domeY,9.5,11,T(1,1,3,'round'),i=>(i%2?C.dome:C.dome2));
+  b.add(T(2,2,3,'cone'),0,domeY+33,0,C.gold);
+  const colX=[-15,-9,-3,3,9,15];
+  for(const x of colX)for(const z of[-28,-32]){for(let y=Y0;y<Y0+20;y+=3)b.add(T(2,2,3,'round'),x,y,z,C.marble);b.add(T(2,2,1,'roundplate'),x,Y0+20,z,C.stone2);}
+  fill(b,-19,-34,Y0+21,38,8,4,C.stone2);
+  for(let x=-18;x<18;x+=2){b.add(T(2,1,3,'slope'),x+1,Y0+25,-34,C.stone3,Math.PI);b.add(T(2,1,3,'slope'),x+1,Y0+25,-26,C.stone3);}
+  const ped=[[18,36],[14,28],[10,20],[6,12]];
+  ped.forEach(([hw,w],k)=>fill(b,-hw,-34,Y0+25+k*3,w,8,3,C.stone2));
+  for(const sx of[-1,1])for(const sz of[-1,1]){const px=sx*22,pz=sz*7;for(let y=Y0;y<Y0+22;y+=3)b.add(T(2,2,3,'round'),px,y,pz,C.marble);b.add(T(2,2,1,'roundplate'),px,Y0+22,pz,C.stone2);}
+  return b.bricks;
+}
+function buildParthenon(){
+  const b=new Builder();
+  const C={marble:0xF0E8D2,marble2:0xD8CAA8,marble3:0xBAA884,dark:0x4A4E56};
+  fill(b,-22,-40,0,44,80,1,C.marble3);fill(b,-20,-38,1,40,76,1,C.marble2);fill(b,-18,-36,2,36,72,1,C.marble);
+  const Y0=3,CH=22;
+  const colX=[-16,-12,-8,-4,0,4,8,12,16];const colZ=[];
+  for(let z=-34;z<=34;z+=4)colZ.push(z);
+  const placeCol=(x,z)=>{for(let y=Y0;y<Y0+CH;y+=3)b.add(T(2,2,3,'round'),x,y,z,C.marble);b.add(T(2,2,1,'roundplate'),x,Y0+CH,z,C.marble2);};
+  for(const z of[-34,34])for(const x of colX)placeCol(x,z);
+  for(const x of[-16,16])for(const z of colZ){if(z===-34||z===34)continue;placeCol(x,z);}
+  for(const x of[-8,-4,0,4,8])placeCol(x,-30);
+  const entY=Y0+CH+1;
+  fill(b,-18,-36,entY,36,72,3,C.marble2);
+  for(const zEnd of[-36,36])for(let k=0;k<6;k++){const w=36-k*6;if(w<=0)break;const zz=zEnd===-36?zEnd:zEnd-3;fill(b,-w/2,zz,entY+3+k*3,w,3,3,C.marble);}
+  fill(b,-12,-32,Y0,2,64,18,C.marble);fill(b,10,-32,Y0,2,64,18,C.marble);
+  fill(b,-10,-32,Y0,20,2,18,C.marble);fill(b,-10,30,Y0,20,2,18,C.marble);
+  return b.bricks;
+}
+function buildGiza(){
+  const b=new Builder();
+  const C={stone:0xD9B888,stone2:0xC4A070,stone3:0xAA8A5C,cap:0xE0C070,sand:0xE8D8A8};
+  fill(b,-70,-55,0,140,110,1,C.sand);
+  const B1=36,H1=26;
+  for(let l=0;l<H1;l++){const half=Math.max(1,Math.round(B1*(1-l/H1)));fill(b,-half,-half,3+l*3,2*half,2*half,3,l%2?C.stone:C.stone2,{skip:(x,z)=>half>3&&Math.max(Math.abs(x),Math.abs(z))<half-2});}
+  b.add(T(2,2,3,'cone'),0,3+H1*3,0,C.cap);b.add(T(1,1,1,'roundplate'),0,3+H1*3+3,0,C.cap);
+  const B2=22,H2=17;
+  for(let l=0;l<H2;l++){const half=Math.max(1,Math.round(B2*(1-l/H2)));fill(b,-half-40,-half+12,1+l*3,2*half,2*half,3,l%2?C.stone:C.stone2,{skip:(x,z)=>half>3&&Math.max(Math.abs(x),Math.abs(z))<half-2});}
+  b.add(T(2,2,3,'cone'),-40,1+H2*3,12,C.cap);
+  const B3=13,H3=10;
+  for(let l=0;l<H3;l++){const half=Math.max(1,Math.round(B3*(1-l/H3)));fill(b,-half+34,-half-14,1+l*3,2*half,2*half,3,l%2?C.stone2:C.stone,{skip:(x,z)=>half>3&&Math.max(Math.abs(x),Math.abs(z))<half-2});}
+  b.add(T(2,2,3,'cone'),34,1+H3*3,-14,C.cap);
+  fill(b,-6,25,1,12,6,1,C.stone3);
+  return b.bricks;
+}
+function buildFreedom(){
+  const b=new Builder();
+  const C={glass:0x9CC4D8,glass2:0x7AA8C0,glass3:0x5A88A8,steel:0xB0B8C0,base:0x808894,spire:0xA8B0B8};
+  fill(b,-20,-20,0,40,40,3,C.base);fill(b,-16,-16,3,32,32,1,C.steel);
+  const H=38,B0=13;
+  for(let l=0;l<H;l++){
+    const t=l/H,half=Math.max(1,Math.round(B0*(1-t*.55))),y=4+l*6;
+    fill(b,-half,-half,y,2*half,2*half,1,l%2?C.glass:C.glass2,{plateShape:'tile'});
+    const n=Math.max(4,Math.round(2*Math.PI*half/1.4));
+    for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2+t*Math.PI*.5;b.add(T(1,1,3,'round'),Math.cos(a)*half,y+1,Math.sin(a)*half,C.glass3);}
+    if(l%4===0)ringOf(b,0,0,y-1,half+.4,n,T(1,1,1,'roundplate'),C.steel);
+  }
+  const topY=4+H*6;
+  b.add(T(4,4,1,'plate'),0,topY,0,C.steel);
+  for(let i=0;i<12;i++)b.add(T(2,2,3,'round'),0,topY+1+i*3,0,C.spire);
+  b.add(T(1,1,3,'round'),0,topY+37,0,C.spire);b.add(T(1,1,1,'roundplate'),0,topY+40,0,C.spire);
+  return b.bricks;
+}
+function buildEmpire(){
+  const b=new Builder();
+  const C={stone:0xC8C0B0,stone2:0xACA490,stone3:0x8E8676,win:0x4A5464,spire:0xB0B8C0,base:0x8E8E90};
+  fill(b,-22,-22,0,44,44,3,C.base);fill(b,-20,-20,3,40,40,15,C.stone);
+  for(let x=-18;x<18;x+=4)for(let z=-18;z<18;z+=4){b.add(T(2,1,3,'grille'),x+1,7,z+1,C.win);b.add(T(2,1,3,'grille'),x+1,13,z+1,C.win);}
+  fill(b,-16,-16,18,32,32,10,C.stone2);fill(b,-12,-12,28,24,24,10,C.stone);
+  fill(b,-8,-8,38,16,16,12,C.stone2);fill(b,-5,-5,50,10,10,22,C.stone);
+  fill(b,-3,-3,72,6,6,12,C.stone2);fill(b,-2,-2,84,4,4,6,C.stone);
+  for(let x=-14;x<14;x+=4)for(let z=-14;z<14;z+=4){b.add(T(2,1,3,'grille'),x+1,22,z+1,C.win);b.add(T(2,1,3,'grille'),x+1,32,z+1,C.win);}
+  for(let i=0;i<14;i++)b.add(T(2,2,3,'round'),0,90+i*3,0,C.spire);
+  b.add(T(1,1,3,'round'),0,132,0,C.spire);b.add(T(1,1,1,'roundplate'),0,135,0,C.spire);
+  fill(b,-8,-24,3,16,4,1,C.stone3);
+  return b.bricks;
+}
+function buildBurj(){
+  const b=new Builder();
+  const C={glass:0xA8C4D8,glass2:0x88A8C0,glass3:0x6888A4,steel:0xC8D0D8,spire:0xD0D8E0,base:0x9098A0};
+  fill(b,-18,-18,0,36,36,3,C.base);fill(b,-16,-16,3,32,32,1,C.steel);
+  const tiers=[
+    {half:14,h:10,y:4},{half:12,h:10,y:14},{half:10,h:12,y:24},
+    {half:8,h:14,y:36},{half:6,h:16,y:50},{half:5,h:16,y:66},
+    {half:4,h:18,y:82},{half:3,h:16,y:100},{half:2,h:12,y:116},
+  ];
+  for(const t of tiers){
+    fill(b,-t.half,-t.half,t.y,2*t.half,2*t.half,t.h,C.glass);
+    fill(b,-t.half,-t.half,t.y+t.h-1,2*t.half,2*t.half,1,C.glass2,{plateShape:'tile'});
+    ringOf(b,0,0,t.y+t.h-2,t.half+.3,Math.max(4,Math.round(2*Math.PI*t.half/1.5)),T(1,1,1,'roundplate'),C.steel);
+  }
+  b.add(T(4,4,1,'plate'),0,128,0,C.steel);
+  for(let i=0;i<16;i++)b.add(T(1,1,3,'round'),0,129+i*3,0,C.spire);
+  b.add(T(1,1,1,'roundplate'),0,177,0,C.spire);
+  return b.bricks;
+}
+
+/* =====================================================================
+   12. Registry + stages
+   ===================================================================== */
+const MODELS={
+  selimiye:{name:'Selimiye Mosque',sub:'Edirne, Türkiye · 1568–1575 · Mimar Sinan',icon:'🕌',build:buildSelimiye,
+    info:'<strong>Selimiye Mosque</strong> (1568–75, Mimar Sinan). Dome ≈31 m on eight piers, four 71 m minarets.'},
+  stpeters:{name:"St Peter's Basilica",sub:'Vatican City · 1506–1626 · Michelangelo / Maderno',icon:'⛪',build:buildStPeters,
+    info:"<strong>St Peter's Basilica</strong>. Renaissance/Baroque masterpiece. Dome by Michelangelo, façade by Maderno, piazza by Bernini."},
+  pantheon:{name:'Pantheon',sub:'Rome, Italy · 113–126 AD · Emperor Hadrian',icon:'🏛️',build:buildPantheon,
+    info:'<strong>Pantheon</strong> (c.118–128 CE). Largest unreinforced concrete dome ≈43 m with oculus.'},
+  parispantheon:{name:'Panthéon',sub:'Paris, France · 1758–1790 · Jacques-Germain Soufflot',icon:'⛪',build:buildParisPantheon,
+    info:"<strong>Panthéon</strong> (1758–90). Neoclassical temple to the great of France. Dome inspired by Rome's Pantheon."},
+  parthenon:{name:'Parthenon',sub:'Athens, Greece · 447–432 BC · Iktinos & Kallikrates',icon:'🏛️',build:buildParthenon,
+    info:'<strong>Parthenon</strong> (447–432 BCE). Doric temple to Athena on the Acropolis. Perfect proportions, 46 outer columns.'},
+  giza:{name:'Great Pyramid',sub:'Giza, Egypt · c. 2560 BC · Pyramid of Khufu',icon:'🔺',build:buildGiza,
+    info:"<strong>Great Pyramid</strong> (c.2580–2560 BCE). Khufu's tomb. Original height ≈146 m, ~2.3 million stone blocks."},
+  freedom:{name:'One World Trade',sub:'New York, USA · 2006–2014 · David Childs (SOM)',icon:'🏙️',build:buildFreedom,
+    info:'<strong>One WTC</strong> (Freedom Tower). 541 m to tip. Opened 2014. Symbolic 1776 ft height.'},
+  empire:{name:'Empire State',sub:'New York, USA · 1930–1931 · Shreve, Lamb & Harmon',icon:'🏢',build:buildEmpire,
+    info:'<strong>Empire State Building</strong> (1931). Art Deco icon, 381 m roof / 443 m tip. 102 floors.'},
+  burj:{name:'Burj Khalifa',sub:'Dubai, UAE · 2004–2010 · Adrian Smith (SOM)',icon:'🗼',build:buildBurj,
+    info:'<strong>Burj Khalifa</strong> (2010). Tallest structure on Earth, 828 m. Inspired by desert flower Hymenocallis.'},
+};
+const MODEL_ORDER=['selimiye','stpeters','pantheon','parispantheon','parthenon','giza','freedom','empire','burj'];
+const MODEL_STAGES={
+  selimiye:['Courtyard base','Prayer hall & piers','Drum & domes','Minarets & galleries','Crescents & finish'],
+  stpeters:['Plaza base','Nave & transepts','Drums & domes','Façade & colonnade','Lanterns & finish'],
+  pantheon:['Podium & steps','Rotunda & columns','Dome & portico','Pediment & oculus','Roof & finish'],
+  parispantheon:['Platform','Cross-plan walls','Drum & dome','Portico & pediment','Lantern & finish'],
+  parthenon:['Crepidoma','Peristyle & cella','Entablature','Pediments','Roofline finish'],
+  giza:['Desert base','Lower courses','Rising courses','Upper casing','Pyramidion finish'],
+  freedom:['Podium','Lower tower','Tapered shaft','Crown','Spire & finish'],
+  empire:['Foundation & base','Setback terraces','Tower shaft','Mast','Antenna & finish'],
+  burj:['Podium','Lower tiers','Middle tiers','Upper tiers','Spire & finish'],
+};
+
+/* =====================================================================
+   13. Version history
+   ===================================================================== */
+const VERSIONS = [
+  {id:'v1',label:'v1.0',name:'Two monuments',
+   models:['selimiye','pantheon'], palettes:'none',
+   features:{cranes:false,jitter:false,outline:false,dayNight:false,stages:false},
+   log:'Selimiye Mosque + Pantheon. Rich procedural builders, single sky, no cranes.'},
+  {id:'v2',label:'v2.0',name:'Nine monuments',
+   models:'all', palettes:'none',
+   features:{cranes:false,jitter:false,outline:false,dayNight:false,stages:false},
+   log:'Added 7 more landmarks — St Peter\'s, Paris Panthéon, Parthenon, Giza, One WTC, Empire State, Burj Khalifa.'},
+  {id:'v3',label:'v3.0',name:'Day / night',
+   models:'all', palettes:'none',
+   features:{cranes:false,jitter:false,outline:false,dayNight:true,stages:false},
+   log:'Sky tween between day and night, warm cream panel styling, auto-orbit.'},
+  {id:'v4',label:'v4.0',name:'Fourier cranes',
+   models:'all', palettes:'none',
+   features:{cranes:true,jitter:false,outline:false,dayNight:true,stages:false},
+   log:'Animated crane fleet with idle sway — the site feels alive between deliveries.'},
+  {id:'v5',label:'v5.0',name:'Brick detail + palettes',
+   models:'all', palettes:'basic',
+   features:{cranes:true,jitter:true,outline:true,dayNight:true,stages:true},
+   log:'Per-brick colour jitter, outline layer, 5-phase stage chips, 8 material palettes.'},
+  {id:'v6',label:'v6.0',name:'Shuffle + rainbow',
+   models:'all', palettes:'full',
+   features:{cranes:true,jitter:true,outline:true,dayNight:true,stages:true},
+   log:'Shuffle (one colour per part type) and Rainbow (height-mapped, time-cyclable).'},
+];
+let currentVersion = 'v6';
+const features = () => VERSIONS.find(v=>v.id===currentVersion).features;
+const allowedModels = () => { const v=VERSIONS.find(v=>v.id===currentVersion); return v.models==='all'?MODEL_ORDER.slice():v.models.slice(); };
+const allowedPaletteList = () => {
+  const v=VERSIONS.find(x=>x.id===currentVersion);
+  if(v.palettes==='none') return [];
+  if(v.palettes==='basic') return PALETTE_ORDER_BASIC.slice();
+  return PALETTE_ORDER_FULL.slice();
+};
+
+/* =====================================================================
+   14. THREE.JS SCENE
+   ===================================================================== */
+const canvas=document.getElementById('scene');
+const stageEl=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,1,0.5,4000);
+camera.position.set(70,55,90);
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.075;
+controls.maxPolarAngle=Math.PI*0.495;
+controls.minDistance=20;controls.maxDistance=900;
+controls.autoRotateSpeed=0.9;
+
+const hemi=new THREE.HemisphereLight(0xdfeaff,0x5b5344,1.15);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff2dd,2.35);
+sun.position.set(70,105,55);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.near=1;sun.shadow.camera.far=800;
+sun.shadow.bias=-.0009;sun.shadow.normalBias=.03;
+scene.add(sun);scene.add(sun.target);
+const rim=new THREE.DirectionalLight(0x8fb6ff,.55);rim.position.set(-80,45,-70);scene.add(rim);
+
+const ground=new THREE.Mesh(new THREE.CircleGeometry(400,64),new THREE.MeshStandardMaterial({color:0xd9d3c6,roughness:1,metalness:0}));
+ground.rotation.x=-Math.PI/2;ground.position.y=-.02;ground.receiveShadow=true;scene.add(ground);
+
+const starGeo=new THREE.BufferGeometry();
+const STAR_N=2400,starPos=new Float32Array(STAR_N*3);
+for(let i=0;i<STAR_N;i++){const r=1400,theta=Math.random()*Math.PI*2,phi=Math.random()*Math.PI*.48;starPos[i*3]=r*Math.sin(phi)*Math.cos(theta);starPos[i*3+1]=r*Math.cos(phi)+120;starPos[i*3+2]=r*Math.sin(phi)*Math.sin(theta);}
+starGeo.setAttribute('position',new THREE.BufferAttribute(starPos,3));
+const starMat=new THREE.PointsMaterial({color:0xffffff,size:1.6,sizeAttenuation:false,transparent:true,opacity:0,depthWrite:false});
+const stars=new THREE.Points(starGeo,starMat);stars.frustumCulled=false;scene.add(stars);
+
+const SKY={day:{hemiSky:0xdfeaff,hemiGround:0x6b5f4a,hemiI:1.15,sunColor:0xfff2dd,sunI:2.35,rimColor:0x8fb6ff,rimI:.55,exposure:1.05,ground:0xd9d3c6},
+          night:{hemiSky:0x2c3c60,hemiGround:0x1a1a24,hemiI:.42,sunColor:0xaac4ff,sunI:.9,rimColor:0x5570b0,rimI:.65,exposure:.82,ground:0x30323a}};
+let isDay=true,skyMix=1,skyTarget=1;
+function mixHex(a,b,t,out){const ar=(a>>16)&255,ag=(a>>8)&255,ab=a&255,br=(b>>16)&255,bg=(b>>8)&255,bb=b&255;out.setRGB((ar+(br-ar)*t)/255,(ag+(bg-ag)*t)/255,(ab+(bb-ab)*t)/255)}
+function applySkyMix(t){const n=SKY.night,d=SKY.day,m=(a,b)=>a+(b-a)*t;
+  mixHex(n.hemiSky,d.hemiSky,t,hemi.color);mixHex(n.hemiGround,d.hemiGround,t,hemi.groundColor);hemi.intensity=m(n.hemiI,d.hemiI);
+  mixHex(n.sunColor,d.sunColor,t,sun.color);sun.intensity=m(n.sunI,d.sunI);
+  mixHex(n.rimColor,d.rimColor,t,rim.color);rim.intensity=m(n.rimI,d.rimI);
+  renderer.toneMappingExposure=m(n.exposure,d.exposure);mixHex(n.ground,d.ground,t,ground.material.color);
+  starMat.opacity=m(.9,0);stageEl.classList.toggle('night',t<.5);
+}
+
+/* =====================================================================
+   15. Crane (v4+)
+   ===================================================================== */
+class Crane{
+  constructor(x,z,baseYaw,h,jibLen){
+    this.origin=new THREE.Vector3(x,0,z);
+    this.baseYaw=baseYaw;this.h=h;this.jibLen=jibLen;
+    this.group=new THREE.Group();this.group.position.copy(this.origin);
+    const y=new THREE.MeshStandardMaterial({color:0xf5b800,roughness:.55,metalness:.3});
+    const d=new THREE.MeshStandardMaterial({color:0x2a2a2a,roughness:.75,metalness:.2});
+    for(const[sx,sz]of[[-1,-1],[1,-1],[-1,1],[1,1]]){
+      const post=new THREE.Mesh(new THREE.BoxGeometry(.5,h,.5),y);
+      post.position.set(sx*1.2,h/2,sz*1.2);post.castShadow=true;this.group.add(post);
+    }
+    for(let yy=4;yy<h;yy+=4){
+      const ring=new THREE.Mesh(new THREE.BoxGeometry(3,.3,3),d);
+      ring.position.y=yy;this.group.add(ring);
+    }
+    this.jib=new THREE.Group();this.jib.position.y=h;this.group.add(this.jib);
+    const beam=new THREE.Mesh(new THREE.BoxGeometry(jibLen,.7,.7),y);
+    beam.position.x=jibLen/2;beam.castShadow=true;this.jib.add(beam);
+    const cw=new THREE.Mesh(new THREE.BoxGeometry(2,2,2),d);
+    cw.position.x=-2.2;this.jib.add(cw);
+    this.trolley=new THREE.Group();this.jib.add(this.trolley);
+    const tl=new THREE.Mesh(new THREE.BoxGeometry(1,.8,1),d);tl.position.y=-.5;this.trolley.add(tl);
+    this.hook=new THREE.Group();this.jib.add(this.hook);
+    const hk=new THREE.Mesh(new THREE.BoxGeometry(.8,1,.8),d);this.hook.add(hk);
+  }
+  update(now){const t=now*0.0002;
+    this.jib.rotation.y=this.baseYaw+Math.sin(t)*0.4;
+    this.trolley.position.x=this.jibLen*(0.4+0.25*Math.sin(t*1.3));
+    this.hook.position.set(this.trolley.position.x,-this.h*(0.4+0.15*Math.sin(t*0.9)),0);
+  }
+  dispose(){this.group.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()})}
+}
+let cranes=[];
+
+/* =====================================================================
+   16. Loading / instancing
+   ===================================================================== */
+let currentModel=null,progress=0,playing=false,direction=1,speedIdx=2;
+const SPEEDS=[0.25,0.5,1,2,4,8,16];
+let turboHeld=false,turboToggle=false;
+const BASE_DURATION=26;
+
+const $=id=>document.getElementById(id);
+const bomBody=$('bomBody'),pbFill=$('pbFill'),pctEl=$('pct');
+const statPlaced=$('statPlaced'),statTotal=$('statTotal'),statTime=$('statTime');
+const timeline=$('timeline'),playBtn=$('playBtn'),speedEl=$('speed'),speedVal=$('speedVal');
+const turboBtn=$('turboBtn'),rewindBtn=$('rewindBtn'),orbitBtn=$('orbitBtn');
+const modelNameEl=$('modelName'),modelSubEl=$('modelSub'),badgeCount=$('badgeCount'),badgeTypes=$('badgeTypes');
+const bomSub=$('bomSub'),phaseLive=$('phaseLive'),stageChips=$('stageChips'),stageSub=$('stageSub');
+const modelInfoEl=$('modelInfo'),verBadge=$('verBadge'),verStrip=$('verStrip'),changelog=$('changelog');
+const paletteGrid=$('paletteGrid'),palSub=$('palSub'),palBadgeName=$('palBadgeName');
+const palChipA=$('palChipA'),palChipB=$('palChipB');
+const paletteCard=$('paletteCard'),palSubRow=$('palSubRow');
+
+function jitterColor(hex,seed){
+  const r=(hex>>16)&255,g=(hex>>8)&255,b=hex&255;
+  const v=Math.abs(Math.sin(seed*12.9898))%1;
+  const d=1+(v-0.5)*0.14;
+  return (Math.min(255,r*d)<<16|Math.min(255,g*d)<<8|Math.min(255,b*d))>>>0;
+}
+
+/** Colour a single brick under the active palette (and optional time). */
+function colorForBrick(bk, typeIdx, time){
+  const p = PALETTES[currentPalette];
+  const doJitter = features().jitter;
+
+  if(p.special === 'shuffle'){
+    const raw = shuffleColors[typeIdx];
+    return doJitter ? jitterColor(raw, bk.seq + typeIdx*991) : raw;
+  }
+  if(p.special === 'rainbow'){
+    const y = bk.y * PLATE;
+    let hue = (y * 6) % 360;
+    if(rainbowMode === 'time') hue = (hue + time * 60) % 360;
+    if(hue < 0) hue += 360;
+    return hslToHex(hue, 0.78, 0.55);
+  }
+  const raw = p.transform(bk.c);
+  return doJitter ? jitterColor(raw, bk.seq + typeIdx*991) : raw;
+}
+
+/** Dominant/representative colour for the BOM swatch of a type. */
+function bomSwatchColor(g, time){
+  const p = PALETTES[currentPalette];
+  if(p.special === 'shuffle') return shuffleColors[g.idx];
+  if(p.special === 'rainbow'){
+    let sumY = 0;
+    for(const bk of g.bricks) sumY += bk.y * PLATE;
+    const avgY = sumY / Math.max(1, g.bricks.length);
+    let hue = (avgY * 6) % 360;
+    if(rainbowMode === 'time') hue = (hue + time * 60) % 360;
+    if(hue < 0) hue += 360;
+    return hslToHex(hue, 0.78, 0.55);
+  }
+  const counts = new Map();
+  for(const bk of g.bricks){
+    const c = p.transform(bk.c);
+    counts.set(c, (counts.get(c) || 0) + 1);
+  }
+  let best = 0, bestN = -1;
+  for(const [c, n] of counts) if(n > bestN){ bestN = n; best = c; }
+  return best;
+}
+
+function makeInstanced(bricks,typeIndex,opts={}){
+  const {outline=false, time=0}=opts;
+  const geo=GEOMETRIES[typeIndex];
+  const mat=outline?OUTLINE_MAT:BRICK_MAT;
+  const mesh=new THREE.InstancedMesh(geo,mat,bricks.length);
+  mesh.castShadow=!outline;mesh.receiveShadow=!outline;mesh.frustumCulled=false;
+  const m=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler();
+  const p=new THREE.Vector3(),s=new THREE.Vector3(1,1,1),col=new THREE.Color();
+  for(let i=0;i<bricks.length;i++){
+    const bk=bricks[i];
+    e.set(0,bk.rot,0);q.setFromEuler(e);
+    p.set(bk.x,bk.y*PLATE,bk.z);
+    s.set(outline?1.04:1,outline?1.04:1,outline?1.04:1);
+    m.compose(p,q,s);mesh.setMatrixAt(i,m);
+    if(!outline){
+      col.setHex(colorForBrick(bk, typeIndex, time));
+      mesh.setColorAt(i,col);
+    }
+  }
+  mesh.instanceMatrix.needsUpdate=true;
+  if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
+  mesh.count=0;
+  return mesh;
+}
+function lowerBound(arr,v){let lo=0,hi=arr.length;while(lo<hi){const mid=(lo+hi)>>1;if(arr[mid]<v)lo=mid+1;else hi=mid;}return lo;}
+
+function clearModel(){
+  if(!currentModel)return;
+  scene.remove(currentModel.root);
+  for(const c of cranes){scene.remove(c.group);c.dispose()}
+  cranes=[];
+  currentModel=null;
+}
+
+function loadModel(key){
+  clearModel();
+  const meta=MODELS[key];
+  const f=features();
+  const raw=meta.build();
+
+  /* pad to 40 types */
+  const usedTypes=new Set(raw.map(b=>b.t));
+  const baseY=Math.min(...raw.map(b=>b.y));
+  const cx0=(Math.min(...raw.map(b=>b.x))+Math.max(...raw.map(b=>b.x)))/2;
+  const cz0=(Math.min(...raw.map(b=>b.z))+Math.max(...raw.map(b=>b.z)))/2;
+  let supplement=0,nextSeq=Math.max(...raw.map(b=>b.seq))+1;
+  for(let t=0;t<N_TYPES;t++)if(!usedTypes.has(t)){
+    const col=supplement%5,row=Math.floor(supplement/5);
+    raw.push({t,x:cx0+(col-2)*3,y:baseY,z:cz0+(row-2)*3,c:raw[0].c,rot:(supplement%2)*Math.PI/2,seq:nextSeq++});
+    supplement++;
+  }
+
+  /* 5-phase segmentation */
+  const names=MODEL_STAGES[key];
+  const minY=Math.min(...raw.map(b=>b.y)),maxY=Math.max(...raw.map(b=>b.y)),spanY=Math.max(1,maxY-minY);
+  raw.forEach(bk=>{
+    const q=(bk.y-minY)/spanY,shape=TYPE_DEFS[bk.t].s;
+    let stage=q<.07?0:q<.48?1:q<.78?2:q<.94?3:4;
+    if(stage>0&&['grille','arch','log','corner'].includes(shape))stage=3;
+    bk.stageIndex=stage;bk.stageName=names[stage];
+  });
+  raw.sort((a,b)=>(a.stageIndex-b.stageIndex)||(a.y-b.y)||(a.seq-b.seq));
+  raw.forEach((bk,i)=>{bk.order=i});
+  const total=raw.length;
+
+  const groups=[];
+  for(let i=0;i<N_TYPES;i++)groups.push({idx:i,def:TYPE_DEFS[i],bricks:[],total:0,color:0x888888,mesh:null,outlineMesh:null,orders:[],_c:-1,row:null});
+  for(const bk of raw)groups[bk.t].bricks.push(bk);
+
+  const root=new THREE.Group();
+  for(let i=0;i<N_TYPES;i++){
+    const g=groups[i];g.total=g.bricks.length;
+    if(!g.total)continue;
+    g.bricks.sort((a,b)=>a.order-b.order);
+    g.orders=g.bricks.map(bk=>bk.order);
+    g.mesh=makeInstanced(g.bricks,i,{outline:false, time:rainbowPhase});
+    root.add(g.mesh);
+    if(f.outline){
+      g.outlineMesh=makeInstanced(g.bricks,i,{outline:true});
+      root.add(g.outlineMesh);
+    }
+    g.color = bomSwatchColor(g, rainbowPhase);
+  }
+  scene.add(root);
+
+  /* framing */
+  let minX=1e9,maxX=-1e9,minZ=1e9,maxZ=-1e9,mY=-1e9;
+  for(const bk of raw){const def=TYPE_DEFS[bk.t],r=Math.max(def.w,def.d)/2+.5;
+    minX=Math.min(minX,bk.x-r);maxX=Math.max(maxX,bk.x+r);
+    minZ=Math.min(minZ,bk.z-r);maxZ=Math.max(maxZ,bk.z+r);
+    mY=Math.max(mY,(bk.y+def.h)*PLATE);
+  }
+  const cx=(minX+maxX)/2,cz=(minZ+maxZ)/2;
+  const width=Math.max(maxX-minX,maxZ-minZ);
+  const radius=Math.max(width,mY)*.5;
+  const tallness=mY/Math.max(width,1);
+  const targetY=mY*(tallness>1.4?.52:.42);
+  controls.target.set(cx,targetY,cz);
+  const elT=Math.min(1,Math.max(0,(tallness-.5)/2.5));
+  const el=(.30-elT*.17)*Math.PI;
+  const dist=radius*3+28,az=Math.PI*.24;
+  camera.position.set(cx+Math.cos(az)*Math.cos(el)*dist,targetY+Math.sin(el)*dist,cz+Math.sin(az)*Math.cos(el)*dist);
+  controls.minDistance=radius*.8;controls.maxDistance=radius*10;
+  sun.position.set(cx+radius*1.5,radius*2.6,cz+radius*1.2);
+  sun.target.position.set(cx,mY*.4,cz);sun.target.updateMatrixWorld();
+  const sd=radius*2;
+  sun.shadow.camera.left=-sd;sun.shadow.camera.right=sd;
+  sun.shadow.camera.top=sd;sun.shadow.camera.bottom=-sd;
+  sun.shadow.camera.far=radius*10;sun.shadow.camera.updateProjectionMatrix();
+  ground.scale.setScalar(Math.max(1,radius/34));
+
+  if(f.cranes){
+    const n=radius<35?2:radius<60?3:4;
+    const craneR=radius*1.15;
+    const craneH=Math.max(mY*.95,radius*.7)+10;
+    const jibLen=craneR*.95;
+    for(let i=0;i<n;i++){
+      const a=(i/n)*Math.PI*2+Math.PI/4+(i*.3);
+      const px=cx+Math.cos(a)*craneR;
+      const pz=cz+Math.sin(a)*craneR;
+      const yaw=Math.atan2(cz-pz,cx-px);
+      const c=new Crane(px,pz,yaw,craneH,jibLen);
+      scene.add(c.group);
+      cranes.push(c);
+    }
+  }
+
+  const stageRanges=names.map((name,i)=>{
+    const indices=raw.map((b,j)=>b.stageIndex===i?j:-1).filter(j=>j>=0);
+    return {name,start:indices.length?indices[0]:0,end:indices.length?indices[indices.length-1]+1:0};
+  });
+  currentModel={key,groups,total,root,bricks:raw,stageRanges};
+
+  progress=0;direction=1;lastPlacedGlobal=-1;
+  playing=false;rewindBtn.classList.remove('on');
+  syncPlayBtn();
+  modelNameEl.textContent=meta.name;
+  modelSubEl.textContent=meta.sub;
+  statTotal.textContent=total.toLocaleString();
+  badgeCount.textContent=total.toLocaleString();
+  badgeTypes.textContent=groups.filter(g=>g.total>0).length;
+  modelInfoEl.innerHTML=meta.info;
+  buildBomTable();
+  buildStageChips();
+  applyProgress(true);
+}
+
+/* =====================================================================
+   17. BOM + stage chips
+   ===================================================================== */
+function buildBomTable(){
+  bomBody.innerHTML='';
+  const frag=document.createDocumentFragment();
+  currentModel.groups.forEach(g=>{
+    const tr=document.createElement('tr');
+    tr.className=g.total===0?'unused':'';
+    const tdSw=document.createElement('td');tdSw.className='sw';
+    const sw=document.createElement('span');sw.style.background='#'+g.color.toString(16).padStart(6,'0');tdSw.appendChild(sw);
+    const tdNm=document.createElement('td');tdNm.className='nm';tdNm.textContent=g.def.n;
+    const tdPl=document.createElement('td');tdPl.className='num placed';tdPl.textContent='0';
+    const tdTo=document.createElement('td');tdTo.className='num total';tdTo.textContent=g.total.toLocaleString();
+    tr.append(tdSw,tdNm,tdPl,tdTo);frag.appendChild(tr);
+    g.row={tr,placed:tdPl};g._c=-1;
+  });
+  bomBody.appendChild(frag);
+  bomSub.textContent=`${currentModel.groups.filter(g=>g.total>0).length} of ${N_TYPES} part types in use`;
+}
+function buildStageChips(){
+  stageSub.textContent=features().stages?'5 named phases':'classic build order';
+  stageChips.innerHTML='';
+  currentModel.stageRanges.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.className='stageChip';btn.dataset.stage=i;
+    btn.setAttribute('aria-label',`Jump to phase ${i+1}: ${s.name}`);
+    btn.innerHTML=`<span class="fill"></span><span class="ord">0${i+1}</span><span class="lbl">${s.name}</span>`;
+    btn.addEventListener('click',()=>{
+      progress=currentModel.total?s.start/currentModel.total:0;
+      direction=1;playing=false;rewindBtn.classList.remove('on');
+      applyProgress(true);syncPlayBtn();
+    });
+    stageChips.appendChild(btn);
+  });
+}
+
+/* =====================================================================
+   18. Progress
+   ===================================================================== */
+let lastPlacedGlobal=-1;
+function applyProgress(force=false){
+  if(!currentModel)return;
+  progress=Math.max(0,Math.min(1,progress||0));
+  const total=currentModel.total;
+  const placed=Math.min(total,Math.floor(progress*total));
+
+  for(const g of currentModel.groups){
+    if(!g.mesh)continue;
+    const c=lowerBound(g.orders,placed);
+    if(g.mesh.count!==c)g.mesh.count=c;
+    if(g.outlineMesh&&g.outlineMesh.count!==c)g.outlineMesh.count=c;
+  }
+
+  if(placed!==lastPlacedGlobal||force){
+    lastPlacedGlobal=placed;
+    statPlaced.textContent=placed.toLocaleString();
+    for(const g of currentModel.groups){
+      if(!g.row)continue;
+      const c=lowerBound(g.orders,placed);
+      if(c!==g._c){g._c=c;g.row.placed.textContent=c.toLocaleString();g.row.tr.classList.toggle('done',c>0&&c===g.total);}
+    }
+  }
+
+  const p=progress*100;
+  pbFill.style.width=p.toFixed(2)+'%';
+  pctEl.textContent=p.toFixed(1)+'%';
+  statTime.textContent=(progress*BASE_DURATION).toFixed(1)+'s';
+
+  let phaseIndex=0;
+  currentModel.stageRanges.forEach((s,i)=>{
+    const size=Math.max(1,s.end-s.start);
+    const stageProgress=Math.max(0,Math.min(1,(placed-s.start)/size));
+    const chip=stageChips.children[i];
+    if(chip){
+      chip.querySelector('.fill').style.width=(stageProgress*100).toFixed(1)+'%';
+      chip.classList.toggle('done',stageProgress>=1);
+      chip.classList.toggle('active',placed>=s.start&&placed<s.end);
+    }
+    if(placed>=s.start)phaseIndex=i;
+  });
+  phaseIndex=Math.max(0,Math.min(4,phaseIndex));
+  phaseLive.textContent=`Phase ${phaseIndex+1} · ${currentModel.stageRanges[phaseIndex].name}`;
+
+  if(!timelineDragging)timeline.value=Math.round(progress*1000);
+  paintRange(timeline);
+  if((progress>=1&&direction>0||progress<=0&&direction<0)&&playing){playing=false;syncPlayBtn();}
+}
+function syncPlayBtn(){playBtn.innerHTML=playing?'⏸ Pause':(progress>=1&&direction>0?'↻ Replay':'▶ Play');}
+function paintRange(el){const min=+el.min,max=+el.max,v=+el.value;el.style.setProperty('--p',Math.max(0,Math.min(100,((v-min)/Math.max(1,max-min))*100))+'%');}
+
+/* =====================================================================
+   19. PALETTE wiring
+   ===================================================================== */
+function previewColors(key){
+  const p=PALETTES[key];
+  if(p.special==='shuffle') return [shuffleColors[0],shuffleColors[9],shuffleColors[19],shuffleColors[29]];
+  if(p.special==='rainbow') return [hslToHex(0,.78,.55),hslToHex(90,.78,.55),hslToHex(180,.78,.55),hslToHex(270,.78,.55)];
+  return PALETTE_PREVIEW_SEEDS.map(s=>p.transform(s));
+}
+
+function buildPaletteGrid(){
+  paletteGrid.innerHTML='';
+  allowedPalettes.forEach(key=>{
+    const p=PALETTES[key];
+    const btn=document.createElement('button');
+    btn.className='palBtn';btn.dataset.palette=key;
+    btn.setAttribute('aria-pressed', key===currentPalette?'true':'false');
+    btn.title=p.tip;
+
+    const swatch=previewColors(key).map(c=>`<i style="background:#${c.toString(16).padStart(6,'0')}"></i>`).join('');
+    btn.innerHTML = `<span class="pi">${p.icon}</span><span class="pn">${p.name}</span><span class="palSwatch">${swatch}</span>`;
+    btn.addEventListener('click',()=>applyPalette(key));
+    paletteGrid.appendChild(btn);
+  });
+  updateSubControls();
+}
+
+function updateSubControls(){
+  const p=PALETTES[currentPalette];
+  palSubRow.innerHTML='';
+  if(p.special==='shuffle'){
+    const btn=document.createElement('button');
+    btn.className='palSubBtn';
+    btn.innerHTML='🎲 Reshuffle colours';
+    btn.title='Regenerate a fresh random colour per part type';
+    btn.addEventListener('click',()=>{
+      shuffleSeed=Math.random()*9973;
+      shuffleColors=makeShuffleColors(shuffleSeed);
+      retintBricks();
+      updateBomSwatches(rainbowPhase);
+      buildPaletteGrid(); // refresh swatch previews
+      applyPalette('shuffle');
+    });
+    palSubRow.appendChild(btn);
+    palSubRow.style.display='flex';
+  } else if(p.special==='rainbow'){
+    const mk=(mode,label)=>{
+      const btn=document.createElement('button');
+      btn.className='palSubBtn'+(rainbowMode===mode?' active':'');
+      btn.textContent=label;
+      btn.title = mode==='height'
+        ? 'Rainbow is a static gradient from bottom to top'
+        : 'Rainbow gradient shifts diagonally over time';
+      btn.addEventListener('click',()=>{
+        rainbowMode=mode;
+        applyPalette('rainbow');
+      });
+      return btn;
+    };
+    palSubRow.appendChild(mk('height','⬍ Static (height)'));
+    palSubRow.appendChild(mk('time','⏱ Animated (time × height)'));
+    palSubRow.style.display='flex';
+  } else {
+    palSubRow.style.display='none';
+  }
+}
+
+/** Apply the current palette to every instanced brick — no model reload. */
+function retintBricks(time = rainbowPhase){
+  if(!currentModel) return;
+  const col=new THREE.Color();
+  for(const g of currentModel.groups){
+    if(!g.mesh) continue;
+    for(let i=0;i<g.bricks.length;i++){
+      const bk=g.bricks[i];
+      col.setHex(colorForBrick(bk, g.idx, time));
+      g.mesh.setColorAt(i, col);
+    }
+    if(g.mesh.instanceColor) g.mesh.instanceColor.needsUpdate=true;
+  }
+}
+
+function updateBomSwatches(time = rainbowPhase){
+  if(!currentModel) return;
+  for(const g of currentModel.groups){
+    if(!g.row) continue;
+    const c=bomSwatchColor(g, time);
+    g.color=c;
+    const sw=g.row.tr.querySelector('.swatch');
+    if(sw) sw.style.background='#'+c.toString(16).padStart(6,'0');
+  }
+}
+
+function updatePaletteBadge(){
+  const p=PALETTES[currentPalette];
+  palSub.textContent=p.name;
+  palBadgeName.textContent=p.name;
+  let c1,c2;
+  if(p.special==='shuffle'){
+    c1=shuffleColors[0]; c2=shuffleColors[10];
+  } else if(p.special==='rainbow'){
+    c1=hslToHex(rainbowMode==='time'?(rainbowPhase*60)%360:40,.78,.55);
+    c2=hslToHex(rainbowMode==='time'?(rainbowPhase*60+180)%360:220,.78,.55);
+  } else {
+    c1=p.transform(PALETTE_PREVIEW_SEEDS[1]);
+    c2=p.transform(PALETTE_PREVIEW_SEEDS[2]);
+  }
+  palChipA.style.background='#'+c1.toString(16).padStart(6,'0');
+  palChipB.style.background='#'+c2.toString(16).padStart(6,'0');
+}
+
+function applyPalette(key){
+  if(!allowedPalettes.includes(key)) key='realistic';
+  currentPalette=key;
+  const p=PALETTES[key];
+
+  paletteGrid.querySelectorAll('.palBtn').forEach(b=>{
+    b.setAttribute('aria-pressed', b.dataset.palette===key?'true':'false');
+  });
+
+  updatePaletteBadge();
+  updateSubControls();
+
+  if(!currentModel) return;
+  retintBricks();
+  updateBomSwatches();
+}
+
+function cyclePalette(dir=1){
+  if(!allowedPalettes.length) return;
+  const i=allowedPalettes.indexOf(currentPalette);
+  applyPalette(allowedPalettes[(i+dir+allowedPalettes.length)%allowedPalettes.length]);
+}
+
+/* =====================================================================
+   20. Version wiring
+   ===================================================================== */
+function buildVersionStrip(){
+  verStrip.innerHTML='';
+  VERSIONS.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.dataset.ver=v.id;
+    btn.setAttribute('aria-pressed',v.id===currentVersion?'true':'false');
+    btn.textContent=v.label;
+    btn.title=`${v.label} · ${v.name}`;
+    btn.addEventListener('click',()=>applyVersion(v.id));
+    verStrip.appendChild(btn);
+  });
+}
+function applyVersion(id){
+  currentVersion=id;
+  const v=VERSIONS.find(x=>x.id===id);
+  verStrip.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ver===id?'true':'false'));
+  verBadge.textContent=v.label;
+  changelog.innerHTML=`<strong>${v.label}</strong> — ${v.log}`;
+  document.getElementById('verSub').textContent=v.name;
+  document.getElementById('dayNightBtn').style.display=v.features.dayNight?'':'none';
+  if(!v.features.dayNight){ isDay=true; skyTarget=1; }
+  document.getElementById('stageCard').style.display=v.features.stages?'':'none';
+
+  /* palette availability */
+  allowedPalettes=allowedPaletteList();
+  if(!allowedPalettes.includes(currentPalette)) currentPalette='realistic';
+  paletteCard.style.display=allowedPalettes.length?'':'none';
+  if(allowedPalettes.length) buildPaletteGrid();
+
+  const allowed=allowedModels();
+  document.querySelectorAll('.mbtn').forEach(b=>{
+    const ok=allowed.includes(b.dataset.model);
+    b.disabled=!ok;
+    b.style.display=ok?'':'none';
+  });
+  document.getElementById('modelCount').textContent=`${allowed.length} landmark${allowed.length===1?'':'s'}`;
+
+  const current=currentModel?currentModel.key:null;
+  if(!current||!allowed.includes(current)){
+    const pick=allowed[0];
+    document.querySelectorAll('.mbtn').forEach(b=>b.classList.toggle('active',b.dataset.model===pick));
+    loadModel(pick);
+  } else {
+    loadModel(current);
+  }
+}
+
+/* =====================================================================
+   21. Model grid
+   ===================================================================== */
+const modelGrid=document.getElementById('modelGrid');
+for(const key of MODEL_ORDER){
+  const m=MODELS[key];
+  const btn=document.createElement('button');
+  btn.className='mbtn';btn.dataset.model=key;
+  btn.innerHTML=`<span class="mi">${m.icon}</span><span class="mn">${m.name}</span>`;
+  btn.title=m.sub;
+  btn.addEventListener('click',()=>{
+    if(btn.classList.contains('active'))return;
+    document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    loadModel(key);
+  });
+  modelGrid.appendChild(btn);
+}
+buildVersionStrip();
+
+/* =====================================================================
+   22. Animation loop
+   ===================================================================== */
+let last=performance.now();
+let bomSwatchAccum=0;
+
+function animate(now){
+  requestAnimationFrame(animate);
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  if(Math.abs(skyMix-skyTarget)>.001){skyMix+=(skyTarget-skyMix)*Math.min(1,dt*4.2);applySkyMix(skyMix);}
+  if(playing&&currentModel){
+    let sp=SPEEDS[speedIdx];
+    if(turboHeld||turboToggle)sp*=4;
+    progress+=(dt/BASE_DURATION)*sp*direction;
+    progress=Math.max(0,Math.min(1,progress));
+  }
+
+  /* live rainbow animation — retint all bricks and periodically
+     refresh the BOM swatches so the parts table tracks the theme */
+  if(currentPalette==='rainbow' && rainbowMode==='time' && currentModel){
+    rainbowPhase += dt;
+    retintBricks(rainbowPhase);
+    bomSwatchAccum += dt;
+    if(bomSwatchAccum > 0.25){
+      bomSwatchAccum = 0;
+      updateBomSwatches(rainbowPhase);
+      updatePaletteBadge();
+    }
+  }
+
+  applyProgress();
+  for(const c of cranes)c.update(now);
+  controls.update();
+  renderer.render(scene,camera);
+}
+function resize(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+window.addEventListener('resize',resize);
+
+/* =====================================================================
+   23. UI wiring
+   ===================================================================== */
+let timelineDragging=false;
+playBtn.addEventListener('click',()=>{
+  if(progress>=1&&direction>0){progress=0;playing=true;}
+  else if(progress<=0&&direction<0){direction=1;rewindBtn.classList.remove('on');playing=true;}
+  else playing=!playing;
+  syncPlayBtn();
+});
+document.getElementById('restartBtn').addEventListener('click',()=>{
+  progress=0;direction=1;playing=true;lastPlacedGlobal=-1;rewindBtn.classList.remove('on');syncPlayBtn();
+});
+rewindBtn.addEventListener('click',()=>{
+  direction=direction<0?1:-1;
+  if(direction<0&&progress<=0)progress=1;
+  playing=true;rewindBtn.classList.toggle('on',direction<0);syncPlayBtn();
+});
+orbitBtn.addEventListener('click',()=>{
+  controls.autoRotate=!controls.autoRotate;
+  orbitBtn.classList.toggle('on',controls.autoRotate);
+  orbitBtn.textContent=controls.autoRotate?'Orbiting':'Auto orbit';
+});
+speedEl.addEventListener('input',()=>{
+  speedIdx=+speedEl.value;
+  speedVal.textContent=SPEEDS[speedIdx].toFixed(2).replace(/\.00$/,'.0')+'×';
+  paintRange(speedEl);
+});
+const startTurbo=(e)=>{e.preventDefault();turboHeld=true;turboBtn.classList.add('on');};
+const stopTurbo=()=>{turboHeld=false;if(!turboToggle)turboBtn.classList.remove('on');};
+turboBtn.addEventListener('pointerdown',startTurbo);
+window.addEventListener('pointerup',stopTurbo);
+window.addEventListener('pointercancel',stopTurbo);
+turboBtn.addEventListener('contextmenu',e=>e.preventDefault());
+timeline.addEventListener('pointerdown',()=>timelineDragging=true);
+window.addEventListener('pointerup',()=>timelineDragging=false);
+timeline.addEventListener('input',()=>{
+  progress=Math.max(0,Math.min(1,+timeline.value/1000));
+  playing=false;syncPlayBtn();paintRange(timeline);
+});
+document.getElementById('dayNightBtn').addEventListener('click',()=>{
+  isDay=!isDay;skyTarget=isDay?1:0;
+  document.getElementById('dayNightBtn').textContent=isDay?'🌙 Night view':'☀ Day view';
+});
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;
+  if(e.key===' '){e.preventDefault();playBtn.click();}
+  else if(e.key==='r'||e.key==='R')document.getElementById('restartBtn').click();
+  else if(e.key==='n'||e.key==='N')document.getElementById('dayNightBtn').click();
+  else if(e.key==='t'||e.key==='T'){turboToggle=!turboToggle;turboBtn.classList.toggle('on',turboToggle);}
+  else if(e.key==='o'||e.key==='O')orbitBtn.click();
+  else if(e.key==='p'||e.key==='P')cyclePalette(1);
+  else if(e.key==='ArrowLeft'){progress=Math.max(0,progress-.03);playing=false;applyProgress(true);syncPlayBtn();}
+  else if(e.key==='ArrowRight'){progress=Math.min(1,progress+.03);playing=false;applyProgress(true);syncPlayBtn();}
+});
+
+/* =====================================================================
+   24. BOOT
+   ===================================================================== */
+paintRange(speedEl);paintRange(timeline);
+speedVal.textContent='1.0×';
+applySkyMix(1);
+resize();
+applyVersion('v6');
+applyPalette('realistic');
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
