@@ -21,7 +21,7 @@ export const metadata = createMetadata({
   title: "Products",
   path: "/products",
   description:
-    "Artemis product modules — Construct (5D beachhead), Twin/Atlas, Flow, Docs, Connect, plus roadmap modules Ops and Desk.",
+    "Artemis product modules — Construct (5D beachhead), Twin/Atlas, Flow, Docs, Connect.",
 });
 
 function EditorialProductCard({ p }: { p: ProductEditorial }) {
@@ -85,7 +85,7 @@ function RegistryProductCard({ product, divisionName }: { product: RegistryProdu
 }
 
 export default function ProductsPage() {
-  // Seven editorial modules (data/products-editorial.ts) first, then registry
+  // Five editorial modules (data/products-editorial.ts) first, then registry
   // products that pass the M1 public listing rule (isPubliclyListed).
   const entries = mergeRegistryOverlay(loadProducts(), productsEditorial);
   const divisionNames = new Map(loadDivisions().map((division) => [division.id, division.name]));
