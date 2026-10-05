@@ -116,7 +116,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: character-led destination quests, sponsored route packs, mobile itinerary funnels, and premium cultural game tours.",
     boundary:
       "This is a lightweight standalone iPhone game prototype with approximate lon/lat projection. It is not a full GIS dataset, navigation product, or production booking engine.",
-  },,
+  },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
     registryId: null,
