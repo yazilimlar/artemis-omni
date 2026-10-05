@@ -15,6 +15,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { labSandbox } from "@/lib/standalone-labs";
 
 const STATS = [
@@ -92,12 +93,12 @@ export default function StudioLanding() {
     <main className="min-h-dvh bg-[#0b0f0d] text-[#e9eef6] antialiased">
       {/* top bar */}
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <a
+        <Link
           href="/labs"
           className="inline-flex items-center gap-2 text-sm text-[#8593a6] transition hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" /> Artemis Labs
-        </a>
+        </Link>
         <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs tracking-wide text-[#9fb0c6]">
           v5.0 · Ultimate Edition
         </span>
