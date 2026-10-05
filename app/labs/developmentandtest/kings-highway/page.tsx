@@ -4,6 +4,7 @@ import { labSandbox } from "@/lib/standalone-labs";
 export const metadata = createMetadata({
   title: "Artemis Atlas — King's Highway v0 (Dev & Test)",
   path: "/labs/developmentandtest/kings-highway",
+  noIndex: true,
   description:
     "A mutant branch of the Artemis Time Atlas: scroll travels distance instead of time. Five stations of the ancient Aegean corridor — Smyrna, Ephesus, Didyma, Halicarnassus, Patara — rendered as a Peutinger-style ribbon itinerary with evidence-graded sites, station guides, and a downloadable KML dataset. One era, c. 150 AD.",
 });

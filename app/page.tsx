@@ -11,7 +11,6 @@ import { ImplementationPhaseCard } from "@/components/showcase/ImplementationPha
 import { LiveDashboardCard } from "@/components/showcase/LiveDashboardCard";
 import { OrganizationArchitectureDiagram } from "@/components/showcase/OrganizationArchitectureDiagram";
 import { ProofCard } from "@/components/showcase/ProofCard";
-import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
@@ -68,7 +67,6 @@ export default function HomePage() {
         <Container className="grid gap-12 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
           <div>
             <div className="flex flex-wrap items-center gap-3">
-              <StatusBadge tone="test">Executive test mode</StatusBadge>
               <span className="eyebrow">Artemis · AI Implementation</span>
             </div>
             <h1 className="display-serif mt-5 max-w-4xl text-balance text-4xl leading-[1.05] text-parchment sm:text-5xl lg:text-6xl">
@@ -213,7 +211,7 @@ export default function HomePage() {
         <Container>
           <ExecutiveSectionHeader
             eyebrow="Audience Pathways"
-            title="Generated landing pages for the people who have to implement"
+            title="Landing pages for the people who have to implement"
             description="Each pathway reframes the same Artemis operating logic for a different buyer, operator, reviewer, or learner."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -249,9 +247,9 @@ export default function HomePage() {
             ]}
           />
           <ConfidenceNote title="Public boundary">
-            This sprint keeps public pages in test mode. Showcase pages use executive narrative,
-            generic proof structure, diagrams, and clear limitations. Private workbench material
-            remains private until it is rebuilt with synthetic or approved data.
+            Public pages use executive narrative, generic proof structure, diagrams, and clear
+            limitations. Private workbench material remains private until it is rebuilt with
+            synthetic or approved data.
           </ConfidenceNote>
         </Container>
       </section>
@@ -265,7 +263,7 @@ export default function HomePage() {
             />
             <p className="eyebrow">Pilot CTA</p>
             <h2 className="display-serif mx-auto mt-4 max-w-2xl text-balance text-3xl text-parchment sm:text-4xl">
-              Bring one high-value workflow into Artemis test mode
+              Bring one high-value workflow to Artemis
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
               Start with one decision loop, one evidence chain, and one controlled proof.

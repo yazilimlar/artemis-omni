@@ -76,7 +76,6 @@ export default async function AudienceLandingPage({ params }: PageProps) {
         description={audience.summary}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <StatusBadge tone="test">Generated landing page</StatusBadge>
           <StatusBadge tone="public">Public-safe copy</StatusBadge>
           <Button href="/contact" variant="outline">
             {audience.cta}
@@ -114,9 +113,9 @@ export default async function AudienceLandingPage({ params }: PageProps) {
             outcome="A reviewed operating view that turns connected evidence into action."
           />
           <ConfidenceNote title="Public-safe audience page">
-            This route uses generalized audience copy and proof-module references. It does
-            not include client facts, private project data, financial account data, backend
-            integrations, analytics, or form wiring.
+            This page uses public-safe copy and proof-module references. It does not include
+            client facts, private project data, financial account data, backend integrations,
+            analytics, or form wiring.
           </ConfidenceNote>
         </Container>
         <Container className="mt-5">
@@ -175,7 +174,7 @@ export default async function AudienceLandingPage({ params }: PageProps) {
           <ExecutiveSectionHeader
             eyebrow="Expected Outcomes"
             title="What the first controlled pilot should prove"
-            description="Outcomes stay practical: better visibility, clearer assumptions, safer review, and a path from test mode to operating cadence."
+            description="Outcomes stay practical: better visibility, clearer assumptions, safer review, and a path to operating cadence."
           />
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {audience.outcomes.map((outcome) => (

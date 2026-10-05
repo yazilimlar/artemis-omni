@@ -37,7 +37,6 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
     heading: "Explore",
     links: [
       { title: "Labs", href: "/labs" },
-      { title: "Rainbow House Botanical Encyclopedia", href: "/labs/rainbow-house-botanical" },
       { title: "Geometric Workbench", href: "/workbench" },
       { title: "Tools", href: "/tools" },
       { title: "Portfolio", href: "/portfolio" },

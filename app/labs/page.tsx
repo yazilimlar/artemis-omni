@@ -177,7 +177,6 @@ export default function LabsPage() {
         description="Labs organizes the strongest Artemis proof paths into public-safe narrative pages, status-labeled cards, diagram systems, and clear private-demo boundaries."
       >
         <div className="flex flex-wrap items-center gap-3">
-          <StatusBadge tone="test">Test mode</StatusBadge>
           <StatusBadge tone="synthetic">Synthetic where live</StatusBadge>
           <StatusBadge tone="private">Private demos protected</StatusBadge>
           <Button href="/library/programs" variant="outline">
