@@ -125,6 +125,14 @@
         "/standalone/lego-build-studio-music.html"
       ],
       "reason": "Web Audio music engine runs under allow-scripts; no downloads, modals, popups, or storage"
+    },
+    {
+      "id": "lego-build-studio-artemis",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/lego-build-studio-artemis.html"
+      ],
+      "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
     }
   ]
 }

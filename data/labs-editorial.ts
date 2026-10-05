@@ -153,4 +153,22 @@ export const labsEditorial: LabEditorial[] = [
     boundary:
       "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "LEGO Build Studio \u00b7 Artemis Edition",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio-artemis",
+    statusLabel: "v5.0 Artemis",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "The Artemis edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js with a generative Web Audio music engine, a Fourier-epicycles ARTEMIS inscription linking to artemis.agoraxai.com, a clean-view presentation mode, and a translucent studio UI.",
+    signals: ["Fourier ARTEMIS inscription", "Generative Web Audio music", "Clean-view mode", "9 monuments"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+  },
 ];
