@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>LEGO Build Studio · by Grok · v5.0 Best</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --panel:#151b24; --panel2:#1b232e;
+    --line:#28323f; --line2:#33404f;
+    --txt:#e9eef6; --muted:#8593a6; --dim:#5d6b7d;
+    --accent:#4da3ff; --accent2:#2b7fd4;
+    --gold:#e3ac3f; --green:#3fcf8e;
+    --mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:#0b1016; color:var(--txt); overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{display:flex; height:100vh; width:100vw}
+
+  /* Grok badge */
+  .grok-badge{
+    position:fixed; top:12px; left:12px; z-index:50;
+    display:flex; align-items:center; gap:8px;
+    background:rgba(16,22,30,.88); border:1px solid var(--line);
+    border-radius:10px; padding:7px 12px 7px 9px;
+    backdrop-filter:blur(12px); pointer-events:none;
+    box-shadow:0 8px 28px rgba(0,0,0,.35);
+  }
+  .grok-badge .mark{
+    width:22px; height:22px; border-radius:6px;
+    background:linear-gradient(145deg,#f8fafc,#94a3b8);
+    color:#0f172a; display:grid; place-items:center;
+    font:700 11px var(--mono); letter-spacing:-.02em;
+  }
+  .grok-badge .txt{line-height:1.15}
+  .grok-badge .txt strong{display:block; font-size:11px; font-weight:700; color:var(--txt)}
+  .grok-badge .txt span{font:500 9px var(--mono); color:var(--dim); letter-spacing:.04em; text-transform:uppercase}
+
+  /* ---------- STAGE ---------- */
+  #stage{
+    position:relative; flex:1 1 auto; min-width:0; overflow:hidden;
+  }
+  .sky{
+    position:absolute; inset:0; pointer-events:none;
+    transition:opacity .65s ease;
+  }
+  .sky-day{
+    background:radial-gradient(120% 90% at 50% 8%, #7fbbe8 0%, #4a90c8 30%, #26628f 65%, #0f2c46 100%);
+  }
+  .sky-night{
+    background:radial-gradient(120% 90% at 50% 8%, #1e2c4a 0%, #131e34 42%, #060b14 100%);
+    opacity:0;
+  }
+  #stage.night .sky-night{opacity:1}
+  #scene{display:block; width:100%; height:100%; position:relative; z-index:1}
+
+  .stageTitle{
+    position:absolute; top:22px; left:26px; pointer-events:none; z-index:3;
+    text-shadow:0 2px 18px rgba(0,0,0,.55);
+    transition:color .5s;
+  }
+  .stageTitle .t1{font-size:26px; font-weight:650; letter-spacing:-.4px}
+  .stageTitle .t2{font-size:12.5px; color:rgba(255,255,255,.78); margin-top:3px; letter-spacing:.3px}
+  #stage.night .stageTitle .t2{color:#9fb0c6}
+
+  .hint{
+    position:absolute; bottom:16px; left:26px; font-size:11.5px;
+    color:rgba(255,255,255,.6); letter-spacing:.3px; pointer-events:none; z-index:3;
+    text-shadow:0 1px 8px rgba(0,0,0,.6);
+  }
+  #stage.night .hint{color:#7f8ea3}
+
+  .badge{
+    position:absolute; bottom:16px; right:22px; z-index:3;
+    display:flex; gap:8px; align-items:center;
+    background:rgba(16,22,30,.72); border:1px solid var(--line);
+    padding:7px 13px; border-radius:100px; font-size:11.5px;
+    color:#9fb0c6; backdrop-filter:blur(10px);
+  }
+  .badge b{color:var(--gold); font-weight:600}
+
+  /* ---------- SIDE PANEL ---------- */
+  #side{
+    flex:0 0 400px; width:400px; height:100vh;
+    background:linear-gradient(180deg,#121820 0%, #0d1219 100%);
+    border-left:1px solid var(--line);
+    display:flex; flex-direction:column;
+    overflow:hidden; z-index:10;
+  }
+  .sideHead{
+    display:flex; align-items:center; gap:11px;
+    padding:14px 18px 12px; border-bottom:1px solid var(--line);
+  }
+  .logo{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(145deg,#ffd23f,#e83b3b 55%,#2b7fd4);
+    display:grid;place-items:center;font-size:17px;
+    box-shadow:0 4px 14px rgba(0,0,0,.5);
+  }
+  .brand{font-size:12px; font-weight:700; letter-spacing:1.4px; font-family:Manrope,sans-serif}
+  .brandsub{font-size:10px; color:var(--dim); letter-spacing:.4px; margin-top:1px}
+  .ver-hist{
+    font-family:var(--mono); font-size:10px; font-weight:600;
+    background:var(--panel2); color:var(--muted); border:1px solid var(--line2);
+    border-radius:6px; padding:5px 8px; cursor:pointer; transition:.12s;
+  }
+  .ver-hist:hover{border-color:#43536a; color:var(--txt)}
+  .ver-hist.active{
+    background:linear-gradient(180deg,var(--accent),var(--accent2));
+    color:#fff; border-color:var(--accent2);
+  }
+  .pal-btn{
+    font-family:var(--mono); font-size:10px; font-weight:600;
+    background:var(--panel2); color:var(--muted); border:1px solid var(--line2);
+    border-radius:6px; padding:5px 8px; cursor:pointer; transition:.12s;
+  }
+  .pal-btn:hover{border-color:#43536a; color:var(--txt)}
+  .pal-btn.active{
+    background:linear-gradient(180deg,#e3ac3f,#c98f1e);
+    color:#1a1200; border-color:#e3ac3f;
+  }
+  .fx-btn{
+    font-family:var(--mono); font-size:10px; font-weight:600;
+    background:var(--panel2); color:var(--muted); border:1px solid var(--line2);
+    border-radius:6px; padding:5px 8px; cursor:pointer; transition:.12s;
+  }
+  .fx-btn:hover{border-color:#43536a; color:var(--txt)}
+  .fx-btn.active{
+    background:linear-gradient(180deg,#a855f7,#7c3aed);
+    color:#fff; border-color:#a855f7;
+  }
+  .mus-btn{
+    font-family:var(--mono); font-size:10px; font-weight:600;
+    background:var(--panel2); color:var(--muted); border:1px solid var(--line2);
+    border-radius:6px; padding:5px 8px; cursor:pointer; transition:.12s;
+  }
+  .mus-btn:hover{border-color:#43536a; color:var(--txt)}
+  .mus-btn.active{
+    background:linear-gradient(180deg,#22c55e,#16a34a);
+    color:#042014; border-color:#22c55e;
+  }
+
+  .card{padding:12px 16px; border-bottom:1px solid var(--line)}
+  .card.grow{flex:1 1 auto; display:flex; flex-direction:column; min-height:0; border-bottom:none}
+  .cardTitle{
+    font-size:10px; font-weight:700; letter-spacing:1.5px;
+    color:var(--dim); text-transform:uppercase; margin-bottom:9px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .cardTitle .sub{font-weight:500; letter-spacing:.3px; text-transform:none; color:#5d6b7d; font-size:10px}
+
+  /* model grid */
+  .modelRow{display:grid; grid-template-columns:1fr 1fr; gap:5px}
+  .mbtn{
+    display:flex; align-items:center; gap:6px;
+    background:var(--panel2); border:1px solid var(--line2);
+    border-radius:8px; padding:6px 8px; cursor:pointer;
+    transition:.14s ease; text-align:left; color:var(--txt);
+    font-family:inherit; min-width:0;
+  }
+  .mbtn:hover{background:#232e3b; border-color:#43536a}
+  .mbtn.active{
+    background:linear-gradient(90deg,rgba(77,163,255,.20),rgba(77,163,255,.05));
+    border-color:var(--accent); box-shadow:inset 2px 0 0 var(--accent);
+  }
+  .mi{font-size:14px; flex-shrink:0; line-height:1}
+  .mn{font-size:10.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+  /* controls */
+  .ctrlRow{display:flex; gap:6px; margin-bottom:9px; flex-wrap:wrap}
+  button{
+    font-family:inherit; font-size:11.5px; font-weight:600;
+    background:var(--panel2); color:var(--txt);
+    border:1px solid var(--line2); border-radius:7px;
+    padding:7px 10px; cursor:pointer; transition:.14s;
+    display:inline-flex; align-items:center; gap:4px;
+  }
+  button:hover{background:#232e3b; border-color:#43536a}
+  button:active{transform:translateY(1px)}
+  button.primary{
+    background:linear-gradient(180deg,var(--accent),var(--accent2));
+    border-color:#2b7fd4; color:#fff;
+    box-shadow:0 3px 12px rgba(43,127,212,.35);
+  }
+  button.primary:hover{background:linear-gradient(180deg,#5cb0ff,#3189dd)}
+  button.turbo{flex:1; justify-content:center}
+  button.turbo.on{
+    background:linear-gradient(180deg,#ffcf4d,#e09b1c);
+    color:#221a00; border-color:#e0a520;
+    box-shadow:0 0 18px rgba(227,172,63,.45);
+  }
+  button.rewind.on{
+    background:linear-gradient(180deg,#ff8a8a,#e35a5a);
+    color:#2a0808; border-color:#e05a5a;
+  }
+  button.orbit.on{
+    background:linear-gradient(180deg,#5fd89a,#2fae72);
+    color:#042014; border-color:#3fcf8e;
+  }
+  button.skyBtn{width:100%; justify-content:center; margin-bottom:8px;
+    background:linear-gradient(180deg,#1c2840,#141d30); border-color:#2a3a58}
+  button.skyBtn:hover{background:linear-gradient(180deg,#243350,#1a2540)}
+
+  .speedRow{display:flex; align-items:center; gap:9px; margin-bottom:8px}
+  .speedRow span{font-size:11px; color:var(--muted); white-space:nowrap}
+  .speedRow .mono{width:46px; text-align:right; color:var(--gold); font-weight:600}
+
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; flex:1;
+    height:4px; border-radius:4px; outline:none;
+    background:linear-gradient(90deg,var(--accent) 0%, var(--accent) var(--p,50%), #2b3644 var(--p,50%), #2b3644 100%);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:14px;height:14px;border-radius:50%;
+    background:#fff; border:3px solid var(--accent); cursor:pointer;
+    box-shadow:0 1px 6px rgba(0,0,0,.5);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:3px solid var(--accent); cursor:pointer;
+  }
+  .timelineRow{margin-bottom:10px}
+  .timelineRow input{width:100%}
+
+  .statRow{display:flex; gap:7px}
+  .statRow>div{
+    flex:1; background:var(--panel2); border:1px solid var(--line);
+    border-radius:7px; padding:6px 8px; display:flex; flex-direction:column; gap:2px;
+  }
+  .statRow .lbl{font-size:9px; color:var(--dim); letter-spacing:.5px; text-transform:uppercase}
+  .statRow .val{font-size:12.5px; font-weight:600; color:var(--txt)}
+  .mono{font-family:var(--mono)}
+
+  /* progress */
+  .progressBlock{margin-bottom:10px}
+  .pbTop{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+  .pbTop span:first-child{font-size:11px; color:var(--muted)}
+  .pbTop #pct{font-size:18px; font-weight:700; color:var(--green); letter-spacing:-.5px}
+  .pbOuter{
+    height:9px; border-radius:5px; background:#10161e;
+    border:1px solid var(--line2); overflow:hidden; position:relative;
+  }
+  .pbInner{
+    height:100%; width:0%; border-radius:5px;
+    background:linear-gradient(90deg,#2b7fd4,#4da3ff 55%,#5ce0b0);
+    box-shadow:0 0 14px rgba(77,163,255,.55);
+    transition:width .06s linear;
+  }
+
+  /* stage chips */
+  .stageChips{display:flex; flex-wrap:wrap; gap:3px; margin-bottom:10px; max-height:64px; overflow-y:auto}
+  .stageChip{
+    position:relative; overflow:hidden; font-size:9.5px;
+    padding:3px 7px; border-radius:4px;
+    background:#0f172a; border:1px solid var(--line); color:var(--dim);
+    transition:color .2s, border-color .2s;
+  }
+  .stageChip .fill{
+    position:absolute; inset:0 auto 0 0;
+    background:linear-gradient(90deg, rgba(77,163,255,.35), rgba(63,207,142,.28));
+    width:0%; transition:width .12s linear; pointer-events:none;
+  }
+  .stageChip .lbl{position:relative; z-index:1}
+  .stageChip.active{color:var(--txt); border-color:var(--accent)}
+  .stageChip.done{color:var(--green); border-color:rgba(63,207,142,.5)}
+
+  /* BOM */
+  .tableWrap{flex:1 1 auto; overflow-y:auto; margin:0 -5px; padding:0 5px; min-height:100px}
+  .tableWrap::-webkit-scrollbar{width:7px}
+  .tableWrap::-webkit-scrollbar-track{background:transparent}
+  .tableWrap::-webkit-scrollbar-thumb{background:#2b3644; border-radius:4px}
+  .tableWrap::-webkit-scrollbar-thumb:hover{background:#3b4a5c}
+
+  table{width:100%; border-collapse:collapse; font-size:11px}
+  thead th{
+    position:sticky; top:0; z-index:2;
+    background:#111821; text-align:left;
+    font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+    color:var(--dim); padding:5px 5px 6px; border-bottom:1px solid var(--line2);
+  }
+  thead th.num{text-align:right}
+  tbody td{padding:4px 5px; border-bottom:1px solid #1b232d; vertical-align:middle}
+  tbody tr.done{background:rgba(63,207,142,.055)}
+  tbody tr.unused{opacity:.28}
+  td.sw{width:13px; padding-right:0}
+  td.sw span{display:block; width:9px; height:9px; border-radius:3px;
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.09)}
+  td.nm{color:#c3cede; font-weight:500}
+  td.num{text-align:right; font-family:var(--mono); font-size:10.5px}
+  td.num.placed{color:var(--accent); font-weight:600}
+  td.num.total{color:var(--dim)}
+  tr.done td.num.placed{color:var(--green)}
+
+  @media (max-width:900px){
+    #app{flex-direction:column}
+    #side{flex:0 0 54vh; width:100%; height:54vh; border-left:none; border-top:1px solid var(--line)}
+    #stage{flex:1 1 auto; min-height:46vh}
+    .stageTitle .t1{font-size:19px}
+    .badge{display:none}
+    .modelRow{grid-template-columns:1fr 1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<!-- Grok attribution -->
+<div class="grok-badge" aria-label="Created with Grok AI">
+  <div class="mark">G</div>
+  <div class="txt">
+    <strong>Created with Grok</strong>
+    <span>xAI · v5.0 Best</span>
+  </div>
+</div>
+
+<div id="app">
+  <div id="stage">
+    <div class="sky sky-day"></div>
+    <div class="sky sky-night"></div>
+    <canvas id="scene"></canvas>
+    <div class="stageTitle" style="top:52px">
+      <div class="t1" id="modelName">Selimiye Mosque</div>
+      <div class="t2" id="modelSub">Edirne, Türkiye · 1568–1574 · Mimar Sinan</div>
+    </div>
+    <div class="hint">Drag to orbit · Scroll zoom · Right-drag pan · <b>Space</b> play · <b>N</b> night · <b>T</b> turbo · <b>O</b> orbit</div>
+    <div class="badge">🧱 <b id="badgeCount">0</b> bricks · <span id="badgeTypes">0</span> part types · <span style="color:var(--gold)">v5.0</span></div>
+  </div>
+
+  <aside id="side">
+    <header class="sideHead">
+      <div class="logo">🧱</div>
+      <div>
+        <div class="brand">LEGO BUILD STUDIO</div>
+        <div class="brandsub">Best bricks · Fourier cranes · 9 monuments · by Grok</div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="cardTitle">Version history <span class="sub">evolution</span></div>
+      <div class="ctrlRow" style="flex-wrap:wrap;gap:5px">
+        <button type="button" class="ver-hist" data-ver="1" title="v1 Classic 2D">v1 2D</button>
+        <button type="button" class="ver-hist" data-ver="2" title="v2 Three.js Day/Night">v2 3D</button>
+        <button type="button" class="ver-hist" data-ver="3" title="v3 Fourier Cranes">v3 Cranes</button>
+        <button type="button" class="ver-hist" data-ver="4" title="v4 Studio UI">v4 UI</button>
+        <button type="button" class="ver-hist active" data-ver="5" title="v5 Best — this build">v5 Best</button>
+      </div>
+      <div id="verNote" style="font-size:10.5px;color:var(--dim);line-height:1.45;margin-top:6px;display:none"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardTitle">Model <span class="sub" id="modelCount">9 landmarks</span></div>
+      <div class="modelRow" id="modelGrid"></div>
+    </section>
+
+    <section class="card">
+      <div class="cardTitle">Color palette <span class="sub" id="paletteLabel">Realistic</span></div>
+      <div class="ctrlRow" style="flex-wrap:wrap;gap:5px" id="paletteRow">
+        <button type="button" class="pal-btn active" data-pal="realistic" title="Natural stone &amp; material colors">Realistic</button>
+        <button type="button" class="pal-btn" data-pal="analog" title="Muted, film-like tones">Analog</button>
+        <button type="button" class="pal-btn" data-pal="threescale" title="Black / grey / white only">Three-Scale</button>
+        <button type="button" class="pal-btn" data-pal="executive" title="Navy, teal &amp; gold corporate">Executive</button>
+        <button type="button" class="pal-btn" data-pal="flamboyant" title="Bold saturated primaries">Flamboyant</button>
+        <button type="button" class="pal-btn" data-pal="antique" title="Aged parchment &amp; bronze">Antique</button>
+        <button type="button" class="pal-btn" data-pal="modern" title="Clean white, black &amp; cyan">Modern</button>
+        <button type="button" class="pal-btn" data-pal="medieval" title="Earth, oak &amp; fortress stone">Medieval</button>
+      </div>
+      <div class="cardTitle" style="margin-top:10px">Color effects <span class="sub" id="fxLabel">Off</span></div>
+      <div class="ctrlRow" style="flex-wrap:wrap;gap:5px" id="fxRow">
+        <button type="button" class="fx-btn active" data-fx="off" title="Use palette colors only">Off</button>
+        <button type="button" class="fx-btn" data-fx="shuffle" title="Shuffle material colors over time (independent of build)">Shuffle</button>
+        <button type="button" class="fx-btn" data-fx="rainbow-time" title="Rainbow cycling by clock time">Rainbow · Time</button>
+        <button type="button" class="fx-btn" data-fx="rainbow-height" title="Rainbow by brick height">Rainbow · Height</button>
+      </div>
+      <div class="cardTitle" style="margin-top:10px">Music <span class="sub" id="musicLabel">Off</span></div>
+      <div class="ctrlRow" style="flex-wrap:wrap;gap:5px" id="musicRow">
+        <button type="button" class="mus-btn active" data-mus="off" title="Silence">Off</button>
+        <button type="button" class="mus-btn" data-mus="techno" title="Deep techno — four-on-floor + filters">Techno</button>
+        <button type="button" class="mus-btn" data-mus="deephouse" title="Deep house — groovy off-beat bass">Deep House</button>
+        <button type="button" class="mus-btn" data-mus="psytrance" title="Psytrance — rolling 16th bass">Psytrance</button>
+        <button type="button" class="mus-btn" data-mus="hiphop" title="Hip-hop — boom-bap drums">Hip-Hop</button>
+        <button type="button" class="mus-btn" data-mus="rap" title="Rap — trap hats + 808">Rap</button>
+        <button type="button" class="mus-btn" data-mus="rock" title="Rock — power chords + backbeat">Rock</button>
+        <button type="button" class="mus-btn" data-mus="classical" title="Classical — harmonic progressions">Classical</button>
+        <button type="button" class="mus-btn" data-mus="pop" title="Pop — major hooks &amp; backbeat">Pop</button>
+        <button type="button" class="mus-btn" data-mus="jazz" title="Jazz — swing &amp; seventh chords">Jazz</button>
+      </div>
+      <div class="speedRow" style="margin-top:8px">
+        <span>Volume</span>
+        <input type="range" id="musVol" min="0" max="100" step="1" value="55">
+        <span id="musVolVal" class="mono">55%</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardTitle">Playback</div>
+      <button id="dayNightBtn" class="skyBtn">🌙 Switch to Night</button>
+      <div class="ctrlRow">
+        <button id="playBtn" class="primary">⏸ Pause</button>
+        <button id="restartBtn">↺ Restart</button>
+      </div>
+      <div class="ctrlRow">
+        <button id="turboBtn" class="turbo">⏩ Hold to accelerate</button>
+        <button id="rewindBtn" style="flex:0 0 auto; padding:7px 10px">⏪</button>
+        <button id="orbitBtn" style="flex:0 0 auto; padding:7px 10px">🔄</button>
+      </div>
+      <div class="speedRow">
+        <span>Speed</span>
+        <input type="range" id="speed" min="0" max="6" step="1" value="2">
+        <span id="speedVal" class="mono">1.0×</span>
+      </div>
+      <div class="timelineRow">
+        <input type="range" id="timeline" min="0" max="1000" step="1" value="0">
+      </div>
+      <div class="statRow">
+        <div><span class="lbl">Placed</span><span class="val mono" id="statPlaced">0</span></div>
+        <div><span class="lbl">Total</span><span class="val mono" id="statTotal">0</span></div>
+        <div><span class="lbl">Build time</span><span class="val mono" id="statTime">0.0s</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardTitle">Stages <span class="sub" id="stageSub">0</span></div>
+      <div class="stageChips" id="stageChips"></div>
+    </section>
+
+    <section class="card grow">
+      <div class="cardTitle">Bill of Materials <span class="sub" id="bomSub">40 part types</span></div>
+
+      <div class="progressBlock">
+        <div class="pbTop">
+          <span>Overall completion</span>
+          <span class="mono" id="pct">0%</span>
+        </div>
+        <div class="pbOuter"><div class="pbInner" id="pbFill"></div></div>
+      </div>
+
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Part type</th>
+              <th class="num">Placed</th>
+              <th class="num">Total</th>
+            </tr>
+          </thead>
+          <tbody id="bomBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+/* ═════════════════════════════════════════════════════════════════
+   1. PART LIBRARY — exactly 40 distinct LEGO part types
+   ═════════════════════════════════════════════════════════════════ */
+const PLATE = 0.4;   // world Y of one plate (stud pitch = 1)
+
+const TYPE_DEFS = [
+  // Bricks (11)
+  {n:'Brick 1×1',        w:1,d:1,h:3,s:'brick'},
+  {n:'Brick 1×2',        w:2,d:1,h:3,s:'brick'},
+  {n:'Brick 1×3',        w:3,d:1,h:3,s:'brick'},
+  {n:'Brick 1×4',        w:4,d:1,h:3,s:'brick'},
+  {n:'Brick 1×6',        w:6,d:1,h:3,s:'brick'},
+  {n:'Brick 1×8',        w:8,d:1,h:3,s:'brick'},
+  {n:'Brick 2×2',        w:2,d:2,h:3,s:'brick'},
+  {n:'Brick 2×3',        w:3,d:2,h:3,s:'brick'},
+  {n:'Brick 2×4',        w:4,d:2,h:3,s:'brick'},
+  {n:'Brick 2×6',        w:6,d:2,h:3,s:'brick'},
+  {n:'Brick 2×8',        w:8,d:2,h:3,s:'brick'},
+  // Plates (11)
+  {n:'Plate 1×1',        w:1,d:1,h:1,s:'plate'},
+  {n:'Plate 1×2',        w:2,d:1,h:1,s:'plate'},
+  {n:'Plate 1×3',        w:3,d:1,h:1,s:'plate'},
+  {n:'Plate 1×4',        w:4,d:1,h:1,s:'plate'},
+  {n:'Plate 1×6',        w:6,d:1,h:1,s:'plate'},
+  {n:'Plate 1×8',        w:8,d:1,h:1,s:'plate'},
+  {n:'Plate 2×2',        w:2,d:2,h:1,s:'plate'},
+  {n:'Plate 2×4',        w:4,d:2,h:1,s:'plate'},
+  {n:'Plate 2×6',        w:6,d:2,h:1,s:'plate'},
+  {n:'Plate 4×4',        w:4,d:4,h:1,s:'plate'},
+  {n:'Plate 6×6',        w:6,d:6,h:1,s:'plate'},
+  // Tiles (4)
+  {n:'Tile 1×1',         w:1,d:1,h:1,s:'tile'},
+  {n:'Tile 1×2',         w:2,d:1,h:1,s:'tile'},
+  {n:'Tile 2×2',         w:2,d:2,h:1,s:'tile'},
+  {n:'Tile 2×4',         w:4,d:2,h:1,s:'tile'},
+  // Slopes (3)
+  {n:'Slope 1×2',        w:2,d:1,h:3,s:'slope'},
+  {n:'Slope 2×2',        w:2,d:2,h:3,s:'slope'},
+  {n:'Slope 2×4',        w:4,d:2,h:3,s:'slope'},
+  // Round (5)
+  {n:'Round Brick 1×1',  w:1,d:1,h:3,s:'round'},
+  {n:'Round Plate 1×1',  w:1,d:1,h:1,s:'roundplate'},
+  {n:'Round Brick 2×2',  w:2,d:2,h:3,s:'round'},
+  {n:'Round Plate 2×2',  w:2,d:2,h:1,s:'roundplate'},
+  {n:'Round Plate 4×4',  w:4,d:4,h:1,s:'roundplate'},
+  // Special (6)
+  {n:'Cone 2×2',         w:2,d:2,h:3,s:'cone'},
+  {n:'Arch 1×4',         w:4,d:1,h:3,s:'arch'},
+  {n:'Arch 1×6',         w:6,d:1,h:3,s:'arch'},
+  {n:'Grille 1×2',       w:2,d:1,h:3,s:'grille'},
+  {n:'Log Brick 1×2',    w:2,d:1,h:3,s:'log'},
+  {n:'Corner Brick 2×2', w:2,d:2,h:3,s:'corner'},
+];
+const N_TYPES = TYPE_DEFS.length;   // = 40
+
+const TYPE_KEY = new Map();
+TYPE_DEFS.forEach((d,i)=> TYPE_KEY.set(`${d.w}_${d.d}_${d.h}_${d.s}`, i));
+const T = (w,d,h,s) => {
+  const i = TYPE_KEY.get(`${w}_${d}_${h}_${s}`);
+  if (i === undefined) throw new Error('Unknown part: ' + `${w}_${d}_${h}_${s}`);
+  return i;
+};
+
+/* ── Geometry factory: box + studs, cylinders, cones, wedges, tiles ── */
+function buildGeometries() {
+  const studGeo = (x,y,z) => {
+    const g = new THREE.CylinderGeometry(0.30, 0.30, 0.22, 14, 1, false);
+    g.translate(x, y + 0.11, z);
+    return g;
+  };
+
+  return TYPE_DEFS.map(def => {
+    const parts = [];
+    const w = def.w, d = def.d, h = def.h * PLATE, s = def.s;
+
+    if (s === 'round' || s === 'roundplate') {
+      const r = Math.min(w, d) / 2;
+      const g = new THREE.CylinderGeometry(r, r, h, 24, 1, false);
+      g.translate(0, h/2, 0);
+      parts.push(g);
+      parts.push(studGeo(0, h, 0));
+    } else if (s === 'cone') {
+      const g = new THREE.CylinderGeometry(0.30, Math.min(w,d)/2, h, 24, 1, false);
+      g.translate(0, h/2, 0);
+      parts.push(g);
+    } else {
+      const g = new THREE.BoxGeometry(w, h, d);
+      g.translate(0, h/2, 0);
+      if (s === 'slope') {
+        const pos = g.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          const y = pos.getY(i);
+          if (y > h * 0.99) {
+            const z = pos.getZ(i);
+            pos.setY(i, h * (1 - 0.80 * ((z + d/2) / d)));
+          }
+        }
+        g.computeVertexNormals();
+      }
+      parts.push(g);
+      if (s === 'brick' || s === 'plate' || s === 'arch' || s === 'corner') {
+        for (let i = 0; i < w; i++)
+          for (let j = 0; j < d; j++)
+            parts.push(studGeo(i - (w-1)/2, h, j - (d-1)/2));
+      }
+    }
+    return mergeGeometries(parts, false);
+  });
+}
+const GEOMETRIES = buildGeometries();
+const BRICK_MAT = new THREE.MeshStandardMaterial({ roughness: 0.52, metalness: 0.02 });
+
+/* ═════════════════════════════════════════════════════════════════
+   COLOR PALETTES — thematic brick color systems
+   ═════════════════════════════════════════════════════════════════ */
+const PALETTES = {
+  realistic: {
+    label: 'Realistic',
+    stone:0xE4D8BC, stone2:0xCFBE99, stone3:0xB2A07A,
+    dome:0x6F94A9, dome2:0x5A7E93, gold:0xE0AC42,
+    marble:0xF5F0E6, marble2:0xD8CAA8, marble3:0xBAA884,
+    dark:0x4E5A6B, roof:0x8E7A5E,
+    trav:0xEDE3D0, trav2:0xD9CDB4, trav3:0xC2B294,
+    granite:0x8E949C, bronze:0x8A6F45,
+    glass:0x9CC4D8, glass2:0x7AA8C0, glass3:0x5A88A8,
+    steel:0xB0B8C0, base:0x808894, spire:0xA8B0B8,
+    win:0x4A5464, sand:0xE8D8A8, cap:0xE0C070, wood:0x8B6914
+  },
+  analog: {
+    label: 'Analog',
+    stone:0xC4B8A8, stone2:0xA89880, stone3:0x8A7A62,
+    dome:0x7A8A9A, dome2:0x5A6A7A, gold:0xC4A060,
+    marble:0xE0D8CC, marble2:0xC0B4A0, marble3:0xA09078,
+    dark:0x3A4048, roof:0x6A5A48,
+    trav:0xD0C8B8, trav2:0xB8A890, trav3:0x988870,
+    granite:0x707880, bronze:0x7A6040,
+    glass:0x8898A8, glass2:0x687888, glass3:0x485868,
+    steel:0x9098A0, base:0x606870, spire:0xA0A8B0,
+    win:0x3A4450, sand:0xD0C4A0, cap:0xC0A870, wood:0x6A5020
+  },
+  threescale: {
+    label: 'Three-Scale',
+    stone:0xF0F0F0, stone2:0xA0A0A0, stone3:0x404040,
+    dome:0x808080, dome2:0x505050, gold:0xD0D0D0,
+    marble:0xFFFFFF, marble2:0xC0C0C0, marble3:0x707070,
+    dark:0x202020, roof:0x606060,
+    trav:0xE8E8E8, trav2:0xB0B0B0, trav3:0x585858,
+    granite:0x787878, bronze:0x909090,
+    glass:0xC8C8C8, glass2:0x888888, glass3:0x484848,
+    steel:0xB8B8B8, base:0x505050, spire:0xD8D8D8,
+    win:0x303030, sand:0xD0D0D0, cap:0xE8E8E8, wood:0x686868
+  },
+  executive: {
+    label: 'Executive',
+    stone:0x2C3E50, stone2:0x34495E, stone3:0x1A252F,
+    dome:0x1ABC9C, dome2:0x16A085, gold:0xF1C40F,
+    marble:0xECF0F1, marble2:0xBDC3C7, marble3:0x7F8C8D,
+    dark:0x0D1117, roof:0x2C3E50,
+    trav:0x34495E, trav2:0x2C3E50, trav3:0x1A252F,
+    granite:0x5D6D7E, bronze:0xD4AC0D,
+    glass:0x5DADE2, glass2:0x3498DB, glass3:0x1A5276,
+    steel:0xAEB6BF, base:0x1C2833, spire:0xD5D8DC,
+    win:0x1A5276, sand:0x85929E, cap:0xF7DC6F, wood:0x6E2C00
+  },
+  flamboyant: {
+    label: 'Flamboyant',
+    stone:0xE74C3C, stone2:0xC0392B, stone3:0x922B21,
+    dome:0x9B59B6, dome2:0x8E44AD, gold:0xF1C40F,
+    marble:0xF5B7B1, marble2:0xF1948A, marble3:0xE74C3C,
+    dark:0x1B2631, roof:0xD35400,
+    trav:0xE67E22, trav2:0xD35400, trav3:0xA04000,
+    granite:0x5B2C6F, bronze:0xF39C12,
+    glass:0x3498DB, glass2:0x2980B9, glass3:0x1A5276,
+    steel:0xECF0F1, base:0x2C3E50, spire:0xF7DC6F,
+    win:0x8E44AD, sand:0xF5B041, cap:0xF4D03F, wood:0xBA4A00
+  },
+  antique: {
+    label: 'Antique',
+    stone:0xC9B896, stone2:0xB09A72, stone3:0x8F7A55,
+    dome:0x6B7B6E, dome2:0x556355, gold:0xC9A227,
+    marble:0xE8DFC8, marble2:0xD0C4A4, marble3:0xB0A080,
+    dark:0x3D3428, roof:0x5C4A32,
+    trav:0xD4C4A0, trav2:0xBCA888, trav3:0x9A8868,
+    granite:0x7A7060, bronze:0x8B6914,
+    glass:0x7A8B7A, glass2:0x5A6B5A, glass3:0x3A4B3A,
+    steel:0xA09070, base:0x5A5040, spire:0xD4C090,
+    win:0x4A4030, sand:0xE0D0A8, cap:0xD4B870, wood:0x5C3A1E
+  },
+  modern: {
+    label: 'Modern',
+    stone:0xFAFAFA, stone2:0xE0E0E0, stone3:0x9E9E9E,
+    dome:0x212121, dome2:0x424242, gold:0xFF6F00,
+    marble:0xFFFFFF, marble2:0xF5F5F5, marble3:0xBDBDBD,
+    dark:0x000000, roof:0x424242,
+    trav:0xEEEEEE, trav2:0xBDBDBD, trav3:0x757575,
+    granite:0x616161, bronze:0xFF8F00,
+    glass:0x00BCD4, glass2:0x0097A7, glass3:0x006064,
+    steel:0xCFD8DC, base:0x263238, spire:0xECEFF1,
+    win:0x01579B, sand:0xFFF8E1, cap:0xFFAB00, wood:0x5D4037
+  },
+  medieval: {
+    label: 'Medieval',
+    stone:0x8D6E63, stone2:0x6D4C41, stone3:0x4E342E,
+    dome:0x455A64, dome2:0x37474F, gold:0xFFD54F,
+    marble:0xD7CCC8, marble2:0xBCAAA4, marble3:0x8D6E63,
+    dark:0x212121, roof:0x3E2723,
+    trav:0xA1887F, trav2:0x795548, trav3:0x5D4037,
+    granite:0x607D8B, bronze:0xFF8F00,
+    glass:0x4FC3F7, glass2:0x0288D1, glass3:0x01579B,
+    steel:0x90A4AE, base:0x37474F, spire:0xFFE082,
+    win:0x1A237E, sand:0xFFE0B2, cap:0xFFCA28, wood:0x3E2723
+  }
+};
+let currentPaletteKey = 'realistic';
+function getPalette(){ return PALETTES[currentPaletteKey]; }
+
+/* Color effects: shuffle & rainbow (independent of build timeline) */
+let colorFx = 'off';           // 'off' | 'shuffle' | 'rainbow-time' | 'rainbow-height'
+let shuffleSeed = 0;
+let lastShuffleT = 0;
+const SHUFFLE_INTERVAL = 1.25; // seconds between reshuffles
+const _fxCol = new THREE.Color();
+
+function paletteColorList(){
+  const P = getPalette();
+  return Object.values(P).filter(v => typeof v === 'number');
+}
+
+function hslRainbow(t){
+  // t in [0,1] → vivid rainbow hex-ish THREE.Color
+  _fxCol.setHSL(((t % 1) + 1) % 1, 0.85, 0.52);
+  return _fxCol;
+}
+
+function recolorInstances(now){
+  if (!currentModel || colorFx === 'off') return;
+  const tSec = now * 0.001;
+  const colors = paletteColorList();
+  const nCol = colors.length || 1;
+
+  // periodic shuffle seed bump (independent of build progress)
+  if (colorFx === 'shuffle' && tSec - lastShuffleT >= SHUFFLE_INTERVAL){
+    lastShuffleT = tSec;
+    shuffleSeed = (shuffleSeed + 1) % 10007;
+  }
+
+  for (const g of currentModel.groups){
+    if (!g.mesh || !g.bricks.length) continue;
+    for (let i = 0; i < g.bricks.length; i++){
+      const bk = g.bricks[i];
+      const yPlate = bk.y != null ? bk.y : 0;
+      const origC = bk.origC != null ? bk.origC : 0x888888;
+
+      if (colorFx === 'shuffle'){
+        const h = ((i * 2654435761) ^ (shuffleSeed * 40503)) >>> 0;
+        _fxCol.setHex(colors[h % nCol]);
+      } else if (colorFx === 'rainbow-time'){
+        const wave = tSec * 0.12 + yPlate * 0.015 + i * 0.0017;
+        hslRainbow(wave);
+      } else if (colorFx === 'rainbow-height'){
+        const wave = yPlate * 0.035 + i * 0.0003;
+        hslRainbow(wave);
+      } else {
+        _fxCol.setHex(origC);
+      }
+      g.mesh.setColorAt(i, _fxCol);
+    }
+    if (g.mesh.instanceColor) g.mesh.instanceColor.needsUpdate = true;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   2. BUILDER HELPERS (same recipes that made v2 look good)
+   ═════════════════════════════════════════════════════════════════ */
+class Builder {
+  constructor(){ this.bricks = []; this.seq = 0; }
+  add(t, x, y, z, c, rot = 0){
+    this.bricks.push({ t, x, y, z, c, rot, seq: this.seq++ });
+  }
+}
+
+function pickW(rem, opts){
+  for (const o of opts) if (o <= rem) return o;
+  return opts[opts.length - 1];
+}
+const W_BRICK_2 = [8,6,4,2];
+const W_BRICK_1 = [8,6,4,3,2,1];
+const W_PLATE_6 = [6];
+const W_PLATE_4 = [4];
+const W_PLATE_2 = [6,4,2];
+const W_PLATE_1 = [8,6,4,3,2,1];
+
+function plateDepth(remZ, w){
+  if (remZ >= 6 && w % 6 === 0) return 6;
+  if (remZ >= 4 && w % 4 === 0) return 4;
+  if (remZ >= 2 && w % 2 === 0) return 2;
+  return 1;
+}
+
+/** Fill a rectangular volume with real brick / plate courses. */
+function fill(b, x0, z0, y0, w, d, h, color, opts = {}){
+  const skip = opts.skip || null;
+  const plateShape = opts.plateShape || 'plate';
+  const evenW = (w % 2 === 0);
+  let y = y0;
+  const yTop = y0 + h;
+
+  while (y + 3 <= yTop) {
+    let z = z0;
+    while (z < z0 + d) {
+      const remZ = z0 + d - z;
+      const dz = (remZ >= 2 && evenW) ? 2 : 1;
+      let x = x0;
+      while (x < x0 + w) {
+        const remX = x0 + w - x;
+        const dx = pickW(remX, dz === 2 ? W_BRICK_2 : W_BRICK_1);
+        const cx = x + dx/2, cz = z + dz/2;
+        if (!skip || !skip(cx, cz, y)) b.add(T(dx, dz, 3, 'brick'), cx, y, cz, color);
+        x += dx;
+      }
+      z += dz;
+    }
+    y += 3;
+  }
+
+  while (y + 1 <= yTop) {
+    let z = z0;
+    while (z < z0 + d) {
+      const remZ = z0 + d - z;
+      const dz = plateDepth(remZ, w);
+      let x = x0;
+      while (x < x0 + w) {
+        const remX = x0 + w - x;
+        const wopts = dz === 6 ? W_PLATE_6 : dz === 4 ? W_PLATE_4 : dz === 2 ? W_PLATE_2 : W_PLATE_1;
+        const dx = pickW(remX, wopts);
+        const cx = x + dx/2, cz = z + dz/2;
+        if (!skip || !skip(cx, cz, y)) {
+          let ti;
+          try { ti = T(dx, dz, 1, plateShape); }
+          catch(e){ ti = T(dx, dz, 1, 'plate'); }
+          b.add(ti, cx, y, cz, color);
+        }
+        x += dx;
+      }
+      z += dz;
+    }
+    y += 1;
+  }
+}
+
+/** Ring of parts around a centre, each rotated to face outward. */
+function ringOf(b, cx, cz, y, r, n, ti, color, phase = 0){
+  for (let i = 0; i < n; i++){
+    const a = (i / n) * Math.PI * 2 + phase;
+    b.add(ti, cx + Math.cos(a) * r, y, cz + Math.sin(a) * r, color, Math.PI/2 - a);
+  }
+}
+
+/** Hemispherical shell built from stacked rings of round bricks. */
+function domeShell(b, cx, cz, y0, R, layers, ti, colorFn, capApex = true){
+  for (let i = 0; i < layers; i++){
+    const t = (i + 0.5) / layers;
+    const r = R * Math.sqrt(Math.max(0, 1 - t * t));
+    const y = y0 + i * 3;
+    const n = Math.max(1, Math.round(2 * Math.PI * r));
+    ringOf(b, cx, cz, y, r, n, ti, colorFn(i), 0.35);
+  }
+  if (capApex) b.add(ti, cx, y0 + layers * 3, cz, colorFn(layers - 1));
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   3. THE 9 MONUMENTS — rich procedural builders (from v2)
+   ═════════════════════════════════════════════════════════════════ */
+
+/* 3.1 Selimiye Mosque — Edirne (1568–1574) */
+function buildSelimiye(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -30, -30, 0, 60, 60, 3, C.stone2);
+  fill(b, -26, -26, 3, 52, 52, 1, C.marble);
+
+  const Y0 = 4, HX = 18, HZ = 15, TH = 2, WH = 24;
+  fill(b, -HX, -HZ,     Y0, 2*HX, TH, WH, C.stone);
+  fill(b, -HX, HZ-TH,   Y0, 2*HX, TH, WH, C.stone);
+  fill(b, -HX, -HZ+TH,  Y0, TH, 2*HZ-2*TH, WH, C.stone);
+  fill(b,  HX-TH,-HZ+TH,Y0, TH, 2*HZ-2*TH, WH, C.stone);
+
+  for (let x = -14; x < 14; x += 4){
+    b.add(T(2,1,3,'grille'), x + 1, 16, -HZ + 1, C.dark);
+    b.add(T(2,1,3,'grille'), x + 1, 16,  HZ - 1, C.dark);
+  }
+  for (let z = -11; z < 12; z += 4){
+    b.add(T(2,1,3,'grille'), -HX + 1, 16, z + 1, C.dark, Math.PI/2);
+    b.add(T(2,1,3,'grille'),  HX - 1, 16, z + 1, C.dark, Math.PI/2);
+  }
+
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]){
+    const cx = sx * 14, cz = sz * 11;
+    fill(b, cx - 4, cz - 4, Y0, 8, 8, WH, C.stone2);
+    domeShell(b, cx, cz, Y0 + WH, 4.3, 5, T(1,1,3,'round'), () => C.dome);
+    b.add(T(2,2,3,'cone'), cx, Y0 + WH + 15, cz, C.gold);
+  }
+
+  fill(b, -HX, -HZ, Y0 + WH, 2*HX, 2*HZ, 1, C.stone3, {
+    skip: (x, z) => (x*x + z*z) < 121 || (Math.abs(x) > 9.5 && Math.abs(z) > 6.5)
+  });
+
+  const drumY = Y0 + WH + 1;
+  for (let l = 0; l < 6; l++)
+    ringOf(b, 0, 0, drumY + l*3, 11, 34, T(2,2,3,'round'), l % 2 ? C.stone2 : C.stone);
+
+  const domeY = drumY + 18;
+  domeShell(b, 0, 0, domeY, 11.6, 12, T(1,1,3,'round'), i => (i % 2 ? C.dome : C.dome2));
+  b.add(T(2,2,3,'cone'), 0, domeY + 36, 0, C.gold);
+  b.add(T(1,1,3,'round'), 0, domeY + 39, 0, C.gold);
+
+  for (const [mx, mz] of [[21,18],[21,-18],[-21,18],[-21,-18]]){
+    fill(b, mx - 2, mz - 2, Y0, 4, 4, 21, C.stone);
+    for (let y = Y0 + 21; y < 91; y += 3)
+      b.add(T(2,2,3,'round'), mx, y, mz, C.stone2);
+    for (const by of [46, 64, 82]){
+      b.add(T(4,4,1,'roundplate'), mx, by, mz, C.marble);
+      ringOf(b, mx, mz, by,      2.6, 16, T(1,1,1,'roundplate'), C.marble);
+      ringOf(b, mx, mz, by + 1,  2.6, 16, T(1,1,3,'round'),      C.marble);
+    }
+    for (let i = 0; i < 6; i++){
+      const r = Math.max(0.6, 2.2 * (1 - i/6));
+      const n = Math.max(1, Math.round(2 * Math.PI * r));
+      ringOf(b, mx, mz, 91 + i*3, r, n, T(1,1,3,'round'), C.dark);
+    }
+    b.add(T(2,2,3,'cone'),       mx, 109, mz, C.gold);
+    b.add(T(1,1,1,'roundplate'), mx, 112, mz, C.gold);
+  }
+
+  const colX = [-15, -9, -3, 3, 9, 15];
+  for (const x of colX){
+    for (const z of [-20, -26]){
+      for (let y = Y0; y < 25; y += 3)
+        b.add(T(2,2,3,'round'), x, y, z, C.marble);
+      b.add(T(2,2,1,'roundplate'), x, 25, z, C.stone2);
+    }
+  }
+  for (let i = 0; i < colX.length - 1; i++){
+    const mx = (colX[i] + colX[i+1]) / 2;
+    b.add(T(6,1,3,'arch'), mx, 22, -20, C.stone);
+    b.add(T(6,1,3,'arch'), mx, 22, -26, C.stone);
+  }
+  fill(b, -19, -30, 26, 38, 15, 3, C.stone2);
+  for (let x = -18; x < 18; x += 2)
+    b.add(T(2,1,3,'slope'), x + 1, 26, -30, C.stone3, Math.PI);
+  for (const dx of [-12, -4, 4, 12])
+    domeShell(b, dx, -23, 29, 3.6, 4, T(1,1,3,'round'), () => C.dome);
+  fill(b, -18, -30, Y0 - 1, 36, 15, 1, C.roof, { plateShape: 'tile' });
+
+  return b.bricks;
+}
+
+/* 3.2 Pantheon, Rome (113–126 AD) */
+function buildPantheonRome(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -25, -26, 0, 50, 74, 3, C.trav2);
+
+  const RW = 21;
+  const nWall = Math.round(2 * Math.PI * RW / 2);
+  for (let l = 0; l < 11; l++)
+    ringOf(b, 0, 0, 3 + l*3, RW, nWall, T(2,2,3,'brick'), l % 2 ? C.trav : C.trav2);
+
+  const domeY = 36, LAYERS = 16;
+  domeShell(b, 0, 0, domeY, 19.5, LAYERS, T(1,1,3,'round'),
+            i => (i % 2 ? C.dome : C.dome2), false);
+  ringOf(b, 0, 0, domeY + LAYERS * 3, 5.1, 32, T(1,1,1,'roundplate'), C.bronze);
+
+  const colX = [-21, -15, -9, -3, 3, 9, 15, 21];
+  for (const z of [27, 35]){
+    for (const x of colX){
+      b.add(T(2,2,1,'roundplate'), x, 3, z, C.trav2);
+      for (let y = 4; y < 34; y += 3)
+        b.add(T(2,2,3,'round'), x, y, z, C.granite);
+      b.add(T(2,2,1,'roundplate'), x, 34, z, C.trav);
+    }
+  }
+  fill(b, -25, 22, 35, 50, 18, 3, C.trav);
+  const ped = [[25,50],[20,40],[15,30],[10,20],[5,10]];
+  ped.forEach(([hw, w], k) => fill(b, -hw, 22, 38 + k*3, w, 18, 3, C.trav));
+  ped.forEach(([hw], k) => {
+    const y = 38 + k*3;
+    for (let x = -hw; x < hw; x += 2)
+      b.add(T(2,1,3,'slope'), x + 1, y, 22, C.trav2, Math.PI);
+  });
+  fill(b, -20, 26, 53, 40, 12, 1, C.roof, { plateShape: 'tile' });
+  for (let s = 0; s < 3; s++)
+    fill(b, -24 + s*3, 42 + s*3, 0, 48 - s*6, 3, 3 - s, C.trav3);
+  return b.bricks;
+}
+
+/* 3.3 St. Peter's Basilica — Vatican */
+function buildStPeters(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -44, -44, 0, 88, 88, 3, C.stone2);
+  fill(b, -40, -40, 3, 80, 80, 1, C.marble);
+
+  const Y0 = 4;
+  fill(b, -25, -8, Y0, 50, 16, 24, C.stone);
+  fill(b, -8, -20, Y0, 16, 12, 24, C.stone);
+  fill(b, -8,   8, Y0, 16, 12, 24, C.stone);
+
+  for (let x = -22; x < 22; x += 5){
+    b.add(T(2,1,3,'grille'), x + 1, 12, -8, C.dark);
+    b.add(T(2,1,3,'grille'), x + 1, 12,  8, C.dark);
+    b.add(T(2,1,3,'grille'), x + 1, 20, -8, C.dark);
+    b.add(T(2,1,3,'grille'), x + 1, 20,  8, C.dark);
+  }
+
+  const drumY = Y0 + 24;
+  for (let l = 0; l < 8; l++)
+    ringOf(b, 0, 0, drumY + l*3, 11, 36, T(2,2,3,'round'), l % 2 ? C.stone : C.stone2);
+
+  const domeY = drumY + 24;
+  domeShell(b, 0, 0, domeY, 11.5, 13, T(1,1,3,'round'), i => (i % 2 ? C.dome : C.dome2));
+  b.add(T(2,2,3,'cone'), 0, domeY + 39, 0, C.gold);
+
+  for (const sx of [-1, 1]){
+    const cx = sx * 20, cz = 0;
+    for (let l = 0; l < 4; l++)
+      ringOf(b, cx, cz, drumY + l*3, 4.6, 20, T(2,2,3,'round'), C.stone);
+    domeShell(b, cx, cz, drumY + 12, 4.9, 6, T(1,1,3,'round'), () => C.dome);
+    b.add(T(2,2,3,'cone'), cx, drumY + 30, cz, C.gold);
+  }
+
+  const colX = [-22, -16, -10, -4, 4, 10, 16, 22];
+  for (const x of colX){
+    for (let y = Y0; y < Y0 + 22; y += 3)
+      b.add(T(2,2,3,'round'), x, y, -12, C.marble);
+    b.add(T(2,2,1,'roundplate'), x, Y0 + 22, -12, C.stone2);
+  }
+  fill(b, -25, -16, Y0 + 23, 50, 6, 4, C.stone2);
+  for (let x = -25; x < 25; x += 2)
+    b.add(T(2,1,3,'slope'), x + 1, Y0 + 27, -16, C.stone3, Math.PI);
+  const ped = [[25,50],[20,40],[15,30],[10,20],[5,10]];
+  ped.forEach(([hw, w], k) => fill(b, -hw, -16, Y0 + 27 + k*3, w, 4, 3, C.stone2));
+
+  // Bernini colonnade hint
+  for (const side of [-1, 1]){
+    for (let r = 0; r < 2; r++){
+      const radius = 36 + r * 2;
+      for (let i = 0; i < 10; i++){
+        const a = side * (0.12 + (i / 10) * 0.72);
+        const cx = Math.sin(a) * radius;
+        const cz = -44 - Math.cos(a) * radius * 0.45;
+        for (let y = 4; y < 22; y += 3)
+          b.add(T(2,2,3,'round'), cx, y, cz, C.marble);
+        b.add(T(2,2,1,'roundplate'), cx, 22, cz, C.stone2);
+      }
+    }
+  }
+  return b.bricks;
+}
+
+/* 3.4 Panthéon, Paris (1758–1790) */
+function buildPantheonParis(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -30, -30, 0, 60, 60, 3, C.stone2);
+  fill(b, -26, -26, 3, 52, 52, 1, C.marble);
+
+  const Y0 = 4;
+  fill(b, -22, -7, Y0, 44, 14, 22, C.stone);
+  fill(b, -7, -22, Y0, 14, 15, 22, C.stone);
+  fill(b, -7,   7, Y0, 14, 15, 22, C.stone);
+
+  const drumY = Y0 + 22;
+  for (let l = 0; l < 8; l++)
+    ringOf(b, 0, 0, drumY + l*3, 9, 30, T(2,2,3,'round'), l % 2 ? C.stone : C.stone2);
+  const domeY = drumY + 24;
+  domeShell(b, 0, 0, domeY, 9.5, 11, T(1,1,3,'round'), i => (i % 2 ? C.dome : C.dome2));
+  b.add(T(2,2,3,'cone'), 0, domeY + 33, 0, C.gold);
+
+  const colX = [-15, -9, -3, 3, 9, 15];
+  for (const x of colX){
+    for (const z of [-28, -32]){
+      for (let y = Y0; y < Y0 + 20; y += 3)
+        b.add(T(2,2,3,'round'), x, y, z, C.marble);
+      b.add(T(2,2,1,'roundplate'), x, Y0 + 20, z, C.stone2);
+    }
+  }
+  fill(b, -19, -34, Y0 + 21, 38, 8, 4, C.stone2);
+  for (let x = -18; x < 18; x += 2){
+    b.add(T(2,1,3,'slope'), x + 1, Y0 + 25, -34, C.stone3, Math.PI);
+    b.add(T(2,1,3,'slope'), x + 1, Y0 + 25, -26, C.stone3);
+  }
+  const ped = [[18,36],[14,28],[10,20],[6,12]];
+  ped.forEach(([hw, w], k) => fill(b, -hw, -34, Y0 + 25 + k*3, w, 8, 3, C.stone2));
+
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]){
+    const px = sx * 22, pz = sz * 7;
+    for (let y = Y0; y < Y0 + 22; y += 3)
+      b.add(T(2,2,3,'round'), px, y, pz, C.marble);
+    b.add(T(2,2,1,'roundplate'), px, Y0 + 22, pz, C.stone2);
+  }
+  return b.bricks;
+}
+
+/* 3.5 Parthenon — Athens (447–432 BC) */
+function buildParthenon(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -22, -40, 0, 44, 80, 1, C.marble3);
+  fill(b, -20, -38, 1, 40, 76, 1, C.marble2);
+  fill(b, -18, -36, 2, 36, 72, 1, C.marble);
+
+  const Y0 = 3, CH = 22;
+  const colX = [-16,-12,-8,-4,0,4,8,12,16];
+  const colZ = [];
+  for (let z = -34; z <= 34; z += 4) colZ.push(z);
+
+  const placeCol = (x, z) => {
+    for (let y = Y0; y < Y0 + CH; y += 3)
+      b.add(T(2,2,3,'round'), x, y, z, C.marble);
+    b.add(T(2,2,1,'roundplate'), x, Y0 + CH, z, C.marble2);
+  };
+  for (const z of [-34, 34]) for (const x of colX) placeCol(x, z);
+  for (const x of [-16, 16]) for (const z of colZ){
+    if (z === -34 || z === 34) continue;
+    placeCol(x, z);
+  }
+  for (const x of [-8, -4, 0, 4, 8]) placeCol(x, -30);
+
+  const entY = Y0 + CH + 1;
+  fill(b, -18, -36, entY, 36, 72, 3, C.marble2);
+  for (const zEnd of [-36, 36]){
+    for (let k = 0; k < 6; k++){
+      const w = 36 - k * 6;
+      if (w <= 0) break;
+      const zz = zEnd === -36 ? zEnd : zEnd - 3;
+      fill(b, -w/2, zz, entY + 3 + k*3, w, 3, 3, C.marble);
+    }
+  }
+  fill(b, -12, -32, Y0, 2, 64, 18, C.marble);
+  fill(b,  10, -32, Y0, 2, 64, 18, C.marble);
+  fill(b, -10, -32, Y0, 20, 2, 18, C.marble);
+  fill(b, -10,  30, Y0, 20, 2, 18, C.marble);
+  return b.bricks;
+}
+
+/* 3.6 Great Pyramid of Giza (c. 2560 BC) */
+function buildGiza(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -70, -55, 0, 140, 110, 1, C.sand);
+
+  const B1 = 36, H1 = 26;
+  for (let l = 0; l < H1; l++){
+    const half = Math.max(1, Math.round(B1 * (1 - l / H1)));
+    fill(b, -half, -half, 3 + l*3, 2*half, 2*half, 3,
+         l % 2 ? C.stone : C.stone2, {
+      skip: (x, z) => half > 3 && Math.max(Math.abs(x), Math.abs(z)) < half - 2
+    });
+  }
+  b.add(T(2,2,3,'cone'), 0, 3 + H1*3, 0, C.cap);
+  b.add(T(1,1,1,'roundplate'), 0, 3 + H1*3 + 3, 0, C.cap);
+
+  const B2 = 22, H2 = 17;
+  for (let l = 0; l < H2; l++){
+    const half = Math.max(1, Math.round(B2 * (1 - l / H2)));
+    fill(b, -half - 40, -half + 12, 1 + l*3, 2*half, 2*half, 3,
+         l % 2 ? C.stone : C.stone2, {
+      skip: (x, z) => half > 3 && Math.max(Math.abs(x), Math.abs(z)) < half - 2
+    });
+  }
+  b.add(T(2,2,3,'cone'), -40, 1 + H2*3, 12, C.cap);
+
+  const B3 = 13, H3 = 10;
+  for (let l = 0; l < H3; l++){
+    const half = Math.max(1, Math.round(B3 * (1 - l / H3)));
+    fill(b, -half + 34, -half - 14, 1 + l*3, 2*half, 2*half, 3,
+         l % 2 ? C.stone2 : C.stone, {
+      skip: (x, z) => half > 3 && Math.max(Math.abs(x), Math.abs(z)) < half - 2
+    });
+  }
+  b.add(T(2,2,3,'cone'), 34, 1 + H3*3, -14, C.cap);
+  fill(b, -6, 25, 1, 12, 6, 1, C.stone3);
+  return b.bricks;
+}
+
+/* 3.7 One World Trade Center (2006–2014) */
+function buildFreedom(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -20, -20, 0, 40, 40, 3, C.base);
+  fill(b, -16, -16, 3, 32, 32, 1, C.steel);
+
+  const H = 38, B0 = 13;
+  for (let l = 0; l < H; l++){
+    const t = l / H;
+    const half = Math.max(1, Math.round(B0 * (1 - t * 0.55)));
+    const y = 4 + l * 6;
+    fill(b, -half, -half, y, 2*half, 2*half, 1,
+         l % 2 ? C.glass : C.glass2, { plateShape: 'tile' });
+    const n = Math.max(4, Math.round(2 * Math.PI * half / 1.4));
+    for (let i = 0; i < n; i++){
+      const a = (i / n) * Math.PI * 2 + t * Math.PI * 0.5;
+      b.add(T(1,1,3,'round'),
+            Math.cos(a) * half, y + 1, Math.sin(a) * half, C.glass3);
+    }
+    if (l % 4 === 0)
+      ringOf(b, 0, 0, y - 1, half + 0.4, n, T(1,1,1,'roundplate'), C.steel);
+  }
+  const topY = 4 + H * 6;
+  b.add(T(4,4,1,'plate'), 0, topY, 0, C.steel);
+  for (let i = 0; i < 12; i++)
+    b.add(T(2,2,3,'round'), 0, topY + 1 + i*3, 0, C.spire);
+  b.add(T(1,1,3,'round'), 0, topY + 37, 0, C.spire);
+  b.add(T(1,1,1,'roundplate'), 0, topY + 40, 0, C.spire);
+  return b.bricks;
+}
+
+/* 3.8 Empire State Building (1930–1931) */
+function buildEmpire(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -22, -22, 0, 44, 44, 3, C.base);
+  fill(b, -20, -20, 3, 40, 40, 15, C.stone);
+  for (let x = -18; x < 18; x += 4)
+    for (let z = -18; z < 18; z += 4){
+      b.add(T(2,1,3,'grille'), x + 1, 7, z + 1, C.win);
+      b.add(T(2,1,3,'grille'), x + 1, 13, z + 1, C.win);
+    }
+  fill(b, -16, -16, 18, 32, 32, 10, C.stone2);
+  fill(b, -12, -12, 28, 24, 24, 10, C.stone);
+  fill(b, -8, -8, 38, 16, 16, 12, C.stone2);
+  fill(b, -5, -5, 50, 10, 10, 22, C.stone);
+  fill(b, -3, -3, 72, 6, 6, 12, C.stone2);
+  fill(b, -2, -2, 84, 4, 4, 6, C.stone);
+
+  for (let x = -14; x < 14; x += 4)
+    for (let z = -14; z < 14; z += 4){
+      b.add(T(2,1,3,'grille'), x + 1, 22, z + 1, C.win);
+      b.add(T(2,1,3,'grille'), x + 1, 32, z + 1, C.win);
+    }
+  for (let i = 0; i < 14; i++)
+    b.add(T(2,2,3,'round'), 0, 90 + i*3, 0, C.spire);
+  b.add(T(1,1,3,'round'), 0, 132, 0, C.spire);
+  b.add(T(1,1,1,'roundplate'), 0, 135, 0, C.spire);
+  fill(b, -8, -24, 3, 16, 4, 1, C.stone3);
+  return b.bricks;
+}
+
+/* 3.9 Burj Khalifa (2004–2010) */
+function buildBurj(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -18, -18, 0, 36, 36, 3, C.base);
+  fill(b, -16, -16, 3, 32, 32, 1, C.steel);
+
+  const tiers = [
+    { half: 14, h: 10, y: 4  },
+    { half: 12, h: 10, y: 14 },
+    { half: 10, h: 12, y: 24 },
+    { half: 8,  h: 14, y: 36 },
+    { half: 6,  h: 16, y: 50 },
+    { half: 5,  h: 16, y: 66 },
+    { half: 4,  h: 18, y: 82 },
+    { half: 3,  h: 16, y: 100 },
+    { half: 2,  h: 12, y: 116 },
+  ];
+  for (const t of tiers){
+    fill(b, -t.half, -t.half, t.y, 2*t.half, 2*t.half, t.h, C.glass);
+    fill(b, -t.half, -t.half, t.y + t.h - 1,
+         2*t.half, 2*t.half, 1, C.glass2, { plateShape: 'tile' });
+    ringOf(b, 0, 0, t.y + t.h - 2, t.half + 0.3,
+           Math.max(4, Math.round(2 * Math.PI * t.half / 1.5)),
+           T(1,1,1,'roundplate'), C.steel);
+  }
+  b.add(T(4,4,1,'plate'), 0, 128, 0, C.steel);
+  for (let i = 0; i < 16; i++)
+    b.add(T(1,1,3,'round'), 0, 129 + i*3, 0, C.spire);
+  b.add(T(1,1,1,'roundplate'), 0, 177, 0, C.spire);
+  return b.bricks;
+}
+
+/* 3.10 Hagia Sophia — Istanbul */
+function buildHagiaSophia(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -32, -28, 0, 64, 56, 3, C.stone2);
+  fill(b, -28, -24, 3, 56, 48, 1, C.marble);
+  // main nave walls
+  const Y0 = 4, WH = 28;
+  fill(b, -22, -18, Y0, 44, 4, WH, C.stone);
+  fill(b, -22, 14, Y0, 44, 4, WH, C.stone);
+  fill(b, -22, -14, Y0, 4, 28, WH, C.stone);
+  fill(b, 18, -14, Y0, 4, 28, WH, C.stone);
+  // buttresses
+  for (const sx of [-1, 1]) {
+    fill(b, sx * 24 - 3, -6, Y0, 6, 12, WH + 4, C.stone2);
+  }
+  // pendentives / transition
+  const drumY = Y0 + WH;
+  for (let l = 0; l < 5; l++)
+    ringOf(b, 0, 0, drumY + l * 3, 13 - l * 0.3, 36, T(2,2,3,'round'), l % 2 ? C.stone2 : C.stone);
+  // main dome
+  domeShell(b, 0, 0, drumY + 15, 12.5, 11, T(1,1,3,'round'), i => (i % 2 ? C.dome : C.dome2));
+  b.add(T(2,2,3,'cone'), 0, drumY + 48, 0, C.gold);
+  // semi-domes E/W
+  for (const sz of [-1, 1]) {
+    domeShell(b, 0, sz * 14, Y0 + 18, 7, 7, T(1,1,3,'round'), () => C.dome);
+  }
+  // four minarets (Ottoman addition)
+  for (const [mx, mz] of [[28,22],[28,-22],[-28,22],[-28,-22]]){
+    fill(b, mx - 2, mz - 2, Y0, 4, 4, 18, C.stone);
+    for (let y = Y0 + 18; y < 80; y += 3)
+      b.add(T(2,2,3,'round'), mx, y, mz, C.stone2);
+    b.add(T(2,2,3,'cone'), mx, 82, mz, C.gold);
+  }
+  // windows
+  for (let x = -16; x <= 16; x += 4){
+    b.add(T(2,1,3,'grille'), x, 18, -16, C.dark);
+    b.add(T(2,1,3,'grille'), x, 18, 16, C.dark);
+  }
+  return b.bricks;
+}
+
+/* 3.11 St Paul's Cathedral — London */
+function buildStPauls(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -30, -40, 0, 60, 80, 3, C.stone2);
+  fill(b, -26, -36, 3, 52, 72, 1, C.marble);
+  const Y0 = 4;
+  // west facade
+  fill(b, -24, -36, Y0, 48, 6, 26, C.stone);
+  // columns on facade
+  for (let x = -18; x <= 18; x += 6){
+    for (let y = Y0; y < 24; y += 3)
+      b.add(T(2,2,3,'round'), x, y, -34, C.marble);
+    b.add(T(2,2,1,'roundplate'), x, 24, -34, C.stone2);
+  }
+  // pediment
+  for (let l = 0; l < 5; l++){
+    const half = 20 - l * 3.5;
+    for (let x = -half; x <= half; x += 2)
+      b.add(T(2,2,1,'plate'), x, 27 + l, -34, C.stone);
+  }
+  // nave
+  fill(b, -14, -30, Y0, 28, 50, 22, C.stone, {
+    skip: (x, z) => Math.abs(x) < 10 && z > -26 && z < 16
+  });
+  // crossing
+  fill(b, -12, 8, Y0, 24, 24, 28, C.stone2);
+  // drum
+  const drumY = Y0 + 28;
+  for (let l = 0; l < 8; l++)
+    ringOf(b, 0, 16, drumY + l * 3, 10, 28, T(2,2,3,'round'), l % 2 ? C.stone : C.stone2);
+  // dome (Wren)
+  domeShell(b, 0, 16, drumY + 24, 10, 10, T(1,1,3,'round'), i => (i % 2 ? C.dome : C.dome2));
+  // lantern
+  for (let y = 0; y < 5; y++)
+    b.add(T(2,2,3,'round'), 0, drumY + 54 + y * 3, 16, C.stone);
+  b.add(T(2,2,3,'cone'), 0, drumY + 70, 16, C.gold);
+  // western towers
+  for (const mx of [-20, 20]){
+    fill(b, mx - 3, -36, Y0, 6, 6, 36, C.stone);
+    for (let y = Y0 + 36; y < 55; y += 3)
+      b.add(T(2,2,3,'round'), mx, y, -33, C.stone2);
+    b.add(T(2,2,3,'cone'), mx, 58, -33, C.gold);
+  }
+  return b.bricks;
+}
+
+/* 3.12 Marina Bay Sands — Singapore */
+function buildMarinaBay(){
+  const b = new Builder();
+  const C = getPalette();
+  fill(b, -30, -20, 0, 60, 40, 2, C.base);
+  // three hotel towers
+  const towers = [-16, 0, 16];
+  towers.forEach((tx, ti) => {
+    fill(b, tx - 5, -10, 2, 10, 20, 4, C.steel);
+    for (let y = 6; y < 70; y += 3){
+      fill(b, tx - 4, -8, y, 8, 16, 3, C.glass);
+      // sky terrace gaps suggestion
+      if (y % 12 === 0)
+        fill(b, tx - 4, -8, y, 8, 16, 1, C.steel, { plateShape: 'tile' });
+    }
+    // crown of each tower
+    fill(b, tx - 5, -9, 70, 10, 18, 3, C.steel);
+  });
+  // SkyPark (boat-shaped platform on top)
+  fill(b, -24, -12, 74, 48, 24, 4, C.steel);
+  fill(b, -22, -10, 78, 44, 20, 2, C.glass2);
+  // cantilever ends
+  fill(b, -28, -8, 74, 6, 12, 3, C.steel);
+  fill(b, 22, -8, 74, 6, 12, 3, C.steel);
+  // infinity pool hint (long plate on top)
+  fill(b, -18, -4, 80, 36, 6, 1, C.glass3, { plateShape: 'tile' });
+  // atrium base between towers
+  fill(b, -8, -6, 2, 16, 12, 8, C.glass);
+  return b.bricks;
+}
+
+/* Registry */
+const MODELS = {
+  selimiye:      { name:'Selimiye Mosque',     sub:'Edirne, Türkiye · 1568–1574 · Mimar Sinan',
+                   icon:'🕌', build:buildSelimiye },
+  stpeters:      { name:"St Peter's Basilica", sub:'Vatican City · 1506–1626 · Michelangelo / Maderno',
+                   icon:'⛪', build:buildStPeters },
+  pantheon:      { name:'Pantheon',            sub:'Rome, Italy · 113–126 AD · Emperor Hadrian',
+                   icon:'🏛️', build:buildPantheonRome },
+  parispantheon: { name:'Panthéon',            sub:'Paris, France · 1758–1790 · Soufflot',
+                   icon:'⛪', build:buildPantheonParis },
+  parthenon:     { name:'Parthenon',           sub:'Athens, Greece · 447–432 BC · Iktinos & Kallikrates',
+                   icon:'🏛️', build:buildParthenon },
+  giza:          { name:'Great Pyramid',       sub:'Giza, Egypt · c. 2560 BC · Khufu',
+                   icon:'🔺', build:buildGiza },
+  freedom:       { name:'One World Trade',     sub:'New York, USA · 2006–2014 · David Childs (SOM)',
+                   icon:'🏙️', build:buildFreedom },
+  empire:        { name:'Empire State',        sub:'New York, USA · 1930–1931 · Shreve, Lamb & Harmon',
+                   icon:'🏢', build:buildEmpire },
+  burj:          { name:'Burj Khalifa',        sub:'Dubai, UAE · 2004–2010 · Adrian Smith (SOM)',
+                   icon:'🗼', build:buildBurj },
+  hagiasophia:   { name:'Hagia Sophia',        sub:'Istanbul, Türkiye · 537 · Anthemius & Isidore',
+                   icon:'🕌', build:buildHagiaSophia },
+  stpauls:       { name:"St Paul's Cathedral", sub:'London, UK · 1675–1710 · Sir Christopher Wren',
+                   icon:'⛪', build:buildStPauls },
+  marinabay:     { name:'Marina Bay Sands',    sub:'Singapore · 2010 · Moshe Safdie',
+                   icon:'🏨', build:buildMarinaBay },
+};
+const MODEL_ORDER = ['selimiye','stpeters','pantheon','parispantheon',
+                     'parthenon','giza','freedom','empire','burj',
+                     'hagiasophia','stpauls','marinabay'];
+
+/* ═════════════════════════════════════════════════════════════════
+   4. THREE.JS SCENE
+   ═════════════════════════════════════════════════════════════════ */
+const canvas   = document.getElementById('scene');
+const stageEl  = document.getElementById('stage');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 4000);
+camera.position.set(70, 55, 90);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.075;
+controls.maxPolarAngle = Math.PI * 0.495;
+controls.minDistance = 20;
+controls.maxDistance = 900;
+controls.autoRotateSpeed = 0.9;
+
+/* lights */
+const hemi = new THREE.HemisphereLight(0xdfeaff, 0x5b5344, 1.15);
+scene.add(hemi);
+
+const sun = new THREE.DirectionalLight(0xfff2dd, 2.35);
+sun.position.set(70, 105, 55);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 800;
+sun.shadow.bias = -0.0009;
+sun.shadow.normalBias = 0.03;
+scene.add(sun);
+scene.add(sun.target);
+
+const rim = new THREE.DirectionalLight(0x8fb6ff, 0.55);
+rim.position.set(-80, 45, -70);
+scene.add(rim);
+
+const ground = new THREE.Mesh(
+  new THREE.CircleGeometry(500, 64),
+  new THREE.MeshStandardMaterial({ color: 0xd9d3c6, roughness: 1, metalness: 0 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.02;
+ground.receiveShadow = true;
+scene.add(ground);
+
+/* stars for night */
+const starGeo = new THREE.BufferGeometry();
+const STAR_N = 2600;
+const starPos = new Float32Array(STAR_N * 3);
+for (let i = 0; i < STAR_N; i++){
+  const r = 1500;
+  const theta = Math.random() * Math.PI * 2;
+  const phi   = Math.random() * Math.PI * 0.48;
+  starPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+  starPos[i*3+1] = r * Math.cos(phi) + 120;
+  starPos[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const starMat = new THREE.PointsMaterial({
+  color: 0xffffff, size: 1.5, sizeAttenuation: false,
+  transparent: true, opacity: 0, depthWrite: false
+});
+const stars = new THREE.Points(starGeo, starMat);
+stars.visible = true;
+stars.frustumCulled = false;
+scene.add(stars);
+
+/* ═══════════════════════════════════════════════════════════════════
+   CRANE SYSTEM — Fourier-series driven tower cranes
+   ═══════════════════════════════════════════════════════════════════ */
+const CRANE_MAT = {
+  yellow: new THREE.MeshStandardMaterial({ color: 0xf5c542, roughness: 0.45, metalness: 0.35 }),
+  grey:   new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.5, metalness: 0.55 }),
+  dark:   new THREE.MeshStandardMaterial({ color: 0x374151, roughness: 0.4, metalness: 0.6 }),
+  red:    new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4, metalness: 0.3 }),
+  cable:  new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.8, metalness: 0.2 })
+};
+
+/** Evaluate a truncated Fourier series: a0/2 + Σ (an cos(nωt) + bn sin(nωt)) */
+function fourier(t, a0, coeffs, omega = 1) {
+  let v = a0 * 0.5;
+  for (let n = 0; n < coeffs.length; n++) {
+    const [an, bn] = coeffs[n];
+    const nt = (n + 1) * omega * t;
+    v += an * Math.cos(nt) + bn * Math.sin(nt);
+  }
+  return v;
+}
+
+function createCrane(opts = {}) {
+  const {
+    baseX = 0, baseZ = 0,
+    towerH = 40,
+    jibLen = 32,
+    // Fourier coefficients for smooth multi-harmonic motion
+    yawA0 = 0, yawCoeffs = [[0.6, 0.4], [0.25, -0.15], [0.1, 0.08]],
+    trolleyA0 = 0.5, trolleyCoeffs = [[0.3, 0.2], [0.12, -0.08]],
+    hoistA0 = 0.45, hoistCoeffs = [[0.35, 0.2], [0.15, -0.1], [0.06, 0.04]],
+    phase = 0,
+    omega = 0.35
+  } = opts;
+
+  const root = new THREE.Group();
+  root.position.set(baseX, 0, baseZ);
+
+  // Base pad
+  const base = new THREE.Mesh(new THREE.BoxGeometry(6, 1.2, 6), CRANE_MAT.dark);
+  base.position.y = 0.6;
+  base.castShadow = true;
+  root.add(base);
+
+  // Counterweight base
+  const cwBase = new THREE.Mesh(new THREE.BoxGeometry(4, 0.8, 4), CRANE_MAT.grey);
+  cwBase.position.set(0, 1.4, 0);
+  root.add(cwBase);
+
+  // Tower (lattice simplified as box stack)
+  const tower = new THREE.Group();
+  const segH = 4;
+  const nSeg = Math.max(4, Math.round(towerH / segH));
+  for (let i = 0; i < nSeg; i++) {
+    const seg = new THREE.Mesh(
+      new THREE.BoxGeometry(2.2, segH * 0.92, 2.2),
+      i % 2 === 0 ? CRANE_MAT.yellow : CRANE_MAT.grey
+    );
+    seg.position.y = 1.8 + i * segH + segH * 0.5;
+    seg.castShadow = true;
+    tower.add(seg);
+  }
+  // diagonal braces (visual)
+  for (let i = 0; i < nSeg - 1; i++) {
+    const brace = new THREE.Mesh(
+      new THREE.BoxGeometry(0.25, segH * 1.15, 0.25),
+      CRANE_MAT.dark
+    );
+    brace.position.set(1.1, 1.8 + i * segH + segH, 0);
+    brace.rotation.z = 0.4;
+    tower.add(brace);
+  }
+  root.add(tower);
+
+  // Slewing unit (rotates)
+  const slew = new THREE.Group();
+  slew.position.y = 1.8 + nSeg * segH;
+  root.add(slew);
+
+  // Cabin
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.2, 2.8), CRANE_MAT.red);
+  cabin.position.set(0, 1.2, 1.2);
+  cabin.castShadow = true;
+  slew.add(cabin);
+
+  // Jib (main arm)
+  const jib = new THREE.Group();
+  const jibBeam = new THREE.Mesh(
+    new THREE.BoxGeometry(jibLen, 0.7, 1.4),
+    CRANE_MAT.yellow
+  );
+  jibBeam.position.set(jibLen * 0.5, 0, 0);
+  jibBeam.castShadow = true;
+  jib.add(jibBeam);
+  // jib lattice top
+  const jibTop = new THREE.Mesh(
+    new THREE.BoxGeometry(jibLen * 0.95, 0.35, 0.9),
+    CRANE_MAT.grey
+  );
+  jibTop.position.set(jibLen * 0.48, 0.9, 0);
+  jib.add(jibTop);
+  // counter-jib
+  const cjib = new THREE.Mesh(new THREE.BoxGeometry(10, 0.6, 1.2), CRANE_MAT.grey);
+  cjib.position.set(-5, 0, 0);
+  jib.add(cjib);
+  const counterW = new THREE.Mesh(new THREE.BoxGeometry(3.5, 2, 2), CRANE_MAT.dark);
+  counterW.position.set(-8.5, -0.4, 0);
+  jib.add(counterW);
+  slew.add(jib);
+
+  // Trolley on jib
+  const trolley = new THREE.Group();
+  const trolMesh = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 1.8), CRANE_MAT.dark);
+  trolley.add(trolMesh);
+  trolley.position.set(jibLen * 0.55, -0.5, 0);
+  jib.add(trolley);
+
+  // Cable + hook
+  const cable = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06, 0.06, 1, 6),
+    CRANE_MAT.cable
+  );
+  cable.geometry.translate(0, -0.5, 0); // pivot at top
+  trolley.add(cable);
+
+  const hook = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 0.7, 0.35),
+    CRANE_MAT.red
+  );
+  hook.position.y = -1;
+  cable.add(hook);
+
+  // Hook "grab" indicator (small yellow)
+  const grab = new THREE.Mesh(
+    new THREE.SphereGeometry(0.25, 10, 8),
+    CRANE_MAT.yellow
+  );
+  grab.position.y = -0.5;
+  hook.add(grab);
+
+  return {
+    root, slew, jib, trolley, cable, hook,
+    jibLen, towerH,
+    yawA0, yawCoeffs, trolleyA0, trolleyCoeffs,
+    hoistA0, hoistCoeffs, phase, omega,
+    // runtime
+    targetHook: new THREE.Vector3(),
+    active: true
+  };
+}
+
+let cranes = [];
+
+function spawnCranesForModel(key, radius, maxY) {
+  // remove old
+  cranes.forEach(c => scene.remove(c.root));
+  cranes = [];
+
+  const tall = ['freedom', 'empire', 'burj'].includes(key);
+  const mid  = ['stpeters', 'selimiye', 'parispantheon'].includes(key);
+
+  const count = tall ? 3 : mid ? 2 : 1;
+  const towerH = tall ? Math.max(55, maxY * 1.15) : mid ? Math.max(38, maxY * 1.05) : Math.max(28, maxY * 0.95);
+  const jibLen = tall ? 42 : mid ? 34 : 28;
+  const dist = radius * 0.85 + 18;
+
+  for (let i = 0; i < count; i++) {
+    const ang = (i / count) * Math.PI * 2 + 0.4;
+    const crane = createCrane({
+      baseX: Math.cos(ang) * dist,
+      baseZ: Math.sin(ang) * dist,
+      towerH,
+      jibLen,
+      phase: i * 2.1,
+      omega: 0.28 + i * 0.04,
+      yawA0: ang + Math.PI, // face inward
+      yawCoeffs: [
+        [0.55 + i * 0.08, 0.35],
+        [0.22, -0.18 + i * 0.03],
+        [0.09, 0.07]
+      ],
+      trolleyA0: 0.45,
+      trolleyCoeffs: [[0.32, 0.18], [0.14, -0.1]],
+      hoistA0: 0.4,
+      hoistCoeffs: [[0.38, 0.22], [0.16, -0.12], [0.07, 0.05]]
+    });
+    scene.add(crane.root);
+    cranes.push(crane);
+  }
+}
+
+function updateCranes(now, progress) {
+  const t = now * 0.001;
+  for (let i = 0; i < cranes.length; i++) {
+    const c = cranes[i];
+    if (!c.active) continue;
+
+    // Fourier-driven yaw (slewing)
+    const yaw = c.yawA0 + fourier(t + c.phase, 0, c.yawCoeffs, c.omega);
+    c.slew.rotation.y = yaw;
+
+    // Fourier trolley position along jib (0..1 → distance)
+    let trol = c.trolleyA0 + fourier(t + c.phase * 1.3, 0, c.trolleyCoeffs, c.omega * 1.15);
+    trol = Math.max(0.12, Math.min(0.92, trol));
+    c.trolley.position.x = trol * c.jibLen;
+
+    // Fourier hoist (cable length)
+    let hoist = c.hoistA0 + fourier(t + c.phase * 0.7, 0, c.hoistCoeffs, c.omega * 0.9);
+    hoist = Math.max(0.08, Math.min(0.95, hoist));
+    const cableLen = 4 + hoist * (c.towerH * 0.85);
+    c.cable.scale.y = cableLen;
+    c.hook.position.y = -1; // relative to scaled cable end via geometry origin
+
+    // Subtle jib nod (Fourier)
+    c.jib.rotation.z = fourier(t + c.phase * 2.1, 0, [[0.03, 0.02], [0.015, -0.01]], c.omega * 0.6);
+  }
+}
+
+/* ── Sky / day-night presets ── */
+const SKY = {
+  day: {
+    hemiSky: 0xdfeaff, hemiGround: 0x6b5f4a, hemiI: 1.15,
+    sunColor: 0xfff2dd, sunI: 2.35,
+    rimColor: 0x8fb6ff, rimI: 0.55,
+    exposure: 1.05,
+    ground: 0xd9d3c6,
+    stars: 0,
+  },
+  night: {
+    hemiSky: 0x2c3c60, hemiGround: 0x1a1a24, hemiI: 0.42,
+    sunColor: 0xaac4ff, sunI: 0.90,
+    rimColor: 0x5570b0, rimI: 0.65,
+    exposure: 0.82,
+    ground: 0x30323a,
+    stars: 0.9,
+  }
+};
+let isDay = true;
+let skyLerp = 1;                 // 0 = night, 1 = day
+let skyTarget = 1;
+
+function applySkyMix(t){
+  const d = SKY.day, n = SKY.night;
+  const mix = (a, b) => a + (b - a) * t;
+  const lerpColor = (ca, cb, out) => {
+    out.r = ca.r + (cb.r - ca.r) * t;
+    out.g = ca.g + (cb.g - ca.g) * t;
+    out.b = ca.b + (cb.b - ca.b) * t;
+  };
+
+  hemi.color.setRGB(
+    (n.hemiSky>>16 & 0xff)/255 + ((d.hemiSky>>16 & 0xff)/255 - (n.hemiSky>>16 & 0xff)/255)*t,
+    (n.hemiSky>>8  & 0xff)/255 + ((d.hemiSky>>8  & 0xff)/255 - (n.hemiSky>>8  & 0xff)/255)*t,
+    (n.hemiSky     & 0xff)/255 + ((d.hemiSky     & 0xff)/255 - (n.hemiSky     & 0xff)/255)*t
+  );
+  hemi.groundColor.setRGB(
+    (n.hemiGround>>16 & 0xff)/255 + ((d.hemiGround>>16 & 0xff)/255 - (n.hemiGround>>16 & 0xff)/255)*t,
+    (n.hemiGround>>8  & 0xff)/255 + ((d.hemiGround>>8  & 0xff)/255 - (n.hemiGround>>8  & 0xff)/255)*t,
+    (n.hemiGround     & 0xff)/255 + ((d.hemiGround     & 0xff)/255 - (n.hemiGround     & 0xff)/255)*t
+  );
+  hemi.intensity = mix(n.hemiI, d.hemiI);
+
+  sun.color.setRGB(
+    (n.sunColor>>16 & 0xff)/255 + ((d.sunColor>>16 & 0xff)/255 - (n.sunColor>>16 & 0xff)/255)*t,
+    (n.sunColor>>8  & 0xff)/255 + ((d.sunColor>>8  & 0xff)/255 - (n.sunColor>>8  & 0xff)/255)*t,
+    (n.sunColor     & 0xff)/255 + ((d.sunColor     & 0xff)/255 - (n.sunColor     & 0xff)/255)*t
+  );
+  sun.intensity = mix(n.sunI, d.sunI);
+  rim.color.setRGB(
+    (n.rimColor>>16 & 0xff)/255 + ((d.rimColor>>16 & 0xff)/255 - (n.rimColor>>16 & 0xff)/255)*t,
+    (n.rimColor>>8  & 0xff)/255 + ((d.rimColor>>8  & 0xff)/255 - (n.rimColor>>8  & 0xff)/255)*t,
+    (n.rimColor     & 0xff)/255 + ((d.rimColor     & 0xff)/255 - (n.rimColor     & 0xff)/255)*t
+  );
+  rim.intensity = mix(n.rimI, d.rimI);
+  renderer.toneMappingExposure = mix(n.exposure, d.exposure);
+  ground.material.color.setRGB(
+    (n.ground>>16 & 0xff)/255 + ((d.ground>>16 & 0xff)/255 - (n.ground>>16 & 0xff)/255)*t,
+    (n.ground>>8  & 0xff)/255 + ((d.ground>>8  & 0xff)/255 - (n.ground>>8  & 0xff)/255)*t,
+    (n.ground     & 0xff)/255 + ((d.ground     & 0xff)/255 - (n.ground     & 0xff)/255)*t
+  );
+  starMat.opacity = mix(n.stars, d.stars);
+
+  document.getElementById('stage').classList.toggle('night', t < 0.5);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   5. MODEL LOADING (instanced + per-brick state)
+   ═════════════════════════════════════════════════════════════════ */
+let currentModel = null;
+let progress = 0;
+let playing = true;
+let direction = 1;
+let speedIdx = 2;
+const SPEEDS = [0.25, 0.5, 1, 2, 4, 8, 16];
+let turboHeld = false, turboToggle = false;
+const BASE_DURATION = 30;
+
+const bomBody   = document.getElementById('bomBody');
+const pbFill    = document.getElementById('pbFill');
+const pctEl     = document.getElementById('pct');
+const statPlaced= document.getElementById('statPlaced');
+const statTotal = document.getElementById('statTotal');
+const statTime  = document.getElementById('statTime');
+const timeline  = document.getElementById('timeline');
+const playBtn   = document.getElementById('playBtn');
+const speedEl   = document.getElementById('speed');
+const speedVal  = document.getElementById('speedVal');
+const turboBtn  = document.getElementById('turboBtn');
+const rewindBtn = document.getElementById('rewindBtn');
+const orbitBtn  = document.getElementById('orbitBtn');
+const modelNameEl = document.getElementById('modelName');
+const modelSubEl  = document.getElementById('modelSub');
+const badgeCount  = document.getElementById('badgeCount');
+const badgeTypes  = document.getElementById('badgeTypes');
+const bomSub      = document.getElementById('bomSub');
+const stageChips  = document.getElementById('stageChips');
+const stageSub    = document.getElementById('stageSub');
+const modelGrid   = document.getElementById('modelGrid');
+let timelineDragging = false;
+let lastPlacedGlobal = -1;
+
+/* ── build model buttons ── */
+for (const key of MODEL_ORDER){
+  const m = MODELS[key];
+  const btn = document.createElement('button');
+  btn.className = 'mbtn';
+  btn.dataset.model = key;
+  btn.innerHTML = `<span class="mi">${m.icon}</span><span class="mn">${m.name}</span>`;
+  btn.title = m.sub;
+  btn.addEventListener('click', () => {
+    if (btn.classList.contains('active')) return;
+    document.querySelectorAll('.mbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadModel(key);
+  });
+  modelGrid.appendChild(btn);
+}
+document.getElementById('modelCount').textContent = `${MODEL_ORDER.length} landmarks`;
+
+function makeInstanced(bricks, typeIndex){
+  const geo  = GEOMETRIES[typeIndex];
+  const mesh = new THREE.InstancedMesh(geo, BRICK_MAT, bricks.length);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.frustumCulled = false;
+  const m = new THREE.Matrix4();
+  const q = new THREE.Quaternion();
+  const e = new THREE.Euler();
+  const p = new THREE.Vector3();
+  const s = new THREE.Vector3(1, 1, 1);
+  const col = new THREE.Color();
+  for (let i = 0; i < bricks.length; i++){
+    const bk = bricks[i];
+    e.set(0, bk.rot, 0);
+    q.setFromEuler(e);
+    p.set(bk.x, bk.y * PLATE, bk.z);
+    m.compose(p, q, s);
+    mesh.setMatrixAt(i, m);
+    col.setHex(bk.c);
+    mesh.setColorAt(i, col);
+  }
+  mesh.instanceMatrix.needsUpdate = true;
+  if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  mesh.count = 0;
+  return mesh;
+}
+
+function lowerBound(arr, v){
+  let lo = 0, hi = arr.length;
+  while (lo < hi){
+    const mid = (lo + hi) >> 1;
+    if (arr[mid] < v) lo = mid + 1; else hi = mid;
+  }
+  return lo;
+}
+
+function clearModel(){
+  if (!currentModel) return;
+  scene.remove(currentModel.root);
+  for (const g of currentModel.groups){
+    if (g.mesh){ g.mesh.dispose(); g.mesh = null; }
+  }
+  currentModel = null;
+  // remove cranes
+  cranes.forEach(c => scene.remove(c.root));
+  cranes = [];
+}
+
+const FLIGHT_MS = 480;
+
+function loadModel(key){
+  clearModel();
+
+  const meta = MODELS[key];
+  const raw  = meta.build();
+
+  // sort by (plate Y, seq) for bottom-up build order
+  raw.sort((a, b) => (a.y - b.y) || (a.seq - b.seq));
+
+  // first pass: find top of model (for sky spawn positions)
+  let maxYWorld = 0;
+  for (const bk of raw){
+    const def = TYPE_DEFS[bk.t];
+    const topY = (bk.y + def.h) * PLATE;
+    if (topY > maxYWorld) maxYWorld = topY;
+  }
+
+  const total = raw.length;
+
+  // assign order + placement time
+  raw.forEach((bk, i) => {
+    bk.order = i;
+    bk.placementTime = ((i + 1) / total) * 100;
+  });
+
+  // bucket by type
+  const groups = [];
+  for (let i = 0; i < N_TYPES; i++){
+    groups.push({
+      def: TYPE_DEFS[i], bricks: [], total: 0, color: 0x888888,
+      mesh: null, times: [], _c: -1, row: null
+    });
+  }
+  for (const bk of raw) groups[bk.t].bricks.push(bk);
+
+  const root = new THREE.Group();
+  const allBricks = [];
+
+  for (let i = 0; i < N_TYPES; i++){
+    const g = groups[i];
+    g.total = g.bricks.length;
+    if (!g.total) continue;
+
+    // dominant colour for the swatch
+    const counts = new Map();
+    for (const bk of g.bricks) counts.set(bk.c, (counts.get(bk.c) || 0) + 1);
+    let best = 0, bestN = -1;
+    for (const [c, n] of counts) if (n > bestN){ bestN = n; best = c; }
+    g.color = best;
+
+    // keep bricks sorted by placement time so slots align with count
+    g.bricks.sort((a, b) => a.order - b.order);
+    g.times = g.bricks.map(bk => bk.placementTime);
+
+    g.mesh = makeInstanced(g.bricks, i);
+    g.mesh.count = 0;
+    root.add(g.mesh);
+
+    // per-brick animation state
+    for (let slot = 0; slot < g.bricks.length; slot++){
+      const bk = g.bricks[slot];
+      const target = new THREE.Vector3(bk.x, bk.y * PLATE, bk.z);
+      const jitter = 4 + Math.random() * 12;
+      const skyPos = new THREE.Vector3(
+        bk.x + (Math.random() - 0.5) * 6,
+        maxYWorld + 18 + Math.random() * 26,
+        bk.z + (Math.random() - 0.5) * 6
+      );
+      const skyRot = new THREE.Euler(
+        (Math.random() - 0.5) * 0.6,
+        bk.rot + (Math.random() - 0.5) * 0.6,
+        (Math.random() - 0.5) * 0.6
+      );
+      const brick = {
+        typeId: i + 1,
+        targetPos: target,
+        placementTime: bk.placementTime,
+        slot,
+        meshRef: g.mesh,
+        state: 'hidden',
+        flightStart: 0,
+        skyPos, skyRot,
+        origC: bk.c,          // palette color for restore
+        y: bk.y,              // plate-height for rainbow-height
+        c: bk.c
+      };
+      g.bricks[slot] = brick;
+      allBricks.push(brick);
+    }
+  }
+
+  scene.add(root);
+
+  // framing
+  let minX = 1e9, maxX = -1e9, minZ = 1e9, maxZ = -1e9, maxY = 0;
+  for (const bk of raw){
+    const def = TYPE_DEFS[bk.t];
+    const r = Math.max(def.w, def.d) / 2 + 0.5;
+    minX = Math.min(minX, bk.x - r); maxX = Math.max(maxX, bk.x + r);
+    minZ = Math.min(minZ, bk.z - r); maxZ = Math.max(maxZ, bk.z + r);
+    maxY = Math.max(maxY, (bk.y + def.h) * PLATE);
+  }
+  const cx = (minX + maxX) / 2;
+  const cz = (minZ + maxZ) / 2;
+  const spanX = maxX - minX, spanZ = maxZ - minZ;
+  const width  = Math.max(spanX, spanZ);
+  const radius = Math.max(width, maxY) * 0.5;
+
+  const tallness = maxY / Math.max(width, 1);
+  const targetY  = maxY * (tallness > 1.4 ? 0.52 : 0.42);
+  controls.target.set(cx, targetY, cz);
+
+  const elT = Math.min(1, Math.max(0, (tallness - 0.5) / 2.5));
+  const el  = (0.30 - elT * 0.17) * Math.PI;
+  const dist = radius * 3.0 + 28;
+  const az = Math.PI * 0.24;
+  camera.position.set(
+    cx + Math.cos(az) * Math.cos(el) * dist,
+    targetY + Math.sin(el) * dist,
+    cz + Math.sin(az) * Math.cos(el) * dist
+  );
+  controls.minDistance = radius * 0.8;
+  controls.maxDistance = radius * 10;
+
+  sun.position.set(cx + radius * 1.5, radius * 2.6, cz + radius * 1.2);
+  sun.target.position.set(cx, maxY * 0.4, cz);
+  sun.target.updateMatrixWorld();
+  const sd = radius * 2.0;
+  sun.shadow.camera.left = -sd; sun.shadow.camera.right = sd;
+  sun.shadow.camera.top  =  sd; sun.shadow.camera.bottom = -sd;
+  sun.shadow.camera.far  = radius * 10;
+  sun.shadow.camera.updateProjectionMatrix();
+
+  ground.scale.setScalar(Math.max(1, radius / 34));
+
+  currentModel = { key, groups, total, root, bricks: allBricks };
+  progress = 0;
+  direction = 1;
+  playing = true;
+  lastPlacedGlobal = -1;
+  rewindBtn.classList.remove('on');
+  syncPlayBtn();
+
+  modelNameEl.textContent = meta.name;
+  modelSubEl.textContent  = meta.sub;
+  statTotal.textContent   = total.toLocaleString();
+  badgeCount.textContent  = total.toLocaleString();
+  badgeTypes.textContent  = groups.filter(g => g.total > 0).length;
+
+  // Spawn Fourier-driven tower cranes scaled to the model
+  spawnCranesForModel(key, radius, maxY);
+
+  buildBomTable();
+  updateBricks(0, performance.now());
+  applyProgress(true);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   6. BOM TABLE
+   ═════════════════════════════════════════════════════════════════ */
+function buildBomTable(){
+  bomBody.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  currentModel.groups.forEach(g => {
+    const tr = document.createElement('tr');
+    tr.className = g.total === 0 ? 'unused' : '';
+    const tdSw = document.createElement('td');
+    tdSw.className = 'sw';
+    const sw = document.createElement('span');
+    sw.style.background = '#' + g.color.toString(16).padStart(6, '0');
+    tdSw.appendChild(sw);
+    const tdNm = document.createElement('td');
+    tdNm.className = 'nm';
+    tdNm.textContent = g.def.n;
+    const tdPl = document.createElement('td');
+    tdPl.className = 'num placed';
+    tdPl.textContent = '0';
+    const tdTo = document.createElement('td');
+    tdTo.className = 'num total';
+    tdTo.textContent = g.total.toLocaleString();
+    tr.append(tdSw, tdNm, tdPl, tdTo);
+    frag.appendChild(tr);
+    g.row = { tr, placed: tdPl };
+    g._c = -1;
+  });
+  bomBody.appendChild(frag);
+  const used = currentModel.groups.filter(g => g.total > 0).length;
+  bomSub.textContent = `${used} of ${N_TYPES} part types in use`;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   7. PER-BRICK FLIGHT STATE MACHINE
+   ═════════════════════════════════════════════════════════════════ */
+const _dummy = new THREE.Object3D();
+
+function updateBricks(progress, now){
+  const dirty = new Set();
+  const bricks = currentModel.bricks;
+
+  for (let i = 0; i < bricks.length; i++){
+    const b = bricks[i];
+    const shouldBe = progress >= b.placementTime;
+
+    if (shouldBe && b.state === 'hidden'){
+      b.state = 'landing';
+      b.flightStart = now;
+    } else if (!shouldBe && b.state === 'placed'){
+      b.state = 'returning';
+      b.flightStart = now;
+    } else if (!shouldBe && b.state === 'landing'){
+      b.state = 'returning';
+      b.flightStart = now;
+    }
+
+    if (b.state === 'landing'){
+      const t = (now - b.flightStart) / FLIGHT_MS;
+      if (t >= 1){
+        b.state = 'placed';
+        _dummy.position.copy(b.targetPos);
+        _dummy.rotation.set(0, 0, 0);
+        _dummy.scale.set(1, 1, 1);
+        _dummy.updateMatrix();
+        b.meshRef.setMatrixAt(b.slot, _dummy.matrix);
+        dirty.add(b.meshRef);
+      } else {
+        const e = 1 - Math.pow(1 - t, 3);
+        _dummy.position.lerpVectors(b.skyPos, b.targetPos, e);
+        _dummy.rotation.set(
+          b.skyRot.x * (1 - e),
+          b.skyRot.y * (1 - e),
+          b.skyRot.z * (1 - e)
+        );
+        const s = Math.min(1, 0.2 + e * 1.3);
+        _dummy.scale.set(s, s, s);
+        _dummy.updateMatrix();
+        b.meshRef.setMatrixAt(b.slot, _dummy.matrix);
+        dirty.add(b.meshRef);
+      }
+    } else if (b.state === 'returning'){
+      const t = (now - b.flightStart) / FLIGHT_MS;
+      if (t >= 1){
+        b.state = 'hidden';
+        _dummy.position.copy(b.skyPos);
+        _dummy.rotation.copy(b.skyRot);
+        _dummy.scale.set(0.001, 0.001, 0.001);
+        _dummy.updateMatrix();
+        b.meshRef.setMatrixAt(b.slot, _dummy.matrix);
+        dirty.add(b.meshRef);
+      } else {
+        const e = t * t;
+        _dummy.position.lerpVectors(b.targetPos, b.skyPos, e);
+        _dummy.rotation.set(
+          b.skyRot.x * e, b.skyRot.y * e, b.skyRot.z * e
+        );
+        const s = Math.max(0.001, 1 - e * 1.1);
+        _dummy.scale.set(s, s, s);
+        _dummy.updateMatrix();
+        b.meshRef.setMatrixAt(b.slot, _dummy.matrix);
+        dirty.add(b.meshRef);
+      }
+    }
+  }
+
+  dirty.forEach(m => { m.instanceMatrix.needsUpdate = true; });
+
+  // sync mesh.count with progress via binary search on placement times
+  for (const g of currentModel.groups){
+    if (!g.mesh || !g.times.length) continue;
+    const c = lowerBound(g.times, progress + 0.00001);
+    if (g.mesh.count !== c) g.mesh.count = c;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   8. PROGRESS / STATS / STAGE CHIPS
+   ═════════════════════════════════════════════════════════════════ */
+function applyProgress(force = false){
+  if (!currentModel) return;
+  const total  = currentModel.total;
+  const placed = Math.min(total, Math.floor(progress / 100 * total));
+
+  if (placed !== lastPlacedGlobal || force){
+    lastPlacedGlobal = placed;
+    statPlaced.textContent = placed.toLocaleString();
+    for (const g of currentModel.groups){
+      if (!g.row) continue;
+      const c = lowerBound(g.times, progress + 0.00001);
+      if (c !== g._c){
+        g._c = c;
+        g.row.placed.textContent = c.toLocaleString();
+        g.row.tr.classList.toggle('done', c > 0 && c === g.total);
+      }
+    }
+  }
+
+  pbFill.style.width = progress.toFixed(2) + '%';
+  pctEl.textContent = progress.toFixed(1) + '%';
+  statTime.textContent = (progress / 100 * BASE_DURATION).toFixed(1) + 's';
+  if (!timelineDragging) timeline.value = Math.round(progress * 10);
+  paintRange(timeline);
+
+  if (progress >= 100 && direction > 0 && playing){ playing = false; syncPlayBtn(); }
+  if (progress <= 0 && direction < 0 && playing){ playing = false; syncPlayBtn(); }
+}
+
+function syncPlayBtn(){
+  if (progress >= 100 && direction > 0) playBtn.innerHTML = '↻ Replay';
+  else if (progress <= 0 && direction < 0) playBtn.innerHTML = '▶ Play';
+  else playBtn.innerHTML = playing ? '⏸ Pause' : '▶ Play';
+}
+
+function paintRange(el){
+  const min = +el.min, max = +el.max, v = +el.value;
+  const p = ((v - min) / (max - min)) * 100;
+  el.style.setProperty('--p', p + '%');
+}
+
+/* stage chips */
+function buildStageChips(){
+  stageChips.innerHTML = '';
+  if (!currentModel) return;
+  const stageSet = new Set();
+  for (const g of currentModel.groups){
+    for (const bk of g.bricks) if (bk.stageName !== undefined) stageSet.add(bk.stageName);
+  }
+  stageSub.textContent = '—';
+  stageChips.innerHTML = '<span style="font-size:10.5px;color:#5d6b7d;padding:3px 6px">Build proceeds bottom-up</span>';
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   9. ANIMATION LOOP
+   ═════════════════════════════════════════════════════════════════ */
+let last = performance.now();
+
+function animate(now){
+  requestAnimationFrame(animate);
+  const dt = Math.min(0.1, (now - last) / 1000);
+  last = now;
+
+  // sky tween
+  if (Math.abs(skyLerp - skyTarget) > 0.002){
+    skyLerp += (skyTarget - skyLerp) * Math.min(1, dt * 4.5);
+    applySkyMix(skyLerp);
+  }
+
+  // timeline advance
+  if (playing && currentModel){
+    let sp = SPEEDS[speedIdx];
+    if (turboHeld || turboToggle) sp *= 4;
+    progress += (dt / BASE_DURATION) * sp * 100 * direction;
+    if (progress >= 100){ progress = 100; }
+    if (progress <= 0){ progress = 0; }
+  }
+
+  if (currentModel){
+    updateBricks(progress, now);
+    applyProgress();
+    if (colorFx !== 'off') recolorInstances(now);
+  }
+
+  // Fourier-series crane animation (always running)
+  updateCranes(now, progress);
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+function resize(){
+  const w = stageEl.clientWidth, h = stageEl.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+
+/* ═════════════════════════════════════════════════════════════════
+   10. UI WIRING
+   ═════════════════════════════════════════════════════════════════ */
+playBtn.addEventListener('click', () => {
+  if (progress >= 100 && direction > 0){ progress = 0; playing = true; }
+  else if (progress <= 0 && direction < 0){ progress = 100; playing = true; }
+  else playing = !playing;
+  syncPlayBtn();
+});
+
+document.getElementById('restartBtn').addEventListener('click', () => {
+  progress = 0; direction = 1; playing = true; lastPlacedGlobal = -1;
+  rewindBtn.classList.remove('on');
+  syncPlayBtn();
+});
+
+/* rewind = flip direction */
+rewindBtn.addEventListener('click', () => {
+  if (direction < 0){
+    direction = 1; rewindBtn.classList.remove('on');
+  } else {
+    direction = -1; rewindBtn.classList.add('on');
+    playing = true;
+  }
+  syncPlayBtn();
+});
+
+/* orbit auto-rotate */
+orbitBtn.addEventListener('click', () => {
+  controls.autoRotate = !controls.autoRotate;
+  orbitBtn.classList.toggle('on', controls.autoRotate);
+});
+
+speedEl.addEventListener('input', () => {
+  speedIdx = +speedEl.value;
+  speedVal.textContent = SPEEDS[speedIdx].toFixed(2).replace(/\.00$/, '.0') + '×';
+  paintRange(speedEl);
+});
+
+/* turbo */
+const startTurbo = (e) => { e.preventDefault(); turboHeld = true; turboBtn.classList.add('on'); };
+const stopTurbo  = ()  => { turboHeld = false; if (!turboToggle) turboBtn.classList.remove('on'); };
+turboBtn.addEventListener('pointerdown', startTurbo);
+window.addEventListener('pointerup', stopTurbo);
+window.addEventListener('pointercancel', stopTurbo);
+turboBtn.addEventListener('contextmenu', e => e.preventDefault());
+turboBtn.addEventListener('dblclick', () => {
+  turboToggle = !turboToggle;
+  turboBtn.classList.toggle('on', turboToggle);
+});
+
+/* timeline scrub */
+timeline.addEventListener('pointerdown', () => timelineDragging = true);
+window.addEventListener('pointerup', () => timelineDragging = false);
+timeline.addEventListener('input', () => {
+  progress = +timeline.value / 10;
+  playing = false;
+  syncPlayBtn();
+  paintRange(timeline);
+});
+
+/* day/night */
+document.getElementById('dayNightBtn').addEventListener('click', () => {
+  isDay = !isDay;
+  skyTarget = isDay ? 1 : 0;
+  const btn = document.getElementById('dayNightBtn');
+  btn.textContent = isDay ? '🌙 Switch to Night' : '☀ Switch to Day';
+});
+
+/* keyboard shortcuts */
+document.addEventListener('keydown', e => {
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  switch(e.key){
+    case ' ': e.preventDefault(); playBtn.click(); break;
+    case 'r': case 'R': document.getElementById('restartBtn').click(); break;
+    case 'n': case 'N': document.getElementById('dayNightBtn').click(); break;
+    case 't': case 'T':
+      turboToggle = !turboToggle;
+      turboBtn.classList.toggle('on', turboToggle);
+      break;
+    case 'o': case 'O': orbitBtn.click(); break;
+    case 'ArrowLeft':
+      progress = Math.max(0, progress - 3);
+      playing = false; syncPlayBtn();
+      break;
+    case 'ArrowRight':
+      progress = Math.min(100, progress + 3);
+      playing = false; syncPlayBtn();
+      break;
+  }
+});
+
+/* ═════════════════════════════════════════════════════════════════
+   11. VERSION HISTORY
+   ═════════════════════════════════════════════════════════════════ */
+const VER_INFO = {
+  1: { note: '<strong>v1 Classic 2D</strong> — Original isometric canvas (Selimiye + Pantheon). Foundation of the series.', file: 'lego-build-studio.html' },
+  2: { note: '<strong>v2 3D Day/Night</strong> — Three.js · 9 monuments · day/night sky · orbit controls.', file: 'lego-5d-twin-v2.html' },
+  3: { note: '<strong>v3 Fourier Cranes</strong> — Multi-crane sites with Fourier-series yaw/trolley/hoist motion.', file: 'lego-crane-fourier.html' },
+  4: { note: '<strong>v4 Studio UI</strong> — Manrope/DM Mono design system, version bar, Grok badge.', file: 'lego-build-studio.html' },
+  5: { note: '<strong>v5 Best (this build)</strong> — Proper LEGO brick geometries (studs, slopes, arches, cones) · instanced meshes · Fourier cranes · 9 monuments · day/night · full controls. Created with Grok (xAI).' }
+};
+document.querySelectorAll('.ver-hist').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.ver-hist').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const v = +btn.dataset.ver;
+    const note = document.getElementById('verNote');
+    const info = VER_INFO[v];
+    if (v === 5) {
+      note.style.display = 'none';
+      note.innerHTML = '';
+    } else {
+      let extra = info.file ? ` <a href="${info.file}" style="color:var(--accent);font-weight:600;text-decoration:none">Open →</a>` : '';
+      note.innerHTML = info.note + extra;
+      note.style.display = 'block';
+    }
+  });
+});
+
+/* Palette switcher — rebuild current model with new colors */
+document.querySelectorAll('.pal-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.pal;
+    if (key === currentPaletteKey) return;
+    currentPaletteKey = key;
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.toggle('active', b.dataset.pal === key));
+    const lab = document.getElementById('paletteLabel');
+    if (lab) lab.textContent = PALETTES[key].label;
+    const mk = currentModel ? currentModel.key : 'selimiye';
+    const savedProgress = progress;
+    const wasPlaying = playing;
+    loadModel(mk);
+    progress = savedProgress;
+    playing = wasPlaying;
+    syncPlayBtn();
+    applyProgress(true);
+  });
+});
+
+/* Color effects: shuffle / rainbow */
+const FX_LABELS = {
+  off: 'Off',
+  shuffle: 'Shuffle',
+  'rainbow-time': 'Rainbow · Time',
+  'rainbow-height': 'Rainbow · Height'
+};
+document.querySelectorAll('.fx-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const fx = btn.dataset.fx;
+    colorFx = fx;
+    document.querySelectorAll('.fx-btn').forEach(b => b.classList.toggle('active', b.dataset.fx === fx));
+    const lab = document.getElementById('fxLabel');
+    if (lab) lab.textContent = FX_LABELS[fx] || fx;
+    if (fx === 'off' && currentModel){
+      // restore original palette colors immediately
+      for (const g of currentModel.groups){
+        if (!g.mesh || !g.bricks.length) continue;
+        for (let i = 0; i < g.bricks.length; i++){
+          _fxCol.setHex(g.bricks[i].origC != null ? g.bricks[i].origC : 0x888888);
+          g.mesh.setColorAt(i, _fxCol);
+        }
+        if (g.mesh.instanceColor) g.mesh.instanceColor.needsUpdate = true;
+      }
+    } else if (fx === 'shuffle'){
+      lastShuffleT = 0; // force immediate reshuffle next frame
+      shuffleSeed = (shuffleSeed + 1) % 10007;
+    }
+  });
+});
+
+/* ═════════════════════════════════════════════════════════════════
+   12. PROCEDURAL MUSIC ENGINE (Web Audio — mathematically formulated)
+   ═════════════════════════════════════════════════════════════════ */
+/*
+  Genres are pure synthesis:
+  - Techno:    4/4 kick (sine decay), closed hat noise, filtered saw bass (LFO cutoff)
+  - Classical: triad arpeggios over I–V–vi–IV, triangle + sine soft pad
+  - Pop:       major pentatonic hooks, backbeat snare noise, square bass
+  - Jazz:      swing 8ths, ii–V–I sevenths, soft saw + noise brush
+*/
+let audioCtx = null, masterGain = null, musicMode = 'off', musicTimer = null;
+let musicBeat = 0, musicBar = 0;
+
+function ensureAudio(){
+  if (audioCtx) return audioCtx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  audioCtx = new AC();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = (+document.getElementById('musVol').value || 55) / 100 * 0.35;
+  masterGain.connect(audioCtx.destination);
+  return audioCtx;
+}
+
+function setMusicVolume(pct){
+  if (masterGain) masterGain.gain.value = (pct / 100) * 0.35;
+}
+
+function midiToFreq(m){ return 440 * Math.pow(2, (m - 69) / 12); }
+
+function envGain(ctx, t0, a, d, s, r, peak = 0.2){
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(peak, t0 + a);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0001, peak * s), t0 + a + d);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + a + d + r);
+  return g;
+}
+
+function playKick(ctx, t, dest){
+  const o = ctx.createOscillator();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(150, t);
+  o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+  const g = envGain(ctx, t, 0.001, 0.08, 0.3, 0.18, 0.55);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t + 0.35);
+}
+
+function playHat(ctx, t, dest, open = false){
+  const bufLen = Math.floor(ctx.sampleRate * 0.05);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'highpass'; bp.frequency.value = 7000;
+  const g = envGain(ctx, t, 0.001, open ? 0.12 : 0.03, 0.2, open ? 0.15 : 0.04, open ? 0.12 : 0.08);
+  src.connect(bp); bp.connect(g); g.connect(dest);
+  src.start(t); src.stop(t + 0.3);
+}
+
+function playSnare(ctx, t, dest){
+  const bufLen = Math.floor(ctx.sampleRate * 0.15);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.8;
+  const g = envGain(ctx, t, 0.001, 0.06, 0.25, 0.12, 0.22);
+  src.connect(bp); bp.connect(g); g.connect(dest);
+  src.start(t); src.stop(t + 0.3);
+  // body
+  const o = ctx.createOscillator();
+  o.type = 'triangle';
+  o.frequency.setValueAtTime(180, t);
+  o.frequency.exponentialRampToValueAtTime(80, t + 0.08);
+  const g2 = envGain(ctx, t, 0.001, 0.05, 0.2, 0.1, 0.15);
+  o.connect(g2); g2.connect(dest);
+  o.start(t); o.stop(t + 0.2);
+}
+
+function playTone(ctx, t, dest, freq, dur, type = 'sine', peak = 0.12){
+  const o = ctx.createOscillator();
+  o.type = type;
+  o.frequency.setValueAtTime(freq, t);
+  const g = envGain(ctx, t, 0.01, 0.08, 0.5, Math.max(0.05, dur - 0.1), peak);
+  // gentle lowpass to tame harshness
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = type === 'sawtooth' ? 2400 : 4000;
+  o.connect(lp); lp.connect(g); g.connect(dest);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+
+function playChord(ctx, t, dest, midis, dur, type = 'triangle', peak = 0.06){
+  midis.forEach((m, i) => playTone(ctx, t + i * 0.012, dest, midiToFreq(m), dur, type, peak));
+}
+
+/* Scale helpers */
+const MAJ = [0, 2, 4, 5, 7, 9, 11];
+const MIN = [0, 2, 3, 5, 7, 8, 10];
+const PENT = [0, 2, 4, 7, 9];
+const BLUES = [0, 3, 5, 6, 7, 10];
+
+function degree(root, scale, deg, oct = 0){
+  const n = scale.length;
+  const o = Math.floor(deg / n) + oct;
+  const d = ((deg % n) + n) % n;
+  return root + scale[d] + o * 12;
+}
+
+function scheduleBar(mode){
+  if (!audioCtx || musicMode === 'off') return;
+  const ctx = audioCtx;
+  const dest = masterGain;
+  const now = ctx.currentTime + 0.06;
+  const BPM_MAP = {
+    techno: 128, deephouse: 122, psytrance: 145,
+    hiphop: 90, rap: 140, rock: 120,
+    classical: 72, pop: 118, jazz: 110
+  };
+  const bpm = BPM_MAP[mode] || 120;
+  const beat = 60 / bpm;
+  const barLen = beat * 4;
+
+  if (mode === 'techno'){
+    // 4-on-floor kick + hats + filtered bass
+    for (let i = 0; i < 4; i++){
+      const t = now + i * beat;
+      playKick(ctx, t, dest);
+      playHat(ctx, t + beat * 0.5, dest, false);
+      if (i === 1 || i === 3) playHat(ctx, t + beat * 0.75, dest, true);
+    }
+    // bass: stepwise on minor scale with LFO-ish note choice
+    const root = 36; // C2
+    for (let i = 0; i < 8; i++){
+      const t = now + i * (beat / 2);
+      const deg = [0, 0, 3, 5, 0, 7, 3, 5][(musicBar + i) % 8];
+      const f = midiToFreq(degree(root, MIN, deg));
+      playTone(ctx, t, dest, f, beat * 0.45, 'sawtooth', 0.1);
+    }
+    // sparse stab
+    if (musicBar % 2 === 0){
+      playChord(ctx, now + beat * 2, dest,
+        [degree(60, MIN, 0), degree(60, MIN, 2), degree(60, MIN, 4)], beat * 0.4, 'square', 0.04);
+    }
+  } else if (mode === 'classical'){
+    // I – V – vi – IV progression, arpeggiated
+    const prog = [[0,4,7],[7,11,14],[9,12,16],[5,9,12]]; // relative to C4=60
+    const chord = prog[musicBar % 4];
+    const root = 60;
+    // soft pad
+    playChord(ctx, now, dest, chord.map(d => root + d - 12), barLen * 0.95, 'sine', 0.045);
+    // arpeggio up-down
+    const pattern = [0, 1, 2, 1, 0, 2, 1, 0];
+    pattern.forEach((idx, i) => {
+      const t = now + i * (barLen / 8);
+      playTone(ctx, t, dest, midiToFreq(root + chord[idx]), barLen / 8 * 0.9, 'triangle', 0.1);
+    });
+    // high decoration
+    playTone(ctx, now + beat * 3, dest, midiToFreq(root + chord[2] + 12), beat * 0.8, 'sine', 0.06);
+  } else if (mode === 'pop'){
+    // major pentatonic hooks + backbeat
+    for (let i = 0; i < 4; i++){
+      const t = now + i * beat;
+      if (i === 0 || i === 2) playKick(ctx, t, dest);
+      if (i === 1 || i === 3) playSnare(ctx, t, dest);
+      playHat(ctx, t + beat * 0.5, dest, false);
+    }
+    const root = 60;
+    const hook = [0, 2, 4, 2, 0, 4, 3, 2];
+    hook.forEach((deg, i) => {
+      const t = now + i * (beat / 2);
+      playTone(ctx, t, dest, midiToFreq(degree(root, PENT, deg, 0)), beat * 0.4, 'square', 0.08);
+    });
+    // bass
+    const bassLine = [0, 0, 4, 5];
+    bassLine.forEach((deg, i) => {
+      playTone(ctx, now + i * beat, dest, midiToFreq(degree(36, MAJ, deg)), beat * 0.7, 'triangle', 0.12);
+    });
+  } else if (mode === 'jazz'){
+    // swing 8ths, ii–V–I
+    const swing = beat * 0.66;
+    const swing2 = beat - swing;
+    // brush-ish hats with swing
+    let t = now;
+    for (let i = 0; i < 4; i++){
+      playHat(ctx, t, dest, i % 2 === 1);
+      t += (i % 2 === 0) ? swing : swing2;
+    }
+    if (musicBar % 2 === 0) playKick(ctx, now, dest);
+    playSnare(ctx, now + beat * 2, dest);
+
+    // ii–V–I in C: Dm7 – G7 – Cmaj7 – Cmaj7
+    const jazzChords = [
+      [50, 53, 57, 60], // Dm7
+      [43, 47, 50, 53], // G7
+      [48, 52, 55, 59], // Cmaj7
+      [48, 52, 55, 59]
+    ];
+    const ch = jazzChords[musicBar % 4];
+    playChord(ctx, now, dest, ch, barLen * 0.9, 'sawtooth', 0.045);
+    // walking bass
+    const walk = [ch[0] - 12, ch[1] - 12, ch[2] - 12, ch[0] - 12];
+    walk.forEach((m, i) => {
+      playTone(ctx, now + i * beat, dest, midiToFreq(m), beat * 0.85, 'triangle', 0.1);
+    });
+    // sparse blue note
+    if (musicBar % 4 === 2){
+      playTone(ctx, now + beat * 2.5, dest, midiToFreq(degree(60, BLUES, 3, 1)), beat * 0.4, 'sine', 0.07);
+    }
+  } else if (mode === 'deephouse'){
+    // deep house: 4-on-floor, off-beat bass, soft pads
+    for (let i = 0; i < 4; i++){
+      const t = now + i * beat;
+      playKick(ctx, t, dest);
+      playHat(ctx, t + beat * 0.5, dest, false);
+      if (i % 2 === 1) playHat(ctx, t + beat * 0.75, dest, true);
+    }
+    const root = 33; // A1
+    const groove = [0, 0, 5, 7, 0, 3, 5, 0];
+    groove.forEach((deg, i) => {
+      const t = now + i * (beat / 2) + beat * 0.08; // slightly late = groove
+      playTone(ctx, t, dest, midiToFreq(degree(root, MIN, deg)), beat * 0.42, 'sawtooth', 0.09);
+    });
+    if (musicBar % 2 === 0){
+      playChord(ctx, now, dest,
+        [degree(57, MIN, 0), degree(57, MIN, 2), degree(57, MIN, 4)], barLen * 0.9, 'sine', 0.04);
+    }
+  } else if (mode === 'psytrance'){
+    // psytrance: fast 4/4, rolling 16th bass
+    for (let i = 0; i < 4; i++){
+      playKick(ctx, now + i * beat, dest);
+      playHat(ctx, now + i * beat + beat * 0.5, dest, false);
+    }
+    const root = 36;
+    for (let i = 0; i < 16; i++){
+      const t = now + i * (beat / 4);
+      const deg = [0, 0, 0, 3, 0, 0, 5, 0, 0, 0, 3, 7, 0, 5, 3, 0][i];
+      playTone(ctx, t, dest, midiToFreq(degree(root, MIN, deg)), beat * 0.22, 'sawtooth', 0.08);
+    }
+    // psychedelic high stab
+    if (musicBar % 4 === 0){
+      playTone(ctx, now + beat * 2, dest, midiToFreq(degree(72, MIN, 4)), beat * 0.3, 'square', 0.05);
+    }
+  } else if (mode === 'hiphop'){
+    // boom-bap: kick on 1 & 3-ish, snare on 2 & 4
+    playKick(ctx, now, dest);
+    playKick(ctx, now + beat * 2.5, dest);
+    playSnare(ctx, now + beat, dest);
+    playSnare(ctx, now + beat * 3, dest);
+    for (let i = 0; i < 8; i++){
+      playHat(ctx, now + i * (beat / 2), dest, i % 4 === 3);
+    }
+    // sparse minor keys
+    const root = 48;
+    const hits = [0, 3, 5, 7];
+    hits.forEach((deg, i) => {
+      if ((musicBar + i) % 3 === 0){
+        playTone(ctx, now + i * beat, dest, midiToFreq(degree(root, MIN, deg)), beat * 0.6, 'triangle', 0.1);
+      }
+    });
+    playTone(ctx, now, dest, midiToFreq(degree(36, MIN, 0)), beat * 1.5, 'sine', 0.14);
+  } else if (mode === 'rap'){
+    // trap-ish: 808 kick, rapid hats, snare on 3
+    playKick(ctx, now, dest);
+    playKick(ctx, now + beat * 2.75, dest);
+    playSnare(ctx, now + beat * 2, dest);
+    for (let i = 0; i < 16; i++){
+      playHat(ctx, now + i * (beat / 4), dest, false);
+    }
+    // open hat on off-beats
+    playHat(ctx, now + beat * 1.5, dest, true);
+    playHat(ctx, now + beat * 3.5, dest, true);
+    // 808 bass slides
+    const root = 33;
+    const slides = [0, 0, 5, 3];
+    slides.forEach((deg, i) => {
+      const t = now + i * beat;
+      const f0 = midiToFreq(degree(root, MIN, deg));
+      const f1 = midiToFreq(degree(root, MIN, deg + (i % 2 ? -1 : 2)));
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(f0, t);
+      o.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t + beat * 0.7);
+      const g = envGain(ctx, t, 0.01, 0.15, 0.4, 0.4, 0.2);
+      o.connect(g); g.connect(dest);
+      o.start(t); o.stop(t + beat);
+    });
+  } else if (mode === 'rock'){
+    // rock: backbeat + power chords
+    for (let i = 0; i < 4; i++){
+      const t = now + i * beat;
+      if (i === 0 || i === 2) playKick(ctx, t, dest);
+      if (i === 1 || i === 3) playSnare(ctx, t, dest);
+      playHat(ctx, t + beat * 0.5, dest, false);
+    }
+    // power chords (root + fifth)
+    const root = 40;
+    const prog = [0, 0, 5, 7]; // I I IV V feel on minor-ish
+    prog.forEach((deg, i) => {
+      const t = now + i * beat;
+      const r = degree(root, MIN, deg);
+      playTone(ctx, t, dest, midiToFreq(r), beat * 0.85, 'sawtooth', 0.1);
+      playTone(ctx, t, dest, midiToFreq(r + 7), beat * 0.85, 'sawtooth', 0.07);
+      playTone(ctx, t, dest, midiToFreq(r + 12), beat * 0.5, 'square', 0.04);
+    });
+  }
+
+  musicBar++;
+  musicTimer = setTimeout(() => scheduleBar(musicMode), barLen * 1000);
+}
+
+function startMusic(mode){
+  stopMusic();
+  musicMode = mode;
+  if (mode === 'off') return;
+  ensureAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  musicBar = 0;
+  scheduleBar(mode);
+}
+
+function stopMusic(){
+  musicMode = 'off';
+  if (musicTimer){ clearTimeout(musicTimer); musicTimer = null; }
+}
+
+const MUS_LABELS = {
+    off:'Off', techno:'Techno', deephouse:'Deep House', psytrance:'Psytrance',
+    hiphop:'Hip-Hop', rap:'Rap', rock:'Rock',
+    classical:'Classical', pop:'Pop', jazz:'Jazz'
+  };
+document.querySelectorAll('.mus-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const m = btn.dataset.mus;
+    document.querySelectorAll('.mus-btn').forEach(b => b.classList.toggle('active', b.dataset.mus === m));
+    const lab = document.getElementById('musicLabel');
+    if (lab) lab.textContent = MUS_LABELS[m] || m;
+    startMusic(m);
+  });
+});
+document.getElementById('musVol').addEventListener('input', e => {
+  const v = +e.target.value;
+  document.getElementById('musVolVal').textContent = v + '%';
+  setMusicVolume(v);
+  paintRange(e.target);
+});
+
+/* ═════════════════════════════════════════════════════════════════
+   13. BOOT
+   ═════════════════════════════════════════════════════════════════ */
+paintRange(speedEl);
+paintRange(timeline);
+speedVal.textContent = '1.0×';
+applySkyMix(1);
+
+resize();
+
+document.querySelector('.mbtn[data-model="selimiye"]').classList.add('active');
+loadModel('selimiye');
+
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>

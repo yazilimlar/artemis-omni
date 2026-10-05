@@ -135,4 +135,22 @@ export const labsEditorial: LabEditorial[] = [
     boundary:
       "Artistic demonstration with illustrative geometry. It is not a LEGO product, a construction model, or engineering advice.",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "LEGO Build Studio \u00b7 Music Edition",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio-music",
+    statusLabel: "v5.0",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "The music edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js across 10 color palettes, driven by a generative Web Audio music engine, with timeline scrubbing and a live BOM view.",
+    signals: ["Generative Web Audio music", "Three.js animation", "9 monuments", "Live BOM"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+  },
 ];

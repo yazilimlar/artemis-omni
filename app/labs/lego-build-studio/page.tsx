@@ -14,7 +14,7 @@ export default function LegoBuildStudioPage() {
       sandbox={labSandbox("lego-build-studio")}
       referrerPolicy="no-referrer"
       loading="lazy"
-      title="LEGO Build Studio \u2014 9 Monuments \u00b7 10 Palettes"
+      title="LEGO Build Studio — 9 Monuments · 10 Palettes"
       src="/standalone/lego-build-studio.html"
       className="fixed inset-0 z-[60] h-dvh w-screen border-0 bg-[#101513]"
       allow="fullscreen; clipboard-write"
