@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/lego-build-studio",
     "/labs/lego-build-studio-music",
     "/labs/lego-build-studio-artemis",
+    "/labs/lego-build-studio-ultimate",
     "/labs/diana-moonshot",
     "/labs/tax-architecture-2026",
     "/labs/turkiye-atlas",

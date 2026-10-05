@@ -133,6 +133,13 @@
         "/standalone/lego-build-studio-artemis.html"
       ],
       "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
-    }
-  ]
+    },
+    {
+      "id": "lego-build-studio-ultimate",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/lego-build-studio-ultimate.html"
+      ],
+      "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
+    }  ]
 }
