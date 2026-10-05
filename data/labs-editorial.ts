@@ -170,5 +170,21 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
     boundary:
       "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
-  },
-];
+  },,
+  {
+    registryId: null,
+    title: "LEGO Build Studio \u00b7 Ultimate Edition",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio-ultimate",
+    statusLabel: "v5.0 Ultimate",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "The ultimate edition of the animated LEGO construction studio: 10 world monuments rebuilt brick-by-brick in Three.js \u2014 a Fourier-series crane fleet, 9 generative Web Audio music modes, 10 color modes, a live bill of materials, and a Fourier-drawn ARTEMIS inscription.",
+    signals: ["Fourier crane fleet", "9 generative music modes", "10 monuments", "Live bill of materials"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+  },];
