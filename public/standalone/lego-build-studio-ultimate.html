@@ -440,6 +440,15 @@
               <option value="modern">Modern</option>
               <option value="medieval">Medieval</option>
             </optgroup>
+            <optgroup label="Material palettes \u00b7 Artemis edition">
+              <option value="mat-analog">Analog \u00b7 material</option>
+              <option value="mat-threescale">Three-Scale \u00b7 material</option>
+              <option value="mat-executive">Executive \u00b7 material</option>
+              <option value="mat-flamboyant">Flamboyant \u00b7 material</option>
+              <option value="mat-antique">Antique \u00b7 material</option>
+              <option value="mat-modern">Modern \u00b7 material</option>
+              <option value="mat-medieval">Medieval \u00b7 material</option>
+            </optgroup>
             <optgroup label="Color modes">
               <option value="shuffle">Shuffle</option>
               <option value="rainbow" selected>Rainbow</option>
@@ -470,6 +479,13 @@
                 <option value="antique">Antique</option>
                 <option value="modern">Modern</option>
                 <option value="medieval">Medieval</option>
+                <option value="mat-analog">Analog · material</option>
+                <option value="mat-threescale">Three-Scale · material</option>
+                <option value="mat-executive">Executive · material</option>
+                <option value="mat-flamboyant">Flamboyant · material</option>
+                <option value="mat-antique">Antique · material</option>
+                <option value="mat-modern">Modern · material</option>
+                <option value="mat-medieval">Medieval · material</option>
               </select>
             </div>
             <button id="shuffleBtn" class="modeAction" title="Shuffle colors again" aria-label="Shuffle colors again">⚄ Shuffle again</button>
@@ -1836,10 +1852,165 @@ const PALETTE_RAMPS = {
   modern:{stone:[0xf3f3ef,0xd7dcdd,0xaeb8ba,0x687477],dome:[0xb6d7da,0x67aeb5,0x16808c,0x0e5962],accent:[0xf0a06e,0xd9653b,0xa9432b,0x6f2d22],metal:[0xd8dde0,0x939da3,0x566168,0x2e373d]},
   medieval:{stone:[0xd2c6aa,0xa99a78,0x796d55,0x4a4337],dome:[0x8e9a84,0x67765f,0x485541,0x303b2d],accent:[0xb88a4c,0x845f32,0x5b4028,0x39291e],metal:[0x9da09a,0x666b67,0x3f4543,0x252a29]}
 };
+/* ---- Material palettes (from the Artemis music edition) ----
+    17 material roles x 4 lightness bins (light -> dark), generated from its
+    26-role hand-tuned palette definitions. Bricks are matched to roles by
+    exact hex against the realistic set, with nearest-shade fallback. */
+const MATERIAL_RAMPS={
+  analog:{
+    stone:[0xc4b8a8,0xb1a38d,0x9e8e76,0x8a7a62],
+    dome:[0x7a8a9a,0x6f7f8f,0x657585,0x5a6a7a],
+    gold:[0xd6bd90,0xcaaa71,0xbd954d,0xa17c3c],
+    marble:[0xe0d8cc,0xcbc0af,0xb5a893,0xa09078],
+    dark:[0x58616d,0x444b55,0x2f333a,0x1a1d20],
+    roof:[0x917c63,0x786651,0x5b4d3e,0x3f362b],
+    trav:[0xd0c8b8,0xc0b39d,0xad9d85,0x988870],
+    granite:[0x9299a0,0x7b838c,0x646b72,0x4f545a],
+    bronze:[0xa58257,0x896c48,0x695337,0x4b3b27],
+    glass:[0x8898a8,0x738393,0x5d6d7d,0x485868],
+    steel:[0xb4b9bf,0x9ca3ab,0x828b94,0x6b747d],
+    base:[0x808992,0x6b737c,0x545b62,0x3f444a],
+    spire:[0xc4c9ce,0xadb3ba,0x929ba4,0x798490],
+    win:[0x566576,0x444f5d,0x2f3741,0x1c2127],
+    sand:[0xe6e0cc,0xd8ceaf,0xc8b98f,0xb8a670],
+    cap:[0xd4c49e,0xc7b280,0xb89d5e,0xa18647],
+    wood:[0x9d762f,0x7c5d25,0x56411a,0x33270f],
+  },
+  threescale:{
+    stone:[0xf0f0f0,0xbbbbbb,0x808080,0x404040],
+    dome:[0x808080,0x707070,0x606060,0x505050],
+    gold:[0xf1f1f1,0xdbdbdb,0xc3c3c3,0xacacac],
+    marble:[0xffffff,0xd5d5d5,0xa5a5a5,0x707070],
+    dark:[0x414141,0x2b2b2b,0x131313,0x050505],
+    roof:[0x818181,0x6b6b6b,0x535353,0x3c3c3c],
+    trav:[0xe8e8e8,0xc3c3c3,0x939393,0x585858],
+    granite:[0x999999,0x838383,0x6b6b6b,0x545454],
+    bronze:[0xb1b1b1,0x9b9b9b,0x838383,0x6c6c6c],
+    glass:[0xc8c8c8,0x9d9d9d,0x737373,0x484848],
+    steel:[0xd9d9d9,0xc3c3c3,0xababab,0x949494],
+    base:[0x717171,0x5b5b5b,0x434343,0x2c2c2c],
+    spire:[0xf9f9f9,0xe3e3e3,0xcbcbcb,0xb4b4b4],
+    win:[0x515151,0x3b3b3b,0x232323,0x0c0c0c],
+    sand:[0xf1f1f1,0xdbdbdb,0xc3c3c3,0xacacac],
+    cap:[0xfafafa,0xf3f3f3,0xdbdbdb,0xc4c4c4],
+    wood:[0x898989,0x737373,0x5b5b5b,0x444444],
+  },
+  executive:{
+    stone:[0x34495e,0x2f4255,0x263645,0x1a252f],
+    dome:[0x1abc9c,0x19b394,0x17a98d,0x16a085],
+    gold:[0xf5d34e,0xf2c925,0xdab10d,0xae8e0a],
+    marble:[0xecf0f1,0xcdd2d5,0xa8b1b4,0x7f8c8d],
+    dark:[0x253041,0x151c26,0x040507,0x040507],
+    roof:[0x445f7b,0x34495f,0x233140,0x131a22],
+    trav:[0x34495e,0x2f4255,0x263645,0x1a252f],
+    granite:[0x7e8ea0,0x67788b,0x52606f,0x3f4955],
+    bronze:[0xf2cb31,0xeabe0e,0xbc990c,0x917509],
+    glass:[0x5dade2,0x429fdd,0x2b81b9,0x1a5276],
+    steel:[0xd3d7dc,0xbbc2c9,0xa0a9b4,0x86929f],
+    base:[0x334a5e,0x243442,0x131b23,0x040507],
+    spire:[0xf9fafa,0xe2e4e6,0xc7cbd0,0xaeb4bc],
+    win:[0x2678ac,0x1e5f89,0x154361,0x0d293b],
+    sand:[0xaab3bb,0x929da8,0x778593,0x616e7a],
+    cap:[0xfaebae,0xf8e185,0xf6d657,0xf3cc2b],
+    wood:[0xb04700,0x853500,0x552200,0x270f00],
+  },
+  flamboyant:{
+    stone:[0xe74c3c,0xcd3f31,0xb13428,0x922b21],
+    dome:[0x9b59b6,0x9752b3,0x924bb0,0x8e44ad],
+    gold:[0xf5d34e,0xf2c925,0xdab10d,0xae8e0a],
+    marble:[0xf5b7b1,0xf2a097,0xee7c70,0xe74c3c],
+    dark:[0x33475c,0x233140,0x121921,0x040507],
+    roof:[0xff7316,0xea5d00,0xba4a00,0x8c3800],
+    trav:[0xe67e22,0xd9620b,0xc24d00,0xa04000],
+    granite:[0x823f9e,0x68337f,0x4c255d,0x31183c],
+    bronze:[0xf6b651,0xf4a528,0xe08e0b,0xb47209],
+    glass:[0x3498db,0x2d88c4,0x2471a3,0x1a5276],
+    steel:[0xf9fafb,0xf9fafb,0xdde4e6,0xc3d0d3],
+    base:[0x445f7b,0x34495f,0x233140,0x131a22],
+    spire:[0xfaebae,0xf8e185,0xf6d657,0xf3cc2b],
+    win:[0xac6dc6,0x9a4eba,0x7f3d9b,0x64307a],
+    sand:[0xf8ca80,0xf6b957,0xf4a629,0xe3900c],
+    cap:[0xf8df7e,0xf5d555,0xf3ca27,0xdfb50d],
+    wood:[0xfc6400,0xd15300,0xa04000,0x732e00],
+  },
+  antique:{
+    stone:[0xc9b896,0xb8a47e,0xa58f68,0x8f7a55],
+    dome:[0x6b7b6e,0x647366,0x5c6b5d,0x556355],
+    gold:[0xdebd54,0xd7af30,0xb49123,0x8d721b],
+    marble:[0xe8dfc8,0xd8cdb0,0xc5b898,0xb0a080],
+    dark:[0x655642,0x4b4031,0x2e271e,0x120f0c],
+    roof:[0x876d49,0x6b563a,0x4b3d29,0x2e2519],
+    trav:[0xd4c4a0,0xc4b190,0xb19d7d,0x9a8868],
+    granite:[0x9c9181,0x877c6a,0x6c6355,0x524b41],
+    bronze:[0xc5951c,0x9f7817,0x755811,0x4d3a0b],
+    glass:[0x7a8b7a,0x657665,0x4f604f,0x3a4b3a],
+    steel:[0xbaaf98,0xa99b7e,0x948462,0x796b50],
+    base:[0x81725c,0x675c4a,0x4b4335,0x302b22],
+    spire:[0xe7dbc0,0xdac9a1,0xcdb67e,0xc0a35d],
+    win:[0x72634a,0x584c39,0x3b3326,0x1f1b14],
+    sand:[0xf1ead9,0xe6d9b9,0xd9c695,0xcdb473],
+    cap:[0xe3d1a3,0xd9c182,0xceae5c,0xc29c3a],
+    wood:[0x8e5a2e,0x6d4524,0x492e18,0x26180c],
+  },
+  modern:{
+    stone:[0xfafafa,0xe9e9e9,0xcacaca,0x9e9e9e],
+    dome:[0x424242,0x373737,0x2c2c2c,0x212121],
+    gold:[0xff9442,0xff7c17,0xe66400,0xb85000],
+    marble:[0xffffff,0xf8f8f8,0xe2e2e2,0xbdbdbd],
+    dark:[0x212121,0x0b0b0b,0x050505,0x050505],
+    roof:[0x636363,0x4d4d4d,0x353535,0x1e1e1e],
+    trav:[0xeeeeee,0xcdcdcd,0xa5a5a5,0x757575],
+    granite:[0x828282,0x6c6c6c,0x545454,0x3d3d3d],
+    bronze:[0xffac42,0xff9917,0xe68100,0xb86700],
+    glass:[0x00bcd4,0x00a3b6,0x008591,0x006064],
+    steel:[0xf5f7f8,0xdce3e6,0xc0ccd1,0xa6b6be],
+    base:[0x41555f,0x2f3e46,0x1c2429,0x090c0d],
+    spire:[0xf9fafb,0xf9fafb,0xdde3e6,0xc3ccd3],
+    win:[0x017cdd,0x0164b2,0x014982,0x012f54],
+    sand:[0xfffdf5,0xfffdf5,0xfff2c7,0xffe79a],
+    cap:[0xffc142,0xffb317,0xe69a00,0xb87b00],
+    wood:[0x875d50,0x6b4a40,0x4d352e,0x30211c],
+  },
+  medieval:{
+    stone:[0x8d6e63,0x78574c,0x63443b,0x4e342e],
+    dome:[0x455a64,0x40545d,0x3c4d56,0x37474f],
+    gold:[0xffe591,0xffda66,0xffcf35,0xffc408],
+    marble:[0xd7ccc8,0xc5b5b0,0xac968e,0x8d6e63],
+    dark:[0x424242,0x2c2c2c,0x141414,0x050505],
+    roof:[0x68423b,0x4d302b,0x2e1d1a,0x100a09],
+    trav:[0xa1887f,0x86665a,0x704e42,0x5d4037],
+    granite:[0x849daa,0x6a8998,0x566f7c,0x435761],
+    bronze:[0xffac42,0xff9917,0xe68100,0xb86700],
+    glass:[0x4fc3f7,0x1c9cde,0x0278bf,0x01579b],
+    steel:[0xb6c3ca,0x9dafb8,0x8198a3,0x68828f],
+    base:[0x526a76,0x40535d,0x2d3940,0x1a2125],
+    spire:[0xfff0c4,0xffe699,0xffda68,0xffce3b],
+    win:[0x2532b5,0x1e2891,0x161d69,0x0e1343],
+    sand:[0xfffbf4,0xffe9c9,0xffd698,0xffc36b],
+    cap:[0xffda6a,0xffd03f,0xffc40e,0xe0a800],
+    wood:[0x68423b,0x4d302b,0x2e1d1a,0x100a09],
+  },
+};
+const HEX_ROLE_MAP={'0x4a5464':'win','0x4e5a6b':'dark','0x5a7e93':'dome','0x5a88a8':'glass','0x6f94a9':'dome','0x7aa8c0':'glass','0x808894':'base','0x8a6f45':'bronze','0x8b6914':'wood','0x8e7a5e':'roof','0x8e949c':'granite','0x9cc4d8':'glass','0xa8b0b8':'spire','0xb0b8c0':'steel','0xb2a07a':'stone','0xbaa884':'marble','0xc2b294':'trav','0xcfbe99':'stone','0xd8caa8':'marble','0xd9cdb4':'trav','0xe0ac42':'gold','0xe0c070':'cap','0xe4d8bc':'stone','0xe8d8a8':'sand','0xede3d0':'trav','0xf5f0e6':'marble'};
+const ROLE_SHADES=[[228,216,188,'stone'],[207,190,153,'stone'],[178,160,122,'stone'],[111,148,169,'dome'],[90,126,147,'dome'],[224,172,66,'gold'],[245,240,230,'marble'],[216,202,168,'marble'],[186,168,132,'marble'],[78,90,107,'dark'],[142,122,94,'roof'],[237,227,208,'trav'],[217,205,180,'trav'],[194,178,148,'trav'],[142,148,156,'granite'],[138,111,69,'bronze'],[156,196,216,'glass'],[122,168,192,'glass'],[90,136,168,'glass'],[176,184,192,'steel'],[128,136,148,'base'],[168,176,184,'spire'],[74,84,100,'win'],[232,216,168,'sand'],[224,192,112,'cap'],[139,105,20,'wood']];
+function materialRole(hex){
+  const key='0x'+(hex>>>0).toString(16).padStart(6,'0');
+  const exact=HEX_ROLE_MAP[key]; if(exact)return exact;
+  const r=(hex>>16)&255,g=(hex>>8)&255,b=hex&255; let best='stone',bd=1e12;
+  for(let k=0;k<ROLE_SHADES.length;k++){const s=ROLE_SHADES[k],dr=r-s[0],dg=g-s[1],db=b-s[2],d=dr*dr+dg*dg+db*db; if(d<bd){bd=d;best=s[3];}}
+  return best;
+}
+function materialRemap(hex,pal){
+  const R=MATERIAL_RAMPS[pal]; if(!R)return hex;
+  const ramp=R[materialRole(hex)]||R.stone;
+  const c=new THREE.Color(hex),hsl={}; c.getHSL(hsl);
+  const idx=hsl.l>.76?0:hsl.l>.57?1:hsl.l>.38?2:3;
+  return ramp[idx];
+}
 const PALETTE_NAMES={realistic:'Realistic',analogous:'Analogous',three:'Three-Scale',executive:'Executive',flamboyant:'Flamboyant',antique:'Antique',modern:'Modern',medieval:'Medieval'};
 let activePalette='rainbow',basePalette='realistic',colorMode='rainbow';
 let shuffleTypeColors=new Array(N_TYPES).fill(0x888888);
-let rainbowBehavior='time',rainbowIntervalSeconds=8,rainbowOffset=0,rainbowStartMs=performance.now(),lastRainbowSwatch=0;
+let rainbowBehavior='time',rainbowIntervalSeconds=8,rainbowOffset=0,rainbowStartMs=performance.now(),lastRainbowSwatch=0;let lastShuffleT=0;
 let rainbowBounds={minY:0,maxY:1};
 let brickDetail=true,outlinesEnabled=true;
 function colorRole(hex){
@@ -1851,6 +2022,7 @@ function colorRole(hex){
 }
 function basePaletteColor(hex,palette=basePalette){
   if(palette==='realistic')return hex;
+  if(palette.indexOf('mat-')===0)return materialRemap(hex,palette.slice(4));
   const c=new THREE.Color(hex),hsl={};c.getHSL(hsl);
   const ramp=PALETTE_RAMPS[palette][colorRole(hex)];
   const idx=hsl.l>.76?0:hsl.l>.57?1:hsl.l>.38?2:3;
@@ -1859,7 +2031,8 @@ function basePaletteColor(hex,palette=basePalette){
 function rainbowColorForBrick(bk){
   const span=Math.max(1,rainbowBounds.maxY-rainbowBounds.minY);
   const level=Math.max(0,Math.min(1,(bk.y-rainbowBounds.minY)/span));
-  const hue=rainbowBehavior==='height'?.015+level*.80:(level+rainbowOffset)%1;
+  const seq=(bk.seq||0); /* per-brick phase: traveling-wave feel from the Artemis music edition */
+  const hue=rainbowBehavior==='height'?.015+level*.80+seq*.0003:(level+rainbowOffset+seq*.0017)%1;
   const light=.52+.07*Math.sin((level+.15)*Math.PI);
   return new THREE.Color().setHSL(hue,.82,light).getHex();
 }
@@ -2248,7 +2421,8 @@ function animate(now){
   if(brickShader)brickShader.uniforms.rainbowHueAngle.value=rainbowActive?rainbowOffset*Math.PI*2:0;
   if(rainbowActive){
     craneMachines.forEach(machine=>{if(machine.carried&&machine.lastOrder>=0){const bk=currentModel&&currentModel.bricks[machine.lastOrder];if(bk)machine.carried.material.color.setHex(brickColor(bk))}});
-    if(currentModel&&now-lastRainbowSwatch>220){currentModel.groups.forEach(setGroupSwatch);lastRainbowSwatch=now}
+    if(colorMode==='shuffle'&&now-lastShuffleT>1250){lastShuffleT=now;randomizeShufflePalette();applyActivePalette();}
+  if(currentModel&&now-lastRainbowSwatch>220){currentModel.groups.forEach(setGroupSwatch);lastRainbowSwatch=now}
   }
   if (playing && currentModel){
     let sp = SPEEDS[speedIdx];
@@ -2614,6 +2788,13 @@ const VERSION_HISTORY=[
   ]},
   {id:'v5',version:'v5.0',codename:'Artemis Edition',date:'2026-10-05',credit:'Built by Muse · monument and interaction design contributions by DeepSeek · refinement design by Grok (xAI) · Artemis Edition by Muse.',changes:[
     ['Models','Hagia Sophia becomes the tenth monument and the default experience'],['Features','Nine mathematically formulated scores: Techno, Deep House, Psytrance, Hip-Hop, Rap, Rock, Classical, Pop and Jazz'],['Features','Adaptive score intensity and optional brick-placement ticks'],['UI','Fourier-drawn ARTEMIS mark links to the Artemis homepage'],['UI','Clean view presentation mode with H shortcut'],['UI','Brick detail and illustrated outline controls'],['Features','P shortcut cycles all architectural palettes and color modes']
+  ]},
+  {id:'v51',version:'v5.1',codename:'Material Lab',date:'2026-10-05',credit:'Built by Muse \u00b7 Material palettes from the Artemis music edition.',changes:[
+    ['Colors','7 material palettes (Analog, Three-Scale, Executive, Flamboyant, Antique, Modern, Medieval \u00b7 material) with 17 material roles each'],
+    ['Colors','Bricks matched to material roles by exact color, with nearest-shade fallback'],
+    ['Colors','Shuffle now re-rolls automatically every 1.25 seconds'],
+    ['Colors','Rainbow gains a traveling per-brick wave phase'],
+    ['UI','Material palettes join the palette menu and shuffle sources']
   ]}
 ];
 let selectedVersion='v5',historyFilter='All',activeEra='v5',restoreCraneCount=1;
