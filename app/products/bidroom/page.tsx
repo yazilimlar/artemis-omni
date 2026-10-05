@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Building2, FileSearch, Radar, Wrench } from "lucide-react";
+import { ArrowRight, Building2, FileSearch, Layers3, Radar, Wrench } from "lucide-react";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -37,6 +37,13 @@ const variants = [
     label: "Bid-package understanding",
     description: "Document register, drawings, specifications, addendum deltas, scope evidence, and model verification workflow.",
     icon: FileSearch,
+  },
+  {
+    href: "/products/bidroom/switchboard",
+    title: "BidRoom Review Switchboard",
+    label: "Side-by-side review",
+    description: "Compare the preserved Bid Room reference interface against the BidRoom Live source workflow in one review surface.",
+    icon: Layers3,
   },
 ];
 
