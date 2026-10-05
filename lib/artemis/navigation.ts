@@ -22,15 +22,14 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
     links: [
       { title: "Solutions", href: "/solutions" },
       { title: "Products", href: "/products" },
-      { title: "Demo", href: "/demo" },
+      { title: "Integrate", href: "/integrate" },
     ],
   },
   {
     heading: "Knowledge",
     links: [
       { title: "Library", href: "/library" },
-      { title: "Academy", href: "/academy" },
-      { title: "Case Studies", href: "/case-studies" },
+      { title: "Insights", href: "/insights" },
     ],
   },
   {
