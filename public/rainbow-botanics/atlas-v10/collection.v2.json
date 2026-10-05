@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "RBSM-2.0-draft",
+  "collection": "Rainbow House Botanical Collection",
+  "publicLocality": "Hudson Valley · Marlboro, New York",
+  "exactLocationPolicy": "private",
+  "migrationStatus": "M2-human-review",
+  "entries": [
+    {"collectionEntryId":"RH-FL-001","activeIdentification":{"taxon":"Zinnia elegans","confidence":"I3","status":"working"},"provenanceConfidence":"P1","populationId":"RH-SP-001-01","assetIds":["IMG_2859","IMG_2860","IMG_2861","IMG_2863","IMG_2864","IMG_2874","IMG_2875","IMG_2876","IMG_2877"]},
+    {"collectionEntryId":"RH-FL-002","activeIdentification":{"taxon":"Tagetes cf. patula","confidence":"I2","status":"review-required"},"provenanceConfidence":"P1","populationId":"RH-SP-002-01","assetIds":["IMG_2878"]},
+    {"collectionEntryId":"RH-FL-003","activeIdentification":{"taxon":"Erigeron sp.","confidence":"I2","status":"review-required"},"provenanceConfidence":"P0","populationId":"RH-SP-003-01","assetIds":["IMG_2869","IMG_2870","IMG_2871"]},
+    {"collectionEntryId":"RH-FL-004","activeIdentification":{"taxon":"Cosmos sulphureus","confidence":"I2","status":"review-required"},"provenanceConfidence":"P1","populationId":"RH-SP-004-01","assetIds":["IMG_2872","IMG_2873"]},
+    {"collectionEntryId":"RH-FL-005","activeIdentification":{"taxon":"Cosmos bipinnatus","confidence":"I3","status":"active"},"provenanceConfidence":"P1","populationId":"RH-SP-005-01","observationIds":["RH-OBS-20260912-001"],"assetIds":["IMG_2829","IMG_2857","IMG_2858","IMG_2862"],"referenceSpecimen":true},
+    {"collectionEntryId":"RH-FL-006","activeIdentification":{"taxon":"Glandularia sp. cf. bipinnatifida","confidence":"I2","status":"review-required"},"provenanceConfidence":"P1","populationId":"RH-SP-006-01","assetIds":["IMG_2866"]}
+  ]
+}
