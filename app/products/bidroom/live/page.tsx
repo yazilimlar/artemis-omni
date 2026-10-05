@@ -86,9 +86,16 @@ const workspaces = [
   },
 ] as const;
 
-export default function BidRoomLivePage() {
+export default async function BidRoomLivePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ embedded?: string }>;
+}) {
+  const { embedded } = await searchParams;
+  const isEmbedded = embedded === "switchboard";
   return (
     <main className="min-h-screen bg-[#071426] text-white">
+      {!isEmbedded && (
       <header className="border-b border-[#2b5275] bg-[#06182b]">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3 lg:px-8">
           <Link
@@ -112,6 +119,7 @@ export default function BidRoomLivePage() {
           </div>
         </div>
       </header>
+      )}
 
       <section className="relative overflow-hidden border-b-4 border-[#ddb04e] bg-[#06182b]">
         <div
