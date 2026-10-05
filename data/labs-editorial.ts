@@ -117,4 +117,22 @@ export const labsEditorial: LabEditorial[] = [
     boundary:
       "This is a lightweight standalone iPhone game prototype with approximate lon/lat projection. It is not a full GIS dataset, navigation product, or production booking engine.",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "LEGO Build Studio",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio",
+    statusLabel: "v1",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "An animated brick-by-brick construction studio: 9 world monuments rebuilt in Three.js across 10 color palettes, with timeline scrubbing, a live BOM view, and day/night orbit presentation.",
+    signals: ["Three.js animation", "9 monuments", "10 palettes", "Live BOM"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry. It is not a LEGO product, a construction model, or engineering advice.",
+  },
 ];
