@@ -242,4 +242,22 @@ export const labsEditorial: LabEditorial[] = [
     boundary:
       "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "HVAC Mechanical Intelligence Bridge",
+    eyebrow: "Mechanical / Demo",
+    href: "/labs/hvac-mechanical-bridge-rc810",
+    statusLabel: "RC8.10",
+    statusTone: "test",
+    Icon: Calculator,
+    accentIcon: Landmark,
+    description:
+      "A parametric commercial-HVAC estimating and project-controls cockpit: Cost Heat Map treemap (area-proportional budget by WBS division, drill-down, Total/Labor/Material/Consumable/Subcontract/Equipment scope lenses), 15-activity estimate, NYC union labor engine, schedule delay register, EVM and cashflow, Monte Carlo risk, a generative sound studio, and an executive control room — demo basis 120,000 SF / 850 tons, Midtown Manhattan.",
+    signals: ["Cost Heat Map treemap", "NYC union labor engine", "Generative sound studio", "EVM + cashflow"],
+    commercialPath:
+      "Best pilot path: mechanical contractor preconstruction demos, owner project-controls reviews, and estimator training on model-to-cashflow traceability.",
+    boundary:
+      "Demonstration with illustrative quantities and pricing. It is not a bid, a design document, or engineering advice.",
+  },
 ];

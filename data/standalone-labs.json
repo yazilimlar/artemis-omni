@@ -165,6 +165,14 @@
         "/standalone/lego-build-studio-artemis-music.html"
       ],
       "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); 9-mode generative Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
+    },
+    {
+      "id": "hvac-mechanical-bridge-rc810",
+      "sandbox": "allow-scripts allow-downloads allow-popups",
+      "paths": [
+        "/standalone/hvac-mechanical-bridge-rc810.html"
+      ],
+      "reason": "Parametric HVAC estimate/schedule/EVM/cashflow cockpit (RC8.10): Cost Heat Map treemap, NYC union labor engine, delay register, layout studio, trade focus, generative Web Audio (off by default); CSV export (downloads); printable deck (popups, noopener); localStorage guarded with try/catch; no same-origin"
     }
   ]
 }
