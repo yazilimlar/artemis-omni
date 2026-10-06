@@ -165,6 +165,22 @@
         "/standalone/lego-build-studio-artemis-music.html"
       ],
       "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); 9-mode generative Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
+    },
+    {
+      "id": "hvac-mechanical-intelligence-bridge",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/hvac-mechanical-intelligence-bridge.html"
+      ],
+      "reason": "Parametric HVAC estimate/schedule/EVM/cashflow cockpit; Three.js + Chart.js + Leaflet render under allow-scripts; localStorage guarded with try/catch; no downloads, modals, popups, or storage writes required"
+    },
+    {
+      "id": "hvac-mechanical-bridge-mount-vernon",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/hvac-mechanical-bridge-mount-vernon.html"
+      ],
+      "reason": "Parametric HVAC estimate/schedule/EVM/cashflow cockpit (Mount Vernon retrofit demo); Three.js + Chart.js render under allow-scripts; no localStorage use; no downloads, modals, popups, or storage"
     }
   ]
 }

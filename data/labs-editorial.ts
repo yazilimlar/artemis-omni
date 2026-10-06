@@ -242,4 +242,40 @@ export const labsEditorial: LabEditorial[] = [
     boundary:
       "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "HVAC Mechanical Intelligence Bridge",
+    eyebrow: "Mechanical / Demo",
+    href: "/labs/hvac-mechanical-intelligence-bridge",
+    statusLabel: "RC8.4",
+    statusTone: "test",
+    Icon: Calculator,
+    accentIcon: Landmark,
+    description:
+      "A parametric commercial-HVAC estimating and project-controls cockpit: ASHRAE/SMACNA/IMC standards lens, 3D building model with duct/pipe/equipment/controls isolation, 15-activity estimate, working-day schedule, EVM and cashflow, Monte Carlo risk, field-claims-to-cashflow story, and an executive control room \u2014 demo basis 120,000 SF / 850 tons, Midtown Manhattan.",
+    signals: ["15-activity mechanical estimate", "3D zone isolation", "EVM + cashflow", "Field claims story"],
+    commercialPath:
+      "Best pilot path: mechanical contractor preconstruction demos, owner project-controls reviews, and estimator training on model-to-cashflow traceability.",
+    boundary:
+      "Demonstration with illustrative quantities and pricing. It is not a bid, a design document, or engineering advice.",
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "HVAC Mechanical Bridge \u00b7 Mount Vernon Retrofit",
+    eyebrow: "Mechanical / Demo",
+    href: "/labs/hvac-mechanical-bridge-mount-vernon",
+    statusLabel: "RC8.4 \u00b7 Reviewed",
+    statusTone: "test",
+    Icon: Calculator,
+    accentIcon: Landmark,
+    description:
+      "A second parametric HVAC cockpit on the same RC8.4 engine, built as a 60,000 SF / 4-story occupied office retrofit in Mount Vernon, NY: ductwork in pounds, hydronic and refrigerant piping, RTU/AHU/VAV/diffuser quantities, TAB and commissioning, schedule, EVM, cashflow, and risk \u2014 independently reviewed and corrected for estimating integrity.",
+    signals: ["60k SF retrofit basis", "Ductwork by weight", "TAB + commissioning", "$90/SF all-in check"],
+    commercialPath:
+      "Best pilot path: retrofit and occupied-building mechanical demos, estimator estimate-review walkthroughs, and side-by-side basis comparisons.",
+    boundary:
+      "Demonstration with illustrative quantities and pricing. It is not a bid, a design document, or engineering advice.",
+  },
 ];
