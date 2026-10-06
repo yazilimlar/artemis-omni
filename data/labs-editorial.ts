@@ -206,7 +206,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
     boundary:
       "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
-  },,
+  },
   {
     registryId: null,
     title: "LEGO Build Studio \u00b7 Ultimate Edition",
