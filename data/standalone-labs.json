@@ -124,7 +124,15 @@
       "paths": [
         "/standalone/utility-intelligence-bridge/qa-capture-studio.html"
       ],
-      "reason": "printable screenshot deck (modals); screenshot/data downloads (createObjectURL); Leaflet GIS tiles"
+      "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
+    },
+    {
+      "id": "lego-build-studio-artemis-music",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/lego-build-studio-artemis-music.html"
+      ],
+      "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); 9-mode generative Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
     }
   ]
 }

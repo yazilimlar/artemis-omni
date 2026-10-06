@@ -153,4 +153,22 @@ export const labsEditorial: LabEditorial[] = [
     boundary:
       "QA and capture tooling with illustrative data. Visual presets change presentation only; quantity, schedule, and cost logic are untouched.",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "LEGO Build Studio \u00b7 Artemis Music Edition",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio-artemis-music",
+    statusLabel: "v5.0 Artemis",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "The Artemis music edition of the animated LEGO construction studio: 10 world monuments including Hagia Sophia rebuilt brick-by-brick in Three.js, a 9-mode generative Web Audio music engine (Techno, Deep House, Psytrance, Hip-Hop, Rap, Rock, Classical, Jazz, Pop), a Fourier-epicycles ARTEMIS inscription linking to artemis.agoraxai.com, a clean-view presentation mode, and a translucent studio UI.",
+    signals: ["9-mode generative music", "Fourier ARTEMIS inscription", "10 monuments", "Clean-view mode"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+  },
 ];
