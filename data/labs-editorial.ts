@@ -156,6 +156,77 @@ export const labsEditorial: LabEditorial[] = [
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
     registryId: null,
+    title: "LEGO Build Studio",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio",
+    statusLabel: "v1",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "An animated brick-by-brick construction studio: 9 world monuments rebuilt in Three.js across 10 color palettes, with timeline scrubbing, a live BOM view, and day/night orbit presentation.",
+    signals: ["Three.js animation", "9 monuments", "10 palettes", "Live BOM"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry. It is not a LEGO product, a construction model, or engineering advice.",
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "LEGO Build Studio \u00b7 Music Edition",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio-music",
+    statusLabel: "v5.0",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "The music edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js across 10 color palettes, driven by a generative Web Audio music engine, with timeline scrubbing and a live BOM view.",
+    signals: ["Generative Web Audio music", "Three.js animation", "9 monuments", "Live BOM"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "LEGO Build Studio \u00b7 Artemis Edition",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio-artemis",
+    statusLabel: "v5.0 Artemis",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "The Artemis edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js with a generative Web Audio music engine, a Fourier-epicycles ARTEMIS inscription linking to artemis.agoraxai.com, a clean-view presentation mode, and a translucent studio UI.",
+    signals: ["Fourier ARTEMIS inscription", "Generative Web Audio music", "Clean-view mode", "9 monuments"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+  },,
+  {
+    registryId: null,
+    title: "LEGO Build Studio \u00b7 Ultimate Edition",
+    eyebrow: "Art / Demo",
+    href: "/labs/lego-build-studio-ultimate",
+    statusLabel: "v5.0 Ultimate",
+    statusTone: "test",
+    Icon: Gamepad2,
+    accentIcon: Landmark,
+    description:
+      "The ultimate edition of the animated LEGO construction studio: 10 world monuments rebuilt brick-by-brick in Three.js \u2014 a Fourier-series crane fleet, 9 generative Web Audio music modes, 10 color modes, a live bill of materials, and a Fourier-drawn ARTEMIS inscription.",
+    signals: ["Fourier crane fleet", "9 generative music modes", "10 monuments", "Live bill of materials"],
+    commercialPath:
+      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+    boundary:
+      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
     title: "LEGO Build Studio \u00b7 Artemis Music Edition",
     eyebrow: "Art / Demo",
     href: "/labs/lego-build-studio-artemis-music",

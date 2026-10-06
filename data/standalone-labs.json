@@ -127,6 +127,38 @@
       "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
     },
     {
+      "id": "lego-build-studio",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/lego-build-studio.html"
+      ],
+      "reason": "no extra capabilities needed: no downloads, modals, popups, or storage"
+    },
+    {
+      "id": "lego-build-studio-music",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/lego-build-studio-music.html"
+      ],
+      "reason": "Web Audio music engine runs under allow-scripts; no downloads, modals, popups, or storage"
+    },
+    {
+      "id": "lego-build-studio-artemis",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/lego-build-studio-artemis.html"
+      ],
+      "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
+    },
+    {
+      "id": "lego-build-studio-ultimate",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/lego-build-studio-ultimate.html"
+      ],
+      "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
+    },
+    {
       "id": "lego-build-studio-artemis-music",
       "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
       "paths": [
