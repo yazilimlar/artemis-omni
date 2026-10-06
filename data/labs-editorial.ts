@@ -278,4 +278,22 @@ export const labsEditorial: LabEditorial[] = [
     boundary:
       "Demonstration with illustrative quantities and pricing. It is not a bid, a design document, or engineering advice.",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "Sewer Utility Intelligence Bridge",
+    eyebrow: "Underground / Demo",
+    href: "/labs/sewer-utility-intelligence-bridge",
+    statusLabel: "RC8.4",
+    statusTone: "test",
+    Icon: Calculator,
+    accentIcon: Landmark,
+    description:
+      "The original RC8.4 parametric sewer-utility cockpit the HVAC bridges were ported from: DEP standards lens, 3D trench/pipe/manhole model with GIS corridor context, 15-activity estimate, working-day schedule, EVM and cashflow, Monte Carlo risk, field-claims-to-cashflow story, and executive control room \u2014 demo basis 740 LF, East 10th Street, East Village.",
+    signals: ["15-activity sewer estimate", "3D trench + GIS corridor", "EVM + cashflow", "Field claims story"],
+    commercialPath:
+      "Best pilot path: underground utility contractor preconstruction demos, municipal project-controls reviews, and estimator training on model-to-cashflow traceability.",
+    boundary:
+      "Demonstration with illustrative quantities and pricing. It is not a bid, a design document, or engineering advice.",
+  },
 ];

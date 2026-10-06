@@ -181,6 +181,14 @@
         "/standalone/hvac-mechanical-bridge-mount-vernon.html"
       ],
       "reason": "Parametric HVAC estimate/schedule/EVM/cashflow cockpit (Mount Vernon retrofit demo); Three.js + Chart.js render under allow-scripts; no localStorage use; no downloads, modals, popups, or storage"
+    },
+    {
+      "id": "sewer-utility-intelligence-bridge",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/sewer-utility-intelligence-bridge.html"
+      ],
+      "reason": "Parametric sewer utility estimate/schedule/EVM/cashflow cockpit (East Village demo corridor); Three.js + Chart.js + Leaflet render under allow-scripts; localStorage guarded with try/catch; no downloads, modals, popups, or storage writes required"
     }
   ]
 }
