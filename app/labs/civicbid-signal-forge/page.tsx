@@ -25,9 +25,33 @@ const contextItems = [
   },
 ] as const;
 
-export default function CivicBidSignalForgePage() {
+export default async function CivicBidSignalForgePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ embedded?: string }>;
+}) {
+  const { embedded } = await searchParams;
+  const isEmbedded = embedded === "switchboard";
   return (
     <main className="min-h-screen bg-[#dfe2dc] text-[#15202e]">
+      {isEmbedded ? (
+        <div className="border-b border-[#15202e] bg-[#f8f8f4]">
+          <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-2 px-4 py-2 sm:px-6">
+            <p className="flex items-center gap-2 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-[#596472]">
+              <FlaskConical className="h-3.5 w-3.5" aria-hidden />
+              CivicBid interface review &middot; The Bid Room v2.1
+            </p>
+            <a
+              href="/civicbid/the-bid-room-v2-1.html"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 border border-[#1d5fbf] px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-wide text-[#1d5fbf] transition-colors hover:bg-[#1d5fbf] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1d5fbf] focus-visible:ring-offset-2"
+            >
+              Open full screen <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            </a>
+          </div>
+        </div>
+      ) : (
       <header className="border-b-2 border-[#15202e] bg-[#f8f8f4]">
         <div className="mx-auto max-w-[1500px] px-4 py-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-3">
@@ -72,6 +96,7 @@ export default function CivicBidSignalForgePage() {
           </div>
         </div>
       </header>
+      )}
 
       <section className="border-b border-[#9ca59e] bg-white" aria-label="Review context">
         <div className="mx-auto grid max-w-[1500px] divide-y divide-[#c9cec9] px-4 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:px-6">

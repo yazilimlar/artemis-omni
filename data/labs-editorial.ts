@@ -120,56 +120,38 @@ export const labsEditorial: LabEditorial[] = [
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
     registryId: null,
-    title: "LEGO Build Studio",
-    eyebrow: "Art / Demo",
-    href: "/labs/lego-build-studio",
-    statusLabel: "v1",
+    title: "NYC Sewer Construction Simulator",
+    eyebrow: "Construction Simulation",
+    href: "/labs/nyc-sewer-simulator",
+    statusLabel: "v0.19",
     statusTone: "test",
-    Icon: Gamepad2,
+    Icon: Calculator,
     accentIcon: Landmark,
     description:
-      "An animated brick-by-brick construction studio: 9 world monuments rebuilt in Three.js across 10 color palettes, with timeline scrubbing, a live BOM view, and day/night orbit presentation.",
-    signals: ["Three.js animation", "9 monuments", "10 palettes", "Live BOM"],
+      "A 3D construction intelligence simulator for NYC sewer work: what-if controls, schedule and cost views, day/night themes, and a printable report mode.",
+    signals: ["Three.js 3D viewer", "What-if controls", "Printable report", "Day/night themes"],
     commercialPath:
-      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+      "Best pilot path: precon scenario workshops, bid strategy reviews, and executive briefing demos.",
     boundary:
-      "Artistic demonstration with illustrative geometry. It is not a LEGO product, a construction model, or engineering advice.",
+      "Demonstration model with illustrative data. It is not a bid, a schedule of record, or engineering advice.",
   },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
     registryId: null,
-    title: "LEGO Build Studio \u00b7 Music Edition",
-    eyebrow: "Art / Demo",
-    href: "/labs/lego-build-studio-music",
-    statusLabel: "v5.0",
+    title: "DEP Sewer Bridge \u2014 QA Capture Studio",
+    eyebrow: "Utility Intelligence",
+    href: "/labs/utility-intelligence-bridge/qa-capture-studio",
+    statusLabel: "RC7",
     statusTone: "test",
-    Icon: Gamepad2,
-    accentIcon: Landmark,
+    Icon: MapIcon,
+    accentIcon: Globe2,
     description:
-      "The music edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js across 10 color palettes, driven by a generative Web Audio music engine, with timeline scrubbing and a live BOM view.",
-    signals: ["Generative Web Audio music", "Three.js animation", "9 monuments", "Live BOM"],
+      "The RC7 publication QA and capture studio for the DEP Sewer Utility Intelligence Bridge: a three-preset cockpit with Leaflet GIS and a printable screenshot deck for publication review.",
+    signals: ["Leaflet GIS", "Printable screenshot deck", "Visual presets", "QA review"],
     commercialPath:
-      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
+      "Best pilot path: publication QA reviews, stakeholder screenshot decks, and utility program briefings.",
     boundary:
-      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
-  },
-  {
-    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
-    registryId: null,
-    title: "LEGO Build Studio \u00b7 Artemis Edition",
-    eyebrow: "Art / Demo",
-    href: "/labs/lego-build-studio-artemis",
-    statusLabel: "v5.0 Artemis",
-    statusTone: "test",
-    Icon: Gamepad2,
-    accentIcon: Landmark,
-    description:
-      "The Artemis edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js with a generative Web Audio music engine, a Fourier-epicycles ARTEMIS inscription linking to artemis.agoraxai.com, a clean-view presentation mode, and a translucent studio UI.",
-    signals: ["Fourier ARTEMIS inscription", "Generative Web Audio music", "Clean-view mode", "9 monuments"],
-    commercialPath:
-      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
-    boundary:
-      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+      "QA and capture tooling with illustrative data. Visual presets change presentation only; quantity, schedule, and cost logic are untouched.",
   },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
