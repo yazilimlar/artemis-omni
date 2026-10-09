@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Artemis HVAC Mechanical Intelligence Bridge — RC8.4 HVAC Dual Story + Field Claims</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#eef3f9;--panel:#fff;--panel2:#f7fafd;--ink:#13243a;--muted:#5d7089;--line:#d7e0ec;
+  --blue:#0f4c81;--blue2:#1d6fb8;--gold:#c99a2e;--green:#178655;--red:#b42318;--amber:#b45309;
+  --purple:#6d36b3;--cyan:#087f8c;--slate:#52657d;--code:#0c3a63;--hud:rgba(255,255,255,.92);
+  --shadow:0 10px 26px rgba(15,40,75,.10);--space-bg:#cfdded;--space-grid:#5b7088;--space-label:#10243a;--space-clear:#cfdded;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  /* HVAC palette */
+  --duct-galv:#b8c2cc;--duct-spiral:#a4b0bd;--duct-flex:#c8d0d8;
+  --pipe-chw:#1d6fb8;--pipe-hw:#c7362b;--pipe-ref:#7c3aed;--pipe-gas:#f5a623;
+  --insul-jacket:#e8d8b8;--ahu-body:#8ba0b3;--vav-body:#5d7a99;--diffuser:#dde5ec;
+}
+html.night{--bg:#0d1726;--panel:#13202f;--panel2:#0f1a29;--ink:#dde7f2;--muted:#8aa0ba;--line:#24364c;--blue:#4d9fe8;--blue2:#6cb2f0;--gold:#e0b65a;--green:#39c98b;--red:#ff7a6b;--amber:#f0a84b;--purple:#b59af3;--cyan:#55d6df;--slate:#8aa0ba;--code:#9cc8f0;--hud:rgba(15,26,41,.92);--shadow:0 10px 26px rgba(0,0,0,.45);--space-bg:#08111f;--space-grid:#315074;--space-label:#d8ebff;--space-clear:#08111f}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:13px}
+:root{--colL:330px;--colR:372px;--deckH:300px}
+#app{display:grid;grid-template-columns:var(--colL) 1fr var(--colR);grid-template-rows:56px 1fr var(--deckH);height:100vh}
+#app>header{grid-column:1/4;grid-row:1/2}
+#leftPanel{grid-column:1/2;grid-row:2/4}
+#app>main{grid-column:2/3;grid-row:2/3}
+#inspector{grid-column:3/4;grid-row:2/4}
+#deck{grid-column:2/3;grid-row:3/4}
+#app.wide{--deckH:0px}#app.wide #deck{display:none}
+#app.theater{--colL:0px;--colR:0px;--deckH:0px}
+#app.theater #deck,#app.theater #leftPanel,#app.theater #inspector{display:none}
+#app.execRoom{--colL:0px;--colR:0px;--deckH:0px}
+#app.execRoom #leftPanel,#app.execRoom #inspector,#app.execRoom #deck{display:none!important}
+#app.execRoom main{grid-column:1/4;grid-row:2/4}
+header{display:flex;align-items:center;gap:14px;padding:0 16px;background:linear-gradient(90deg,var(--panel),var(--panel2));border-bottom:1px solid var(--line);z-index:30}
+header .brand{font-weight:800;font-size:15px;letter-spacing:.02em}
+header .brand small{display:block;color:var(--muted);font-weight:600;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+header .stamp{margin-left:auto;text-align:right;font-size:10.5px;color:var(--muted);line-height:1.35}
+header .stamp b{color:var(--blue);font-size:11.5px}
+.hbtn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 10px;font-weight:700;font-size:11.5px;cursor:pointer}
+.hbtn:hover{border-color:var(--blue)}
+.hbtn.on{background:var(--gold);border-color:var(--gold);color:#1a1408}
+aside{grid-row:2/4;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;overflow-x:hidden}
+#inspector{background:var(--panel);border-left:1px solid var(--line);overflow-y:auto}
+main{position:relative;overflow:hidden;background:var(--space-bg)}
+#viewport{width:100%;height:100%;display:block;cursor:crosshair}
+.sec{border-bottom:1px solid var(--line)}
+.sec>h2{margin:0;padding:10px 14px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);cursor:pointer;display:flex;justify-content:space-between;user-select:none}
+.sec>h2:after{content:'▾';color:var(--muted)}
+.sec.closed>h2:after{content:'▸'}
+.sec .body{padding:2px 14px 12px}
+.sec.closed .body{display:none}
+.field{margin:8px 0}
+label{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:4px}
+label output{color:var(--ink);font-family:var(--mono);font-size:11.5px}
+select,input[type=number],input[type=text],input[type=date]{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--ink);font-weight:600;font-size:12px;font-family:inherit}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+button.act{width:100%;padding:8px 10px;border:1px solid var(--blue);border-radius:8px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer;font-size:12px;margin-top:6px}
+button.act.sec2{background:transparent;color:var(--blue)}
+button.act:hover{filter:brightness(1.08)}
+.note{margin-top:8px;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--muted);font-size:11px;line-height:1.45}
+.hud{position:absolute;top:12px;left:12px;background:var(--hud);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow);font-size:11.5px;max-width:300px;backdrop-filter:blur(6px)}
+.hud .row{display:flex;justify-content:space-between;gap:14px;margin:3px 0}
+.hud .row b{font-family:var(--mono)}
+.hud h4{margin:0 0 6px;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--blue)}
+#legend{position:absolute;left:12px;bottom:96px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:10px;box-shadow:var(--shadow);z-index:18;line-height:1.85}
+#legend b{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+#legend .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid rgba(0,0,0,.2)}
+#camBar{position:absolute;top:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 320px);justify-content:flex-end}
+#transport{position:absolute;left:12px;right:12px;bottom:12px;background:var(--hud);border:1px solid var(--line);border-radius:14px;padding:10px 14px;box-shadow:var(--shadow);backdrop-filter:blur(6px)}
+#transport .tr-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tbtn{width:34px;height:30px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-weight:800;cursor:pointer;font-size:13px}
+.tbtn.primary{background:var(--blue);border-color:var(--blue);color:#fff;width:44px}
+#simDayWrap{flex:1;min-width:160px;position:relative}
+#simTicks{position:absolute;top:-9px;left:0;right:0;height:9px;font-size:8.5px;color:var(--muted);font-family:var(--mono)}
+#simTicks span{position:absolute;transform:translateX(-50%)}
+.tr-read{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.tr-read b{color:var(--ink);font-size:13px}
+#simPhaseChips{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.chip{padding:2.5px 8px;border-radius:999px;border:1px solid var(--line);font-size:10px;font-weight:700;color:var(--muted);background:var(--panel)}
+.chip.active{background:var(--gold);border-color:var(--gold);color:#1a1408}
+.chip.done{background:var(--green);border-color:var(--green);color:#fff}
+#cashStrip{display:flex;gap:16px;margin-top:7px;font-family:var(--mono);font-size:11px;color:var(--muted);flex-wrap:wrap}
+.pos{color:var(--green)}.neg{color:var(--red)}
+#inspector .pad{padding:12px 14px;border-bottom:1px solid var(--line)}
+#inspector h3{margin:0 0 8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--blue)}
+#selPath{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-bottom:6px;line-height:1.6}
+#selPath a{color:var(--blue2);text-decoration:none}#selPath a:hover{text-decoration:underline}
+#selTitle{font-size:15px;font-weight:800}
+#selSub{color:var(--muted);font-size:11px;margin-top:2px}
+.pbarWrap{height:9px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:8px 0 3px}
+.pbar{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue2));transition:width .25s}
+.kv{display:grid;grid-template-columns:1fr auto;gap:3px 10px;font-size:11.5px;margin-top:6px}
+.kv div:nth-child(even){font-family:var(--mono);text-align:right;font-weight:700}
+table.mini{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px}
+table.mini th{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:right;padding:3px 5px;border-bottom:1px solid var(--line)}
+table.mini th:first-child,table.mini td:first-child{text-align:left}
+table.mini td{padding:3.5px 5px;border-bottom:1px dashed var(--line);text-align:right;font-family:var(--mono)}
+table.mini td:first-child{font-family:Inter,sans-serif;font-weight:600;color:var(--muted)}
+table.mini tr.tot td{border-top:2px solid var(--line);font-weight:800;color:var(--ink)}
+#treeWrap{font-size:11.5px;line-height:1.85;max-height:300px;overflow:auto}
+.tnode{cursor:pointer;display:block;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.tnode:hover{background:var(--panel2)}
+.tnode.sel{background:var(--blue);color:#fff;font-weight:700}
+.tnode .cc{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-left:6px}
+.tnode.sel .cc{color:#cfe4ff}
+#deck{background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;min-height:0;position:relative}
+#deckHandle{position:absolute;top:-4px;left:0;right:0;height:8px;cursor:row-resize;z-index:25}
+#deckHandle:hover{background:var(--blue);opacity:.35}
+#tabs{display:flex;gap:2px;padding:6px 10px 0;border-bottom:1px solid var(--line);overflow-x:auto;flex-shrink:0}
+.tab{padding:7px 13px;border:1px solid transparent;border-bottom:none;border-radius:9px 9px 0 0;cursor:pointer;font-weight:700;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.tab.on{background:var(--panel2);border-color:var(--line);color:var(--blue)}
+#tabBody{flex:1;overflow:auto;padding:12px 14px;background:var(--panel2)}
+.tpage{display:none}.tpage.on{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:9px 12px;box-shadow:var(--shadow)}
+.card.tone-info{border-top:4px solid var(--blue)}
+.card.tone-good{border-top:4px solid var(--green)}
+.card.tone-watch{border-top:4px solid var(--amber)}
+.card.tone-critical{border-top:4px solid var(--red)}
+.card.tone-governance{border-top:4px solid var(--purple)}
+.card.tone-schedule{border-top:4px solid var(--cyan)}
+.card .t{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+.card .v{font-size:16.5px;font-weight:800;font-family:var(--mono);margin-top:3px}
+.card .s{font-size:10px;color:var(--muted);margin-top:2px}
+table.data{width:100%;border-collapse:collapse;font-size:11.5px;background:var(--panel);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+table.data th{background:var(--panel2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:7px 9px;text-align:left;border-bottom:1px solid var(--line);position:sticky;top:0}
+table.data th.num,table.data td.num{text-align:right;font-family:var(--mono)}
+table.data td{padding:6px 9px;border-bottom:1px solid var(--line)}
+table.data tr:hover td{background:var(--panel2)}
+table.data tr.grp td{background:var(--panel2);font-weight:800;color:var(--blue)}
+table.data tr.tot td{font-weight:800;border-top:2px solid var(--line)}
+.costCode{font-family:var(--mono);font-weight:700;color:var(--code);font-size:11px}
+.catPill{display:inline-block;min-width:18px;text-align:center;padding:1px 6px;border-radius:6px;font-family:var(--mono);font-weight:800;font-size:10px;color:#fff;margin-right:5px}
+.cat-L{background:#1d6fb8}.cat-M{background:#7c3aed}.cat-C{background:#b45309}.cat-S{background:#0f766e}.cat-E{background:#be185d}.cat-R{background:#178655}
+.dGood{color:var(--green);font-weight:700}.dBad{color:var(--red);font-weight:700}
+.toolrow{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.toolrow select,.toolrow input{width:auto;min-width:130px}
+.toolrow .sp{flex:1}
+.chartBox{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px;box-shadow:var(--shadow);height:240px;position:relative;margin-bottom:12px}
+.chartGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:1500px){.chartGrid{grid-template-columns:1fr}}
+.formula{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:9px;padding:9px 12px;margin:8px 0;font-size:11.5px}
+.formula code{font-family:var(--mono);color:var(--code);font-weight:700;font-size:11px}
+.formula .src{color:var(--muted);font-size:10px;margin-top:3px}
+h3.dh{margin:14px 0 8px;font-size:12px;color:var(--blue);text-transform:uppercase;letter-spacing:.05em}
+.scrollX{overflow-x:auto}
+.warnBanner{background:#fff4e0;border:1px solid #e8c27a;color:#7a4d00;border-radius:9px;padding:7px 11px;font-size:11.5px;font-weight:600;margin-bottom:10px}
+html.night .warnBanner{background:#3a2c10;border-color:#7a5c1e;color:#f2cf86}
+.publicStory{display:grid;grid-template-columns:minmax(280px,1.2fr) minmax(360px,1.8fr);gap:10px;margin-bottom:11px}
+.publicStoryLead{border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,color-mix(in srgb,var(--cyan) 8%,var(--panel)),var(--panel));box-shadow:var(--shadow)}
+.publicStoryLead .eyebrow{font:800 9px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.publicStoryLead h2{margin:5px 0 4px;font-size:17px;line-height:1.12}
+.publicStoryLead h2 span{color:var(--blue)}
+.publicStoryLead p{margin:0;color:var(--muted);font-size:10.5px;line-height:1.45}
+.synthesisPipe{display:grid;grid-template-columns:repeat(5,minmax(86px,1fr));gap:5px}
+.pipeStep{position:relative;border:1px solid var(--line);border-top:4px solid var(--blue);border-radius:11px;padding:8px 7px;background:var(--panel);box-shadow:var(--shadow);min-height:68px}
+.pipeStep:nth-child(2){border-top-color:var(--cyan)}.pipeStep:nth-child(3){border-top-color:var(--purple)}
+.pipeStep:nth-child(4){border-top-color:var(--gold)}.pipeStep:nth-child(5){border-top-color:var(--green)}
+.pipeStep b{display:block;font:900 9px var(--mono);color:var(--muted)}.pipeStep span{display:block;margin-top:5px;font-size:10px;font-weight:800;line-height:1.25}
+.actualsHero{display:grid;grid-template-columns:minmax(270px,1.2fr) minmax(360px,1.8fr);gap:10px;margin-bottom:10px}
+.actualsNarrative{border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,color-mix(in srgb,var(--blue) 10%,var(--panel)),var(--panel));box-shadow:var(--shadow)}
+.actualsNarrative .eyebrow{font:800 9px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.actualsNarrative h3{margin:4px 0;font-size:16px}
+.actualsNarrative p{margin:0;color:var(--muted);font-size:10.5px;line-height:1.4}
+.actualsControls{border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--panel);box-shadow:var(--shadow)}
+.disclaimerRail{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 10px}
+.disclaimerRail span{border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--gold) 8%,var(--panel));padding:3px 8px;font:800 9px var(--mono);color:var(--muted)}
+.actualsKpis{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}
+.actualsCharts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actualsCharts .chartBox{height:225px}
+.statusPill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 7px;font:800 9px var(--mono);background:var(--panel2);color:var(--muted)}
+.statusPill.pass,.statusPill.accepted,.statusPill.paid{color:var(--green);border-color:color-mix(in srgb,var(--green) 45%,var(--line))}
+.statusPill.info,.statusPill.approved{color:var(--blue);border-color:color-mix(in srgb,var(--blue) 45%,var(--line))}
+.statusPill.watch,.statusPill.pending,.statusPill.partially-approved{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line))}
+.statusPill.action-required,.statusPill.rejected,.statusPill.disputed{color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,var(--line))}
+.reconGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:7px}
+.reconItem{border:1px solid var(--line);border-left:5px solid var(--green);border-radius:11px;background:var(--panel);padding:9px 10px}
+.reconItem.info{border-left-color:var(--blue)}.reconItem.watch{border-left-color:var(--amber)}.reconItem.action-required{border-left-color:var(--red)}
+.reconItem b{display:block;font-size:10.5px}.reconItem p{margin:3px 0 0;color:var(--muted);font-size:9.8px;line-height:1.35}
+.actualsEmpty{border:1px dashed var(--line);border-radius:12px;padding:18px;text-align:center;background:var(--panel);color:var(--muted)}
+.controlHero{display:grid;grid-template-columns:minmax(240px,1.1fr) minmax(300px,1.9fr);gap:10px;margin-bottom:11px}
+.controlGate{border:1px solid var(--line);border-left:6px solid var(--green);border-radius:14px;background:var(--panel);padding:12px 14px;box-shadow:var(--shadow)}
+.controlGate.watch{border-left-color:var(--amber)}.controlGate.critical{border-left-color:var(--red)}
+.controlGate .eyebrow{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}
+.controlGate .decision{font-size:21px;line-height:1.1;font-weight:950;color:var(--green);margin-top:4px}
+.controlGate.watch .decision{color:var(--amber)}.controlGate.critical .decision{color:var(--red)}
+.controlGate .basis{font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:5px}
+.controlCounts{display:grid;grid-template-columns:repeat(4,minmax(90px,1fr));gap:7px}
+.controlCount{border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:9px 10px;box-shadow:var(--shadow)}
+.controlCount b{display:block;font:950 19px var(--mono)}.controlCount span{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:850}
+.controlCount.critical b{color:var(--red)}.controlCount.watch b{color:var(--amber)}.controlCount.good b{color:var(--green)}.controlCount.ack b{color:var(--purple)}
+.controlRegister{display:grid;gap:7px}
+.controlAlert{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:9px;align-items:start;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:9px 10px;box-shadow:0 5px 14px rgba(15,40,75,.06)}
+.controlAlert .rail{width:10px;align-self:stretch;border-radius:999px;background:var(--blue)}
+.controlAlert.watch .rail{background:var(--amber)}.controlAlert.critical .rail{background:var(--red)}.controlAlert.acknowledged{opacity:.68}
+.controlAlert h4{margin:0;font-size:11.5px}.controlAlert p{margin:3px 0 0;font-size:10.5px;color:var(--muted);line-height:1.35}
+.controlMeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.controlChip{display:inline-block;border-radius:999px;padding:2px 7px;font:800 8.8px var(--mono);background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+.controlChip.critical{color:var(--red)}.controlChip.watch{color:var(--amber)}
+.controlAlertActions{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:195px}
+.controlAlertActions .hbtn{font-size:9px;padding:3px 6px}
+.balanceGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px}
+.balanceItem{border:1px solid var(--line);border-left:4px solid var(--green);border-radius:10px;background:var(--panel);padding:8px 9px}
+.balanceItem.warn{border-left-color:var(--amber)}.balanceItem.fail{border-left-color:var(--red)}
+.balanceItem b{display:block;font-size:10.5px}.balanceItem span{display:block;color:var(--muted);font-size:9.7px;line-height:1.3;margin-top:2px}
+.balanceItem em{font-style:normal;font:900 9px var(--mono);color:var(--green)}.balanceItem.warn em{color:var(--amber)}.balanceItem.fail em{color:var(--red)}
+.standardHero{background:linear-gradient(135deg,var(--panel),var(--panel2));border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:14px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:12px}
+.standardHero h3{margin:0 0 5px;color:var(--blue);font-size:15px}.standardHero p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.standardGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:10px 0 12px}
+.standardCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow)}
+.standardCard .k{font-size:9.8px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:900}
+.standardCard .v{font-size:14px;color:var(--ink);font-weight:900;margin-top:3px}
+.standardCard .s{font-size:11px;color:var(--muted);line-height:1.38;margin-top:3px}
+.standardFlow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin:10px 0}
+.standardFlow div{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:9px 10px;color:var(--muted);font-size:11.2px;line-height:1.4}
+.standardFlow b{display:block;color:var(--blue);font-size:11px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.standardTags{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0}
+.standardTag{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:3px 8px;font-size:10.5px;font-weight:850;color:var(--muted)}
+.execRoomPanel{position:absolute;right:12px;top:12px;bottom:12px;width:min(720px,42vw);z-index:46;display:none;flex-direction:column;gap:9px;background:rgba(255,255,255,.93);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 55px rgba(0,0,0,.24);backdrop-filter:blur(8px);padding:10px;overflow:hidden}
+html.night .execRoomPanel{background:rgba(10,22,36,.93)}
+#app.execRoom #execRoomPanel{display:flex}
+.execHead{display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid var(--line);padding:2px 2px 8px}
+.execTitle{font-weight:950;color:var(--blue);font-size:13px;letter-spacing:.03em;text-transform:uppercase;line-height:1.2}
+.execSub{color:var(--muted);font-size:10.5px;line-height:1.35;margin-top:2px}
+.execHead .sp{flex:1}
+.execControls{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.execControls select,.execControls input{width:auto;min-width:116px;padding:5px 7px;font-size:10.5px}
+.execKpis{display:grid;grid-template-columns:repeat(5,minmax(86px,1fr));gap:7px}
+.execKpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 8px;box-shadow:0 7px 16px rgba(15,40,75,.08);min-height:54px}
+.execKpi .k{font-size:8.8px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.055em;white-space:nowrap}
+.execKpi .v{font-size:13.5px;font-family:var(--mono);font-weight:950;margin-top:3px;line-height:1.1}
+.execKpi .s{font-size:9.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.execCharts{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0;flex:1}
+.execChart{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;min-height:144px;position:relative;box-shadow:0 7px 16px rgba(15,40,75,.08)}
+.execChart.wide{grid-column:1/3;min-height:150px}
+.execChart h4{margin:0 0 5px;color:var(--blue);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase}
+.execChart canvas{width:100%;height:calc(100% - 18px)!important;display:block}
+.execBridge{display:grid;grid-template-columns:1fr 1fr;gap:7px;color:var(--muted);font-size:10px;line-height:1.35}
+.execBridge div{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:6px 7px}
+.execBridge b{color:var(--ink)}
+.execDisclaimer{font-size:9.2px;color:var(--muted);border-top:1px solid var(--line);padding-top:6px;line-height:1.3}
+#controlPulse{position:absolute;left:50%;top:52px;transform:translateX(-50%);display:flex;align-items:center;gap:7px;z-index:48;max-width:min(680px,70%);padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--hud);box-shadow:var(--shadow);font-size:10.2px;font-weight:850;cursor:pointer;backdrop-filter:blur(8px)}
+#controlPulse.good{border-color:var(--green)}#controlPulse.watch{border-color:var(--amber)}#controlPulse.critical{border-color:var(--red)}
+.pulseDot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 18%,transparent)}
+#controlPulse.watch .pulseDot{background:var(--amber)}#controlPulse.critical .pulseDot{background:var(--red)}
+#controlToastStack{position:fixed;right:18px;top:72px;z-index:140;display:grid;gap:7px;width:min(360px,calc(100vw - 36px));pointer-events:none}
+.controlToast{pointer-events:auto;border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:12px;background:var(--hud);box-shadow:0 18px 50px rgba(0,0,0,.25);padding:9px 10px;animation:controlIn .2s ease}
+.controlToast.critical{border-left-color:var(--red)}.controlToast.good{border-left-color:var(--green)}
+.controlToast b{display:block;font-size:10.8px}.controlToast span{display:block;color:var(--muted);font-size:9.8px;margin-top:2px;line-height:1.3}
+@keyframes controlIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+.narrativePage{position:fixed;inset:0;z-index:500;display:none;overflow:auto;color:#e8f0fa;background:radial-gradient(1100px 620px at 82% -8%,rgba(15,76,129,.48),transparent 64%),linear-gradient(180deg,#0e1c2c,#0b1622 44%);font-family:Inter,system-ui,sans-serif}
+.narrativePage.on{display:block}
+.narWrap{position:relative;z-index:1;width:min(1180px,calc(100% - 38px));margin:0 auto}
+.narTop{position:sticky;top:0;z-index:8;border-bottom:1px solid #294159;background:rgba(11,22,34,.88);backdrop-filter:blur(12px)}
+.narTop .narWrap{display:flex;align-items:center;gap:13px;height:62px}
+.narBrand{display:flex;align-items:center;gap:11px;font-weight:850}
+.narBrand small{display:block;margin-top:2px;color:#90a7c2;font:700 9px var(--mono);letter-spacing:.19em;text-transform:uppercase}
+.narNav{display:flex;gap:3px;margin-left:auto}
+.narNav a{color:#90a7c2;text-decoration:none;padding:7px 9px;border-radius:8px;font-size:11px;font-weight:750}
+.narNav a:hover{color:#e8f0fa;background:rgba(47,143,224,.13)}
+.narTopButton,.narPrimary,.narSecondary,.narLaunch{border:1px solid #294159;border-radius:9px;background:#0f2030;color:#e8f0fa;padding:8px 11px;font-weight:800;font-size:11px;cursor:pointer}
+.narPrimary{background:#1d6fb8;border-color:#1d6fb8;color:#fff;padding:10px 14px}
+.narHero{display:grid;grid-template-columns:minmax(330px,.92fr) minmax(500px,1.35fr);gap:32px;align-items:center;padding:64px 0 30px}
+.narEyebrow{font:750 10px var(--mono);letter-spacing:.25em;text-transform:uppercase;color:#e0b65a}
+.narHero h1{margin:13px 0 0;max-width:15ch;font-size:clamp(38px,5.8vw,67px);line-height:1.01;letter-spacing:-.045em}
+.narHero h1 .water{color:#54a8ed}.narHero h1 .brass{color:#e0b65a}
+.narLead{max-width:62ch;margin:20px 0 0;color:#90a7c2;font-size:15.5px;line-height:1.6}
+.narActions{display:flex;gap:9px;flex-wrap:wrap;margin-top:25px}
+.narMeta{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:24px;color:#90a7c2;font:700 10px var(--mono)}
+.narMeta b{color:#7cc0f5}
+.narSpine{border:1px solid #294159;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,rgba(18,37,55,.96),rgba(15,32,48,.96));box-shadow:0 24px 64px rgba(0,0,0,.42)}
+.narSpine svg{display:block;width:100%;height:auto;min-height:330px}
+.narSpineLegend{display:flex;gap:8px 15px;flex-wrap:wrap;padding:11px 15px;border-top:1px solid #294159;color:#90a7c2;font:700 8.5px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.narSpineLegend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.narSpineLegend .hint{margin-left:auto;color:#647b94}
+.narLive{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin:12px 0 0;border:1px solid #294159;border-radius:14px;overflow:hidden;background:#294159;box-shadow:0 14px 42px rgba(0,0,0,.25)}
+.narMetric{padding:15px 16px;background:#122537}
+.narMetric span{display:block;color:#90a7c2;font:750 8.8px var(--mono);letter-spacing:.09em;text-transform:uppercase}
+.narMetric b{display:block;margin-top:5px;color:#e8f0fa;font:800 20px var(--mono)}
+.narMetric small{display:block;margin-top:2px;color:#7cc0f5;font:650 9px var(--mono)}
+.narSection{padding:70px 0 4px;scroll-margin-top:74px}
+.narSectionHead{max-width:690px;margin-bottom:26px}
+.narSectionHead h2{margin:10px 0 7px;font-size:clamp(25px,3.2vw,36px);letter-spacing:-.03em;color:#e8f0fa}
+.narSectionHead p{margin:0;color:#90a7c2;font-size:13.5px;line-height:1.58}
+.narChain{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+.narChainStep{position:relative;min-height:118px;padding:15px 13px;border:1px solid #294159;border-top:4px solid #2f8fe0;border-radius:12px;background:#0f2030}
+.narChainStep b{display:block;color:#e0b65a;font:800 10px var(--mono)}
+.narChainStep strong{display:block;margin-top:7px;font-size:13px;color:#e8f0fa}
+.narChainStep span{display:block;margin-top:5px;color:#90a7c2;font-size:10.5px;line-height:1.38}
+.narMatrix{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.narCap{position:relative;min-height:188px;border:1px solid #294159;border-radius:14px;padding:18px;background:linear-gradient(180deg,#122537,#0f2030);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.narCap:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cap,#2f8fe0)}
+.narCap .num{color:#90a7c2;font:750 9px var(--mono);letter-spacing:.1em}.narCap h3{margin:7px 0 3px;font-size:16px;color:#e8f0fa}
+.narCap .owner{color:var(--cap,#2f8fe0);font:750 9.5px var(--mono)}.narCap p{color:#90a7c2;font-size:11.5px;line-height:1.48}
+.narCap .proof{margin-top:12px;padding-top:10px;border-top:1px solid #294159;font:700 11px var(--mono)}
+.narCap .proof b{color:#e0b65a}
+.narLaunchBay{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.narLaunch{display:block;text-align:left;min-height:125px;padding:17px}
+.narLaunch b{display:block;font-size:14px}.narLaunch span{display:block;margin-top:5px;color:#90a7c2;font-size:10.8px;line-height:1.42}
+.narLaunch em{display:block;margin-top:10px;color:#7cc0f5;font:750 9.5px var(--mono);font-style:normal}
+.narBoundary{margin:52px 0 30px;padding:18px 20px;border:1px solid rgba(224,182,90,.55);border-radius:13px;background:rgba(224,182,90,.07);color:#90a7c2;font-size:11px;line-height:1.55}
+.narBoundary b{color:#e0b65a}
+.narFoot{padding:10px 0 48px;color:#647b94;font:650 9.5px var(--mono)}
+.narStorySelector{margin:22px 0 4px;padding:14px;border:1px solid rgba(124,192,245,.26);border-left:6px solid #e0b65a;border-radius:16px;background:linear-gradient(135deg,rgba(224,182,90,.12),rgba(47,143,224,.08),rgba(18,37,55,.72));box-shadow:0 16px 42px rgba(0,0,0,.28)}
+.narStoryCards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.narStoryCard{position:relative;text-align:left;border:1px solid #294159;border-radius:14px;background:linear-gradient(180deg,#122537,#0f2030);padding:15px;cursor:pointer;color:#e8f0fa;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.narStoryCard .num{font:900 10px var(--mono);color:#e0b65a;text-transform:uppercase}
+.narStoryCard h3{margin:6px 0 5px;font-size:16px;color:#e8f0fa}
+.narStoryCard p{margin:0;color:#90a7c2;font-size:11px;line-height:1.46}
+.narStoryCard em{display:inline-block;margin-top:10px;color:#7cc0f5;font:850 9.5px var(--mono);font-style:normal;text-transform:uppercase}
+@media(max-width:980px){.narHero{grid-template-columns:1fr}.narMatrix,.narLaunchBay{grid-template-columns:1fr}.narChain{grid-template-columns:repeat(2,1fr)}.narSpine{display:none}.narLive{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.actualsHero,.publicStory,.controlHero{grid-template-columns:1fr}.actualsCharts{grid-template-columns:1fr}.execKpis{grid-template-columns:repeat(3,1fr)}.execCharts{grid-template-columns:1fr}.execChart.wide{grid-column:1}}
+
+/* ---------- Mobile layout (<=900px): stacked scroll, header-first ---------- */
+@media(max-width:900px){
+  html,body{overflow:auto;height:auto;-webkit-text-size-adjust:100%}
+  #app{display:flex;flex-direction:column;height:auto;min-height:100dvh}
+  #app>header{position:sticky;top:0;z-index:40;flex-wrap:wrap;height:auto;min-height:56px;row-gap:6px;padding:8px 10px}
+  #app>header .stamp{display:none}
+  #app>header .brand{font-size:13px}
+  #app>main{flex:none;height:54dvh;min-height:360px}
+  #leftPanel{border-right:none;border-bottom:1px solid var(--line);overflow:visible;flex:none}
+  #inspector{border-left:none;border-top:1px solid var(--line);overflow:visible;flex:none}
+  #deck{flex:none;min-height:420px}
+  .hbtn{padding:6px 8px;font-size:11px}
+  .hud{max-width:min(230px,calc(100vw - 120px));font-size:10.5px;padding:8px 10px}
+  #legend{left:8px;bottom:86px;font-size:9px;padding:6px 8px;line-height:1.7}
+  #transport{left:8px;right:8px;bottom:8px;padding:8px 10px;font-size:11px}
+  #camBar{max-width:calc(100% - 16px);flex-wrap:wrap;top:8px;right:8px}
+  #tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .sec .body{padding:2px 10px 10px}
+  #app.wide,#app.theater,#app.execRoom{display:flex}
+  #app.wide #deck{display:flex}
+  #app.theater #deck,#app.theater #leftPanel,#app.theater #inspector{display:flex}
+  #app.execRoom main{height:70dvh}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NARRATIVE PAGE ============ -->
+<section class="narrativePage" id="narrativePage">
+  <div class="narTop"><div class="narWrap">
+    <div class="narBrand">
+      <svg width="32" height="32" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18.5" fill="none" stroke="#e0b65a" stroke-width="1.4"/><rect x="8" y="14" width="24" height="12" rx="2" fill="none" stroke="#2f8fe0" stroke-width="2"/><circle cx="20" cy="20" r="3.4" fill="#e0b65a"/></svg>
+      <span>HVAC Mechanical Intelligence Bridge<small>Artemis · RC8.4 HVAC</small></span>
+    </div>
+    <nav class="narNav">
+      <a href="#narStoryFieldClaims">Story 1</a><a href="#narStoryCockpitClassic">Story 2</a><a href="#narCockpit">Live cockpit</a><a href="#narLaunch">Launch</a>
+    </nav>
+    <button class="narTopButton" id="btnNarrativeEnter">Enter live application</button>
+  </div></div>
+  <div class="narWrap">
+    <section class="narStorySelector">
+      <div style="margin-bottom:10px">
+        <div class="narEyebrow">RC8.4 Startup story selector</div>
+        <h2 style="margin:5px 0 0;font-size:20px;color:#e8f0fa">Choose the narrative path</h2>
+        <p style="margin:5px 0 0;color:#90a7c2;font-size:11.5px;line-height:1.5">Two guided narratives over the same HVAC mechanical intelligence engine.</p>
+      </div>
+      <div class="narStoryCards">
+        <button class="narStoryCard" data-story-scroll="narStoryFieldClaims"><span class="num">Story 1 · Field claims proof</span><h3>Duct completion → actual cost → claim/payment → executive action</h3><p>How HVAC geometry becomes field quantities, actual cost, earned value, payment applications, retainage, and cash exposure.</p><em>Open Field Claims Story ↓</em></button>
+        <button class="narStoryCard" data-story-scroll="narStoryCockpitClassic"><span class="num">Story 2 · Cockpit classic</span><h3>One mechanical model. Six disciplines. One source of truth.</h3><p>The Section &amp; Spine visual identity applied to HVAC: duct cross-section, discipline dialects, live estimate preview.</p><em>Open Cockpit Story ↓</em></button>
+      </div>
+    </section>
+
+    <section class="narHero" id="narStoryFieldClaims">
+      <div>
+        <div class="narEyebrow">Mount Vernon, NY · Commercial Office Retrofit · CSI Div 23</div>
+        <h1>One mechanical model.<br><span class="water">Six disciplines.</span><br><span class="brass">One source of truth.</span></h1>
+        <p class="narLead">Artemis turns one HVAC mechanical scope into a shared operational language. Duct geometry becomes quantity; quantity becomes schedule and cost; field completion becomes earned value; approved work becomes cashflow and executive action.</p>
+        <div class="narActions">
+          <button class="narPrimary" data-narrative-launch="model">Explore the live model</button>
+          <button class="narSecondary" data-narrative-launch="actuals-controlled">Run sample actuals</button>
+          <button class="narSecondary" data-rc83-scenario="demo-claims-payment-lag">Run claim/payment lag</button>
+          <button class="narSecondary" data-narrative-launch="exec">Open Executive Control Room</button>
+        </div>
+        <div class="narMeta">
+          <span>Activities <b id="narActivities">15</b></span>
+          <span>Duct runs <b id="narCorridor">900 LF</b></span>
+          <span>Site <b>Mount Vernon, NY</b></span>
+          <span>Deployment <b>single-file + fallback</b></span>
+        </div>
+      </div>
+      <div class="narSpine">
+        <svg viewBox="0 0 1140 478" role="img" aria-label="Animated HVAC duct section feeding six disciplines">
+          <defs>
+            <linearGradient id="narBack" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c8d0d8"/><stop offset="1" stop-color="#a4b0bd"/></linearGradient>
+          </defs>
+          <rect x="1" y="1" width="1138" height="476" rx="18" fill="none" stroke="rgba(47,143,224,.13)"/>
+          <g font-family="ui-monospace,Menlo,Consolas,monospace">
+            <line x1="60" y1="150" x2="1090" y2="150" stroke="#e0b65a" stroke-width="1" stroke-dasharray="2 5" opacity=".65"/>
+            <text x="60" y="142" fill="#90a7c2" font-size="9" letter-spacing=".04em">DATUM EL. 100.00</text>
+            <g font-size="9" fill="#90a7c2" letter-spacing=".04em">
+              <line x1="120" y1="146" x2="120" y2="154" stroke="#385d80"/><text x="120" y="166" text-anchor="middle">0+00</text>
+              <line x1="304" y1="146" x2="304" y2="154" stroke="#385d80"/><text x="304" y="166" text-anchor="middle">2+00</text>
+              <line x1="488" y1="146" x2="488" y2="154" stroke="#385d80"/><text x="488" y="166" text-anchor="middle">4+00</text>
+              <line x1="672" y1="146" x2="672" y2="154" stroke="#385d80"/><text x="672" y="166" text-anchor="middle">6+00</text>
+              <line x1="856" y1="146" x2="856" y2="154" stroke="#385d80"/><text x="856" y="166" text-anchor="middle">8+00</text>
+              <line x1="1040" y1="146" x2="1040" y2="154" stroke="#385d80"/><text x="1040" y="166" text-anchor="middle">10+00</text>
+            </g>
+            <rect x="44" y="60" width="92" height="58" rx="10" fill="#163a5c" stroke="#2f8fe0" stroke-width="1.7"/>
+            <text x="90" y="82" text-anchor="middle" fill="#7cc0f5" font-size="10" letter-spacing=".12em" font-weight="800">PARAMETRIC</text>
+            <text x="90" y="96" text-anchor="middle" fill="#e8f0fa" font-size="10" letter-spacing=".12em" font-weight="800">HVAC MODEL</text>
+            <text x="90" y="110" text-anchor="middle" fill="#e0b65a" font-size="10" letter-spacing=".12em" font-weight="800">SOURCE</text>
+            <path d="M120 168 L1040 236" fill="none" stroke="#2f8fe0" stroke-width="2.6"/>
+            <g stroke="#385d80" stroke-width="1.25" stroke-dasharray="4 5" fill="none" opacity=".95">
+              <path d="M136 89 C 190 42, 250 42, 300 42"/>
+              <path d="M136 89 C 252 30, 360 42, 430 42"/>
+              <path d="M136 89 C 318 24, 490 42, 560 42"/>
+              <path d="M136 89 C 382 20, 620 42, 690 42"/>
+              <path d="M136 89 C 450 18, 748 42, 820 42"/>
+              <path d="M136 89 C 530 16, 890 42, 960 42"/>
+            </g>
+            <g font-size="12" fill="#e8f0fa" font-weight="800" letter-spacing=".05em">
+              <g><circle cx="300" cy="42" r="9" fill="none" stroke="#e0b65a" stroke-width="2"/><circle cx="300" cy="42" r="3.3" fill="#e0b65a"/><text x="300" y="25" text-anchor="middle">BIM / 3D</text></g>
+              <g><circle cx="430" cy="42" r="9" fill="none" stroke="#e0b65a" stroke-width="2"/><circle cx="430" cy="42" r="3.3" fill="#e0b65a"/><text x="430" y="25" text-anchor="middle">QTO</text></g>
+              <g><circle cx="560" cy="42" r="9" fill="none" stroke="#e0b65a" stroke-width="2"/><circle cx="560" cy="42" r="3.3" fill="#e0b65a"/><text x="560" y="25" text-anchor="middle">COST CODES</text></g>
+              <g><circle cx="690" cy="42" r="9" fill="none" stroke="#e0b65a" stroke-width="2"/><circle cx="690" cy="42" r="3.3" fill="#e0b65a"/><text x="690" y="25" text-anchor="middle">EVM</text></g>
+              <g><circle cx="820" cy="42" r="9" fill="none" stroke="#e0b65a" stroke-width="2"/><circle cx="820" cy="42" r="3.3" fill="#e0b65a"/><text x="820" y="25" text-anchor="middle">FIELD</text></g>
+              <g><circle cx="960" cy="42" r="9" fill="none" stroke="#e0b65a" stroke-width="2"/><circle cx="960" cy="42" r="3.3" fill="#e0b65a"/><text x="960" y="25" text-anchor="middle">EXEC</text></g>
+            </g>
+            <line x1="580" y1="205" x2="580" y2="252" stroke="#e0b65a" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="580" y="246" text-anchor="middle" fill="#e0b65a" font-size="12" font-weight="850" letter-spacing=".12em">SECTION A–A · STA 5+00</text>
+            <!-- Duct section view -->
+            <g transform="translate(430 262)">
+              <line x1="-5" y1="14" x2="-5" y2="128" stroke="#e0b65a" stroke-width="2"/>
+              <line x1="305" y1="14" x2="305" y2="128" stroke="#e0b65a" stroke-width="2"/>
+              <rect x="0" y="14" width="300" height="12" fill="#2c3540"/>
+              <rect x="0" y="26" width="300" height="78" fill="#8a9aa8" opacity=".35"/>
+              <rect x="60" y="46" width="180" height="42" rx="3" fill="none" stroke="#2f8fe0" stroke-width="2"/>
+              <rect x="60" y="46" width="180" height="6" fill="url(#narBack)"/>
+              <rect x="60" y="82" width="180" height="6" fill="url(#narBack)"/>
+              <rect x="60" y="46" width="4" height="42" fill="url(#narBack)"/>
+              <rect x="236" y="46" width="4" height="42" fill="url(#narBack)"/>
+              <text x="150" y="72" text-anchor="middle" fill="#e0b65a" font-size="11" font-weight="800" letter-spacing=".08em">24x16 GALV DUCT</text>
+              <text x="150" y="112" text-anchor="middle" fill="#90a7c2" font-size="9" font-weight="750" letter-spacing=".06em">1" WRAP INSULATION</text>
+              <circle cx="150" cy="106" r="3" fill="#178655"/>
+              <text x="14" y="23" fill="#dce7f3" font-size="9" font-weight="900" letter-spacing=".08em">CEILING / PLENUM</text>
+              <text x="14" y="46" fill="#90a7c2" font-size="9" font-weight="750" letter-spacing=".06em">SEISMIC HANGER</text>
+              <text x="-21" y="86" fill="#e0b65a" font-size="9" font-weight="900" letter-spacing=".08em" transform="rotate(-90 -21 86)">DUCT RUN</text>
+            </g>
+          </g>
+        </svg>
+        <div class="narSpineLegend">
+          <span><i style="background:#2f8fe0"></i>Data spine</span>
+          <span><i style="background:#e0b65a"></i>Discipline station</span>
+          <span><i style="background:#b8c2cc"></i>Galv duct</span>
+          <span><i style="background:#e8d8b8"></i>Insulation</span>
+          <span class="hint">Animated packets show one HVAC source model feeding six disciplines →</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="narLive">
+      <div class="narMetric"><span>Duct corridor</span><b id="narLength">900 LF</b><small id="narGeo">site plan alignment</small></div>
+      <div class="narMetric"><span>Bid / SOV value</span><b id="narRevenue">$0</b><small>live from estimate engine</small></div>
+      <div class="narMetric"><span>Duration</span><b id="narDuration">0 wd</b><small id="narFinish">working-day sequence</small></div>
+      <div class="narMetric"><span>Data mode</span><b id="narDataMode">Plan</b><small id="narPerformance">CPI 1.00 · SPI 1.00</small></div>
+      <div class="narMetric"><span>Control gate</span><b id="narGate">Controlled</b><small>checks live below</small></div>
+    </div>
+
+    <section class="narSection" id="narStoryCockpitClassic">
+      <div class="narSectionHead"><div class="narEyebrow">Cockpit Classic Story · Section &amp; Spine</div><h2>The polished cockpit narrative applied to HVAC</h2><p>This story preserves the strongest visual language from Cockpit v1 — trench-section identity translated to duct-section identity, the data spine, the six-discipline bridge, and the live estimate preview.</p></div>
+      <div class="narMatrix">
+        <article class="narCap" style="--cap:#54a8ed"><div class="num">01 · MODEL / BIM</div><h3>Duct geometry &amp; clickable intelligence</h3><div class="owner">BIM / VDC Coordinator</div><p>Inspect duct runs, fittings, AHUs, VAVs, terminals, and hangers with linked construction activities.</p><div class="proof">Live: <b id="narModelProof">900 LF · 4 runs</b></div></article>
+        <article class="narCap" style="--cap:#8f7a59"><div class="num">02 · PROJECT CONTROLS</div><h3>Schedule, EVM &amp; forecast</h3><div class="owner">Project Controls Manager</div><p>Synchronize activity register, Gantt, PV/EV/AC curves, CPI/SPI, EAC, variance, and cashflow.</p><div class="proof">Live: <b id="narControlsProof">15 activities · 45 wd</b></div></article>
+        <article class="narCap" style="--cap:#c2724a"><div class="num">03 · FIELD</div><h3>Completion reports &amp; actual cost</h3><div class="owner">Field Engineer / Superintendent</div><p>Load deterministic sample scenarios or import source-tagged daily production and cost records.</p><div class="proof">Live: <b id="narFieldProof">Plan mode · import ready</b></div></article>
+        <article class="narCap" style="--cap:#e0b65a"><div class="num">04 · COMMERCIAL</div><h3>ERP, SOV, claims &amp; cash</h3><div class="owner">Commercial / Finance Team</div><p>Map L/M/C/S/E/R cost codes, payment applications, approvals, retainage, and cash gaps.</p><div class="proof">Live: <b id="narCommercialProof">CMiC-style bridge</b></div></article>
+        <article class="narCap" style="--cap:#9aa6b2"><div class="num">05 · STANDARDS / QA</div><h3>HVAC Standards Lens</h3><div class="owner">QA Reviewer</div><p>Trace SMACNA / ASHRAE / NYC Mech Code assumptions into geometry, quantities, and controls.</p><div class="proof">Live: <b>SMACNA · ASHRAE · Div 23</b></div></article>
+        <article class="narCap" style="--cap:#36c98b"><div class="num">06 · EXECUTIVE</div><h3>Control Room &amp; action register</h3><div class="owner">Project Executive / PM</div><p>Read cost, production, cash, variance, risk, opportunity, and warnings beside the live model.</p><div class="proof">Live: <b id="narExecProof">live decision gate</b></div></article>
+      </div>
+    </section>
+
+    <section class="narSection" id="narCockpit">
+      <div class="narSectionHead"><div class="narEyebrow">Live cockpit · Section &amp; Spine graft</div><h2>Estimate engine, risk register, and CSI-23 bridge, computing in the narrative</h2><p>Scenario, ground, and ceiling selections drive the live application controls, then redraw cost, SOV, duration, labor hours, L/M/C/S/E split, top cost codes, and P50/P80 risk envelope.</p></div>
+      <div style="border:1px solid #294159;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#122537,#0f2030);box-shadow:0 18px 54px rgba(0,0,0,.28)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 17px;border-bottom:1px solid #294159">
+          <span style="border:1px solid rgba(224,182,90,.75);border-radius:999px;padding:4px 9px;color:#e0b65a;font:850 9px var(--mono);letter-spacing:.12em;text-transform:uppercase">Live RC8 engine</span>
+          <span style="font-weight:900;font-size:13.5px;color:#e8f0fa">Cockpit decision deck · model-to-controls proof</span>
+          <span id="narCockpitBasis" style="margin-left:auto;color:#90a7c2;font:760 10px var(--mono);letter-spacing:.04em">BASE · Soil · Dry</span>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;padding:14px 17px;border-bottom:1px solid #294159">
+          <div><label style="display:block;margin:0 0 6px;color:#90a7c2;font:780 9px var(--mono);letter-spacing:.1em;text-transform:uppercase">Scenario</label><div style="display:inline-flex;border:1px solid #294159;border-radius:10px;overflow:hidden;background:#0f2030" data-cockpit-group="scenario">
+            <button data-cockpit-key="scenario" data-cockpit-value="best" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">Best</button>
+            <button data-cockpit-key="scenario" data-cockpit-value="base" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">Base</button>
+            <button data-cockpit-key="scenario" data-cockpit-value="worst" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">Worst</button>
+            <button data-cockpit-key="scenario" data-cockpit-value="recovery" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">Recovery</button>
+          </div></div>
+          <div><label style="display:block;margin:0 0 6px;color:#90a7c2;font:780 9px var(--mono);letter-spacing:.1em;text-transform:uppercase">Ceiling type</label><div style="display:inline-flex;border:1px solid #294159;border-radius:10px;overflow:hidden;background:#0f2030" data-cockpit-group="ground">
+            <button data-cockpit-key="ground" data-cockpit-value="Soil" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">Exposed</button>
+            <button data-cockpit-key="ground" data-cockpit-value="Rock" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">Concealed</button>
+          </div></div>
+          <div><label style="display:block;margin:0 0 6px;color:#90a7c2;font:780 9px var(--mono);letter-spacing:.1em;text-transform:uppercase">Insulation</label><div style="display:inline-flex;border:1px solid #294159;border-radius:10px;overflow:hidden;background:#0f2030" data-cockpit-group="water">
+            <button data-cockpit-key="water" data-cockpit-value="Dry" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">None</button>
+            <button data-cockpit-key="water" data-cockpit-value="Wet" style="border:0;border-left:1px solid #294159;background:transparent;color:#90a7c2;padding:8px 10px;font:800 10px var(--mono);cursor:pointer">2" Wrap</button>
+          </div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#294159">
+          <div class="narMetric"><span>Cost basis</span><b id="narCockpitCost">—</b><small id="narCockpitCostSub">direct + indirect</small></div>
+          <div class="narMetric"><span>Revenue / SOV</span><b id="narCockpitRev">—</b><small id="narCockpitRevSub">markup bridge</small></div>
+          <div class="narMetric"><span>Duration</span><b id="narCockpitDur">—</b><small id="narCockpitDurSub">working days</small></div>
+          <div class="narMetric"><span>Labor hours</span><b id="narCockpitHrs">—</b><small>all activity crews</small></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.1fr .95fr;gap:1px;background:#294159">
+          <div style="padding:17px;background:#122537">
+            <h4 style="margin:0 0 12px;color:#90a7c2;font:800 10px var(--mono);letter-spacing:.11em;text-transform:uppercase">Cost composition · L / M / C / S / E</h4>
+            <div id="narSplitBar" style="display:flex;height:30px;border:1px solid #294159;border-radius:8px;overflow:hidden;background:#0f2030"></div>
+            <div id="narSplitLegend" style="display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:12px;color:#90a7c2;font:740 10px var(--mono)"></div>
+            <h4 style="margin:22px 0 12px;color:#90a7c2;font:800 10px var(--mono);letter-spacing:.11em;text-transform:uppercase">Monte Carlo · P50 / P80 risk envelope</h4>
+            <div id="narRiskStrip" style="position:relative;height:66px;margin-top:8px;border:1px solid #294159;border-radius:9px;background:#0f2030;overflow:hidden"></div>
+            <div id="narRiskNote" style="margin-top:9px;color:#90a7c2;font:740 10px var(--mono)"></div>
+          </div>
+          <div style="padding:17px;background:#122537">
+            <h4 style="margin:0 0 12px;color:#90a7c2;font:800 10px var(--mono);letter-spacing:.11em;text-transform:uppercase">Top CSI Div 23 cost codes by value</h4>
+            <table style="width:100%;border-collapse:collapse;font:740 10.5px var(--mono)">
+              <thead><tr><th style="text-align:left;color:#90a7c2;font-size:9px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid #294159;padding:0 0 7px">Code</th><th style="text-align:left;color:#90a7c2;font-size:9px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid #294159;padding:0 0 7px">Activity</th><th style="text-align:right;color:#90a7c2;font-size:9px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid #294159;padding:0 0 7px">Value</th></tr></thead>
+              <tbody id="narCodeRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="narSection" id="narLaunch">
+      <div class="narSectionHead"><div class="narEyebrow">Open the live systems</div><h2>Launch bay</h2><p>Move directly into the operational proof point. All live numbers come from the same geometry, quantity, schedule, cost, actuals, and cashflow engines.</p></div>
+      <div class="narLaunchBay">
+        <button class="narLaunch" data-narrative-launch="gis"><b>Mount Vernon plant layout</b><span>Site plan, AHU/RTU locations, duct trunk alignment, schematic fallback.</span><em>Launch GIS →</em></button>
+        <button class="narLaunch" data-narrative-launch="schedule"><b>Schedule &amp; cashflow</b><span>Activity register, Gantt storytelling, moving fronts, billing, retainage.</span><em>Launch sequence →</em></button>
+        <button class="narLaunch" data-narrative-launch="actuals-controlled"><b>Actuals &amp; Claims story</b><span>Deterministic field reports, cost records, claims, approvals, payments.</span><em>Load sample controls →</em></button>
+        <button class="narLaunch" data-narrative-launch="standards"><b>HVAC Standards Lens</b><span>SMACNA / ASHRAE / NYC Mech Code standard families translated to geometry.</span><em>Launch standards →</em></button>
+        <button class="narLaunch" data-narrative-launch="exec"><b>Executive Control Room</b><span>Live model beside production, variance, cashflow, risk, opportunity, forecast.</span><em>Launch executive view →</em></button>
+        <button class="narLaunch" data-rc83-scenario="demo-claims-payment-lag"><b>Guided Field Claims Demo</b><span>One click opens Actuals &amp; Claims, loads payment-lag sample, refreshes QA.</span><em>Run field-to-cash proof →</em></button>
+      </div>
+    </section>
+
+    <div class="narBoundary"><b>Public-safe boundary:</b> Representative demonstration only. Not sealed design, not survey control, not official agency approval, not payment certification, and not a substitute for contract reconciliation.</div>
+    <footer class="narFoot">Artemis HVAC Mechanical Intelligence Bridge · RC8.4 HVAC · Mount Vernon, NY · 2026</footer>
+  </div>
+</section>
+
+<!-- ============ MAIN APPLICATION ============ -->
+<div id="app">
+<header>
+  <div class="brand">Artemis HVAC Mechanical Intelligence Bridge <span style="color:var(--gold)">RC8.4 HVAC</span>
+    <small>Mount Vernon · Dual Story · Cockpit Classic · Claims-to-Cashflow · CSI Div 23</small>
+  </div>
+  <button class="hbtn" id="btnLeft" title="Collapse / expand inputs panel">⮜ Inputs</button>
+  <button class="hbtn" id="btnRight" title="Collapse / expand inspector">Inspector ⮞</button>
+  <button class="hbtn" id="btnNight">◐ Night</button>
+  <button class="hbtn" id="btnRecalc">⟳ Recalculate</button>
+  <button class="hbtn" id="btnNarrative">Story / Cockpit</button>
+  <button class="hbtn" id="btnExecRoom" title="Executive Control Room">▥ Exec Room</button>
+  <button class="hbtn" id="btnDEPStandards" title="Open HVAC Standards Lens">⚙ Standards</button>
+  <button class="hbtn" id="btnControls">Controls <span class="controlBadge" id="controlHeaderBadge" style="display:inline-grid;place-items:center;min-width:18px;height:18px;margin-left:4px;padding:0 5px;border-radius:999px;background:var(--slate);color:#fff;font:900 9px var(--mono)">0</span></button>
+  <div class="stamp"><b>Artemis</b><br>HVAC Mechanical Lens · RC8.4 · 2026</div>
+</header>
+
+<aside id="leftPanel">
+  <div id="valWarn"></div>
+  <div class="sec" id="secProj"><h2>Project &amp; Site</h2><div class="body">
+    <div class="field"><label>Project name</label><input type="text" id="projName" value="Artemis HVAC Mechanical Demo — Mount Vernon Office Retrofit"></div>
+    <div class="grid2">
+      <div class="field"><label>NTP / start</label><input type="date" id="startDate" value="2026-06-01"></div>
+      <div class="field"><label>Work days / wk</label><select id="workWeek"><option value="5" selected>5 (Mon–Fri)</option><option value="6">6</option></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Site lat</label><input type="number" id="startLat" value="40.9126" step="0.0000001"></div>
+      <div class="field"><label>Site lon</label><input type="number" id="startLon" value="-73.8371" step="0.0000001"></div>
+      <div class="field"><label>Building SF</label><input type="number" id="pBldgSF" value="60000" step="500"></div>
+      <div class="field"><label>Floors</label><input type="number" id="pFloors" value="4" step="1"></div>
+    </div>
+    <button class="act sec2" id="btnMountVernon">Restore Mount Vernon demo</button>
+    <div class="note"><b>Demonstration location:</b> Mount Vernon, NY, Westchester County — commercial office retrofit, representing a 4-story 60,000 SF building HVAC replacement.</div>
+  </div></div>
+
+  <div class="sec" id="secHVAC"><h2>HVAC Standards Lens</h2><div class="body">
+    <div class="note"><b>Sample focus:</b> realistic commercial HVAC mechanical scope. The model references SMACNA duct construction, ASHRAE 90.1 insulation, NYC Mechanical Code and Local Law 97 logic conceptually, then turns those assumptions into geometry, quantities, cost codes, schedule, cashflow, risk and opportunity signals.</div>
+    <div class="standardTags">
+      <span class="standardTag">SMACNA Duct</span><span class="standardTag">ASHRAE 90.1</span><span class="standardTag">NYC Mech Code</span>
+      <span class="standardTag">Local Law 97</span><span class="standardTag">CSI Div 23</span><span class="standardTag">ARI Equipment</span>
+      <span class="standardTag">SMACNA Seismic</span><span class="standardTag">AABC TAB</span>
+    </div>
+    <button class="act sec2" id="btnOpenHVACFromPanel">Open HVAC Standards Lens</button>
+  </div></div>
+
+  <div class="sec" id="secDuct"><h2>Duct &amp; Equipment</h2><div class="body">
+    <div class="grid2">
+      <div class="field"><label>Duct family</label><select id="pipeFamily"></select></div>
+      <div class="field"><label>Duct size</label><select id="pipeSize"></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Trunk length <output id="oLen"></output></label><input type="range" id="lengthLf" min="100" max="2500" step="10" value="900"></div>
+      <div class="field"><label>Ceiling plenum (in) <output id="oCover"></output></label><input type="range" id="coverFt" min="6" max="48" step="1" value="24"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Insulation thickness (in)</label><input type="number" id="beddingFt" value="1.5" step="0.5" min="0" max="4"></div>
+      <div class="field"><label>VAV rule</label><select id="mhRule"><option value="AUTO" selected>By SF / zone</option><option value="MANUAL">Manual</option></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Zones / branch runs <output id="oSeg"></output></label><input type="range" id="segments" min="1" max="16" step="1" value="6"></div>
+      <div class="field"><label>AHU type</label><select id="manholeType"></select></div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>VAV type</label><select id="catchBasinType"></select></div>
+      <div class="field"><label>VAV count</label><input type="number" id="catchBasinCount" value="24" min="0" max="200"></div>
+      <div class="field"><label>Diffusers</label><input type="number" id="houseConnCount" value="48" min="0" max="500"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>RTUs on roof</label><input type="number" id="riserCount" value="2" min="0" max="20"></div>
+      <div class="field"><label>Ceiling height (ft)</label><input type="number" id="paveWidthFt" value="9" min="7" max="20"></div>
+    </div>
+    <div class="field"><label>Insulation R-value target</label><input type="number" id="paveThickIn" value="6" min="0" max="30" step="0.5"></div>
+  </div></div>
+
+  <div class="sec" id="secSite"><h2>Site Conditions</h2><div class="body">
+    <div class="grid2">
+      <div class="field"><label>Building class</label><select id="soilType"><option value="A">Class A · Office</option><option value="B" selected>Class B · Office</option><option value="C">Class C · Retail</option><option value="ROCK">Industrial / Lab</option></select></div>
+      <div class="field"><label>Support system</label><select id="shoring"><option selected>Seismic-restrained</option><option>Standard hangers</option></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Insulation type</label><select id="water"><option selected>Wrap (fiberglass)</option><option>Liner (acoustic)</option><option>Both</option></select></div>
+      <div class="field"><label>Occupied during work</label><select id="dewatering"><option>No</option><option selected>Yes</option><option>Partial</option></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Plenum use</label><select id="ground"><option selected>Return air plenum</option><option>Supply air only</option></select></div>
+      <div class="field"><label>Scenario</label><select id="scenario"><option value="best">Best</option><option value="base" selected>Base</option><option value="worst">Worst</option><option value="recovery">Recovery</option></select></div>
+    </div>
+    <div class="field"><label>Ceiling access buffer (LF) <output id="oBuf"></output></label><input type="range" id="bufferLF" min="20" max="200" step="10" value="60"></div>
+  </div></div>
+
+  <div class="sec" id="secComm"><h2>Commercial &amp; Cashflow</h2><div class="body">
+    <div class="grid2">
+      <div class="field"><label>Markup %</label><input type="number" id="markupPct" value="14" step="0.5"></div>
+      <div class="field"><label>Contingency %</label><input type="number" id="contingencyPct" value="5" step="0.5"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Bond + ins. %</label><input type="number" id="bondPct" value="2.5" step="0.25"></div>
+      <div class="field"><label>Field OH $/day</label><input type="number" id="overheadDay" value="3800" step="100"></div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>Billing cycle (d)</label><input type="number" id="billingCycleDays" value="30" min="7"></div>
+      <div class="field"><label>Payment lag (d)</label><input type="number" id="paymentLagDays" value="45" min="0"></div>
+      <div class="field"><label>Retainage %</label><input type="number" id="retainagePct" value="5" step="0.5"></div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>Labor terms</label><input type="number" id="termL" value="7"></div>
+      <div class="field"><label>Mat/Eq terms</label><input type="number" id="termM" value="30"></div>
+      <div class="field"><label>Sub terms</label><input type="number" id="termS" value="45"></div>
+    </div>
+    <div class="field"><label>Forecast method</label><select id="forecastMethod"><option value="actual_unit_cost" selected>Actual unit cost</option><option value="budget_unit_cost">Budget unit cost</option><option value="blend">50/50 blend</option></select></div>
+  </div></div>
+
+  <div class="note"><b>Public demo disclaimer:</b> Representative HVAC mechanical demonstration only. Not sealed design, not survey control, not official agency approval, not payment certification, and not a substitute for contract reconciliation.<br><br>SMACNA duct geometry and ASHRAE equipment selections create quantities; the ERP layer decides how quantities become cost codes, billing and cashflow.</div>
+</aside>
+
+<main>
+  <canvas id="viewport"></canvas>
+  <div class="hud" id="hudBox">
+    <h4>Model Status</h4>
+    <div class="row"><span>Duct corridor</span><b id="hudDepth">—</b></div>
+    <div class="row"><span>Duct weight</span><b id="hudExc">—</b></div>
+    <div class="row"><span>Insulation</span><b id="hudConc">—</b></div>
+    <div class="row"><span>Pipe</span><b id="hudRebar">—</b></div>
+    <div class="row"><span>Bid value</span><b id="hudRev">—</b></div>
+    <div class="row"><span>Forecast margin</span><b id="hudMargin">—</b></div>
+  </div>
+  <div id="camBar">
+    <button class="hbtn" id="camIso">Iso</button>
+    <button class="hbtn" id="camProfile">Profile</button>
+    <button class="hbtn" id="camPlan">Plan</button>
+    <button class="hbtn" id="camFit">⌖ Fit</button>
+    <button class="hbtn" id="camReset">Reset</button>
+    <button class="hbtn" id="camFocus">⊙ Focus</button>
+    <select id="viewMode" title="Construction view mode">
+      <option value="sim" selected>Construction cutaway</option>
+      <option value="trench">Full duct open</option>
+      <option value="pipe">Duct only</option>
+      <option value="done">Completed condition</option>
+    </select>
+    <button class="hbtn" id="btnHUD">HUD</button>
+    <button class="hbtn" id="btnLegend">Legend</button>
+    <button class="hbtn" id="btnClean">Clean</button>
+  </div>
+  <div id="legend"><b>Legend</b><br>
+    <span class="sw" style="background:#b8c2cc"></span>Galv duct&nbsp; <span class="sw" style="background:#a4b0bd"></span>Spiral&nbsp; <span class="sw" style="background:#c8d0d8"></span>Flex<br>
+    <span class="sw" style="background:#1d6fb8"></span>CHW&nbsp; <span class="sw" style="background:#c7362b"></span>HW&nbsp; <span class="sw" style="background:#7c3aed"></span>Refrigerant&nbsp; <span class="sw" style="background:#f5a623"></span>Gas<br>
+    <span class="sw" style="background:#8ba0b3"></span>AHU / RTU&nbsp; <span class="sw" style="background:#5d7a99"></span>VAV / FCU&nbsp; <span class="sw" style="background:#dde5ec"></span>Diffuser&nbsp; <span class="sw" style="background:#ffaa00"></span>Selection
+  </div>
+  <div id="libWarn" style="display:none"></div>
+  <div id="transport">
+    <div class="tr-top">
+      <button class="tbtn" id="trReset">⏮</button>
+      <button class="tbtn" id="trBack">−1</button>
+      <button class="tbtn primary" id="trPlay">▶</button>
+      <button class="tbtn" id="trFwd">+1</button>
+      <button class="tbtn" id="trRev">◀◀</button>
+      <select id="trSpeed" style="width:78px"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option><option value="16">16×</option></select>
+      <div id="simDayWrap"><div id="simTicks"></div><input type="range" id="simDaySlider" min="1" max="90" value="1"></div>
+      <div class="tr-read">Day <b id="trDay">1</b> / <span id="trDur">—</span><br><span id="trDate">—</span></div>
+    </div>
+    <div id="simPhaseChips"></div>
+    <div id="cashStrip"></div>
+  </div>
+
+  <div id="controlPulse" style="display:none"><span class="pulseDot"></span><span id="controlPulseText">Controls evaluating…</span></div>
+
+  <div id="execRoomPanel" class="execRoomPanel" aria-label="HVAC Executive Control Room">
+    <div class="execHead">
+      <div>
+        <div class="execTitle">Artemis HVAC Executive Control Room</div>
+        <div class="execSub">SMACNA / ASHRAE · Geometry-to-Cashflow · Risk/Opportunity · Variance · Dynamic Trends</div>
+      </div>
+      <div class="sp"></div>
+      <div class="execControls">
+        <select id="execScenario"><option value="base" selected>Base Plan</option><option value="risk">Risk Case</option><option value="recovery">Recovery Plan</option><option value="opportunity">Opportunity Case</option></select>
+        <input type="number" id="execSeed" value="1313" style="width:78px;min-width:78px">
+        <button class="hbtn" id="btnExecClose">×</button>
+      </div>
+    </div>
+    <div class="execKpis" id="execKpis"></div>
+    <div class="execCharts">
+      <div class="execChart"><h4>Cash Flow</h4><canvas id="execCashChart"></canvas></div>
+      <div class="execChart"><h4>Cost Variance</h4><canvas id="execVarianceChart"></canvas></div>
+      <div class="execChart"><h4>Production Trend</h4><canvas id="execProdChart"></canvas></div>
+      <div class="execChart"><h4>Risk / Opportunity</h4><canvas id="execRiskChart"></canvas></div>
+      <div class="execChart wide"><h4>Forecast Range</h4><canvas id="execForecastChart"></canvas></div>
+    </div>
+    <div class="execBridge">
+      <div><b>Standards → App:</b> SMACNA duct gauges, ASHRAE insulation, ARI equipment.</div>
+      <div><b>Field → App:</b> production, labor, equipment, material, subcontract, notes.</div>
+      <div><b>App ↔ ERP:</b> CSI Div 23 cost codes, L/M/C/S/E/R categories.</div>
+      <div><b>App → Executives:</b> cashflow, variance, forecast margin, risk/opportunity exposure.</div>
+    </div>
+    <div class="execDisclaimer">Representative demonstration only. Not sealed design, not survey control, not official agency approval, not payment certification, and not a substitute for contract reconciliation.</div>
+  </div>
+</main>
+
+<div id="inspector">
+  <div class="pad">
+    <h3>Selected Element</h3>
+    <div id="selPath">—</div>
+    <div id="selTitle">Total HVAC System</div>
+    <div id="selSub">Click an element · double-click = parent group · triple-click = grandparent</div>
+    <div class="pbarWrap"><div class="pbar" id="selPbar" style="width:0%"></div></div>
+    <div class="kv" id="selHead"></div>
+  </div>
+  <div class="pad">
+    <h3>Quantities — Est / Actual / Projected</h3>
+    <div id="selQty" class="scrollX"></div>
+  </div>
+  <div class="pad">
+    <h3>Cost &amp; Billing — Est / Actual / Projected</h3>
+    <div id="selCost" class="scrollX"></div>
+    <div id="selCodes" style="margin-top:8px"></div>
+  </div>
+  <div class="pad">
+    <h3>Model Hierarchy</h3>
+    <div id="treeWrap"></div>
+  </div>
+</div>
+
+<div id="deck">
+  <div id="deckHandle"></div>
+  <div id="tabs">
+    <div class="tab on" data-t="tDash">Dashboard</div>
+    <div class="tab" data-t="tControls">Controls &amp; Alerts</div>
+    <div class="tab" data-t="tHVAC">HVAC Standards Lens</div>
+    <div class="tab" data-t="tERP">ERP Cost Codes</div>
+    <div class="tab" data-t="tCross">Crosstab</div>
+    <div class="tab" data-t="tSched">Schedule &amp; Cashflow</div>
+    <div class="tab" data-t="tEVM">EVM &amp; Forecast</div>
+    <div class="tab" data-t="tField">Actuals &amp; Claims</div>
+    <div class="tab" data-t="tRisk">Risk</div>
+    <div class="tab" data-t="tForm">Formulas &amp; Exports</div>
+    <div class="tab" data-t="tGeo">Site Plan / GIS</div>
+  </div>
+  <div id="tabBody">
+    <div class="tpage on" id="tDash">
+      <div class="publicStory">
+        <div class="publicStoryLead">
+          <div class="eyebrow">The Section &amp; The Spine</div>
+          <h2>One mechanical model. <span>Six disciplines.</span> One source of truth.</h2>
+          <p>Mount Vernon commercial office HVAC retrofit: duct geometry stays connected to quantity, schedule, field production, ERP cost, payment applications, cashflow, and executive action.</p>
+        </div>
+        <div class="synthesisPipe">
+          <div class="pipeStep"><b>01</b><span>Duct Geometry &amp; Site</span></div>
+          <div class="pipeStep"><b>02</b><span>QTO &amp; Schedule</span></div>
+          <div class="pipeStep"><b>03</b><span>Field &amp; Actual Cost</span></div>
+          <div class="pipeStep"><b>04</b><span>Claim &amp; Approval</span></div>
+          <div class="pipeStep"><b>05</b><span>Cash &amp; Action</span></div>
+        </div>
+      </div>
+      <div class="cards" id="dashCards"></div>
+      <div class="chartGrid">
+        <div class="chartBox"><canvas id="chCat"></canvas></div>
+        <div class="chartBox"><canvas id="chQty"></canvas></div>
+      </div>
+      <h3 class="dh">Quantity takeoff</h3>
+      <div class="scrollX" id="qtoTable"></div>
+    </div>
+
+    <div class="tpage" id="tControls">
+      <div class="controlHero">
+        <div class="controlGate" id="controlGate">
+          <div class="eyebrow">Current decision gate</div>
+          <div class="decision" id="controlDecision">EVALUATING</div>
+          <div class="basis" id="controlDecisionBasis">Cross-checking schedule, cost, cash, geometry, field data, risk, and governance controls.</div>
+        </div>
+        <div class="controlCounts" id="controlCounts"></div>
+      </div>
+      <div class="toolrow">
+        <select id="controlSeverity"><option value="all">All severities</option><option value="critical">Action required</option><option value="watch">Watch</option><option value="info">Information</option></select>
+        <select id="controlDomain"><option value="all">All control domains</option></select>
+        <select id="controlStatus"><option value="open">Open + unacknowledged</option><option value="all">All current</option></select>
+        <div class="sp"></div>
+        <button class="hbtn" id="btnControlRefresh">Refresh Controls</button>
+        <button class="hbtn" id="btnAckVisible">Acknowledge Visible</button>
+      </div>
+      <div class="controlRegister" id="controlRegister"></div>
+      <h3 class="dh">Independent checks and balances</h3>
+      <div class="balanceGrid" id="controlBalances"></div>
+    </div>
+
+    <div class="tpage" id="tHVAC">
+      <div class="standardHero">
+        <h3>HVAC Mechanical Standards Lens</h3>
+        <p><b>Purpose:</b> show how SMACNA, ASHRAE, ARI, and NYC Mechanical Code standard families feed a mechanical model that becomes quantity takeoff, ERP cost codes, field production, schedule, cashflow, variance, risk, opportunity, and executive reporting.</p>
+      </div>
+      <div class="standardGrid">
+        <div class="standardCard"><div class="k">Duct families</div><div class="v">Galv Rect · Spiral · Flex</div><div class="s">Rectangular and spiral duct selections drive gauge, weight, hangers, and QTO. SMACNA HVAC Duct Construction Standards govern gauge-pressure class relationships.</div></div>
+        <div class="standardCard"><div class="k">Equipment</div><div class="v">AHU · RTU · VAV · FCU · ERV</div><div class="s">ARI 430, ARI 340, ARI 880, ARI 440, ARI 1060 equipment family cost and rigging/setting hours per family.</div></div>
+        <div class="standardCard"><div class="k">Pipe</div><div class="v">CHW · HW · Ref · Gas</div><div class="s">ASME B36.10 / B31.9 pipe families, ASHRAE 90.1 insulation thickness, refrigerant ACR copper, gas CS.</div></div>
+        <div class="standardCard"><div class="k">Support</div><div class="v">Seismic · Hangers · Trapeze</div><div class="s">SMACNA seismic restraint and trapeze spacing drive support material, labor, and QTO.</div></div>
+        <div class="standardCard"><div class="k">Terminal</div><div class="v">Diffusers · Grilles · Linear</div><div class="s">SMACNA air distribution devices drive terminal count, ceiling coordination, and QC inspection.</div></div>
+        <div class="standardCard"><div class="k">Commercial</div><div class="v">QTO → ERP → Cashflow</div><div class="s">Standard-driven quantities become CSI Div 23 L/M/C/S/E/R cost-code rows, SOV support, production curves, and executive signals.</div></div>
+      </div>
+      <h3 class="dh">Standards-to-controls flow</h3>
+      <div class="standardFlow">
+        <div><b>1. Standards basis</b>SMACNA, ASHRAE, ARI, and NYC Mech Code define families, gauges, insulation thickness, seismic restraint, and equipment selection.</div>
+        <div><b>2. Geometry</b>The model converts selected standards into duct runs, fittings, equipment, and terminal geometry in plan and section.</div>
+        <div><b>3. Quantity</b>Geometry drives LF, LB, SF, EA and equipment quantities with formula audit visibility.</div>
+        <div><b>4. ERP bridge</b>Quantities are organized into L/M/C/S/E/R CSI Div 23 cost codes.</div>
+        <div><b>5. Field bridge</b>Daily production and actual cost records update earned value, productivity, and forecast signals.</div>
+        <div><b>6. Executive lens</b>Cashflow, variance, risk, opportunity, and forecast range move with the same simulation and quantity logic.</div>
+      </div>
+      <div class="printNote" style="border-left:3px solid var(--gold);background:var(--panel);padding:10px 12px;border-radius:10px;margin:10px 0;font-size:11.5px;color:var(--muted);line-height:1.45"><b>Public-safe disclaimer:</b> Representative demonstration only. Not sealed design, not survey control, not official agency approval, not payment certification, and not a substitute for contract reconciliation.</div>
+    </div>
+
+    <div class="tpage" id="tERP">
+      <div class="toolrow">
+        <select id="erpGroup"><option value="flat">Flat — all cost codes</option><option value="cat">Group by category (L/M/C/S/E/R)</option><option value="div">Group by WBS division</option></select>
+        <select id="erpMeasure"><option value="est" selected>Estimated</option><option value="act">Actual</option><option value="proj">Projected</option><option value="all">Est vs Act vs Proj</option></select>
+        <div class="sp"></div>
+        <button class="hbtn" id="expCodes">⬇ Cost code master CSV</button>
+      </div>
+      <div class="scrollX" id="erpTable"></div>
+      <h3 class="dh">Category roll-up</h3>
+      <div class="scrollX" id="erpCatTable"></div>
+    </div>
+
+    <div class="tpage" id="tCross">
+      <div class="toolrow">
+        <select id="xMeasure"><option value="est" selected>Estimated $</option><option value="act">Actual $</option><option value="proj">Projected $</option><option value="varE">Variance: Proj − Est</option><option value="varA">Variance: Act − Earned</option></select>
+        <div class="sp"></div>
+        <button class="hbtn" id="expCross">⬇ Crosstab CSV</button>
+      </div>
+      <div class="scrollX" id="crossTable"></div>
+    </div>
+
+    <div class="tpage" id="tSched">
+      <div class="cards" id="schedCards"></div>
+      <div class="toolrow"><select id="cashPeriod"><option value="day" selected>Daily</option><option value="week">Weekly</option></select></div>
+      <div class="chartGrid">
+        <div class="chartBox"><canvas id="chCash"></canvas></div>
+        <div class="chartBox"><canvas id="chFronts"></canvas></div>
+      </div>
+      <div class="chartBox" style="height:260px"><canvas id="chSCurve"></canvas></div>
+      <h3 class="dh">Activity register</h3>
+      <div class="scrollX" id="schedTable"></div>
+    </div>
+
+    <div class="tpage" id="tEVM">
+      <div class="cards" id="evmCards"></div>
+      <div class="chartBox"><canvas id="chEVM"></canvas></div>
+      <h3 class="dh">Activity forecast (EAC / ETC / TCPI)</h3>
+      <div class="scrollX" id="evmTable"></div>
+    </div>
+
+    <div class="tpage" id="tField">
+      <div class="actualsHero">
+        <div class="actualsNarrative">
+          <div class="eyebrow">Actuals &amp; Claims Demo Studio</div>
+          <h3>Field production to approved cash</h3>
+          <p>Trace the Mount Vernon duct and equipment model through daily completion, actual cost, earned value, payment application, approval, retainage, payment lag, and executive control response.</p>
+        </div>
+        <div class="actualsControls">
+          <div class="toolrow">
+            <label style="display:block;margin:0;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Data mode
+              <select id="actualDataMode" style="margin-top:3px;min-width:145px">
+                <option value="demo-plan">Plan-based public demo</option>
+                <option value="demo-actuals-controlled">Sample actuals: controlled</option>
+                <option value="demo-actuals-cost-overrun">Sample actuals: cost overrun</option>
+                <option value="demo-actuals-schedule-delay">Sample actuals: schedule delay</option>
+                <option value="demo-claims-payment-lag">Sample claims: payment lag</option>
+                <option value="field-actuals">Field / imported actuals</option>
+              </select>
+            </label>
+            <label style="display:block;margin:0;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Seed
+              <input type="number" id="actualSeed" value="81473" min="1" style="margin-top:3px;min-width:90px">
+            </label>
+            <button class="hbtn" id="btnGenerateActuals">Generate / Apply</button>
+            <button class="hbtn" id="btnClearDemoActuals">Clear demo only</button>
+          </div>
+          <div style="display:flex;gap:7px;align-items:center;margin-top:8px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);font-size:10.5px;color:var(--muted)">
+            <span style="width:9px;height:9px;border-radius:50%;background:var(--gold)"></span>
+            <b id="actualModeLabel" style="color:var(--ink)">Plan-based demo active</b>
+            <span id="actualModeNote">Load sample actuals to activate CPI/SPI and claim/payment analytics.</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(135px,1fr));gap:7px;margin-top:8px">
+            <button class="hbtn" data-rc83-scenario="demo-plan"><b>Plan Only</b></button>
+            <button class="hbtn" data-rc83-scenario="demo-actuals-controlled"><b>Good Performance</b></button>
+            <button class="hbtn" data-rc83-scenario="demo-actuals-cost-overrun"><b>Cost Overrun</b></button>
+            <button class="hbtn" data-rc83-scenario="demo-actuals-schedule-delay"><b>Schedule Delay</b></button>
+            <button class="hbtn" data-rc83-scenario="demo-claims-payment-lag"><b>Payment Lag</b></button>
+            <button class="hbtn" data-rc83-scenario="field-actuals"><b>Imported Field</b></button>
+          </div>
+        </div>
+      </div>
+      <div class="disclaimerRail">
+        <span>Representative demonstration data</span><span>Sample field completion reports</span><span>Sample actuals</span>
+        <span>Sample payment application</span><span>Not payment certification</span><span>Not official agency approval</span>
+      </div>
+      <div class="cards actualsKpis" id="actualsKpis"></div>
+      <div class="actualsCharts">
+        <div class="chartBox"><canvas id="chActualQty"></canvas></div>
+        <div class="chartBox"><canvas id="chSegmentCompletion"></canvas></div>
+      </div>
+      <h3 class="dh">Field reports</h3>
+      <div class="scrollX" id="fieldReportsTable"></div>
+      <h3 class="dh">Claims / payment applications</h3>
+      <div class="scrollX" id="claimsTable"></div>
+      <h3 class="dh">Reconciliation checks</h3>
+      <div class="reconGrid" id="actualsReconciliation"></div>
+    </div>
+
+    <div class="tpage" id="tRisk">
+      <div class="cards" id="riskCards"></div>
+      <div class="chartBox"><canvas id="chRisk"></canvas></div>
+    </div>
+
+    <div class="tpage" id="tForm">
+      <div class="toolrow">
+        <button class="hbtn" id="expQTO">⬇ QTO CSV</button>
+        <button class="hbtn" id="expCash">⬇ Cashflow CSV</button>
+        <button class="hbtn" id="expSched">⬇ Schedule CSV</button>
+        <button class="hbtn" id="expJSON">⬇ Project JSON snapshot</button>
+      </div>
+      <div id="formulaList"></div>
+    </div>
+
+    <div class="tpage" id="tGeo">
+      <div class="publicStoryLead" style="border-left-color:var(--cyan)">
+        <div class="eyebrow">Mount Vernon, NY · Commercial Office Retrofit</div>
+        <h2 style="color:var(--ink)">Site Plan Context</h2>
+        <p>Mount Vernon commercial office at the intersection of the Cross County Parkway corridor and local streets. The basemap provides recognizable context; the model remains the independent source for duct geometry, quantities, controls, schedule, and cashflow.</p>
+      </div>
+      <div class="toolrow">
+        <button class="hbtn" id="geoMountVernon">Load Mount Vernon</button>
+        <button class="hbtn" id="geoOpenOSM">Open in OSM</button>
+        <button class="hbtn" id="expGeoJSON">Export GeoJSON</button>
+      </div>
+      <div style="height:360px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#17233a,#263f62)" id="satMap"></div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="controlToastStack"></div>
+
+<script>
+"use strict";
+
+/* =================== 1. HVAC STANDARDS LIBRARY =================== */
+const ductStandards={
+  RECT_GALV:{label:"Rectangular Galvanized Duct",source:"SMACNA HVAC Duct Construction",
+    sizes:{
+      8:{display:'8 x 8 Rect',gauge:26,wtPerSF:.75,A:1.0,OD:.67},
+      12:{display:'12 x 10 Rect',gauge:24,wtPerSF:1.00,A:1.4,OD:.83},
+      18:{display:'18 x 12 Rect',gauge:22,wtPerSF:1.25,A:1.8,OD:1.0},
+      24:{display:'24 x 16 Rect',gauge:20,wtPerSF:1.50,A:2.2,OD:1.33},
+      36:{display:'36 x 24 Rect',gauge:18,wtPerSF:2.00,A:2.8,OD:2.0},
+      48:{display:'48 x 32 Rect',gauge:16,wtPerSF:2.50,A:3.5,OD:2.67},
+      60:{display:'60 x 40 Rect',gauge:14,wtPerSF:3.00,A:4.2,OD:3.33}
+    }},
+  SPIRAL_GALV:{label:"Spiral Round Galvanized",source:"SMACNA HVAC Duct Construction",
+    sizes:{
+      6:{display:'6" Spiral',gauge:26,wtPerSF:.75,A:.7,OD:.5},
+      8:{display:'8" Spiral',gauge:26,wtPerSF:.75,A:.9,OD:.67},
+      10:{display:'10" Spiral',gauge:24,wtPerSF:1.00,A:1.1,OD:.83},
+      12:{display:'12" Spiral',gauge:24,wtPerSF:1.00,A:1.3,OD:1.0},
+      16:{display:'16" Spiral',gauge:22,wtPerSF:1.25,A:1.7,OD:1.33},
+      20:{display:'20" Spiral',gauge:22,wtPerSF:1.25,A:2.1,OD:1.67},
+      24:{display:'24" Spiral',gauge:20,wtPerSF:1.50,A:2.5,OD:2.0}
+    }},
+  FLEX:{label:"Flexible Duct (Insulated)",source:"SMACNA Flexible Duct Performance",
+    sizes:{
+      6:{display:'6" Flex Ins',gauge:26,wtPerSF:.55,A:.7,OD:.5},
+      8:{display:'8" Flex Ins',gauge:26,wtPerSF:.60,A:.9,OD:.67},
+      10:{display:'10" Flex Ins',gauge:26,wtPerSF:.65,A:1.1,OD:.83}
+    }}
+};
+const pipeStandards={
+  CHW_STEEL:{label:"Chilled Water — Black Steel Sch 40",source:"ASME B36.10",
+    sizes:{
+      "0.5":{display:'1/2" CHW',matPerLF:6.5,insul:1.5},
+      "0.75":{display:'3/4" CHW',matPerLF:8.0,insul:1.5},
+      "1":{display:'1" CHW',matPerLF:9.5,insul:1.5},
+      "1.25":{display:'1-1/4" CHW',matPerLF:12.0,insul:2.0},
+      "1.5":{display:'1-1/2" CHW',matPerLF:14.0,insul:2.0},
+      "2":{display:'2" CHW',matPerLF:18.0,insul:2.0},
+      "2.5":{display:'2-1/2" CHW',matPerLF:24.0,insul:2.0},
+      "3":{display:'3" CHW',matPerLF:32.0,insul:2.0},
+      "4":{display:'4" CHW',matPerLF:45.0,insul:2.0},
+      "6":{display:'6" CHW',matPerLF:78.0,insul:2.0}
+    }},
+  HW_STEEL:{label:"Heating Water — Black Steel Sch 40",source:"ASME B36.10",
+    sizes:{
+      "0.5":{display:'1/2" HW',matPerLF:6.5,insul:1.5},
+      "0.75":{display:'3/4" HW',matPerLF:8.0,insul:1.5},
+      "1":{display:'1" HW',matPerLF:9.5,insul:1.5},
+      "1.5":{display:'1-1/2" HW',matPerLF:14.0,insul:2.0},
+      "2":{display:'2" HW',matPerLF:18.0,insul:2.0},
+      "3":{display:'3" HW',matPerLF:32.0,insul:2.0},
+      "4":{display:'4" HW',matPerLF:45.0,insul:2.0},
+      "6":{display:'6" HW',matPerLF:78.0,insul:2.0}
+    }},
+  REF_COPPER:{label:"Refrigerant — ACR Copper",source:"ASTM B280",
+    sizes:{
+      "0.25":{display:'1/4" ACR',matPerLF:4.5},
+      "0.375":{display:'3/8" ACR',matPerLF:6.5},
+      "0.5":{display:'1/2" ACR',matPerLF:8.5},
+      "0.625":{display:'5/8" ACR',matPerLF:11.0},
+      "0.875":{display:'7/8" ACR',matPerLF:15.0},
+      "1.125":{display:'1-1/8" ACR',matPerLF:20.0}
+    }},
+  GAS_CS:{label:"Natural Gas — Black Steel",source:"ASME B31.9",
+    sizes:{
+      "1":{display:'1" Gas CS',matPerLF:9.0},
+      "1.25":{display:'1-1/4" Gas CS',matPerLF:11.5},
+      "1.5":{display:'1-1/2" Gas CS',matPerLF:14.0},
+      "2":{display:'2" Gas CS',matPerLF:18.0},
+      "2.5":{display:'2-1/2" Gas CS',matPerLF:24.0},
+      "3":{display:'3" Gas CS',matPerLF:32.0},
+      "4":{display:'4" Gas CS',matPerLF:45.0}
+    }}
+};
+const ahuStandards={
+  RTU:{label:"Packaged Rooftop Unit",source:"ARI 340/360",unitCost:145000,rigHrs:16,setHrs:24,pipeHrs:16,startHrs:16},
+  AHU_CUSTOM:{label:"Custom AHU",source:"ARI 430",unitCost:85000,rigHrs:24,setHrs:32,pipeHrs:24,startHrs:20},
+  AHU_FANWALL:{label:"Fan Wall AHU",source:"ARI 430",unitCost:125000,rigHrs:20,setHrs:28,pipeHrs:20,startHrs:18},
+  FCU:{label:"Fan Coil Unit",source:"ARI 440",unitCost:2400,rigHrs:2,setHrs:4,pipeHrs:2,startHrs:2},
+  ERV:{label:"Energy Recovery Ventilator",source:"ARI 1060",unitCost:42000,rigHrs:8,setHrs:12,pipeHrs:4,startHrs:8},
+  CHILLER_AIR:{label:"Air-Cooled Chiller",source:"ARI 550/590",unitCost:185000,rigHrs:24,setHrs:32,pipeHrs:32,startHrs:24},
+  BOILER_COND:{label:"Condensing Boiler",source:"AHRI BTS-2000",unitCost:65000,rigHrs:12,setHrs:16,pipeHrs:16,startHrs:12}
+};
+const vavStandards={
+  VAV_REHEAT:{label:"VAV Box w/ Electric Reheat",source:"ARI 880",unitCost:1850,labHrs:4.0},
+  VAV_FANPWR:{label:"Fan-Powered VAV",source:"ARI 880",unitCost:2450,labHrs:4.5},
+  VAV_DDC:{label:"VAV w/ DDC + Reheat",source:"ARI 880",unitCost:2650,labHrs:5.0},
+  FCU_CEILING:{label:"Ceiling FCU",source:"ARI 440",unitCost:2400,labHrs:4.0},
+  NONE:{label:"None",source:"-",unitCost:0,labHrs:0}
+};
+const wageLibrary={
+  Foreman:{base:72,fringe:58,payroll:12},Operator:{base:70,fringe:57,payroll:12},
+  Laborer:{base:55,fringe:50,payroll:10},SMW:{base:62,fringe:60,payroll:12},
+  Pipefitter:{base:65,fringe:62,payroll:12},Insulator:{base:55,fringe:52,payroll:11},
+  Ironworker:{base:63,fringe:58,payroll:11},TruckDriver:{base:57,fringe:50,payroll:10},
+  Surveyor:{base:66,fringe:52,payroll:10},TAB:{base:68,fringe:52,payroll:10}
+};
+const crewTemplates={
+  "Survey/Layout":{Surveyor:1,Foreman:.5,Laborer:1},
+  "Support Crew":{Foreman:1,Ironworker:3,SMW:1,Laborer:2},
+  "Sheet Metal Crew":{Foreman:1,SMW:4,Laborer:1,TruckDriver:1},
+  "Pipefitter Crew":{Foreman:1,Pipefitter:3,Laborer:2},
+  "Insulation Crew":{Foreman:1,Insulator:3,Laborer:2},
+  "Rigging Crew":{Foreman:1,Ironworker:2,Operator:1,Laborer:2},
+  "Commissioning Crew":{Foreman:1,TAB:2,SMW:1,Laborer:2},
+  "Ceiling Crew":{Foreman:1,Laborer:4},
+  "Demo Crew":{Foreman:1,Laborer:4,TruckDriver:2},
+  "QA":{Foreman:1,TAB:1,Laborer:2}
+};
+const OSHA_SLOPE={A:.75,B:1,C:1.5,ROCK:0};
+const SWELL=1.25,COMPACTION=.92,TRUCK_CY=12;
+
+/* =================== 2. ACTIVITY MODEL =================== */
+const ACTS=[
+ {id:"A01",name:"BIM Coordination / Layout",    code:"0100-MOB", driver:"LS",       unit:"LS", prod:1,   crew:"Survey/Layout",   equipDay:800, equipHrsDay:8,  matU:4500, subU:0,   kind:"global"},
+ {id:"A14",name:"Demolition of Existing",       code:"0210-DEMO",driver:"FLOOR_SF", unit:"SF", prod:950, crew:"Demo Crew",       equipDay:2100,equipHrsDay:10, matU:2,    subU:8,   kind:"linear",chain:0},
+ {id:"A02",name:"Seismic Restraint / Supports", code:"0220-SUPT",driver:"DUCT_LF",  unit:"LF", prod:400, crew:"Support Crew",    equipDay:600, equipHrsDay:8,  matU:9,    subU:0,   kind:"linear",chain:1},
+ {id:"A03",name:"Temporary Cooling / Power",    code:"0250-TEMP",driver:"DAYS",     unit:"DAY",prod:1,   crew:"Support Crew",    equipDay:1200,equipHrsDay:24, matU:250,  subU:650, kind:"span"},
+ {id:"A04",name:"Main Duct Trunk Installation", code:"0310-MAIN",driver:"DUCT_LF",  unit:"LF", prod:420, crew:"Sheet Metal Crew",equipDay:900, equipHrsDay:10, matU:8,    subU:0,   kind:"linear",chain:2},
+ {id:"A05",name:"Branch Duct Installation",     code:"0330-BRCH",driver:"BRANCH_LF",unit:"LF", prod:260, crew:"Sheet Metal Crew",equipDay:900, equipHrsDay:10, matU:34,   subU:0,   kind:"linear",chain:3},
+ {id:"A06",name:"Duct Insulation",              code:"0340-INSU",driver:"INSUL_SF", unit:"SF", prod:550, crew:"Insulation Crew", equipDay:700, equipHrsDay:8,  matU:3.2,  subU:0,   kind:"linear",chain:4},
+ {id:"A07",name:"Hydronic Piping",              code:"0410-PIPE",driver:"PIPE_LF",  unit:"LF", prod:48,  crew:"Pipefitter Crew", equipDay:1200,equipHrsDay:12, matU:68,   subU:0,   kind:"linear",chain:5},
+ {id:"A08",name:"AHU / RTU Setting",            code:"0510-AHU", driver:"AHU_EA",   unit:"EA", prod:1.1, crew:"Rigging Crew",    equipDay:2600,equipHrsDay:14, matU:0,    subU:0,   kind:"discrete"},
+ {id:"A09",name:"VAV / FCU Installation",       code:"0520-VAV", driver:"VAV_EA",   unit:"EA", prod:5,   crew:"Sheet Metal Crew",equipDay:800, equipHrsDay:8,  matU:0,    subU:0,   kind:"discrete"},
+ {id:"A10",name:"Terminal Units (Diffusers)",   code:"0530-TERM",driver:"DIFF_EA",  unit:"EA", prod:18,  crew:"Sheet Metal Crew",equipDay:700, equipHrsDay:6,  matU:145,  subU:0,   kind:"discrete"},
+ {id:"A11",name:"Duct Sealing / Leak Test",     code:"0610-SEAL",driver:"DUCT_LF",  unit:"LF", prod:450, crew:"Commissioning Crew",equipDay:650, equipHrsDay:8,  matU:6,   subU:0,   kind:"linear",chain:6},
+ {id:"A15",name:"TAB / Commissioning",          code:"0810-TAB", driver:"TAB_DAYS", unit:"DAY",prod:1,   crew:"Commissioning Crew",equipDay:700,equipHrsDay:8, matU:0,    subU:0,   kind:"span"},
+ {id:"A12",name:"Ceiling / Access Panels",      code:"0710-CEIL",driver:"CEIL_SF",  unit:"SF", prod:400, crew:"Ceiling Crew",    equipDay:800, equipHrsDay:8,  matU:24,   subU:18,  kind:"linear",chain:7},
+ {id:"A13",name:"QA/QC / Closeout",             code:"0900-QA",  driver:"LS",       unit:"LS", prod:1,   crew:"QA",              equipDay:900, equipHrsDay:4,  matU:2500, subU:0,   kind:"global"}
+];
+const CATS={L:{label:"Labor"},M:{label:"Material"},C:{label:"Consumable"},S:{label:"Subcontract"},E:{label:"Equipment"},R:{label:"Revenue / Billing"}};
+const CAT_KEYS=["L","M","C","S","E"];
+
+/* =================== 3. STATE & UTILITIES =================== */
+let G=null,E=null,PLAN=null,RISK=[],ACTUALS=[],CHARTS={};
+const SIM={day:1,speed:1,dir:1,timer:null};
+const SEL={id:"SYS"};
+let REG=[],REGBY={};
+const $=id=>document.getElementById(id);
+const val=id=>{const e=$(id);return e?e.value:""};
+const num=id=>parseFloat(val(id))||0;
+const fmt=(n,d=0)=>(Number.isFinite(+n)?+n:0).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d});
+const money=n=>(n<0?"−$":"$")+fmt(Math.abs(n),0);
+const pct=(n,d=1)=>fmt(n*100,d)+"%";
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const wageRate=t=>{const w=wageLibrary[t]||{};return(+w.base||0)+(+w.fringe||0)+(+w.payroll||0)};
+const crewSize=c=>Object.values(crewTemplates[c]||{}).reduce((a,b)=>a+(+b||0),0);
+const crewRate=c=>Object.entries(crewTemplates[c]||{}).reduce((s,[t,n])=>s+wageRate(t)*(+n),0);
+function tbl(head,rows,cls="data"){
+  return `<table class="${cls}"><thead><tr>${head.map(h=>`<th class="${h[1]?'num':''}">${h[0]}</th>`).join("")}</tr></thead><tbody>${
+    rows.map(r=>{const c=r.cls?` class="${r.cls}"`:"";const cells=r.cells||r;
+    return `<tr${c}>${cells.map((x,i)=>`<td class="${head[i]&&head[i][1]?'num':''}">${x}</td>`).join("")}</tr>`}).join("")}</tbody></table>`;
+}
+function catPill(c){return `<span class="catPill cat-${c}">${c}</span>`}
+function deltaSpan(v,invert=false){const bad=invert?v<0:v>0;return `<span class="${Math.abs(v)<1?'':(bad?'dBad':'dGood')}">${money(v)}</span>`}
+function simDate(d){
+  const ww=parseInt(val('workWeek'))||5;
+  const start=new Date((val('startDate')||"2026-06-01")+"T12:00:00");
+  let dt=new Date(start),left=Math.max(0,Math.round(d)-1);
+  while(left>0){dt.setDate(dt.getDate()+1);const dow=dt.getDay();
+    if(ww===7||(ww===6&&dow!==0)||(ww===5&&dow!==0&&dow!==6))left--;}
+  return dt.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+}
+function calToWork(calDays){const ww=parseInt(val('workWeek'))||5;return Math.max(1,Math.round(calDays*ww/7));}
+
+/* =================== 4. GEOMETRY & QTO ENGINE =================== */
+function selectedDuct(){
+  const fam=val('pipeFamily')||"RECT_GALV",sizes=ductStandards[fam].sizes;
+  const k=sizes[val('pipeSize')]?val('pipeSize'):Object.keys(sizes)[0];
+  return {...sizes[k],key:k,family:fam,familyLabel:ductStandards[fam].label,source:ductStandards[fam].source};
+}
+function calcGeo(){
+  const R=20925524.9,toR=Math.PI/180;
+  const p1=num('startLat')*toR,p2=num('startLat')*toR;
+  return {dist:900,bearing:0};
+}
+function geometry(){
+  const p=selectedDuct(),length=Math.max(50,num('lengthLf')),ceiling=num('coverFt');
+  const OD=p.OD,depth=OD+ceiling/12*.2;
+  const segs=Math.max(1,parseInt(val('segments'))||1);
+  const ahu=ahuStandards[val('manholeType')]||ahuStandards.RTU;
+  const vav=vavStandards[val('catchBasinType')]||vavStandards.VAV_REHEAT;
+  const ahuCount=segs+1,vavCount=Math.max(0,Math.round(num('catchBasinCount')));
+  const diffCount=Math.max(0,Math.round(num('houseConnCount'))),rtuCount=Math.max(0,Math.round(num('riserCount')));
+  const insul=num('beddingFt');
+  const floorSF=num('pBldgSF')||60000;
+  const occ=val('dewatering');
+  const tempDays=occ==="No"?0:occ==="Partial"?20:45;
+  const ceilingFt=num('paveWidthFt')||9;
+  // Duct quantities
+  const rectFamily=p.family==="RECT_GALV";
+  const ductPerimeter=rectFamily?2*(p.A+OD):Math.PI*OD;
+  const ductSF=ductPerimeter*length*1.10;
+  const ductLb=ductSF*p.wtPerSF;
+  const branchLF=length*2.4;
+  const insulSF=ductSF*1.15;
+  const hangerSpacing=rectFamily?8:10;
+  const hangerCount=Math.ceil(length/hangerSpacing)*2;
+  const fitCount=Math.ceil(length/10);
+  // Pipe quantities
+  const chwLF=length*0.75,hwLF=length*0.55,refLF=length*0.35,gasLF=length*0.15;
+  const pipeWeightLb=(chwLF*8.5)+(hwLF*8.5)+(refLF*2.5)+(gasLF*10);
+  // Equipment weights
+  const ahuWeightLb=ahuCount*(ahu.unitCost>100000?12000:4500);
+  const vavWeightLb=vavCount*85;
+  const diffWeightLb=diffCount*12;
+  // Ceiling
+  const ceilSF=length*(ceilingFt>0?30:0);
+  // Manhour allocation per zone
+  const craneDays=Math.ceil(ahuCount/2);
+  return {p,length,OD,depth,segs,segLen:length/segs,
+    ahu,vav,ahuCount,vavCount,diffCount,rtuCount,insul,floorSF,ceilingFt,
+    ductPerimeter,ductSF,ductLb,branchLF,insulSF,hangerCount,fitCount,
+    chwLF,hwLF,refLF,gasLF,pipeWeightLb,
+    ahuWeightLb,vavWeightLb,diffWeightLb,ceilSF,craneDays,tempDays};
+}
+function qtyFor(driver,g){
+  return {LS:1,DUCT_LF:g.length,BRANCH_LF:g.branchLF,INSUL_SF:g.insulSF,PIPE_LF:g.chwLF+g.hwLF+g.refLF+g.gasLF,
+    AHU_EA:g.ahuCount,VAV_EA:g.vavCount,DIFF_EA:g.diffCount,FLOOR_SF:g.ceilSF,CEIL_SF:g.ceilSF,DAYS:g.tempDays,TAB_DAYS:Math.max(4,Math.round(g.floorSF/7500))}[driver]||0;
+}
+
+/* =================== 5. ESTIMATE ENGINE =================== */
+function estimate(g){
+  const scen=val('scenario'),prodF={best:1.12,base:1,worst:.82,recovery:1.18}[scen]||1;
+  const costF={best:.96,base:1,worst:1.12,recovery:1.18}[scen]||1;
+  const rows=ACTS.map(a=>{
+    let qty=qtyFor(a.driver,g),prod=a.prod*prodF;
+    if(a.driver==="LS")qty=1;
+    if(val('ground')==="Return air plenum"&&["A04","A05","A06"].includes(a.id))prod*=.9;
+    let days=a.id==="A01"?clamp(g.length/250,3,8):a.id==="A13"?3:qty<=0?0:qty/Math.max(1e-4,prod);
+    const laborHrs=days*8*crewSize(a.crew);
+    const L=days*8*crewRate(a.crew)*costF;
+    const Eq=days*(+a.equipDay)*costF,equipHrs=days*(+a.equipHrsDay);
+    let M=qty*(+a.matU)*costF;
+    if(a.driver==="AHU_EA")M=qty*g.ahu.unitCost*costF;
+    if(a.driver==="VAV_EA")M=qty*g.vav.unitCost*costF;
+    if(a.driver==="DIFF_EA")M=qty*145*costF;
+    let S=qty*(+a.subU)*costF;
+    if(a.id==="A04")M=g.ductLb*6.5*costF;
+    const C=L*.07;
+    const total=L+M+C+S+Eq;
+    return {...a,qty,prod,days,laborHrs,equipHrs,cat:{L,M,C,S,E:Eq},total};
+  });
+  const subtotal=rows.reduce((s,r)=>s+r.total,0);
+  const durGuess=rows.filter(r=>r.kind!=="span").reduce((s,r)=>s+r.days,0)*.62;
+  const overhead=durGuess*num('overheadDay');
+  const contingency=subtotal*num('contingencyPct')/100;
+  const bond=(subtotal+overhead+contingency)*num('bondPct')/100;
+  const costBasis=subtotal+overhead+contingency+bond;
+  const revenue=costBasis*(1+num('markupPct')/100);
+  const revFactor=subtotal>0?revenue/subtotal:1;
+  rows.forEach(r=>{r.cat.R=r.total*revFactor;r.revenue=r.cat.R;});
+  return {rows,byId:Object.fromEntries(rows.map(r=>[r.id,r])),subtotal,overhead,contingency,bond,costBasis,revenue,revFactor,
+    profit:revenue-costBasis,laborHrs:rows.reduce((s,r)=>s+r.laborHrs,0),equipHrs:rows.reduce((s,r)=>s+r.equipHrs,0)};
+}
+
+/* =================== 6. COST CODES (CSI Div 23) =================== */
+const costCode=(actId,cat)=>{const a=E?E.byId[actId]:ACTS.find(x=>x.id===actId);return `${a.code}-${cat}`};
+const codeDivision=actId=>{const a=ACTS.find(x=>x.id===actId);return a.code.slice(0,2)+"00"};
+function actualAgg(filter){
+  const byAct={};let maxDay=0;
+  ACTUALS.forEach(r=>{
+    if(filter&&!filter(r))return;
+    const o=byAct[r.act]||(byAct[r.act]={qty:0,L:0,M:0,C:0,S:0,E:0,laborHrs:0,equipHrs:0,cost:0});
+    const L=(+r.mh||0)*(+r.rate||0),Eq=(+r.eqh||0)*(+r.eqr||0),M=+r.mat||0,S=+r.sub||0,C=L*.07;
+    o.qty+=+r.qty||0;o.L+=L;o.E+=Eq;o.M+=M;o.S+=S;o.C+=C;o.laborHrs+=+r.mh||0;o.equipHrs+=+r.eqh||0;
+    o.cost+=L+Eq+M+S+C;maxDay=Math.max(maxDay,+r.day||0);
+  });
+  return {byAct,maxDay};
+}
+function actCategories(actId,filter){
+  const r=E.byId[actId];if(!r)return null;
+  const a=actualAgg(filter).byAct[actId]||{qty:0,L:0,M:0,C:0,S:0,E:0,cost:0,laborHrs:0,equipHrs:0};
+  const earned=clamp(a.qty/(r.qty||1),0,1);
+  const budgetUnit=r.qty?r.total/r.qty:0;
+  const actualUnit=a.qty>0?a.cost/a.qty:budgetUnit;
+  const m=val('forecastMethod');
+  const fUnit=m==="budget_unit_cost"?budgetUnit:m==="blend"?(budgetUnit+actualUnit)/2:actualUnit;
+  const remainQty=Math.max(0,(r.qty||0)-a.qty);
+  const etc=remainQty*fUnit;
+  const estShare=cat=>r.total>0?r.cat[cat]/r.total:0;
+  const proj={};CAT_KEYS.forEach(c=>proj[c]=a[c]+etc*estShare(c));
+  proj.R=r.cat.R;
+  const est={...r.cat};
+  const act={L:a.L,M:a.M,C:a.C,S:a.S,E:a.E,R:earned*r.cat.R};
+  return {est,act,proj,earned,earnedQty:a.qty,actCost:a.cost,etc,eac:a.cost+etc,
+    actLaborHrs:a.laborHrs,actEquipHrs:a.equipHrs,budgetUnit,actualUnit,fUnit};
+}
+function categoryTotals(){
+  const z=()=>({L:0,M:0,C:0,S:0,E:0,R:0}),est=z(),act=z(),proj=z();
+  E.rows.forEach(r=>{const c=actCategories(r.id);if(!c)return;
+    Object.keys(est).forEach(k=>{est[k]+=c.est[k]||0;act[k]+=c.act[k]||0;proj[k]+=c.proj[k]||0;});});
+  return {est,act,proj};
+}
+
+/* =================== 7. REGISTRY / NODES =================== */
+const FAMILIES=[
+ {key:"TRN",label:"Duct Trunk",comps:[["MAIN","Main Duct Run","A04"],["SUPT","Seismic Supports","A02"],["DEMO","Demolition","A14"],["TEMP","Temporary Systems","A03"]]},
+ {key:"BRN",label:"Branch Ducts",comps:[["BRCH","Branch Duct","A05"],["INSU","Duct Insulation","A06"]]},
+ {key:"EQP",label:"Equipment",comps:[["AHU","AHU / RTU","A08"],["VAV","VAV Boxes","A09"],["TERM","Terminal Units","A10"]]},
+ {key:"FIN",label:"Finishes &amp; Commissioning",comps:[["SEAL","Duct Sealing","A11"],["TAB","TAB / Commissioning","A15"],["CEIL","Ceiling / Access","A12"]]}];
+function buildRegistry(g){
+  REG=[];REGBY={};
+  const push=n=>{REG.push(n);REGBY[n.id]=n;};
+  push({id:"SYS",label:"Total HVAC System",level:0,parent:null,seg:null,acts:ACTS.map(a=>({id:a.id,share:1}))});
+  const segShare=1/g.segs;
+  for(let i=0;i<g.segs;i++){
+    const sid=`ZONE-${i+1}`;
+    const staA=i*g.segLen,staB=(i+1)*g.segLen;
+    const sta=x=>`${Math.floor(x/100)}+${("0"+Math.round(x%100)).slice(-2)}`;
+    const segActs=[];
+    push({id:sid,label:`Zone ${i+1}  (STA ${sta(staA)} – ${sta(staB)})`,level:1,parent:"SYS",seg:i,acts:segActs});
+    FAMILIES.forEach(f=>{
+      const fid=`${sid}/${f.key}`,fActs=[];
+      push({id:fid,label:f.label,level:2,parent:sid,seg:i,acts:fActs});
+      f.comps.forEach(([ck,cl,actId])=>{
+        let share=segShare;
+        if(actId==="A08")share=(i===g.segs-1?2:1)/g.ahuCount;
+        if(actId==="A09")share=g.vavCount>0?segCount(g.vavCount,g.segs,i)/g.vavCount:0;
+        if(actId==="A10")share=g.diffCount>0?segCount(g.diffCount,g.segs,i)/g.diffCount:0;
+        const node={id:`${fid}/${ck}`,label:cl,level:3,parent:fid,seg:i,acts:[{id:actId,share}]};
+        push(node);fActs.push({id:actId,share});segActs.push({id:actId,share});
+      });
+    });
+  }
+}
+function segCount(total,segs,i){const base=Math.floor(total/segs),extra=total%segs;return base+(i<extra?1:0);}
+function nodeQuantities(n,g){
+  const f=a=>{const x=n.acts.find(t=>t.id===a);return x?x.share:0};
+  const q={};
+  const add=(k,v,u)=>{if(v>0.0001)q[k]={v,u}};
+  add("Main Duct",g.length*f("A04"),"LF");
+  add("Branch Duct",g.branchLF*f("A05"),"LF");
+  add("Duct Weight",g.ductLb*f("A04"),"LB");
+  add("Insulation",g.insulSF*f("A06"),"SF");
+  add("Seismic Supports",g.hangerCount*f("A02"),"EA");
+  add("Fittings",g.fitCount*f("A04"),"EA");
+  add("Hydronic Pipe",(g.chwLF+g.hwLF+g.refLF+g.gasLF)*f("A07"),"LF");
+  add("AHU / RTU",g.ahuCount*f("A08"),"EA");
+  add("VAV Boxes",g.vavCount*f("A09"),"EA");
+  add("Terminal Diffusers",g.diffCount*f("A10"),"EA");
+  add("Ceiling Area",g.ceilSF*f("A12"),"SF");
+  add("Demolition",g.ceilSF*f("A14"),"SF");
+  return q;
+}
+function nodeMetrics(n,day){
+  const z=()=>({L:0,M:0,C:0,S:0,E:0,R:0});
+  const out={est:z(),act:z(),proj:z(),estTotal:0,actTotal:0,projTotal:0,
+    laborHrsEst:0,laborHrsAct:0,equipHrsEst:0,equipHrsAct:0,revenue:0,earnedRev:0,planPct:0,wSum:0};
+  n.acts.forEach(({id,share})=>{
+    const r=E.byId[id];if(!r||share<=0)return;
+    const segFilter=n.seg===null?null:(rec=>{
+      if(rec.act!==id)return false;
+      const rs=String(rec.seg||"").trim();
+      return rs===""+(n.seg+1);});
+    const c=actCategories(id,segFilter);
+    const cAll=actCategories(id);
+    const untagged=n.seg===null?null:actualAgg(rec=>rec.act===id&&!String(rec.seg||"").trim()).byAct[id];
+    CAT_KEYS.concat("R").forEach(k=>{
+      out.est[k]+=r.cat[k]*share;
+      let a=c?c.act[k]:0;
+      if(untagged&&k!=="R")a+=({L:untagged.L,M:untagged.M,C:untagged.C,S:untagged.S,E:untagged.E})[k]*share;
+      out.act[k]+=a;
+    });
+    if(cAll)CAT_KEYS.concat("R").forEach(k=>out.proj[k]+=cAll.proj[k]*share);
+    out.laborHrsEst+=r.laborHrs*share;out.equipHrsEst+=r.equipHrs*share;
+    if(c){out.laborHrsAct+=c.actLaborHrs;out.equipHrsAct+=c.actEquipHrs;}
+    if(untagged){out.laborHrsAct+=untagged.laborHrs*share;out.equipHrsAct+=untagged.equipHrs*share;}
+    out.revenue+=r.cat.R*share;
+    const p=planPctForNodeAct(n,id,day??(PLAN?PLAN.duration:0));
+    out.planPct+=p*r.total*share;out.wSum+=r.total*share;
+  });
+  out.estTotal=CAT_KEYS.reduce((s,k)=>s+out.est[k],0);
+  out.actTotal=CAT_KEYS.reduce((s,k)=>s+out.act[k],0);
+  out.projTotal=CAT_KEYS.reduce((s,k)=>s+out.proj[k],0);
+  out.planPct=out.wSum>0?out.planPct/out.wSum:0;
+  out.earnedRev=out.revenue*out.planPct;
+  return out;
+}
+
+/* =================== 8. SCHEDULE ENGINE =================== */
+function computePlan(g,e){
+  const chain=ACTS.filter(a=>a.kind==="linear").sort((a,b)=>a.chain-b.chain);
+  const rate={};chain.forEach(a=>{const r=e.byId[a.id];rate[a.id]=r.days>0?g.length/r.days:g.length;});
+  const buffer=num('bufferLF')||60;
+  const mobDays=Math.ceil(e.byId.A01.days);
+  const ahuProd=e.byId.A08.qty>0?e.byId.A08.qty/Math.max(.25,e.byId.A08.days):0;
+  const vavProd=e.byId.A09.qty>0?e.byId.A09.qty/Math.max(.25,e.byId.A09.days):0;
+  const diffProd=e.byId.A10.qty>0?e.byId.A10.qty/Math.max(.25,e.byId.A10.days):0;
+  const ahuSta=Array.from({length:g.ahuCount},(_,j)=>j*g.segLen);
+  const vavSta=Array.from({length:g.vavCount},(_,k)=>(k+1)*g.length/(g.vavCount+1));
+  const diffSta=Array.from({length:g.diffCount},(_,k)=>(k+.5)*g.length/Math.max(1,g.diffCount));
+  const pos={};chain.forEach(a=>pos[a.id]=0);
+  let ahuDone=0,vavDone=0,diffDone=0,ahuAcc=0,vavAcc=0,diffAcc=0;
+  const ahuDoneDay=ahuSta.map(()=>0),vavDoneDay=vavSta.map(()=>0),diffDoneDay=diffSta.map(()=>0);
+  let dewStart=0,dewDays=0;
+  const days=[];let d=0;
+  const done=()=>chain.every(a=>pos[a.id]>=g.length-1e-6)&&ahuDone>=g.ahuCount&&vavDone>=g.vavCount&&diffDone>=g.diffCount;
+  while(d<1500&&!(done()&&d>mobDays)){
+    d++;
+    if(d>mobDays){
+      chain.forEach((a,i)=>{
+        const prev=i===0?Infinity:pos[chain[i-1].id];
+        const limit=prev>=g.length-1e-6?g.length:Math.max(0,prev-buffer);
+        pos[a.id]=Math.min(g.length,Math.max(pos[a.id],Math.min(pos[a.id]+rate[a.id],limit)));
+      });
+      if(pos.A04>0&&pos.A11<g.length-1e-6){if(!dewStart)dewStart=d;dewDays++;}
+      ahuAcc+=ahuProd;while(ahuDone<g.ahuCount&&ahuAcc>=1&&pos.A07>=ahuSta[ahuDone]-1e-6){ahuAcc--;ahuDoneDay[ahuDone]=d;ahuDone++;}
+      vavAcc+=vavProd;while(vavDone<g.vavCount&&vavAcc>=1&&pos.A05>=vavSta[vavDone]-1e-6){vavAcc--;vavDoneDay[vavDone]=d;vavDone++;}
+      diffAcc+=diffProd;while(diffDone<g.diffCount&&diffAcc>=1&&pos.A11>=diffSta[diffDone]-1e-6){diffAcc--;diffDoneDay[diffDone]=d;diffDone++;}
+    }
+    const pctMap={A01:clamp(d/mobDays,0,1)};
+    chain.forEach(a=>pctMap[a.id]=g.length>0?pos[a.id]/g.length:1);
+    pctMap.A03=e.byId.A03.qty>0?clamp(dewDays/e.byId.A03.qty,0,1):(pos.A04>0?pctMap.A11:0);
+    pctMap.A08=g.ahuCount?ahuDone/g.ahuCount:1;pctMap.A09=g.vavCount?vavDone/g.vavCount:1;pctMap.A10=g.diffCount?diffDone/g.diffCount:1;
+    pctMap.A13=0;
+    days.push({d,pos:{...pos},pct:pctMap,ahuDone,vavDone,diffDone});
+  }
+  const coDays=Math.ceil(e.byId.A13.days)||3,base=d;
+  for(let k=1;k<=coDays;k++){d++;const last=days[days.length-1];
+    days.push({d,pos:{...last.pos},pct:{...last.pct,A13:k/coDays},ahuDone,vavDone,diffDone});}
+  const duration=d;
+  let prev={};ACTS.forEach(a=>prev[a.id]=0);
+  const planEV=[],planRev=[],accruals=[];
+  days.forEach(row=>{
+    let ev=0,rev=0;const acc={L:0,M:0,C:0,S:0,E:0};
+    ACTS.forEach(a=>{
+      const p=row.pct[a.id]??0,r=e.byId[a.id],dp=Math.max(0,p-prev[a.id]);
+      ev+=p*r.total;rev+=p*r.cat.R;
+      CAT_KEYS.forEach(c=>acc[c]+=dp*r.cat[c]);
+      prev[a.id]=p;
+    });
+    planEV.push(ev);planRev.push(rev);accruals.push(acc);
+  });
+  return {duration,days,planEV,planRev,accruals,ahuDoneDay,vavDoneDay,diffDoneDay,ahuSta,vavSta,diffSta,mobDays,chain:chain.map(a=>a.id)};
+}
+function planPctForNodeAct(n,actId,day){
+  if(!PLAN||!PLAN.days.length)return 0;
+  const row=PLAN.days[clamp(Math.round(day||0),1,PLAN.duration)-1];if(!row)return 0;
+  if(n.seg===null)return row.pct[actId]??0;
+  const g=G,a=ACTS.find(x=>x.id===actId),s0=n.seg*g.segLen,s1=s0+g.segLen;
+  if(a.kind==="linear")return clamp((row.pos[actId]-s0)/g.segLen,0,1);
+  if(actId==="A03")return (clamp((row.pos.A04-s0)/g.segLen,0,1)+clamp((row.pos.A11-s0)/g.segLen,0,1))/2;
+  const unitDone=(staArr,doneDay)=>{
+    let own=0,fin=0;
+    staArr.forEach((x,j)=>{const inSeg=actId==="A08"?(j===n.seg||(n.seg===g.segs-1&&j===g.segs)):(x>=s0&&x<s1);
+      if(inSeg){own++;if(doneDay[j]&&doneDay[j]<=row.d)fin++;}});
+    return own?fin/own:1;};
+  if(actId==="A08")return unitDone(PLAN.ahuSta,PLAN.ahuDoneDay);
+  if(actId==="A09")return unitDone(PLAN.vavSta,PLAN.vavDoneDay);
+  if(actId==="A10")return unitDone(PLAN.diffSta,PLAN.diffDoneDay);
+  return row.pct[actId]??0;
+}
+
+/* =================== 9. EVM + CASHFLOW =================== */
+function evmSeries(){
+  const D=PLAN.duration,PV=PLAN.planEV,BAC=E.subtotal;
+  const evA=new Array(D+1).fill(0),acA=new Array(D+1).fill(0);
+  let dd=0;
+  if(ACTUALS.length){
+    ACTUALS.forEach(r=>{const day=clamp(Math.round(+r.day||1),1,D);dd=Math.max(dd,day);
+      const e=E.byId[r.act];if(!e)return;
+      const L=(+r.mh||0)*(+r.rate||0),Eq=(+r.eqh||0)*(+r.eqr||0),cost=L+Eq+(+r.mat||0)+(+r.sub||0)+L*.07;
+      const ev=e.qty>0?(+r.qty||0)/e.qty*e.total:0;
+      evA[day]+=ev;acA[day]+=cost;});
+    for(let i=1;i<=D;i++){evA[i]+=evA[i-1];acA[i]+=acA[i-1];}
+  }
+  const SPI=dd&&PV[dd-1]>0?clamp(evA[dd]/PV[dd-1],.4,1.6):1;
+  const CPI=dd&&acA[dd]>0?clamp(evA[dd]/acA[dd],.4,1.8):1;
+  const EV=[],AC=[];
+  for(let i=1;i<=D;i++){
+    const pv=PV[i-1];let ev,ac;
+    if(dd===0){ev=pv;ac=pv;}
+    else if(i<=dd){ev=evA[i];ac=acA[i];}
+    else{ev=Math.min(BAC,evA[dd]+(pv-PV[dd-1])*SPI);ac=acA[dd]+(ev-evA[dd])/CPI;}
+    EV.push(ev);AC.push(ac);
+  }
+  const eac=AC[D-1],vac=BAC-eac;
+  return {PV,EV,AC,BAC,SPI,CPI,dd,eac,vac,projRev:E.revenue,projProfit:E.revenue-(eac+E.overhead+E.contingency+E.bond)};
+}
+function cashSeries(){
+  const ev=evmSeries(),D=PLAN.duration;
+  const horizon=D+calToWork(num('paymentLagDays')+90);
+  const out=new Array(horizon+1).fill(0),inn=new Array(horizon+1).fill(0);
+  const terms={L:calToWork(num('termL')||7),C:calToWork(num('termL')||7),M:calToWork(num('termM')||30),E:calToWork(num('termM')||30),S:calToWork(num('termS')||45)};
+  let prevAC=0,prevPlan=0;
+  for(let i=1;i<=D;i++){
+    const planDelta=PLAN.planEV[i-1]-prevPlan;prevPlan=PLAN.planEV[i-1];
+    const acDelta=ev.AC[i-1]-prevAC;prevAC=ev.AC[i-1];
+    const ratio=planDelta>1?acDelta/planDelta:1;
+    const acc=PLAN.accruals[i-1];
+    CAT_KEYS.forEach(c=>{const pay=Math.min(horizon,i+terms[c]);out[pay]+=acc[c]*ratio;});
+    out[Math.min(horizon,i+terms.L)]+=num('overheadDay');
+  }
+  const cycle=calToWork(num('billingCycleDays')||30),lag=calToWork(num('paymentLagDays')||45),ret=num('retainagePct')/100;
+  const earnedRev=i=>ev.EV[clamp(i,1,D)-1]/Math.max(1,ev.BAC)*E.revenue;
+  let billed=0,retained=0;
+  const billEvents=new Array(horizon+1).fill(0),retEvents=new Array(horizon+1).fill(0);
+  const billDays=[];for(let b=cycle;b<D;b+=cycle)billDays.push(b);billDays.push(D);
+  billDays.forEach(b=>{
+    const amt=Math.max(0,earnedRev(b)-billed);billed+=amt;
+    retained+=amt*ret;
+    billEvents[Math.min(horizon,b)]+=amt;retEvents[Math.min(horizon,b)]+=amt*ret;
+    inn[Math.min(horizon,b+lag)]+=amt*(1-ret);
+  });
+  const relDay=Math.min(horizon,D+lag+calToWork(60));
+  inn[relDay]+=retained;retEvents[relDay]-=retained;
+  const cumIn=[],cumOut=[],net=[],billedCum=[],retainedCum=[];
+  let ci=0,co=0,bc=0,rc=0,minNet=0,minDay=0;
+  for(let i=1;i<=horizon;i++){ci+=inn[i];co+=out[i];bc+=billEvents[i];rc+=retEvents[i];
+    cumIn.push(ci);cumOut.push(co);net.push(ci-co);billedCum.push(bc);retainedCum.push(Math.max(0,rc));
+    if(ci-co<minNet){minNet=ci-co;minDay=i;}}
+  return {horizon,cumIn,cumOut,net,billedCum,retainedCum,minNet,minDay,finalCash:net[horizon-1],retained,evm:ev};
+}
+function runRisk(){
+  const base=evmSeries().eac+E.overhead+E.contingency+E.bond;
+  const runs=clamp(parseInt(num('mcRuns'))||2000,200,10000);
+  RISK=[];
+  const risks=[["Utility conflict / relocation",.25,.03,.12],["Refrigerant leak / rework",.18,.02,.09],["Crane access / rigging overrun",.16,.02,.10],["Low productivity / access",.25,.02,.08],["Material delay / escalation",.14,.01,.06],["Overtime recovery premium",.20,.02,.07],["Opportunity: better production",.18,-.08,-.02],["Opportunity: buyout savings",.12,-.05,-.01]];
+  for(let i=0;i<runs;i++){
+    let c=base*(.96+Math.random()*.1);
+    risks.forEach(r=>{if(Math.random()<r[1])c+=base*(r[2]+Math.random()*(r[3]-r[2]));});
+    RISK.push(c);
+  }
+  RISK.sort((a,b)=>a-b);
+  renderRisk();
+}
+const percentile=(arr,p)=>arr.length?arr[Math.floor((arr.length-1)*p)]:0;
+
+/* =================== 10. SIM TRANSPORT =================== */
+function setSimDay(d,skipRender){
+  if(!PLAN)return;
+  SIM.day=clamp(Math.round(d),1,PLAN.duration);
+  const s=$('simDaySlider');if(s){s.max=PLAN.duration;s.value=SIM.day;}
+  if(!skipRender){renderTransport();update3DState();renderInspector();renderExecutive();renderActualsStudio();renderControlSystem();}
+}
+function simStep(dir){const n=SIM.day+(dir||SIM.dir);if(n<1||n>PLAN.duration){simPause();return;}setSimDay(n);}
+function simPlay(){simPause();SIM.timer=setInterval(()=>simStep(SIM.dir),Math.max(40,520/SIM.speed));$('trPlay').textContent="❚❚";}
+function simPause(){if(SIM.timer){clearInterval(SIM.timer);SIM.timer=null;}if($('trPlay'))$('trPlay').textContent="▶";}
+function simPlayPause(){SIM.timer?simPause():simPlay();}
+function simToggleReverse(){SIM.dir*=-1;$('trRev').classList.toggle('on',SIM.dir<0);}
+
+/* =================== 11. 3D ENGINE =================== */
+let scene,camera,renderer,modelGroup,raycaster,SEL3D={meshes:[],dyn:[]};
+const CAM={theta:.95,phi:1.05,dist:120,tx:0,ty:-4,tz:0};
+const CAMG=Object.assign({},CAM);
+const VIEW={mode:"sim"};
+const SC=.18;
+function mat(hex,op=1){return new THREE.MeshLambertMaterial({color:hex,transparent:op<1,opacity:op});}
+function growBoxGeo(len,h,w){const g=new THREE.BoxGeometry(len,h,w);g.translate(len/2,0,0);return g;}
+function growCylGeo(r,len){const g=new THREE.CylinderGeometry(r,r,len,24);g.rotateZ(Math.PI/2);g.translate(len/2,0,0);return g;}
+function init3D(){
+  const cv=$('viewport');
+  renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  renderer.setClearColor(0x1a2a32,1);
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x1a2a32);
+  camera=new THREE.PerspectiveCamera(46,2,.1,4000);
+  raycaster=new THREE.Raycaster();
+  scene.add(new THREE.HemisphereLight(0xeaf2ff,0x3a3127,1.15));
+  const sun=new THREE.DirectionalLight(0xffffff,1.0);sun.position.set(60,120,80);scene.add(sun);
+  const fill=new THREE.DirectionalLight(0x9db8ff,.4);fill.position.set(-90,55,-70);scene.add(fill);
+  modelGroup=new THREE.Group();scene.add(modelGroup);
+  bind3DEvents(cv);
+  resize3D();window.addEventListener('resize',resize3D);
+  (function loop(){requestAnimationFrame(loop);applyCamera();renderer.render(scene,camera);})();
+}
+function resize3D(){const cv=$('viewport'),w=cv.clientWidth||cv.parentElement.clientWidth,h=cv.clientHeight||cv.parentElement.clientHeight;if(w&&h){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}}
+function applyCamera(){
+  const k=.16;["theta","phi","dist","tx","ty","tz"].forEach(p=>CAM[p]+=(CAMG[p]-CAM[p])*k);
+  const cp=Math.cos(CAM.phi),sp=Math.sin(CAM.phi);
+  camera.position.set(CAM.tx+CAM.dist*sp*Math.sin(CAM.theta),CAM.ty+CAM.dist*cp,CAM.tz+CAM.dist*sp*Math.cos(CAM.theta));
+  camera.lookAt(CAM.tx,CAM.ty,CAM.tz);
+}
+function fitView(){const L=(G?G.length:900)*SC,D=(G?G.depth:6)*SC;CAMG.tx=0;CAMG.tz=0;CAMG.ty=-D*.45;CAMG.dist=clamp(L*1.08,40,900);}
+function camPreset(p){
+  if(p==='iso'){CAMG.theta=.95;CAMG.phi=1.05;}
+  if(p==='profile'){CAMG.theta=Math.PI/2;CAMG.phi=1.45;}
+  if(p==='plan'){CAMG.theta=.001;CAMG.phi=.06;}
+}
+function build3D(){
+  if(!renderer)init3D();
+  while(modelGroup.children.length)modelGroup.remove(modelGroup.children[0]);
+  SEL3D.meshes=[];SEL3D.dyn=[];
+  const g=G,L=g.length*SC,D=g.depth*SC,B=g.p.A*SC,T=B+2*SC,R=g.OD/2*SC,x0=-L/2;
+  const add=(mesh,eid,dynKey)=>{mesh.userData.elementId=eid||null;if(eid)SEL3D.meshes.push(mesh);if(dynKey)mesh.userData.dyn=dynKey;modelGroup.add(mesh);return mesh;};
+  // Floor slab
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(L+30*SC,.15,40*SC),mat(0x2c313a));
+  floor.position.set(0,-.08,0);add(floor);
+  // Ceiling grid
+  const ceil=new THREE.Mesh(new THREE.BoxGeometry(L+30*SC,.08,40*SC),mat(0x4a5058,.6));
+  ceil.position.set(0,D*2.4,0);add(ceil);
+  // Per-zone construction state
+  const segL=L/g.segs;
+  for(let i=0;i<g.segs;i++){
+    const sx=x0+i*segL,base=`ZONE-${i+1}`;
+    const mk=(geo,m,eid,key,y=0,z=0)=>{const me=new THREE.Mesh(geo,m);me.position.set(sx,y,z);me.scale.x=.0001;
+      me.userData.segIdx=i;add(me,eid,key);SEL3D.dyn.push(me);return me;};
+    // Main duct trunk (rectangular galv)
+    const ductH=g.p.family==="RECT_GALV"?g.p.A*SC*.6:R*2;
+    const ductW=g.p.family==="RECT_GALV"?g.OD*SC:R*2;
+    mk(growBoxGeo(segL,ductH,ductW),mat(0xb8c2cc),`${base}/TRN/MAIN`,"MAIN",-D*.4);
+    // Insulation jacket
+    if(g.insul>0){
+      const ins=g.insul/12*SC;
+      mk(growBoxGeo(segL,ductH+ins*2,ductW+ins*2),mat(0xe8d8b8,.4),`${base}/BRN/INSU`,"INSU",-D*.4);
+    }
+    // Seismic supports
+    const supH=D*1.6;
+    mk(growBoxGeo(.15,supH,.15),mat(0xc99a2e),`${base}/TRN/SUPT`,"SUPT",-D*.4,-T*.7);
+    mk(growBoxGeo(.15,supH,.15),mat(0xc99a2e),`${base}/TRN/SUPT`,"SUPT",-D*.4,T*.7);
+    // Branch duct
+    mk(growBoxGeo(segL,ductH*.6,ductW*.6),mat(0xa4b0bd,.85),`${base}/BRN/BRCH`,"BRCH",-D*.4,ductW*1.5);
+    // Hydronic pipe under duct
+    mk(growCylGeo(R*.55,segL),mat(0x1d6fb8),`${base}/TRN/TEMP`,"TEMP",-D*.4-ductH*.9,-ductW*.55);
+    mk(growCylGeo(R*.4,segL),mat(0xc7362b),`${base}/TRN/TEMP`,"TEMP",-D*.4-ductH*.9,ductW*.55);
+    // Ceiling / access (appears at end)
+    mk(growBoxGeo(segL,.06,30*SC),mat(0xdde5ec,.35),`${base}/FIN/CEIL`,"CEIL",D*1.8);
+  }
+  // AHUs on top of duct
+  for(let j=0;j<g.ahuCount;j++){
+    const owner=Math.min(j,g.segs-1),x=x0+j*segL;
+    const grp=new THREE.Group();grp.position.set(x,D*.9,0);
+    const body=new THREE.Mesh(new THREE.BoxGeometry(2*SC*10,2*SC*6,2*SC*7),mat(0x8ba0b3));
+    const door=new THREE.Mesh(new THREE.BoxGeometry(.05,1.6*SC,1.2*SC),mat(0xc99a2e));
+    door.position.set(1*SC*5,0,0);
+    [body,door].forEach(m=>{m.userData.elementId=`ZONE-${owner+1}/EQP/AHU`;SEL3D.meshes.push(m);grp.add(m);});
+    grp.userData.dyn="AHU";grp.userData.unit=j;grp.scale.set(.001,.001,.001);
+    modelGroup.add(grp);SEL3D.dyn.push(grp);
+  }
+  // VAV boxes at branches
+  for(let k=0;k<g.vavCount;k++){
+    const x=x0+(k+1)*L/(g.vavCount+1),side=k%2?-1:1,z=side*(T/2+1.2*SC);
+    const owner=clamp(Math.floor(((k+1)*g.length/(g.vavCount+1))/g.segLen),0,g.segs-1);
+    const grp=new THREE.Group();grp.position.set(x,-D*.4,z);
+    const body=new THREE.Mesh(new THREE.BoxGeometry(1.2*SC*4,.8*SC*4,1.0*SC*4),mat(0x5d7a99));
+    body.userData.elementId=`ZONE-${owner+1}/EQP/VAV`;SEL3D.meshes.push(body);grp.add(body);
+    grp.userData.dyn="VAV";grp.userData.unit=k;grp.scale.set(.001,.001,.001);
+    modelGroup.add(grp);SEL3D.dyn.push(grp);
+  }
+  // Diffusers (ceiling)
+  for(let k=0;k<g.diffCount;k++){
+    const x=x0+(k+.5)*L/Math.max(1,g.diffCount);
+    const owner=clamp(Math.floor(((k+.5)*g.length/Math.max(1,g.diffCount))/g.segLen),0,g.segs-1);
+    const me=new THREE.Mesh(new THREE.BoxGeometry(1.0*SC*3,.06,1.0*SC*3),mat(0xdde5ec));
+    me.position.set(x,D*1.8,0);
+    me.userData.elementId=`ZONE-${owner+1}/EQP/TERM`;me.userData.dyn="DIFF";me.userData.unit=k;
+    me.scale.x=.001;SEL3D.meshes.push(me);modelGroup.add(me);SEL3D.dyn.push(me);
+  }
+  update3DState();
+}
+function update3DState(){
+  if(!PLAN||!modelGroup)return;
+  const g=G,row=PLAN.days[clamp(SIM.day,1,PLAN.duration)-1];
+  const segL=g.segLen;
+  const segPct=(actId,i)=>clamp((row.pos[actId]-i*segL)/segL,0,1);
+  SEL3D.dyn.forEach(o=>{
+    const k=o.userData.dyn;
+    if(k==="AHU"){const dn=PLAN.ahuDoneDay[o.userData.unit];const s=dn&&dn<=row.d?1:.001;o.scale.set(s,s,s);return;}
+    if(k==="VAV"){const dn=PLAN.vavDoneDay[o.userData.unit];const s=dn&&dn<=row.d?1:.001;o.scale.set(s,s,s);return;}
+    if(k==="DIFF"){const dn=PLAN.diffDoneDay[o.userData.unit];o.scale.x=dn&&dn<=row.d?1:.001;return;}
+    const i=o.userData.segIdx;let f=0;
+    if(k==="MAIN")f=segPct("A04",i);
+    if(k==="SUPT")f=segPct("A02",i);
+    if(k==="BRCH")f=segPct("A05",i);
+    if(k==="INSU")f=segPct("A06",i);
+    if(k==="TEMP")f=segPct("A07",i);
+    if(k==="CEIL")f=segPct("A12",i);
+    if(VIEW.mode!=="sim"){
+      const M={trench:{MAIN:1,SUPT:1,BRCH:1,INSU:1,TEMP:1,CEIL:0},
+               pipe:{MAIN:1,SUPT:1,BRCH:0,INSU:0,TEMP:1,CEIL:0},
+               done:{MAIN:1,SUPT:1,BRCH:1,INSU:1,TEMP:1,CEIL:1}}[VIEW.mode];
+      if(M&&M[k]!==undefined)f=M[k];
+    }
+    o.scale.x=Math.max(.0001,f);
+  });
+  if(VIEW.mode!=="sim")SEL3D.dyn.forEach(o=>{const k=o.userData.dyn;if(k==="AHU"||k==="VAV")o.scale.set(1,1,1);if(k==="DIFF")o.scale.x=1;});
+  highlightSelection();
+}
+function bind3DEvents(cv){
+  let drag=null;
+  cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,b:e.button,sh:e.shiftKey};});
+  window.addEventListener('pointerup',()=>drag=null);
+  window.addEventListener('pointermove',e=>{
+    if(drag){
+      const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;
+      if(drag.b===2||drag.sh){const k=CAM.dist*.0016;CAMG.tx-=(dx*Math.cos(CAM.theta))*k;CAMG.tz+=(dx*Math.sin(CAM.theta))*k;CAMG.ty+=dy*k;}
+      else{CAMG.theta-=dx*.0055;CAMG.phi=clamp(CAMG.phi-dy*.0045,.05,1.52);}
+    }
+  });
+  cv.addEventListener('wheel',e=>{e.preventDefault();CAMG.dist=clamp(CAMG.dist*(1+Math.sign(e.deltaY)*.09),12,900);},{passive:false});
+  cv.addEventListener('contextmenu',e=>e.preventDefault());
+  cv.addEventListener('click',e=>{
+    const hit=pick(e);
+    if(!hit){selectNode("SYS");return;}
+    selectNode(hit);
+  });
+}
+function ndc(e){const r=renderer.domElement.getBoundingClientRect();return new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);}
+function pick(e){raycaster.setFromCamera(ndc(e),camera);const hits=raycaster.intersectObjects(SEL3D.meshes,false).filter(h=>h.object.visible&&h.object.scale.x>.005);return hits.length?hits[0].object.userData.elementId:null;}
+function highlightSelection(){
+  const n=REGBY[SEL.id];if(!n||n.id==="SYS")return;
+}
+function selectNode(id){SEL.id=REGBY[id]?id:"SYS";renderInspector();renderTree();}
+
+/* =================== 12. RENDERERS =================== */
+const CACHE={evm:null,cash:null};
+function refreshCache(){CACHE.evm=evmSeries();CACHE.cash=cashSeries();}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#888";}
+function chartTheme(){return {ink:cssVar('--ink'),muted:cssVar('--muted'),line:cssVar('--line'),blue:cssVar('--blue'),gold:cssVar('--gold'),green:cssVar('--green'),red:cssVar('--red'),grid:cssVar('--line')};}
+function makeChart(id,cfg){
+  const cv=$(id);if(!cv)return;
+  if(typeof Chart==="undefined")return;
+  if(CHARTS[id]){CHARTS[id].destroy();delete CHARTS[id];}
+  const th=chartTheme();
+  cfg.options=cfg.options||{};
+  cfg.options.responsive=true;cfg.options.maintainAspectRatio=false;cfg.options.animation=false;
+  cfg.options.plugins=Object.assign({legend:{labels:{color:th.muted,boxWidth:12,font:{size:10}}}},cfg.options.plugins||{});
+  const ax=s=>Object.assign({ticks:{color:th.muted,font:{size:9.5},maxTicksLimit:8},grid:{color:th.grid}},s||{});
+  cfg.options.scales=cfg.options.scales||{};
+  cfg.options.scales.x=ax(cfg.options.scales.x);cfg.options.scales.y=ax(cfg.options.scales.y);
+  try{CHARTS[id]=new Chart(cv.getContext('2d'),cfg);}catch(err){console.error('Chart '+id,err);}
+}
+function cardTone(t,cls){
+  const k=String(t||'').toLowerCase();
+  if(cls==="neg")return "critical";
+  if(cls==="pos")return "good";
+  if(/duration|mobilization|finish|schedule/.test(k))return "schedule";
+  if(/risk|p80|variance|vac|forecast/.test(k))return "watch";
+  if(/cash|funding|retainage|billing|revenue|profit|margin/.test(k))return "governance";
+  return "info";
+}
+const card=(t,v,s,cls)=>`<div class="card tone-${cardTone(t,cls)}"><div class="t">${t}</div><div class="v ${cls||""}">${v}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+
+function renderAll(){
+  refreshCache();
+  renderDashboard();renderERP();renderCrosstab();renderSched();renderEVM();renderRisk();renderFormulas();renderValidation();renderTransport();renderTree();renderInspector();updateHUD();renderExecutive();renderActualsStudio();renderControlSystem();
+}
+function updateHUD(){
+  if(!G||!E)return;
+  $('hudDepth').textContent=`${fmt(G.length)} LF · ${G.segs} zones`;
+  $('hudExc').textContent=`${fmt(G.ductLb)} LB`;
+  $('hudConc').textContent=`${fmt(G.insulSF)} SF`;
+  $('hudRebar').textContent=`${fmt(G.chwLF+G.hwLF+G.refLF+G.gasLF)} LF`;
+  $('hudRev').textContent=money(E.revenue);
+  const m=CACHE.evm?CACHE.evm.projProfit/Math.max(1,E.revenue):E.profit/Math.max(1,E.revenue);
+  const el=$('hudMargin');el.textContent=pct(m);el.style.color=m<0?cssVar('--red'):cssVar('--green');
+}
+function renderDashboard(){
+  const ev=CACHE.evm,cash=CACHE.cash,ct=categoryTotals();
+  $('dashCards').innerHTML=
+    card("Bid value (revenue)",money(E.revenue),`markup ${fmt(num('markupPct'),1)}%`)+
+    card("Direct cost (est)",money(E.subtotal),`indirects ${money(E.overhead+E.contingency+E.bond)}`)+
+    card("Forecast cost (EAC)",money(ev.eac+E.overhead+E.contingency+E.bond),`direct EAC ${money(ev.eac)}`)+
+    card("Forecast profit",money(ev.projProfit),`${pct(ev.projProfit/Math.max(1,E.revenue))} margin`,ev.projProfit<0?"neg":"pos")+
+    card("Duration",`${fmt(PLAN.duration)} wd`,`finish ${simDate(PLAN.duration)}`)+
+    card("Peak funding",money(cash.minNet),`day ${cash.minDay}`,cash.minNet<0?"neg":"pos")+
+    card("Labor hours",fmt(E.laborHrs),"all activity crews")+
+    card("Duct",`${fmt(G.length)} LF`,`${G.segs} zones · ${fmt(G.ductLb)} LB`);
+  const th=chartTheme();
+  makeChart('chCat',{type:'bar',
+    data:{labels:CAT_KEYS.map(c=>CATS[c].label),
+      datasets:[
+        {label:'Estimated',data:CAT_KEYS.map(c=>ct.est[c]),backgroundColor:th.blue},
+        {label:'Actual',data:CAT_KEYS.map(c=>ct.act[c]),backgroundColor:th.gold},
+        {label:'Projected',data:CAT_KEYS.map(c=>ct.proj[c]),backgroundColor:th.green}]},
+    options:{plugins:{title:{display:true,text:'Cost by category — Est vs Act vs Proj',color:th.muted,font:{size:11}}}}});
+  const ql=[["Main Duct",G.length],["Branch Duct",G.branchLF],["Insulation",G.insulSF],["Hydronic Pipe",G.chwLF+G.hwLF+G.refLF+G.gasLF],["Ceiling",G.ceilSF]];
+  makeChart('chQty',{type:'bar',
+    data:{labels:ql.map(q=>q[0]),datasets:[{label:'Qty',data:ql.map(q=>q[1]),backgroundColor:th.blue+"cc"}]},
+    options:{indexAxis:'y',plugins:{title:{display:true,text:'Key quantities (LF / SF)',color:th.muted,font:{size:11}},legend:{display:false}}}});
+  const rows=[
+    ["Main duct trunk","LF",G.length,`${G.p.display} · SMACNA gauge ${G.p.gauge||'-'}`],
+    ["Branch duct","LF",G.branchLF,"2.4× main trunk length"],
+    ["Duct weight","LB",G.ductLb,`${G.p.wtPerSF||0} lb/SF × ${fmt(G.ductSF)} SF`],
+    ["Insulation","SF",G.insulSF,`${fmt(G.insul,1)}" wrap · ASHRAE 90.1`],
+    ["Seismic supports","EA",G.hangerCount,"SMACNA seismic restraint"],
+    ["Fittings","EA",G.fitCount,"1 per 10 LF of trunk"],
+    ["CHW pipe","LF",G.chwLF,"0.75 × trunk length"],
+    ["HW pipe","LF",G.hwLF,"0.55 × trunk length"],
+    ["Refrigerant","LF",G.refLF,"0.35 × trunk length"],
+    ["Gas","LF",G.gasLF,"0.15 × trunk length"],
+    ["AHU / RTU","EA",G.ahuCount,val('manholeType')],
+    ["VAV boxes","EA",G.vavCount,val('catchBasinType')],
+    ["Diffusers / terminals","EA",G.diffCount,"SMACNA air devices"],
+    ["Ceiling area","SF",G.ceilSF,`${fmt(G.ceilingFt,1)} ft ceiling height`]
+  ];
+  $('qtoTable').innerHTML=tbl([["Item"],["UM"],["Quantity",1],["Basis"]],
+    rows.map(r=>[r[0],r[1],fmt(r[2],r[1]==="EA"?0:1),`<span style="color:var(--muted)">${r[3]}</span>`]));
+}
+function renderERP(){
+  const mode=val('erpGroup'),meas=val('erpMeasure'),data=E.rows.map(r=>({r,c:actCategories(r.id)}));
+  const moneyCols=meas==="all"?[["Est",1],["Act",1],["Proj",1],["Δ",1]]:[[{est:"Estimated",act:"Actual",proj:"Projected"}[meas],1],["Δ",1]];
+  const head=[["Cost code"],["Activity"],["Cat"],["UM"],["Qty",1]].concat(moneyCols);
+  const cellSet=(est,act,proj)=>meas==="all"
+    ?[money(est),money(act),money(proj),deltaSpan(proj-est)]
+    :[money({est,act,proj}[meas]),meas==="est"?"—":deltaSpan(({act,proj})[meas]!==undefined?({act,proj})[meas]-est:0)];
+  const allCats=CAT_KEYS.concat("R");
+  const rowFor=(d,cat)=>({cells:[
+      `<span class="costCode">${costCode(d.r.id,cat)}</span>`,d.r.name,catPill(cat)+CATS[cat].label,
+      cat==="R"?"":d.r.unit,cat==="R"?"":fmt(d.r.qty,d.r.unit==="EA"?0:1)]
+      .concat(cellSet(d.c.est[cat],d.c.act[cat],d.c.proj[cat]))});
+  let rows=[];
+  if(mode==="flat"){
+    data.forEach(d=>allCats.forEach(cat=>{if(d.c.est[cat]>0.5||d.c.act[cat]>0.5)rows.push(rowFor(d,cat));}));
+  }else if(mode==="cat"){
+    allCats.forEach(cat=>{
+      const sub={est:0,act:0,proj:0},inner=[];
+      data.forEach(d=>{if(d.c.est[cat]>0.5||d.c.act[cat]>0.5){inner.push(rowFor(d,cat));
+        sub.est+=d.c.est[cat];sub.act+=d.c.act[cat];sub.proj+=d.c.proj[cat];}});
+      if(inner.length){
+        rows.push({cls:"grp",cells:[catPill(cat)+CATS[cat].label,"","","",""].concat(cellSet(sub.est,sub.act,sub.proj))});
+        rows=rows.concat(inner);
+      }});
+  }else{
+    const divs={};
+    data.forEach(d=>{(divs[codeDivision(d.r.id)]=divs[codeDivision(d.r.id)]||[]).push(d);});
+    Object.keys(divs).sort().forEach(dv=>{
+      const sub={est:0,act:0,proj:0},inner=[];
+      divs[dv].forEach(d=>allCats.forEach(cat=>{if(d.c.est[cat]>0.5||d.c.act[cat]>0.5){inner.push(rowFor(d,cat));
+        sub.est+=d.c.est[cat];sub.act+=d.c.act[cat];sub.proj+=d.c.proj[cat];}}));
+      rows.push({cls:"grp",cells:[`<span class="costCode">Division ${dv}</span>`,divs[dv][0].r.name.split("/")[0],"","",""].concat(cellSet(sub.est,sub.act,sub.proj))});
+      rows=rows.concat(inner);
+    });
+  }
+  $('erpTable').innerHTML=tbl(head,rows);
+  const ct=categoryTotals();
+  const crows=CAT_KEYS.map(c=>[catPill(c)+CATS[c].label,money(ct.est[c]),money(ct.act[c]),money(ct.proj[c]),deltaSpan(ct.proj[c]-ct.est[c])]);
+  const tEst=CAT_KEYS.reduce((s,c)=>s+ct.est[c],0),tAct=CAT_KEYS.reduce((s,c)=>s+ct.act[c],0),tProj=CAT_KEYS.reduce((s,c)=>s+ct.proj[c],0);
+  crows.push({cls:"tot",cells:["Direct cost",money(tEst),money(tAct),money(tProj),deltaSpan(tProj-tEst)]});
+  crows.push([catPill("R")+"Revenue",money(ct.est.R),money(ct.act.R),money(ct.proj.R),deltaSpan(ct.proj.R-ct.est.R,true)]);
+  $('erpCatTable').innerHTML=tbl([["Category"],["Estimated",1],["Actual",1],["Projected",1],["Variance",1]],crows);
+}
+function crosstabMatrix(meas){
+  const cols=CAT_KEYS.concat("R");
+  const rows=E.rows.map(r=>{
+    const c=actCategories(r.id);
+    const v=cols.map(k=>{
+      if(meas==="est")return c.est[k];
+      if(meas==="act")return c.act[k];
+      if(meas==="proj")return c.proj[k];
+      if(meas==="varE")return c.proj[k]-c.est[k];
+      return c.act[k]-c.est[k]*c.earned;
+    });
+    return {r,v,sum:v.slice(0,5).reduce((a,b)=>a+b,0)};
+  });
+  const tot=cols.map((_,j)=>rows.reduce((s,row)=>s+row.v[j],0));
+  return {cols,rows,tot};
+}
+function renderCrosstab(){
+  const meas=val('xMeasure'),M=crosstabMatrix(meas),isVar=meas.startsWith("var");
+  const cell=v=>isVar?deltaSpan(v):money(v);
+  const head=[["Activity"],["Code"]].concat(M.cols.map(c=>[catPill(c)+c,1]),[["Direct total",1]]);
+  const rows=M.rows.map(row=>[row.r.name,`<span class="costCode">${row.r.code}</span>`]
+    .concat(row.v.map(cell),[isVar?deltaSpan(row.sum):money(row.sum)]));
+  rows.push({cls:"tot",cells:["Total",""].concat(M.tot.map(cell),[isVar?deltaSpan(M.tot.slice(0,5).reduce((a,b)=>a+b,0)):money(M.tot.slice(0,5).reduce((a,b)=>a+b,0))])});
+  $('crossTable').innerHTML=tbl(head,rows);
+}
+function actWindow(id){
+  let s=0,f=0;
+  for(let i=0;i<PLAN.days.length;i++){const p=PLAN.days[i].pct[id]??0;
+    if(!s&&p>1e-6)s=PLAN.days[i].d;
+    if(p>=1-1e-9){f=PLAN.days[i].d;break;}}
+  if(!f)f=PLAN.duration;
+  return {s:s||1,f};
+}
+function renderSched(){
+  const cash=CACHE.cash,ev=CACHE.evm,th=chartTheme();
+  $('schedCards').innerHTML=
+    card("Duration",`${fmt(PLAN.duration)} wd`,`NTP ${simDate(1)} → ${simDate(PLAN.duration)}`)+
+    card("Mobilization",`${fmt(PLAN.mobDays)} wd`,`fronts release day ${PLAN.mobDays+1}`)+
+    card("Peak funding",money(cash.minNet),`worst day ${cash.minDay}`,cash.minNet<0?"neg":"pos")+
+    card("Final cash",money(cash.finalCash),"after retention release",cash.finalCash<0?"neg":"pos")+
+    card("Retainage held",money(cash.retained),`${fmt(num('retainagePct'),1)}% · released D+60`)+
+    card("Ceiling access buffer",`${fmt(num('bufferLF'))} LF`,"front constraint");
+  const H=cash.horizon,D0=PLAN.duration,per=val('cashPeriod')||"day";
+  const idx=[];
+  if(per==="day"){const st=Math.max(1,Math.ceil(H/160));for(let i=1;i<=H;i+=st)idx.push(i);}
+  else{const ww=5;for(let i=ww;i<=H;i+=ww)idx.push(i);if(idx[idx.length-1]!==H)idx.push(H);}
+  const at=(arr,i)=>arr[Math.min(i,arr.length)-1];
+  const labels=idx.map(i=>per==="day"?i:simDate(i));
+  const evAt=i=>at(CACHE.evm.EV,Math.min(i,D0)),pvAt=i=>at(CACHE.evm.PV,Math.min(i,D0)),acAt=i=>at(CACHE.evm.AC,Math.min(i,D0));
+  makeChart('chCash',{type:'line',
+    data:{labels,datasets:[
+      {label:'Planned cost',data:idx.map(pvAt),borderColor:th.muted,borderDash:[5,4],backgroundColor:'transparent',pointRadius:0,borderWidth:1.8},
+      {label:'Cost',data:idx.map(acAt),borderColor:th.red,backgroundColor:'transparent',pointRadius:0,borderWidth:2},
+      {label:'Billed',data:idx.map(i=>at(cash.billedCum,i)),borderColor:th.gold,backgroundColor:'transparent',pointRadius:0,borderWidth:2},
+      {label:'Cash in',data:idx.map(i=>at(cash.cumIn,i)),borderColor:th.green,backgroundColor:'transparent',pointRadius:0,borderWidth:2},
+      {label:'Net cash',data:idx.map(i=>at(cash.net,i)),borderColor:th.blue,backgroundColor:th.blue+'22',fill:true,pointRadius:0,borderWidth:2.5}]},
+    options:{plugins:{title:{display:true,text:'Cashflow & cost curves',color:th.muted,font:{size:11}}}}});
+  const D=PLAN.duration,fs=Math.max(1,Math.ceil(D/140)),fl=[];
+  const series=PLAN.chain.map(()=>[]);
+  for(let i=0;i<PLAN.days.length;i+=fs){const row=PLAN.days[i];fl.push(row.d);
+    PLAN.chain.forEach((id,j)=>series[j].push(row.pos[id]));}
+  const palette=[th.gold,th.red,'#7c3aed','#0f766e',th.blue,'#b45309',th.green];
+  makeChart('chFronts',{type:'line',
+    data:{labels:fl,datasets:PLAN.chain.map((id,j)=>({label:E.byId[id].name,data:series[j],borderColor:palette[j%palette.length],backgroundColor:'transparent',pointRadius:0,borderWidth:2}))},
+    options:{plugins:{title:{display:true,text:'Production fronts (LF vs day)',color:th.muted,font:{size:11}}},scales:{y:{min:0,max:Math.ceil(G.length/100)*100}}}});
+  const sIdx=[];{const st=Math.max(1,Math.ceil(D/120));for(let i=1;i<=D;i+=st)sIdx.push(i);if(sIdx[sIdx.length-1]!==D)sIdx.push(D);}
+  makeChart('chSCurve',{type:'line',
+    data:{labels:sIdx,datasets:[
+      {label:'PV',data:sIdx.map(i=>ev.PV[i-1]),borderColor:th.muted,borderDash:[5,4],backgroundColor:'transparent',pointRadius:0,borderWidth:1.8},
+      {label:'EV',data:sIdx.map(i=>ev.EV[i-1]),borderColor:th.green,backgroundColor:'transparent',pointRadius:0,borderWidth:2.2},
+      {label:'AC',data:sIdx.map(i=>ev.AC[i-1]),borderColor:th.red,backgroundColor:'transparent',pointRadius:0,borderWidth:2.2}]},
+    options:{plugins:{title:{display:true,text:'S-curves',color:th.muted,font:{size:11}}}}});
+  const rows=ACTS.map(a=>{
+    const r=E.byId[a.id],w=actWindow(a.id);
+    const rate=a.kind==="linear"?fmt(G.length/Math.max(1,w.f-w.s+1))+" LF/d":a.kind==="discrete"?fmt(r.qty/Math.max(1,w.f-w.s+1),2)+" EA/d":"—";
+    return [`<span class="costCode">${a.code}</span>`,a.name,a.kind,
+      fmt(w.s),fmt(w.f),fmt(w.f-w.s+1),`${fmt(r.qty,r.unit==="EA"?0:0)} ${r.unit}`,rate,
+      `${simDate(w.s)} – ${simDate(w.f)}`];
+  });
+  $('schedTable').innerHTML=tbl([["Code"],["Activity"],["Type"],["Start",1],["Finish",1],["Days",1],["Quantity",1],["Rate",1],["Calendar"]],rows);
+}
+function renderEVM(){
+  const ev=CACHE.evm,th=chartTheme(),D=PLAN.duration;
+  $('evmCards').innerHTML=
+    card("BAC",money(ev.BAC),"budget at completion")+
+    card("Data date",ev.dd?`day ${ev.dd}`:"no actuals","from field log")+
+    card("SPI",fmt(ev.SPI,2),"schedule performance",ev.SPI<1?"neg":"pos")+
+    card("CPI",fmt(ev.CPI,2),"cost performance",ev.CPI<1?"neg":"pos")+
+    card("EAC (direct)",money(ev.eac),`VAC ${money(ev.vac)}`,ev.vac<0?"neg":"pos")+
+    card("Forecast profit",money(ev.projProfit),pct(ev.projProfit/Math.max(1,E.revenue)),ev.projProfit<0?"neg":"pos");
+  const step=Math.max(1,Math.ceil(D/160)),labels=[],pv=[],evd=[],ac=[];
+  for(let i=1;i<=D;i+=step){labels.push(i);pv.push(ev.PV[i-1]);evd.push(ev.EV[i-1]);ac.push(ev.AC[i-1]);}
+  makeChart('chEVM',{type:'line',
+    data:{labels,datasets:[
+      {label:'PV',data:pv,borderColor:th.muted,borderDash:[5,4],backgroundColor:'transparent',pointRadius:0,borderWidth:2},
+      {label:'EV',data:evd,borderColor:th.green,backgroundColor:'transparent',pointRadius:0,borderWidth:2.5},
+      {label:'AC',data:ac,borderColor:th.red,backgroundColor:'transparent',pointRadius:0,borderWidth:2.5}]},
+    options:{plugins:{title:{display:true,text:'EVM curves',color:th.muted,font:{size:11}}}}});
+  const rows=E.rows.map(r=>{
+    const c=actCategories(r.id);
+    const tcpi=(r.total-c.earned*r.total)>1&&(c.eac-c.actCost)>1?(r.total-c.earned*r.total)/(c.eac-c.actCost):1;
+    return [`<span class="costCode">${r.code}</span>`,r.name,money(r.total),pct(c.earned),
+      money(c.actCost),money(c.etc),money(c.eac),deltaSpan(c.eac-r.total),fmt(tcpi,2),
+      money(c.budgetUnit)+" / "+money(c.fUnit)];
+  });
+  $('evmTable').innerHTML=tbl([["Code"],["Activity"],["BAC",1],["% Comp",1],["AC",1],["ETC",1],["EAC",1],["VAC",1],["TCPI",1],["Unit $ bud/fcst",1]],rows);
+}
+function renderRisk(){
+  const th=chartTheme();
+  if(!RISK.length){$('riskCards').innerHTML=`<div class="note">Run the Monte Carlo simulation via the Recalculate button to generate the cost-outcome distribution.</div>`;return;}
+  const p10=percentile(RISK,.1),p50=percentile(RISK,.5),p80=percentile(RISK,.8),p90=percentile(RISK,.9);
+  const basis=CACHE.evm.eac+E.overhead+E.contingency+E.bond;
+  $('riskCards').innerHTML=
+    card("Iterations",fmt(RISK.length),`around EAC ${money(basis)}`)+
+    card("P10",money(p10),"optimistic")+
+    card("P50",money(p50),"expected",p50>E.revenue?"neg":"")+
+    card("P80",money(p80),"budget recommendation",p80>E.revenue?"neg":"")+
+    card("P90",money(p90),"conservative")+
+    card("P80 vs bid",deltaSpan(E.revenue-p80,true),"margin at risk confidence",E.revenue-p80<0?"neg":"pos");
+  const bins=28,lo=RISK[0],hi=RISK[RISK.length-1],w=(hi-lo)/bins||1,hist=new Array(bins).fill(0);
+  RISK.forEach(v=>hist[clamp(Math.floor((v-lo)/w),0,bins-1)]++);
+  makeChart('chRisk',{type:'bar',
+    data:{labels:hist.map((_,i)=>money(lo+w*(i+.5))),
+      datasets:[{label:'Outcomes',data:hist,backgroundColor:hist.map((_,i)=>lo+w*(i+.5)<=E.revenue?th.green+"bb":th.red+"bb")}]},
+    options:{plugins:{title:{display:true,text:'Monte Carlo cost distribution',color:th.muted,font:{size:11}},legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:7}}}}});
+}
+function renderTransport(){
+  if(!PLAN)return;
+  const d=SIM.day,D=PLAN.duration;
+  $('trDay').textContent=d;$('trDur').textContent=D;$('trDate').textContent=simDate(d);
+  const cyc=calToWork(num('billingCycleDays')||30);
+  let ticks=`<span style="left:${(PLAN.mobDays/D*100).toFixed(1)}%" title="Mobilization complete">M</span>`;
+  for(let b=cyc;b<D;b+=cyc)ticks+=`<span style="left:${(b/D*100).toFixed(1)}%" title="Billing day ${b}">₿</span>`;
+  $('simTicks').innerHTML=ticks;
+  const row=PLAN.days[clamp(d,1,D)-1];
+  $('simPhaseChips').innerHTML=ACTS.map(a=>{
+    const p=row.pct[a.id]??0,cls=p>=1-1e-9?"chip done":p>1e-6?"chip active":"chip";
+    return `<span class="${cls}" title="${a.name}: ${pct(p)}">${a.code.split("-")[1]} ${Math.round(p*100)}%</span>`;
+  }).join("");
+  const prevRow=PLAN.days[clamp(d-1,1,D)-1];
+  const daily=ACTS.map(a=>{
+    const r=E.byId[a.id],dp=d>1?Math.max(0,(row.pct[a.id]??0)-(prevRow.pct[a.id]??0)):(row.pct[a.id]??0);
+    return dp*r.qty>0.05?`${a.code.split("-")[1]} +${fmt(dp*r.qty,0)} ${a.unit}`:null;
+  }).filter(Boolean);
+  const ev=CACHE.evm,cash=CACHE.cash;
+  const i=clamp(d,1,D)-1;
+  const net=cash.net[Math.min(i,cash.net.length-1)];
+  $('cashStrip').innerHTML=
+    `<span style="color:var(--gold)">Today ▸ <b>${daily.length?daily.join(" · "):"—"}</b></span>`+
+    `<span>PV <b>${money(ev.PV[i])}</b></span><span>EV <b>${money(ev.EV[i])}</b></span>`+
+    `<span>AC <b>${money(ev.AC[i])}</b></span>`+
+    `<span>Net cash <b class="${net<0?'neg':'pos'}">${money(net)}</b></span>`;
+}
+function billingUnitLabel(n,m){
+  if(n.level===3){const a=E.byId[n.acts[0].id];return a.qty>0?money(a.cat.R/a.qty)+" /"+(a.driver==="LS"?"LS":a.unit):money(a.cat.R)+" LS";}
+  const lf=n.level===0?G.length:G.segLen;
+  return money(m.revenue/Math.max(1,lf))+" /LF";
+}
+function renderInspector(){
+  const n=REGBY[SEL.id]||REGBY.SYS;if(!n)return;
+  const m=nodeMetrics(n,SIM.day);
+  const crumbs=[];let cur=n;while(cur){crumbs.unshift(cur);cur=cur.parent?REGBY[cur.parent]:null;}
+  $('selPath').innerHTML=crumbs.map(c=>`<a href="#" onclick="selectNode('${c.id}');return false">${c.id}</a>`).join(" › ");
+  $('selTitle').textContent=n.label;
+  const sta=x=>`${Math.floor(x/100)}+${("0"+Math.round(x%100)).slice(-2)}`;
+  const s0=n.seg===null?0:n.seg*G.segLen,s1=n.seg===null?G.length:s0+G.segLen;
+  $('selSub').textContent=["System","Zone","Group","Component"][n.level]
+    +` · STA ${sta(s0)} – ${sta(s1)} · sim day ${SIM.day}`;
+  $('selPbar').style.width=(m.planPct*100).toFixed(1)+"%";
+  const margin=m.revenue>0?(m.revenue-m.projTotal)/m.revenue:0;
+  $('selHead').innerHTML=
+    `<div>Completion @ day</div><div>${pct(m.planPct)}</div>`+
+    `<div>Billing revenue (SOV)</div><div>${money(m.revenue)}</div>`+
+    `<div>Billing unit price</div><div>${billingUnitLabel(n,m)}</div>`+
+    `<div>Earned to date</div><div>${money(m.earnedRev)}</div>`+
+    `<div>Cost — Est / Proj</div><div>${money(m.estTotal)} / ${money(m.projTotal)}</div>`+
+    `<div>Actual cost to date</div><div>${money(m.actTotal)}</div>`+
+    `<div>Labor hrs — Est / Act</div><div>${fmt(m.laborHrsEst)} / ${fmt(m.laborHrsAct)}</div>`+
+    `<div>Forecast margin</div><div class="${margin<0?'neg':'pos'}">${pct(margin)}</div>`;
+  const q=nodeQuantities(n,G);
+  const actOf={"Main Duct":"A04","Branch Duct":"A05","Duct Weight":"A04","Insulation":"A06","Seismic Supports":"A02","Fittings":"A04","Hydronic Pipe":"A07","AHU / RTU":"A08","VAV Boxes":"A09","Terminal Diffusers":"A10","Ceiling Area":"A12","Demolition":"A14"};
+  const qrows=Object.entries(q).map(([k,o])=>{
+    const aid=actOf[k]||"A04",p=planPctForNodeAct(n,aid,SIM.day);
+    return `<tr><td>${k}</td><td>${fmt(o.v,o.u==="EA"?0:1)} ${o.u}</td><td>${fmt(o.v*p,o.u==="EA"?0:1)}</td><td>${pct(p,0)}</td></tr>`;
+  }).join("");
+  $('selQty').innerHTML=`<table class="mini"><thead><tr><th>Item</th><th>Est</th><th>Plan inst.</th><th>%</th></tr></thead><tbody>${qrows}</tbody></table>`;
+  const crows=CAT_KEYS.map(c=>
+    `<tr><td>${catPill(c)}${CATS[c].label}</td><td>${money(m.est[c])}</td><td>${money(m.act[c])}</td><td>${money(m.proj[c])}</td></tr>`).join("")+
+    `<tr class="tot"><td>Direct cost</td><td>${money(m.estTotal)}</td><td>${money(m.actTotal)}</td><td>${money(m.projTotal)}</td></tr>`+
+    `<tr><td>${catPill("R")}Revenue</td><td>${money(m.est.R)}</td><td>${money(m.earnedRev)}</td><td>${money(m.proj.R)}</td></tr>`;
+  $('selCost').innerHTML=`<table class="mini"><thead><tr><th>Category</th><th>Est</th><th>Actual</th><th>Proj</th></tr></thead><tbody>${crows}</tbody></table>`;
+  const seen={};
+  $('selCodes').innerHTML="CSI Div 23 codes: "+n.acts.filter(a=>a.share>0).map(a=>{
+    if(seen[a.id])return "";seen[a.id]=1;const act=E.byId[a.id];
+    return `<span class="costCode" title="${act.name}">${act.code}-[${CAT_KEYS.join("·")}·R]</span>`;
+  }).filter(Boolean).join(" ");
+}
+function renderTree(){
+  $('treeWrap').innerHTML=REG.map(n=>{
+    return `<a class="tnode${n.id===SEL.id?' sel':''}" style="padding-left:${7+n.level*13}px" href="#"
+      onclick="selectNode('${n.id}');return false">${n.label}${n.level===3?`<span class="cc">${E.byId[n.acts[0].id].code}</span>`:""}</a>`;
+  }).join("");
+}
+const FORMULA_LIB=[
+  ["Duct surface area","SF = L × Perimeter × 1.10","SMACNA seam/lap allowance: rectangular 2(W+H)/12, spiral πD/12."],
+  ["Duct weight","lb = SF × gauge wt","Galv steel gauge wt: 26ga = 0.75 lb/SF, 22ga = 1.25, 18ga = 2.00."],
+  ["Insulation","SF = duct SF × 1.15","ASHRAE 90.1 Table 6.8.2C: wrap thickness per pipe size and location."],
+  ["Seismic supports","count = ⌈L / spacing⌉ × 2","SMACNA seismic restraint: 8 ft (rectangular), 10 ft (spiral)."],
+  ["Hydronic pipe","LF = trunk × ratio","0.75 CHW, 0.55 HW, 0.35 refrigerant, 0.15 gas."],
+  ["AHU/RTU setting","hrs = rig + set + pipe + start","ARI 340/360 packaged rooftop; ARI 430 custom AHU."],
+  ["VAV / FCU","hrs = quantity × 4.0","ARI 880 VAV terminal with electric reheat."],
+  ["Diffusers","hrs = quantity × 2.0","SMACNA air distribution devices."],
+  ["Cost codes (CSI)","code = XXYY-PHASE-{L|M|C|S|E|R}","CSI Division 23: 0100 mobilization, 0310 main duct, 0510 AHU, etc."],
+  ["Production fronts","posᵢ(d+1) = min(L, posᵢ + rateᵢ, posᵢ₋₁ − buffer)","Linear march schedule: each crew chases the one ahead, limited by the ceiling access buffer."],
+  ["Projected cost (EAC)","EAC = AC + (Qty − Qtyact) × unit$","Per activity; unit$ = actual, budget, or 50/50 blend."],
+  ["EVM extrapolation","EV(t>dd) = EVdd + ΔPV·SPI ; AC = ACdd + ΔEV ÷ CPI","Curves are actual to data date, performance-indexed beyond."],
+  ["Cashflow","out(t+terms꜀) += accrual꜀(t) ; in(bill+lag) += earned·(1−ret)","Per-category payment terms (L/C weekly, M/E net-30, S net-45)."]
+];
+function renderFormulas(){
+  $('formulaList').innerHTML=FORMULA_LIB.map(f=>`<div class="formula"><b>${f[0]}</b> — <code>${f[1]}</code><div class="src">${f[2]}</div></div>`).join("");
+}
+function geoWarnings(){
+  const w=[],g=G,p=g.p;
+  if(g.insul<1.5)w.push(`Insulation thickness ${fmt(g.insul,1)}" is below ASHRAE 90.1 minimum for supply ducts — verify.`);
+  if(num('coverFt')<18)w.push(`Ceiling plenum ${fmt(num('coverFt'),1)}" is tight for ${g.p.display} — verify ceiling access.`);
+  if(g.segs<2&&g.length>400)w.push(`Long trunk (${fmt(g.length)} LF) split across few zones — consider more zone boundaries.`);
+  if(g.vavCount<6&&g.floorSF>40000)w.push(`VAV count (${g.vavCount}) is low for ${fmt(g.floorSF)} SF — verify zoning per ASHRAE 62.1.`);
+  if(num('ground')==="Return air plenum"&&g.insul<1.5)w.push(`Return air plenum + insulation below 1.5" — verify sealing per SMACNA.`);
+  return w;
+}
+function renderValidation(){
+  const el=$('valWarn');if(!el)return;
+  const w=geoWarnings();
+  el.innerHTML=w.length?w.map(x=>`<div class="warnBanner">⚠ ${x}</div>`).join(""):"";
+}
+function validateActual(r,i){
+  const flags=[],a=ACTS.find(x=>x.id===r.act),e=a?E.byId[a.id]:null;
+  if(!a){flags.push("Unknown activity");return flags;}
+  if(a.kind==="linear"&&!String(r.seg||"").trim())flags.push("Linear activity without zone tag");
+  if(e){
+    const cum=ACTUALS.slice(0,i+1).filter(x=>x.act===r.act).reduce((s,x)=>s+(+x.qty||0),0);
+    if(cum>e.qty*1.02)flags.push(`Cumulative qty ${fmt(cum,1)} exceeds plan ${fmt(e.qty,1)} ${e.unit}`);
+  }
+  return flags;
+}
+
+/* =================== 13. CONTROLS & EXECUTIVE =================== */
+function buildBalances(){
+  if(!G||!E||!PLAN||!CACHE.evm||!CACHE.cash)return [];
+  const ev=CACHE.evm,cash=CACHE.cash,rows=[];
+  const direct=E.rows.reduce((s,r)=>s+r.total,0);
+  rows.push({id:'BAL-COST',label:'Estimate cost identity',status:Math.abs(direct-E.subtotal)<=2?'PASS':'FAIL',note:`Activity total ${money(direct)} vs subtotal ${money(E.subtotal)}`});
+  rows.push({id:'BAL-BAC',label:'EVM baseline identity',status:Math.abs(ev.BAC-E.subtotal)<=2?'PASS':'FAIL',note:`BAC ${money(ev.BAC)} vs budget ${money(E.subtotal)}`});
+  const last=cash.net.length-1,ident=(cash.cumIn[last]||0)-(cash.cumOut[last]||0);
+  rows.push({id:'BAL-CASH',label:'Cashflow identity',status:Math.abs(ident-cash.finalCash)<=2?'PASS':'FAIL',note:`Cash in − out ${money(ident)} vs final ${money(cash.finalCash)}`});
+  rows.push({id:'BAL-SCHED',label:'Schedule completion test',status:PLAN.days[PLAN.days.length-1].pct.A13>=.999?'PASS':'FAIL',note:'All activities complete at planned finish'});
+  rows.push({id:'BAL-BOUNDARY',label:'Public-boundary language',status:document.body.textContent.includes('Not sealed design')?'PASS':'FAIL',note:'Required design, approval, and payment-certification boundaries visible'});
+  return rows;
+}
+function buildAlerts(){
+  if(!G||!E||!PLAN||!CACHE.evm||!CACHE.cash)return [];
+  const rows=[],ev=CACHE.evm,cash=CACHE.cash;
+  geoWarnings().forEach((m,i)=>rows.push({id:`GEOM-${i}`,domain:'Geometry',severity:/below|exceeds|less|tight|low/i.test(m)?'critical':'watch',title:'Geometry assumption',message:m,source:'tForm'}));
+  if(ev.dd){
+    if(ev.SPI<.97)rows.push({id:'EVM-SPI',domain:'Schedule',severity:ev.SPI<.90?'critical':'watch',title:'Schedule performance below threshold',message:`SPI ${fmt(ev.SPI,2)} (threshold 0.97)`,source:'tEVM'});
+    if(ev.CPI<.97)rows.push({id:'EVM-CPI',domain:'Cost',severity:ev.CPI<.90?'critical':'watch',title:'Cost performance below threshold',message:`CPI ${fmt(ev.CPI,2)} (threshold 0.97)`,source:'tEVM'});
+  }
+  const baseline=E.subtotal+E.overhead+E.contingency+E.bond;
+  const forecast=ev.eac+E.overhead+E.contingency+E.bond;
+  const costVar=(forecast-baseline)/Math.max(1,baseline);
+  if(costVar>.01)rows.push({id:'COST-EAC',domain:'Cost',severity:costVar>.05?'critical':'watch',title:'Forecast cost exceeds control budget',message:`Total forecast ${money(forecast)} vs ${money(baseline)} baseline`,source:'tEVM'});
+  const margin=ev.projProfit/Math.max(1,E.revenue);
+  if(margin<.10)rows.push({id:'COMM-MARGIN',domain:'Commercial',severity:margin<.05?'critical':'watch',title:'Forecast margin below threshold',message:`Forecast margin ${pct(margin)} (target 10%)`,source:'tEVM'});
+  const funding=Math.abs(cash.minNet)/Math.max(1,E.revenue);
+  if(funding>.40)rows.push({id:'CASH-FUNDING',domain:'Cash',severity:funding>.75?'critical':'watch',title:'Peak funding requirement',message:`Peak ${money(cash.minNet)} (${pct(funding)} of revenue) day ${cash.minDay}`,source:'tSched'});
+  if(!RISK.length)rows.push({id:'RISK-NOT-RUN',domain:'Risk',severity:'info',title:'Risk distribution not refreshed',message:'Run Monte Carlo before formal forecast review.',source:'tRisk'});
+  else{
+    const p80=percentile(RISK,.8),ratio=p80/Math.max(1,E.revenue);
+    if(ratio>.95)rows.push({id:'RISK-P80',domain:'Risk',severity:ratio>1?'critical':'watch',title:'P80 cost challenges bid coverage',message:`P80 ${money(p80)} = ${pct(ratio)} of bid`,source:'tRisk'});
+  }
+  if(!ACTUALS.length)rows.push({id:'DATA-NO-ACTUALS',domain:'Data Quality',severity:'info',title:'Plan-based demo active',message:'Load a sample scenario to activate actual-performance CPI/SPI.',source:'tField'});
+  const fR=window.RC8_DATA?.fields?.length||0;
+  if(fR)rows.push({id:'DATA-FIELDS',domain:'Data Quality',severity:'info',title:`${fR} field reports active`,message:'Sample records tagged source = demo.',source:'tField'});
+  return rows;
+}
+function renderControlSystem(){
+  if(!G||!E||!PLAN||!CACHE.evm)return;
+  const balances=buildBalances(),alerts=buildAlerts();
+  const critical=alerts.filter(a=>a.severity==='critical').length,watch=alerts.filter(a=>a.severity==='watch').length;
+  const gate=$('controlGate');
+  const decision=critical?{tone:'critical',label:'HOLD / CORRECT',basis:`${critical} action-required condition${critical===1?'':'s'} active`}:watch?{tone:'watch',label:'PROCEED WITH CAUTION',basis:`${watch} watch condition${watch===1?'':'s'} require ownership`}:{tone:'good',label:'CONTROLLED TO PROCEED',basis:'No action-required or watch conditions active.'};
+  if(gate){gate.className=`controlGate ${decision.tone}`;$('controlDecision').textContent=decision.label;$('controlDecisionBasis').textContent=decision.basis;}
+  const badge=$('controlHeaderBadge');
+  if(badge){badge.textContent=critical+watch;badge.style.background=critical?'var(--red)':watch?'var(--amber)':'var(--slate)';}
+  const pulse=$('controlPulse');
+  if(pulse){pulse.className=decision.tone;pulse.style.borderColor=`var(--${decision.tone==='good'?'green':decision.tone==='watch'?'amber':'red'})`;$('controlPulseText').textContent=`${decision.label} · ${critical} action · ${watch} watch`;}
+  const counts=$('controlCounts');
+  if(counts)counts.innerHTML=[
+    ['critical','Action',critical],['watch','Watch',watch],['good','Info',alerts.filter(a=>a.severity==='info').length],['ack','Balances',balances.filter(b=>b.status==='PASS').length]
+  ].map(x=>`<div class="controlCount ${x[0]}"><b>${x[2]}</b><span>${x[1]}</span></div>`).join('');
+  const register=$('controlRegister');
+  if(register){
+    const sev=val('controlSeverity')||'all';
+    const filtered=alerts.filter(a=>sev==='all'||a.severity===sev);
+    register.innerHTML=filtered.length?filtered.map(a=>`
+      <div class="controlAlert ${a.severity}">
+        <div class="rail"></div>
+        <div><h4>${a.title}</h4><p>${a.message}</p>
+        <div class="controlMeta"><span class="controlChip ${a.severity}">${a.severity==='critical'?'ACTION REQUIRED':a.severity==='watch'?'WATCH':'INFO'}</span><span class="controlChip">${a.domain}</span></div></div>
+        <div class="controlAlertActions"><button class="hbtn" onclick="openDeckTab('${a.source}')">Open Source</button></div>
+      </div>`).join(''):'<div class="note">No controls match the current filter.</div>';
+  }
+  const bal=$('controlBalances');
+  if(bal)bal.innerHTML=balances.map(b=>`<div class="balanceItem ${b.status==='FAIL'?'fail':b.status==='WARN'?'warn':''}"><em>${b.status}</em><b>${b.label}</b><span>${b.note}</span></div>`).join('');
+}
+
+/* =================== 14. ACTUALS =================== */
+const RC8_DATA={mode:'demo-plan',seed:81473,fields:[],costs:[],claims:[]};
+function seededRandom(seed){let a=(Math.abs(parseInt(seed,10))||81473)>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+function isoDate(dt){return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
+function isWorkDay(dt){const ww=parseInt(val('workWeek'),10)||5,d=dt.getDay();return ww===7||(ww===6&&d!==0)||(ww===5&&d!==0&&d!==6);}
+function workDayISO(day){const dt=new Date((val('startDate')||'2026-06-01')+'T12:00:00');let left=Math.max(0,Math.round(+day)-1);while(left>0){dt.setDate(dt.getDate()+1);if(isWorkDay(dt))left--;}return isoDate(dt);}
+function addCalendarDays(iso,days){const dt=new Date((iso||val('startDate')||'2026-06-01')+'T12:00:00');dt.setDate(dt.getDate()+Math.round(+days));return isoDate(dt);}
+function calendarToWorkDay(iso){if(!iso)return 1;const start=new Date((val('startDate')||'2026-06-01')+'T12:00:00'),end=new Date(iso+'T12:00:00');if(!Number.isFinite(end.getTime())||end<=start)return 1;let day=1,dt=new Date(start),guard=0;while(dt<end&&guard++<1000){dt.setDate(dt.getDate()+1);if(isWorkDay(dt))day++;}return day;}
+function generateSample(mode,seed){
+  const cfg={productivity:[.97,1.04],cost:[.97,1.04],paymentLag:42};
+  if(mode==='demo-actuals-cost-overrun'){cfg.cost=[1.12,1.21];cfg.paymentLag=45;}
+  if(mode==='demo-actuals-schedule-delay'){cfg.productivity=[.74,.88];cfg.paymentLag=48;}
+  if(mode==='demo-claims-payment-lag'){cfg.paymentLag=95;}
+  const rng=seededRandom(seed),fields=[],costs=[],claims=[],legacy=[];
+  const horizon=Math.min(PLAN.duration,Math.max(15,Math.round(PLAN.duration*.58)));
+  let fSeq=0,cSeq=0,clSeq=0;
+  const grouped={};
+  for(let d=1;d<=horizon;d++){
+    const row=PLAN.days[d-1],prev=d>1?PLAN.days[d-2]:null;
+    ACTS.forEach(a=>{
+      const e=E.byId[a.id],dp=Math.max(0,(row.pct[a.id]||0)-(prev?(prev.pct[a.id]||0):0));
+      if(!e||e.qty<=0||dp<=1e-8)return;
+      const prod=cfg.productivity[0]+rng()*(cfg.productivity[1]-cfg.productivity[0]);
+      const qty=e.qty*dp*prod;
+      if(qty<=1e-6)return;
+      const zt=clamp(Math.floor(((row.pos[a.id]||0)/G.length)*G.segs)+1,1,G.segs);
+      const zone=a.kind==='linear'?`ZONE-${zt}`:'ALL';
+      const reportId=`FCR-${String(++fSeq).padStart(4,'0')}`;
+      fields.push({report_id:reportId,report_date:workDayISO(d),work_day:d,shift:'Day',weather:rng()<.13?'Rain':'Clear',
+        crew:a.crew,foreman:['A. Demo','B. Demo','C. Demo'][Math.floor(rng()*3)],activity_id:a.id,activity_code:a.code,
+        segment:zone,station_from:a.kind==='linear'?geoStation((row.pos[a.id]||0)):'',station_to:'',
+        qty_completed:+qty.toFixed(2),unit:a.unit,percent_rework:rng()*.01,inspection_status:'Accepted',inspector_note:'Demo acceptance.',source:'demo'});
+      // cost records
+      const costFactor=cfg.cost[0]+rng()*(cfg.cost[1]-cfg.cost[0]);
+      const laborRate=e.laborHrs?e.cat.L/e.laborHrs:0,equipRate=e.equipHrs?e.cat.E/e.equipHrs:0;
+      [['L',e.cat.L*dp*costFactor,e.laborHrs*dp*costFactor,laborRate,a.crew],
+       ['M',e.cat.M*dp*costFactor,0,0,'Material'],
+       ['C',e.cat.C*dp*costFactor,0,0,'Consumables'],
+       ['S',e.cat.S*dp*costFactor,0,0,'Trade'],
+       ['E',e.cat.E*dp*costFactor,e.equipHrs*dp*costFactor,equipRate,'Equipment']].forEach(([cat,amount,hours,rate,vendor])=>{
+        if(+amount<=.01)return;
+        costs.push({cost_record_id:`AC-${String(++cSeq).padStart(5,'0')}`,work_day:d,cost_date:workDayISO(d),
+          activity_id:a.id,activity_code:a.code,segment:zone,cost_category:cat,
+          cost_type:{L:'Labor',M:'Material',C:'Consumable',S:'Subcontract',E:'Equipment'}[cat],
+          qty:+qty.toFixed(2),unit:a.unit,hours:+hours.toFixed(2),rate:+rate.toFixed(2),amount:+amount.toFixed(2),
+          vendor_or_crew:vendor,source_doc:reportId,source:'demo'});
+      });
+      legacy.push({src:'demo',act:a.id,seg:zone==='ALL'?'':zone.replace('ZONE-',''),day:d,qty:+qty.toFixed(2),
+        mh:+(e.laborHrs*dp*costFactor).toFixed(2),rate:+(laborRate||0).toFixed(2),
+        eqh:+(e.equipHrs*dp*costFactor).toFixed(2),eqr:+(equipRate||0).toFixed(2),
+        mat:+(e.cat.M*dp*costFactor).toFixed(2),sub:+(e.cat.S*dp*costFactor).toFixed(2)});
+      // claims: one per activity every ~half period
+      const periodSpan=Math.max(10,Math.round(horizon/2));
+      const key=[Math.floor((d-1)/periodSpan),a.id,zone].join('|');
+      const g=grouped[key]||(grouped[key]={period:Math.floor((d-1)/periodSpan),activity_id:a.id,activity_code:a.code,segment:zone,unit:a.unit,qty:0,periodStart:d,periodEnd:Math.min(horizon,d+periodSpan-1)});
+      g.qty+=qty;
+      g.periodEnd=Math.max(g.periodEnd,d);
+    });
+  }
+  // finalize claims
+  Object.values(grouped).forEach(g=>{
+    const e=E.byId[g.activity_id];if(!e)return;
+    const rate=e.qty>0?e.revenue/e.qty:0;
+    const claimedQty=g.qty*.985,approvedQty=claimedQty*(.975+rng()*.025);
+    const claimDate=addCalendarDays(workDayISO(g.periodEnd),3);
+    const isLatest=g.periodEnd>=horizon-3;
+    let status='Paid',paymentDate='';
+    if(mode==='demo-claims-payment-lag'&&isLatest){status='Pending Backup';paymentDate='';}
+    else if(isLatest&&rng()<.45){status='Approved';}
+    else{paymentDate=addCalendarDays(claimDate,cfg.paymentLag);}
+    claims.push({claim_id:`CLM-${String(++clSeq).padStart(3,'0')}`,
+      period_start:workDayISO(g.periodStart),period_end:workDayISO(g.periodEnd),
+      claim_date:claimDate,pay_item:e.name,activity_id:g.activity_id,activity_code:g.activity_code,segment:g.segment,
+      claimed_qty:+claimedQty.toFixed(2),approved_qty:+approvedQty.toFixed(2),unit:g.unit,
+      billing_unit_rate:+rate.toFixed(2),claimed_amount:+(claimedQty*rate).toFixed(2),approved_amount:+(approvedQty*rate).toFixed(2),
+      retainage_pct:5,retainage_amount:+(approvedQty*rate*.05).toFixed(2),net_due:+(approvedQty*rate*.95).toFixed(2),
+      payment_status:status,payment_date:paymentDate,owner_note:'Representative demo.',source:'demo',
+      claim_work_day:calendarToWorkDay(claimDate),payment_work_day:paymentDate?calendarToWorkDay(paymentDate):0});
+  });
+  return {fields,costs,claims,legacy,horizon};
+}
+function generateRC8Scenario(mode,seed){
+  RC8_DATA.mode=DATA_MODE_LABELS[mode]?mode:'demo-plan';RC8_DATA.seed=parseInt(seed,10)||81473;
+  if(RC8_DATA.mode==='demo-plan'){
+    RC8_DATA.fields=[];RC8_DATA.costs=[];RC8_DATA.claims=[];ACTUALS=[];
+  }else{
+    const data=generateSample(RC8_DATA.mode,RC8_DATA.seed);
+    RC8_DATA.fields=data.fields;RC8_DATA.costs=data.costs;RC8_DATA.claims=data.claims;ACTUALS=data.legacy;
+    SIM.day=Math.max(SIM.day,Math.min(PLAN.duration,data.horizon));
+  }
+  const sel=$('actualDataMode');if(sel)sel.value=RC8_DATA.mode;
+  const input=$('actualSeed');if(input)input.value=RC8_DATA.seed;
+  recalcAll(false);renderActualsStudio();renderControlSystem();
+}
+const DATA_MODE_LABELS={
+  'demo-plan':{label:'Plan-based demo active',note:'Load sample actuals to activate CPI/SPI and claim/payment analytics.'},
+  'demo-actuals-controlled':{label:'Sample actuals: controlled',note:'Controlled sample field reports and actual costs loaded.'},
+  'demo-actuals-cost-overrun':{label:'Sample actuals: cost overrun',note:'Sample actual cost pressure loaded for variance review.'},
+  'demo-actuals-schedule-delay':{label:'Sample actuals: schedule delay',note:'Sample productivity delay loaded for CPI/SPI review.'},
+  'demo-claims-payment-lag':{label:'Sample claims: payment lag',note:'Sample claim approval, retainage, and payment-lag loaded.'},
+  'field-actuals':{label:'Field / imported actuals',note:'Validation, staleness, quantity, claim, and payment controls are active.'}
+};
+function renderActualsStudio(){
+  if(!G||!E||!PLAN||!CACHE.evm)return;
+  const F=RC8_DATA.fields,C=RC8_DATA.costs,K=RC8_DATA.claims,maxDay=Math.max(0,...F.map(x=>+x.work_day||0));
+  const cfg=DATA_MODE_LABELS[RC8_DATA.mode];
+  const label=$('actualModeLabel'),note=$('actualModeNote');
+  if(label)label.textContent=cfg.label;if(note)note.textContent=cfg.note;
+  const actualCost=C.reduce((s,x)=>s+(x.cost_category!=='R'?+x.amount:0),0);
+  const earned=CACHE.evm.dd?CACHE.evm.EV[CACHE.evm.dd-1]/Math.max(1,CACHE.evm.BAC)*E.revenue:0;
+  const claimed=K.reduce((s,x)=>s+ +x.claimed_amount,0),approved=K.reduce((s,x)=>s+ +x.approved_amount,0);
+  const paid=K.filter(x=>x.payment_status==='Paid').reduce((s,x)=>s+ +x.net_due,0);
+  const retainage=K.reduce((s,x)=>s+ +x.retainage_amount,0);
+  const pending=K.filter(x=>x.payment_status!=='Paid').reduce((s,x)=>s+ +x.net_due,0);
+  $('actualsKpis').innerHTML=
+    card('Field data date',maxDay?workDayISO(maxDay):'Plan only',maxDay?`working day ${maxDay}`:'no actuals asserted')+
+    card('Actual cost to date',money(actualCost),`${C.filter(x=>x.cost_category!=='R').length} cost records`)+
+    card('Earned revenue to date',money(earned),'earned, not claim approved')+
+    card('CPI / SPI',`${fmt(CACHE.evm.CPI,2)} / ${fmt(CACHE.evm.SPI,2)}`,'cost / schedule',CACHE.evm.CPI<.9||CACHE.evm.SPI<.9?'neg':'')+
+    card('Claimed to date',money(claimed),`${K.length} payment lines`)+
+    card('Approved to date',money(approved),'demo approval only')+
+    card('Paid to date',money(paid),'net of modeled retainage')+
+    card('Retainage held',money(retainage),'representative 5% hold')+
+    card('Pending / disputed',money(pending),'unpaid net due')+
+    card('Cash gap from payment lag',money(Math.max(0,claimed-paid)),'approved/pending less paid',pending>0?'neg':'pos');
+  // field reports table
+  const fieldRows=F.length?[...F].sort((a,b)=>(+b.work_day)-(+a.work_day)).slice(0,200).map(r=>[
+    `<span class="costCode">${r.report_id}</span>`,r.report_date,fmt(r.work_day),
+    `<span class="costCode">${r.activity_code}</span>`,r.segment,
+    `${fmt(r.qty_completed,2)} ${r.unit}`,
+    `<span class="statusPill ${r.inspection_status==='Accepted'?'accepted':'pending'}">${r.inspection_status}</span>`,
+    `<span class="statusPill info">${r.source}</span>`
+  ]):[["<div style='padding:18px;color:var(--muted)'>Plan-based demo active. Generate a sample scenario.</div>","","","","","","",""]];
+  $('fieldReportsTable').innerHTML=tbl([["Report"],["Date"],["Day",1],["Activity"],["Zone"],["Qty",1],["Inspection"],["Source"]],fieldRows);
+  // claims
+  const claimRows=K.length?[...K].sort((a,b)=>String(b.claim_date).localeCompare(String(a.claim_date))).slice(0,200).map(r=>[
+    `<span class="costCode">${r.claim_id}</span>`,`${r.period_start} to ${r.period_end}`,r.pay_item,r.segment,
+    `${fmt(r.claimed_qty,2)} ${r.unit}`,`${fmt(r.approved_qty,2)} ${r.unit}`,money(r.claimed_amount),money(r.approved_amount),
+    money(r.retainage_amount),money(r.net_due),
+    `<span class="statusPill ${r.payment_status.toLowerCase().replace(/\s+/g,'-')}">${r.payment_status}</span>`,
+    r.payment_date||'—'
+  ]):[["<div style='padding:18px;color:var(--muted)'>No claim records. Sample records are never presented as payment certification.</div>","","","","","","","","","","",""]];
+  $('claimsTable').innerHTML=tbl([["Claim"],["Period"],["Pay item"],["Zone"],["Claimed",1],["Approved",1],["Claimed $",1],["Approved $",1],["Retainage",1],["Net due",1],["Status"],["Paid"]],claimRows);
+  // reconciliation
+  const recon=[];
+  if(!F.length&&!C.length&&!K.length){
+    ['Model quantity vs field completed','Field accepted vs claimed','Claimed vs approved','Approved vs paid','Actual cost vs earned','Claim lag vs threshold'].forEach(x=>recon.push({status:'INFO',label:x,note:'Plan-based demo active; no actuals asserted.'}));
+  }else{
+    recon.push({status:'PASS',label:'Field reports tagged to zones',note:`${F.length} field reports across ${[...new Set(F.map(x=>x.segment))].length} zones.`});
+    recon.push({status:'PASS',label:'Claims referenced to activities',note:`${K.length} claim lines linked to CSI Div 23 activity codes.`});
+    recon.push({status:actualCost>earned*1.08?'WATCH':'INFO',label:'Actual cost vs earned revenue',note:`${money(actualCost)} cost vs ${money(earned)} earned.`});
+    recon.push({status:pending>0?'WATCH':'PASS',label:'Approved vs paid',note:`${money(pending)} pending payment.`});
+    const lagThreshold=Math.max(45,+num('paymentLagDays'));
+    const lagged=K.filter(x=>x.payment_status==='Paid'&&x.payment_date).filter(x=>(new Date(x.payment_date)-new Date(x.claim_date))/86400000>lagThreshold);
+    recon.push({status:lagged.length?'WATCH':'PASS',label:'Payment lag vs threshold',note:`${lagged.length} paid lines exceed ${lagThreshold} days.`});
+  }
+  $('actualsReconciliation').innerHTML=recon.map(x=>`<div class="reconItem ${x.status.toLowerCase()}"><span class="statusPill ${x.status.toLowerCase()}">${x.status}</span><b>${x.label}</b><p>${x.note}</p></div>`).join('');
+  // charts
+  const th=chartTheme(),D=PLAN.duration,step=Math.max(1,Math.ceil(D/55)),labels=[],planned=[],actual=[];
+  const pipe=E.byId.A04;
+  let actualCum=0;const actualDay={};
+  F.filter(x=>x.activity_id==='A04').forEach(x=>actualDay[+x.work_day]=(actualDay[+x.work_day]||0)+ +x.qty_completed);
+  for(let d=1;d<=D;d++){actualCum+=actualDay[d]||0;
+    if(d===1||d===D||d%step===0){labels.push(d);planned.push(pipe.qty*(PLAN.days[d-1]?.pct?.A04||0));actual.push(actualCum);}}
+  makeChart('chActualQty',{type:'line',data:{labels,datasets:[
+    {label:'Planned duct LF',data:planned,borderColor:th.blue,pointRadius:0,borderDash:[5,4]},
+    {label:'Field-reported duct LF',data:actual,borderColor:th.gold,pointRadius:0}
+  ]},options:{plugins:{title:{display:true,text:'Planned vs field-reported duct quantity',color:th.muted,font:{size:11}}}}});
+  const zoneLabels=Array.from({length:G.segs},(_,i)=>`ZONE-${i+1}`);
+  const zoneActual=zoneLabels.map(z=>F.filter(x=>x.activity_id==='A04'&&x.segment===z).reduce((s,x)=>s+ +x.qty_completed,0));
+  makeChart('chSegmentCompletion',{type:'bar',data:{labels:zoneLabels,datasets:[
+    {label:'Model LF',data:zoneLabels.map(()=>G.segLen),backgroundColor:th.blue+'77'},
+    {label:'Field LF',data:zoneActual,backgroundColor:th.green}
+  ]},options:{plugins:{title:{display:true,text:'Duct completion by zone',color:th.muted,font:{size:11}}}}});
+}
+
+/* =================== 15. EXECUTIVE =================== */
+function execRand(seed){let t=(seed>>>0)+0x6D2B79F5;return function(){t+=0x6D2B79F5;let r=Math.imul(t^t>>>15,1|t);r^=r+Math.imul(r^r>>>7,61|r);return ((r^r>>>14)>>>0)/4294967296;};}
+const EXEC={on:false,scenario:'base',seed:1313,series:null};
+function execScenarioFactors(name){
+  const base={prodVol:.10,costVol:.06,riskProb:.08,oppProb:.05,riskImpact:.055,oppImpact:.035,prodBias:0,costBias:0};
+  if(name==='risk')return {...base,prodVol:.18,costVol:.12,riskProb:.18,oppProb:.025,riskImpact:.095,oppImpact:.018,prodBias:-.08,costBias:.10};
+  if(name==='recovery')return {...base,prodVol:.14,costVol:.08,riskProb:.08,oppProb:.11,riskImpact:.045,oppImpact:.05,prodBias:.03,costBias:.02};
+  if(name==='opportunity')return {...base,prodVol:.12,costVol:.055,riskProb:.055,oppProb:.16,riskImpact:.035,oppImpact:.07,prodBias:.08,costBias:-.05};
+  return base;
+}
+function execBuildSeries(){
+  if(!G||!E||!PLAN)return null;
+  const rand=execRand(EXEC.seed),f=execScenarioFactors(EXEC.scenario);
+  const D=PLAN.duration,L=G.length,rev=E.revenue,budget=E.subtotal+E.overhead+E.contingency+E.bond;
+  let cumPlan=0,cumActual=0,cumProg=0,cumOpp=0,cumRiskReal=0,cashIn=0,cashOut=0,billed=0;
+  const rows=[];const risk0=budget*(EXEC.scenario==='risk'?.18:.115);
+  const lag=calToWork(num('paymentLagDays')||45),retain=num('retainagePct')/100;
+  const pending=[];
+  for(let d=1;d<=D;d++){
+    const planEV=PLAN.planEV[d-1]||0,prevPlanEV=PLAN.planEV[d-2]||0,planCost=Math.max(0,planEV-prevPlanEV);
+    const plannedLF=(PLAN.days[d-1]?.pos?.A04||0)-(PLAN.days[d-2]?.pos?.A04||0);
+    const phase=d/D;
+    let prodFactor=1+f.prodBias+(rand()-.5)*2*f.prodVol;
+    let riskEvent=rand()<f.riskProb,oppEvent=rand()<f.oppProb;
+    if(riskEvent)prodFactor-=.20+rand()*.25;
+    if(oppEvent)prodFactor+=.10+rand()*.18;
+    const actualLF=Math.max(0,plannedLF*clamp(prodFactor,.35,1.65));
+    cumProg=clamp(cumProg+actualLF,0,L);
+    let costFactor=1+f.costBias+(rand()-.5)*2*f.costVol;
+    if(riskEvent)costFactor+=.10+rand()*.22;
+    if(oppEvent)costFactor-=.05+rand()*.16;
+    const actualCost=Math.max(0,planCost*clamp(costFactor,.55,1.85));
+    cumPlan+=planCost;cumActual+=actualCost;cashOut+=actualCost*(.72+.18*rand());
+    if(d%calToWork(num('billingCycleDays')||30)===0||d===D){
+      const bill=rev*(cumProg/L)-billed;if(bill>0){billed+=bill;pending.push([d+lag,bill*(1-retain)]);}
+    }
+    for(const p of pending){if(p[0]===d)cashIn+=p[1];}
+    const riskRemaining=Math.max(0,risk0*(1-phase*.78)+cumRiskReal*.52-cumOpp*.34);
+    const forecast=cumActual+(budget-cumPlan)*clamp((cumActual/Math.max(1,cumPlan)),.72,1.55)+riskRemaining*.45-cumOpp*.25;
+    rows.push({day:d,label:'D'+d,plannedLF,actualLF,planCost,cumPlan,actualCost,cumActual,forecast,budget,variance:forecast-budget,billed,cashIn,cashOut,netCash:cashIn-cashOut,riskRemaining,cumRiskReal,cumOpp,netExposure:riskRemaining+cumRiskReal-cumOpp,margin:rev-forecast});
+  }
+  return rows;
+}
+function renderExecutive(){
+  if(!EXEC.on||!G||!E||!PLAN)return;
+  const rows=execBuildSeries();if(!rows)return;
+  const d=clamp(SIM.day,1,rows.length),cur=rows[d-1],th=chartTheme();
+  $('execKpis').innerHTML=[
+    ['Budget',money(cur.budget),'baseline'],['Actual Cost',money(cur.cumActual),'through day '+d],
+    ['Projected Cost',money(cur.forecast),'EAC-style'],['Billing',money(cur.billed),'submitted'],
+    ['Cash Received',money(cur.cashIn),'lag/retainage'],
+    ['Net Cash',money(cur.netCash),'cash in − out',cur.netCash<0?'neg':'pos'],
+    ['Forecast Margin',money(cur.margin),pct(cur.margin/Math.max(1,E.revenue)),cur.margin<0?'neg':'pos'],
+    ['Risk Exposure',money(cur.riskRemaining),'remaining','neg'],
+    ['Opportunity',money(cur.cumOpp),'captured','pos'],
+    ['VAC',money(cur.variance),'forecast − budget',cur.variance>0?'neg':'pos']
+  ].map(k=>`<div class="execKpi"><div class="k">${k[0]}</div><div class="v ${k[3]||''}">${k[1]}</div><div class="s">${k[2]}</div></div>`).join('');
+  const labels=rows.map(r=>r.label),yMoney={ticks:{callback:v=>'$'+Math.round(v/1000)+'k'}};
+  const live=fn=>rows.map((r,i)=>i<d?fn(r):null);
+  makeChart('execCashChart',{type:'line',data:{labels,datasets:[
+    {label:'Planned',data:live(r=>r.cumPlan),borderColor:th.blue,pointRadius:0,tension:.25},
+    {label:'Actual',data:live(r=>r.cumActual),borderColor:th.red,pointRadius:0,tension:.25},
+    {label:'Billed',data:live(r=>r.billed),borderColor:th.gold,pointRadius:0,tension:.25},
+    {label:'Cash in',data:live(r=>r.cashIn),borderColor:th.green,pointRadius:0,tension:.25},
+    {label:'Net cash',data:live(r=>r.netCash),borderColor:th.muted,pointRadius:0,tension:.25}]},options:{scales:{y:yMoney}}});
+  makeChart('execVarianceChart',{type:'line',data:{labels,datasets:[
+    {label:'Budget',data:rows.map(r=>r.budget),borderColor:th.blue,pointRadius:0,borderDash:[4,4]},
+    {label:'Forecast',data:live(r=>r.forecast),borderColor:th.red,pointRadius:0,tension:.25},
+    {label:'VAC',data:live(r=>r.variance),borderColor:th.gold,pointRadius:0,tension:.25}]},options:{scales:{y:yMoney}}});
+  makeChart('execProdChart',{type:'line',data:{labels,datasets:[
+    {label:'Planned LF/d',data:live(r=>r.plannedLF),borderColor:th.blue,pointRadius:0,tension:.25},
+    {label:'Actual LF/d',data:live(r=>r.actualLF),borderColor:th.gold,pointRadius:0,tension:.25}]},options:{scales:{y:{ticks:{callback:v=>Math.round(v)+' LF'}}}}});
+  makeChart('execRiskChart',{type:'line',data:{labels,datasets:[
+    {label:'Risk',data:live(r=>r.riskRemaining),borderColor:th.red,pointRadius:0,tension:.25},
+    {label:'Realized',data:live(r=>r.cumRiskReal),borderColor:th.gold,pointRadius:0,tension:.25},
+    {label:'Opportunity',data:live(r=>r.cumOpp),borderColor:th.green,pointRadius:0,tension:.25},
+    {label:'Net',data:live(r=>r.netExposure),borderColor:th.muted,pointRadius:0,tension:.25}]},options:{scales:{y:yMoney}}});
+  makeChart('execForecastChart',{type:'line',data:{labels,datasets:[
+    {label:'Likely',data:live(r=>r.forecast),borderColor:th.blue,pointRadius:0,tension:.25},
+    {label:'Budget',data:rows.map(r=>r.budget),borderColor:th.gold,pointRadius:0,borderDash:[5,5]}]},options:{scales:{y:yMoney}}});
+}
+function setExecutiveRoom(on){
+  EXEC.on=!!on;const app=$('app');if(app)app.classList.toggle('execRoom',EXEC.on);
+  $('btnExecRoom').classList.toggle('on',EXEC.on);
+  if(EXEC.on)setTimeout(()=>{resize3D();renderExecutive();},80);
+  else setTimeout(resize3D,60);
+}
+
+/* =================== 16. EXPORTS =================== */
+function dl(name,text,mime){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:mime||"text/csv;charset=utf-8"}));
+  a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+const csvEsc=v=>{const s=String(v??"");return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
+const csv=rows=>rows.map(r=>r.map(csvEsc).join(",")).join("\r\n");
+const slug=()=>(val('projName')||"project").replace(/[^a-z0-9]+/gi,"_").slice(0,40);
+function expCostCodes(){
+  const rows=[["Cost Code","Description","Category","UM","Budget Qty","Budget Amount"]];
+  E.rows.forEach(r=>{
+    const c=actCategories(r.id);
+    CAT_KEYS.concat("R").forEach(cat=>{
+      if(c.est[cat]<.5&&c.act[cat]<.5)return;
+      rows.push([costCode(r.id,cat),`${r.name} — ${CATS[cat].label}`,cat,cat==="R"?"LS":r.unit,cat==="R"?1:r.qty,c.est[cat]]);
+    });
+  });
+  dl(slug()+"_cost_code_master.csv",csv(rows));
+}
+function expCross(){
+  const meas=val('xMeasure'),M=crosstabMatrix(meas);
+  const rows=[["Activity","Code"].concat(M.cols,["Direct total"])];
+  M.rows.forEach(row=>rows.push([row.r.name,row.r.code].concat(row.v,[row.sum])));
+  rows.push(["Total",""].concat(M.tot,[M.tot.slice(0,5).reduce((a,b)=>a+b,0)]));
+  dl(slug()+"_crosstab_"+meas+".csv",csv(rows));
+}
+function expQTO(){
+  const g=G,rows=[["Item","UM","Quantity"]];
+  [["Main duct","LF",g.length],["Branch duct","LF",g.branchLF],["Duct weight","LB",g.ductLb],
+   ["Insulation","SF",g.insulSF],["Seismic supports","EA",g.hangerCount],["Fittings","EA",g.fitCount],
+   ["CHW pipe","LF",g.chwLF],["HW pipe","LF",g.hwLF],["Refrigerant","LF",g.refLF],["Gas","LF",g.gasLF],
+   ["AHU / RTU","EA",g.ahuCount],["VAV boxes","EA",g.vavCount],["Diffusers","EA",g.diffCount],
+   ["Ceiling","SF",g.ceilSF]].forEach(r=>rows.push([r[0],r[1],r[2]]));
+  dl(slug()+"_qto.csv",csv(rows));
+}
+function expCash(){
+  const c=CACHE.cash,ev=CACHE.evm,rows=[["Working Day","Date","PV","EV","AC","Cum In","Cum Out","Net Cash"]];
+  for(let i=1;i<=c.horizon;i++){
+    const j=Math.min(i,PLAN.duration)-1;
+    rows.push([i,simDate(i),ev.PV[j],ev.EV[j],ev.AC[j],c.cumIn[i-1],c.cumOut[i-1],c.net[i-1]]);
+  }
+  dl(slug()+"_cashflow.csv",csv(rows));
+}
+function expSched(){
+  const rows=[["Code","Activity","Type","Start","Finish","Days","Qty","UM","Start Date","Finish Date"]];
+  ACTS.forEach(a=>{const r=E.byId[a.id],w=actWindow(a.id);
+    rows.push([a.code,a.name,a.kind,w.s,w.f,w.f-w.s+1,r.qty,r.unit,simDate(w.s),simDate(w.f)]);});
+  dl(slug()+"_schedule.csv",csv(rows));
+}
+function expJSON(){
+  const inputs={};document.querySelectorAll('#leftPanel input,#leftPanel select').forEach(el=>inputs[el.id]=el.value);
+  dl(slug()+"_snapshot.json",JSON.stringify({
+    app:"Artemis HVAC Mechanical Intelligence Bridge RC8.4",
+    exported:new Date().toISOString(),inputs,geometry:G,estimate:{subtotal:E.subtotal,revenue:E.revenue},
+    actuals:RC8_DATA
+  },null,2),"application/json");
+}
+
+/* =================== 17. BINDINGS & INIT =================== */
+const on=(id,ev,fn)=>{const e=$(id);if(e)e.addEventListener(ev,fn);};
+function initPipeSelectors(keepSize){
+  const fam=$('pipeFamily');
+  if(!fam.options.length){Object.entries(ductStandards).forEach(([k,v])=>fam.add(new Option(v.label,k)));fam.value="RECT_GALV";}
+  const sizes=ductStandards[fam.value].sizes,sel=$('pipeSize'),prev=sel.value;
+  sel.innerHTML="";
+  Object.entries(sizes).forEach(([k,v])=>sel.add(new Option(v.display,k)));
+  sel.value=(keepSize&&sizes[prev])?prev:(sizes["24"]?"24":Object.keys(sizes)[0]);
+}
+function initStructSelectors(){
+  const mh=$('manholeType');Object.entries(ahuStandards).forEach(([k,v])=>mh.add(new Option(v.label,k)));mh.value="RTU";
+  const cb=$('catchBasinType');Object.entries(vavStandards).forEach(([k,v])=>cb.add(new Option(v.label,k)));cb.value="VAV_REHEAT";
+}
+function syncOutputs(){
+  $('oLen').textContent=fmt(num('lengthLf'))+" LF";
+  $('oCover').textContent=fmt(num('coverFt'),0)+" in";
+  $('oSeg').textContent=val('segments');
+  $('oBuf').textContent=fmt(num('bufferLF'))+" LF";
+}
+function recalcAll(rebuild3d=true){
+  G=geometry();E=estimate(G);buildRegistry(G);
+  if(!REGBY[SEL.id])SEL.id="SYS";
+  PLAN=computePlan(G,E);
+  SIM.day=clamp(SIM.day,1,PLAN.duration);
+  if(rebuild3d&&typeof THREE!=="undefined")build3D();
+  renderAll();
+  setSimDay(SIM.day);
+  if(RISK.length)RISK=[];
+}
+function applyHVACDefault(){syncOutputs();recalcAll();}
+function openDeckTab(tabId){
+  if(EXEC.on)setExecutiveRoom(false);
+  const tab=document.querySelector(`#tabs .tab[data-t="${tabId}"]`),page=$(tabId);
+  if(!tab||!page)return;
+  document.querySelectorAll('#tabs .tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.tpage').forEach(x=>x.classList.remove('on'));
+  tab.classList.add('on');page.classList.add('on');
+  setTimeout(()=>{resize3D();renderAll();},40);
+}
+window.openDeckTab=openDeckTab;
+window.selectNode=selectNode;
+function bindUI(){
+  document.querySelectorAll('#tabs .tab').forEach(t=>t.addEventListener('click',()=>{
+    document.querySelectorAll('#tabs .tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.tpage').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');$(t.dataset.t).classList.add('on');
+    renderAll();
+  }));
+  document.querySelectorAll('#leftPanel .sec h2').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('closed')));
+  document.querySelectorAll('#leftPanel input,#leftPanel select').forEach(el=>{
+    el.addEventListener('change',()=>{if(el.id==='pipeFamily')initPipeSelectors(false);syncOutputs();recalcAll();});
+    if(el.type==='range')el.addEventListener('input',syncOutputs);
+  });
+  on('btnRecalc','click',()=>recalcAll());
+  on('btnMountVernon','click',()=>{
+    $('projName').value="Artemis HVAC Mechanical Demo — Mount Vernon Office Retrofit";
+    $('startLat').value=40.9126;$('startLon').value=-73.8371;
+    $('lengthLf').value=900;$('coverFt').value=24;
+    applyHVACDefault();
+  });
+  on('btnOpenHVACFromPanel','click',()=>openDeckTab('tHVAC'));
+  on('btnNight','click',()=>{document.documentElement.classList.toggle('night');$('btnNight').textContent=document.documentElement.classList.contains('night')?'◑ Day':'◐ Night';});
+  on('camIso','click',()=>camPreset('iso'));
+  on('camProfile','click',()=>camPreset('profile'));
+  on('camPlan','click',()=>camPreset('plan'));
+  on('camFit','click',fitView);
+  on('camReset','click',()=>{camPreset('iso');fitView();});
+  on('camFocus','click',()=>{});
+  on('btnLeft','click',()=>{$('app').classList.toggle('noleft');setTimeout(resize3D,40);});
+  on('btnRight','click',()=>{$('app').classList.toggle('noright');setTimeout(resize3D,40);});
+  on('btnExecRoom','click',()=>setExecutiveRoom(!EXEC.on));
+  on('btnExecClose','click',()=>setExecutiveRoom(false));
+  on('execScenario','change',e=>{EXEC.scenario=e.target.value;renderExecutive();});
+  on('execSeed','change',e=>{EXEC.seed=parseInt(e.target.value)||1313;renderExecutive();});
+  on('btnControls','click',()=>openDeckTab('tControls'));
+  on('controlPulse','click',()=>openDeckTab('tControls'));
+  on('controlSeverity','change',()=>renderControlSystem());
+  on('btnControlRefresh','click',()=>renderControlSystem());
+  on('btnAckVisible','click',()=>renderControlSystem());
+  on('viewMode','change',e=>{VIEW.mode=e.target.value;update3DState();});
+  on('btnHUD','click',()=>{$('hudBox').style.display=$('hudBox').style.display==='none'?'block':'none';});
+  on('btnLegend','click',()=>{$('legend').style.display=$('legend').style.display==='none'?'block':'none';});
+  on('btnClean','click',()=>{const main=document.querySelector('main');const hide=!main.dataset.clean;main.dataset.clean=hide?'1':'';['hudBox','legend','transport','camBar','controlPulse'].forEach(id=>{const el=$(id);if(el)el.style.display=hide?'none':'';});});
+  on('trReset','click',()=>{simPause();setSimDay(1);});
+  on('trBack','click',()=>simStep(-1));
+  on('trFwd','click',()=>simStep(1));
+  on('trPlay','click',simPlayPause);
+  on('trRev','click',simToggleReverse);
+  on('trSpeed','change',e=>{SIM.speed=+e.target.value||1;if(SIM.timer)simPlay();});
+  on('simDaySlider','input',e=>{simPause();setSimDay(+e.target.value);});
+  on('erpGroup','change',renderERP);
+  on('erpMeasure','change',renderERP);
+  on('xMeasure','change',renderCrosstab);
+  on('cashPeriod','change',renderSched);
+  on('expCodes','click',expCostCodes);
+  on('expCross','click',expCross);
+  on('expQTO','click',expQTO);
+  on('expCash','click',expCash);
+  on('expSched','click',expSched);
+  on('expJSON','click',expJSON);
+  on('btnGenerateActuals','click',()=>generateRC8Scenario($('actualDataMode').value,$('actualSeed').value));
+  on('btnClearDemoActuals','click',()=>generateRC8Scenario('demo-plan',RC8_DATA.seed));
+  document.querySelectorAll('[data-rc83-scenario]').forEach(b=>b.addEventListener('click',()=>generateRC8Scenario(b.dataset.rc83Scenario,parseInt($('actualSeed').value,10)||81473)));
+  // narrative
+  on('btnNarrative','click',()=>$('narrativePage').classList.add('on'));
+  on('btnNarrativeEnter','click',()=>$('narrativePage').classList.remove('on'));
+  document.querySelectorAll('[data-story-scroll]').forEach(b=>b.addEventListener('click',()=>{const t=$(b.dataset.storyScroll);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});}));
+  document.querySelectorAll('[data-narrative-launch]').forEach(b=>b.addEventListener('click',()=>{
+    $('narrativePage').classList.remove('on');
+    const target=b.dataset.narrativeLaunch;
+    if(target==='model'){setTimeout(()=>fitView(),80);}
+    else if(target==='schedule'){openDeckTab('tSched');setTimeout(()=>setSimDay(Math.max(1,Math.round(PLAN.duration*.48))),70);}
+    else if(target==='actuals'){openDeckTab('tField');}
+    else if(target==='actuals-controlled'){openDeckTab('tField');setTimeout(()=>generateRC8Scenario('demo-actuals-controlled',parseInt($('actualSeed').value,10)||81473),80);}
+    else if(target==='standards'){openDeckTab('tHVAC');}
+    else if(target==='exec'){setTimeout(()=>setExecutiveRoom(true),60);}
+    else if(target==='gis'){openDeckTab('tGeo');}
+  }));
+  // cockpit buttons
+  document.querySelectorAll('[data-cockpit-key]').forEach(b=>b.addEventListener('click',()=>{
+    const el=$(b.dataset.cockpitKey);if(el){el.value=b.dataset.cockpitValue;el.dispatchEvent(new Event('change',{bubbles:true}));}
+    renderNarCockpit();
+  }));
+  // geo
+  on('geoMountVernon','click',()=>{initLeafletMap('satMap');});
+  on('geoOpenOSM','click',()=>{const ll={slat:+val('startLat'),slon:+val('startLon')};window.open(`https://www.openstreetmap.org/#map=17/${ll.slat}/${ll.slon}`,'_blank');});
+  on('expGeoJSON','click',()=>{
+    const ll={slat:+val('startLat'),slon:+val('startLon')};
+    dl(slug()+'_site.geojson',JSON.stringify({type:'FeatureCollection',features:[{type:'Feature',geometry:{type:'Point',coordinates:[ll.slon,ll.slat]},properties:{project:val('projName')}}]},null,2),'application/geo+json');
+  });
+}
+function renderNarCockpit(){
+  if(!E||!G||!PLAN)return;
+  const scen=val('scenario')||'base',ground=val('ground')||'Plenum',water=val('water')||'None';
+  const set=(id,v)=>{const el=$(id);if(el)el.textContent=v;};
+  set('narCockpitBasis',`${scen.toUpperCase()} · ${ground} · ${water} · ${fmt(G.length,0)} LF`);
+  set('narCockpitCost',money(E.costBasis));set('narCockpitCostSub','subtotal '+money(E.subtotal));
+  set('narCockpitRev',money(E.revenue));set('narCockpitRevSub','profit '+money(E.profit||E.revenue-E.costBasis));
+  set('narCockpitDur',PLAN?String(PLAN.duration):'—');set('narCockpitDurSub',PLAN?'finish '+simDate(PLAN.duration):'working days');
+  set('narCockpitHrs',fmt(E.laborHrs));
+  // split bar
+  const totals={L:0,M:0,C:0,S:0,E:0};
+  E.rows.forEach(r=>CAT_KEYS.forEach(k=>totals[k]+=r.cat[k]||0));
+  const sum=CAT_KEYS.reduce((s,k)=>s+totals[k],0)||1;
+  const bar=$('narSplitBar'),leg=$('narSplitLegend');
+  if(bar)bar.innerHTML=CAT_KEYS.map(k=>{const p=totals[k]/sum*100;return `<span style="flex:${p} 0 0;background:var(--${k==='L'?'pipe-chw':k==='M'?'duct-galv':k==='C'?'pipe-gas':k==='S'?'vav-body':'insul-jacket'})" title="${CATS[k].label} ${p.toFixed(0)}%"></span>`;}).join('');
+  if(leg)leg.innerHTML=CAT_KEYS.map(k=>{const p=totals[k]/sum*100;return `<span>${CATS[k].label} <b>${p.toFixed(0)}%</b></span>`;}).join('');
+  // risk
+  const box=$('narRiskStrip');
+  if(box){box.innerHTML='';const base=E.costBasis,mc=[];for(let i=0;i<400;i++)mc.push(base*(.9+Math.random()*.25));mc.sort((a,b)=>a-b);
+    const min=mc[0],max=mc[399],span=max-min;
+    const bins=60,counts=new Array(bins).fill(0);mc.forEach(v=>counts[Math.floor((v-min)/span*bins)]++);
+    const maxc=Math.max(...counts);
+    counts.forEach((c,i)=>{const b=document.createElement('div');b.className='bar';b.style.left=(i/bins*100)+'%';b.style.width=(100/bins)+'%';b.style.height=(c/maxc*100)+'%';box.appendChild(b);});
+    const p50=mc[Math.floor(400*.5)],p80=mc[Math.floor(400*.8)];
+    [`P50 ${money(p50)}`,`P80 ${money(p80)}`].forEach((t,i)=>{
+      const p=document.createElement('div');p.className='p';p.style.left=((i?p80:p50)-min)/span*100+'%';
+      p.innerHTML=`<label>${t}</label>`;box.appendChild(p);
+    });
+  }
+  const note=$('narRiskNote');
+  if(note){const base=E.costBasis;note.innerHTML=`Cost basis <b>${money(base)}</b> · revenue <b>${money(E.revenue)}</b> · margin <b>${pct((E.revenue-base)/Math.max(1,E.revenue))}</b>`;}
+  // codes
+  const body=$('narCodeRows');
+  if(body){const rows=[...E.rows].sort((a,b)=>b.total-a.total).slice(0,7),max=rows[0]?.total||1;
+    body.innerHTML=rows.map(r=>`<tr><td style="color:#e0b65a">${r.code}</td><td>${r.name}</td><td style="text-align:right">${money(r.total)}<span style="display:inline-block;height:6px;border-radius:4px;background:#2f8fe0;margin-left:6px;vertical-align:middle;width:${Math.max(4,r.total/max*46)}px"></span></td></tr>`).join('');
+  }
+}
+function initLeafletMap(containerId){
+  const el=$(containerId);if(!el)return;
+  if(!window.L){el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:#dbeafe;font-weight:800">Site plan schematic — Leaflet not loaded</div>';return;}
+  const ll={slat:+val('startLat'),slon:+val('startLon')};
+  el.innerHTML='';
+  const map=L.map(el).setView([ll.slat,ll.slon],17);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OSM'}).addTo(map);
+  L.marker([ll.slat,ll.slon]).addTo(map).bindPopup(`<b>${val('projName')}</b><br>Mount Vernon, NY<br>${fmt(G.length)} LF duct trunk`).openPopup();
+  setTimeout(()=>map.invalidateSize(),200);
+}
+window.addEventListener('load',()=>{
+  const missing=[];
+  if(typeof THREE==="undefined")missing.push("Three.js");
+  if(typeof Chart==="undefined")missing.push("Chart.js");
+  if(missing.length){const w=$('libWarn');if(w){w.style.display='block';w.style.padding='10px';w.style.background='#fff4e0';w.style.borderRadius='10px';w.style.margin='10px';w.style.fontWeight='700';w.style.color='#7a4d00';w.textContent=missing.join(' and ')+' did not load. Core tables, calculations, and exports remain available.';}}
+  initPipeSelectors(false);initStructSelectors();syncOutputs();recalcAll();
+  bindUI();
+  // initial narrative cockpit render
+  setTimeout(renderNarCockpit,300);
+});
+</script>
+</body>
+</html>
