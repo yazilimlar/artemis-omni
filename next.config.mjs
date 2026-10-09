@@ -182,6 +182,14 @@ const nextConfig = {
           destination: "/standalone/utility-intelligence-bridge/3d-model/index.html",
         },
         {
+          source: "/labs/hvac-mechanical-intelligence-bridge",
+          destination: "/standalone/hvac-mechanical-intelligence-bridge/index.html",
+        },
+        {
+          source: "/labs/hvac-mechanical-intelligence-bridge/app",
+          destination: "/standalone/hvac-mechanical-intelligence-bridge/index.html",
+        },
+        {
           source: "/workbench/runtime/latest",
           destination: "/labs/geometric-workbench/v5-8/index.html",
         },
