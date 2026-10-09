@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { ValueChainDiagram } from "@/components/home/ValueChainDiagram";
+import { IntroVideo } from "@/components/home/IntroVideo";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
@@ -110,6 +111,18 @@ export default function HomePage() {
           </p>
           <div className="mt-6">
             <ValueChainDiagram idPrefix="hero-value-chain" animated />
+          </div>
+        </Container>
+      </section>
+
+      {/* 1b — Intro video (click-to-play; nothing loads until watched) */}
+      <section className="border-b border-border/60">
+        <Container className={`${CONTENT_WIDTH} py-12`}>
+          <div className="mx-auto max-w-3xl">
+            <IntroVideo />
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              Artemis Intro · 2:24
+            </p>
           </div>
         </Container>
       </section>
