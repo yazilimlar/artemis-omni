@@ -165,6 +165,16 @@
         "/standalone/lego-build-studio-artemis-music.html"
       ],
       "reason": "homepage link opens noopener in a new tab (popups that leave the sandbox); 9-mode generative Web Audio music engine and Fourier canvas under allow-scripts; no downloads, modals, or storage"
+    },
+    {
+      "id": "hvac-rc811",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/hvac-mechanical-intelligence-bridge/:path*",
+        "/labs/hvac-mechanical-intelligence-bridge",
+        "/labs/hvac-mechanical-intelligence-bridge/app"
+      ],
+      "reason": "served top-level via rewrite; isolated by response header only"
     }
   ]
 }
