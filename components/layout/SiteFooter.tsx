@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site";
+import { ARTEMIS_ACRONYM } from "@/lib/artemis/positioning";
 import { footerNav } from "@/lib/artemis/navigation";
 import { Container } from "@/components/ui/container";
 import { ArtemisLogo } from "@/components/layout/ArtemisLogo";
@@ -46,6 +47,12 @@ export function SiteFooter() {
             © {year} {siteConfig.name}. Early-stage, public-safe platform.
           </p>
           <p className="font-mono tracking-wide">AI-Native Multi-Division Product Platform</p>
+        </div>
+        <div className="mt-4 text-xs text-muted-foreground">
+          <p>ARTEMIS — {ARTEMIS_ACRONYM}.</p>
+          <p className="mt-2 font-mono tracking-wide">
+            George Oktem · New York · {year} · Artemis Construction
+          </p>
         </div>
       </Container>
     </footer>

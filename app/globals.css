@@ -202,6 +202,45 @@ html[data-theme="day"] iframe {
   .scan-sweep {
     animation: scanSweep 8.5s ease-in-out infinite;
   }
+
+  /*
+    Homepage value-chain signal loop (v1).
+    Opacity-only keyframes; the animation itself is gated on
+    prefers-reduced-motion: no-preference, so first paint and
+    reduced-motion users always get the static diagram.
+  */
+  .vc-signal-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.375rem;
+    background: hsl(var(--gold) / 0.3);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .vc-signal-glow {
+      animation: vc-signal-sweep 10s linear infinite;
+    }
+  }
+
+  @keyframes vc-signal-sweep {
+    0% {
+      opacity: 0;
+    }
+    1.5% {
+      opacity: 1;
+    }
+    6% {
+      opacity: 1;
+    }
+    7.7% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 }
 
 @layer utilities {
