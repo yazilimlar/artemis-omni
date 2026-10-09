@@ -190,6 +190,14 @@ const nextConfig = {
           destination: "/standalone/hvac-mechanical-intelligence-bridge/index.html",
         },
         {
+          source: "/labs/sewer-utility-intelligence-bridge",
+          destination: "/standalone/sewer-utility-intelligence-bridge/index.html",
+        },
+        {
+          source: "/labs/sewer-utility-intelligence-bridge/app",
+          destination: "/standalone/sewer-utility-intelligence-bridge/index.html",
+        },
+        {
           source: "/workbench/runtime/latest",
           destination: "/labs/geometric-workbench/v5-8/index.html",
         },

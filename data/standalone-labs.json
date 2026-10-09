@@ -175,6 +175,16 @@
         "/labs/hvac-mechanical-intelligence-bridge/app"
       ],
       "reason": "served top-level via rewrite; isolated by response header only"
+    },
+    {
+      "id": "sewer-lab-v1",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/sewer-utility-intelligence-bridge/:path*",
+        "/labs/sewer-utility-intelligence-bridge",
+        "/labs/sewer-utility-intelligence-bridge/app"
+      ],
+      "reason": "served top-level via rewrite; isolated by response header only"
     }
   ]
 }
