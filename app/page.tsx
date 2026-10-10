@@ -75,6 +75,11 @@ const whatItIsNot = [
   "Not a replacement for PMs, engineers, finance leaders, field teams, or reviewers.",
 ];
 
+// Greek-key (meander) fret strip, echoing the Artemis mark's border.
+// Gold stroke on transparent; tiled horizontally as a decorative rail.
+const MEANDER_BG =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='20' viewBox='0 0 28 20'%3E%3Cpath d='M4 16V4h20v10H10V8h8' fill='none' stroke='%23c9a227' stroke-opacity='0.55' stroke-width='1.8'/%3E%3C/svg%3E\")";
+
 // Inquiry email for the pilot CTA. Used in the mailto link target only —
 // the address is never rendered as visible page text.
 const PILOT_EMAIL = "greatorder@greatorder.org";
@@ -84,7 +89,7 @@ const CONTENT_WIDTH = "max-w-[1120px]";
 export default function HomePage() {
   return (
     <>
-      {/* 1 — Hero (Temple of Artemis backdrop, art-directed desktop/mobile) */}
+      {/* 1 — Hero (Temple of Artemis backdrop: blueprint duotone, Greek-key rails) */}
       <section className="relative overflow-hidden border-b border-border/60">
         <div className="absolute inset-0" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -99,15 +104,47 @@ export default function HomePage() {
             <img
               src="/images/temple-bg-mobile.jpg"
               alt=""
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-top"
               fetchPriority="high"
             />
           </picture>
+          {/* Blueprint duotone: brand blue takes the photo's hue, keeps its light. */}
+          <div className="absolute inset-0 bg-[#274b8f] opacity-45 mix-blend-color" />
+          {/* Fine blueprint grid, kept whisper-quiet. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
           {/* Readability washes. --lunar flips with the theme (dark at night,
               light in day), so overlaid type stays readable in both. */}
-          <div className="absolute inset-0 bg-lunar/55" />
-          <div className="absolute inset-0 bg-gradient-to-b from-lunar/60 via-transparent to-background" />
+          <div className="absolute inset-0 bg-lunar/65" />
+          <div className="absolute inset-0 bg-gradient-to-b from-lunar/40 via-transparent to-background" />
         </div>
+        {/* Greek-key rails top and bottom, echoing the Artemis mark. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-5 opacity-70"
+          style={{
+            backgroundImage: MEANDER_BG,
+            backgroundSize: "28px 20px",
+            backgroundRepeat: "repeat-x",
+            backgroundPosition: "center top",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-5 opacity-70"
+          style={{
+            backgroundImage: MEANDER_BG,
+            backgroundSize: "28px 20px",
+            backgroundRepeat: "repeat-x",
+            backgroundPosition: "center bottom",
+          }}
+        />
         <Container className={`${CONTENT_WIDTH} relative py-12`}>
           <p className="eyebrow">Artemis · AI Implementation</p>
           <h1 className="display-serif mt-4 max-w-3xl text-balance text-4xl leading-[1.1] text-parchment">
