@@ -115,9 +115,10 @@ function useAtlasScene(
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 200);
       // Flatter, higher framings for the map-like styles so the layout reads.
+      // Radial is a top-down canopy: branches spread in the XZ plane.
       if (style === "archipelago") camera.position.set(0, 15, 17);
       else if (style === "strata") camera.position.set(0, 10, 22);
-      else if (style === "radial") camera.position.set(0, 9, 31);
+      else if (style === "radial") camera.position.set(0, 27, 13);
       else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
