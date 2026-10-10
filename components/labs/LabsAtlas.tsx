@@ -105,6 +105,7 @@ function useAtlasScene(
 
       const labelScale = style === "forum" ? 1.25 : 1;
       const meshes: THREE.Mesh[] = [];
+      const hitMeshes: THREE.Mesh[] = [];
       const byCategory = new Map<LabCategory, THREE.Object3D[]>();
       const hubPositions = new Map<LabCategory, THREE.Vector3>();
 
@@ -176,6 +177,18 @@ function useAtlasScene(
           meshes.push(mesh);
           group.push(mesh);
 
+          // Invisible, generous hit target — raycast-tested, never rendered.
+          const hit = new THREE.Mesh(
+            new THREE.SphereGeometry(1.05, 8, 8),
+            new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false }),
+          );
+          hit.position.copy(p);
+          hit.userData.node = node;
+          hit.userData.visual = mesh;
+          root.add(hit);
+          hitMeshes.push(hit);
+          group.push(hit);
+
           const label = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8");
           label.position.copy(p).add(new THREE.Vector3(0, size + 0.85, 0));
           root.add(label);
@@ -205,8 +218,9 @@ function useAtlasScene(
         ptr.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
         ptr.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
         ray.setFromCamera(ptr, camera);
-        const hits = ray.intersectObjects(meshes.filter((m) => m.visible));
-        return (hits[0]?.object as THREE.Mesh | undefined) ?? null;
+        const hits = ray.intersectObjects(hitMeshes.filter((m) => m.visible));
+        const hit = (hits[0]?.object as THREE.Mesh | undefined) ?? null;
+        return hit ? ((hit.userData.visual as THREE.Mesh) ?? null) : null;
       }
 
       function setHover(mesh: THREE.Mesh | null) {
@@ -221,7 +235,16 @@ function useAtlasScene(
       }
 
       const onMove = (ev: PointerEvent) => setHover(pick(ev));
+      // Drag guard: a click that moved more than a few pixels was an orbit drag,
+      // not a node selection.
+      let downX = 0;
+      let downY = 0;
+      const onDown = (ev: PointerEvent) => {
+        downX = ev.clientX;
+        downY = ev.clientY;
+      };
       const onClick = (ev: PointerEvent) => {
+        if (Math.hypot(ev.clientX - downX, ev.clientY - downY) > 6) return;
         const mesh = pick(ev);
         if (selected && selected !== mesh) selected.scale.setScalar(selected.userData.baseScale);
         selected = mesh;
@@ -229,6 +252,7 @@ function useAtlasScene(
         selectCb(mesh ? (mesh.userData.node as AtlasNode) : null);
       };
       renderer.domElement.addEventListener("pointermove", onMove);
+      renderer.domElement.addEventListener("pointerdown", onDown);
       renderer.domElement.addEventListener("click", onClick);
 
       const clock = new THREE.Clock();
@@ -290,6 +314,7 @@ function useAtlasScene(
         cancelAnimationFrame(raf);
         ro.disconnect();
         renderer.domElement.removeEventListener("pointermove", onMove);
+        renderer.domElement.removeEventListener("pointerdown", onDown);
         renderer.domElement.removeEventListener("click", onClick);
         controls.dispose();
         scene.traverse((o) => {
