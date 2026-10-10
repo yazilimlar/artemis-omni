@@ -9,25 +9,25 @@
 */
 @layer base {
   :root {
-    --background: 222 47% 7%;
+    --background: 216 45% 9%;
     --foreground: 40 30% 92%;
 
-    --muted: 220 25% 16%;
+    --muted: 216 30% 15%;
     --muted-foreground: 215 18% 65%;
 
-    --border: 215 25% 22%;
-    --ring: 41 60% 56%;
+    --border: 215 30% 24%;
+    --ring: 41 68% 62%;
 
     /* Brand scale (raw HSL triplets) */
-    --navy: 222 47% 14%;
-    --navy-deep: 224 52% 9%;
-    --lunar: 230 35% 4%;
+    --navy: 216 45% 13%;
+    --navy-deep: 216 48% 10%;
+    --lunar: 220 40% 5%;
     --silver: 210 18% 78%;
-    --gold: 41 64% 56%;
-    --gold-soft: 41 55% 72%;
+    --gold: 41 68% 62%;
+    --gold-soft: 41 70% 74%;
     --parchment: 42 38% 92%;
-    --signal-blue: 204 100% 42%;
-    --crescent-blue: 193 100% 50%;
+    --signal-blue: 208 80% 60%;
+    --crescent-blue: 208 85% 68%;
     --platinum: 212 24% 82%;
 
     --radius: 0.75rem;
