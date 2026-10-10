@@ -265,7 +265,7 @@ function useAtlasScene(
           for (const m of hitMeshes) {
             if (!m.visible) continue;
             m.getWorldPosition(v);
-            const d = ray.distanceToPoint(v);
+            const d = ray.ray.distanceToPoint(v);
             if (d < best) best = d;
           }
           report?.(
