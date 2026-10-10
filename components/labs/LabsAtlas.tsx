@@ -8,6 +8,7 @@ import { labCategoryMeta, type LabCategory } from "@/data/labs-editorial";
 export type AtlasNode = {
   id: string;
   title: string;
+  description: string;
   category: LabCategory;
   flagship: boolean;
   href: string;

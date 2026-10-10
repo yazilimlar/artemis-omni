@@ -227,6 +227,7 @@ export default function LabsPage() {
     { title: "Rainbow House Botanical Encyclopedia", href: "/labs/rainbow-house-botanical" },
   ];
   const divisionNames = new Map(loadDivisions().map((division) => [division.id, division.name]));
+  const divisionMissions = new Map(loadDivisions().map((division) => [division.id, division.mission]));
 
   // Serializable node list for the Atlas view — no component references cross
   // the server/client boundary.
@@ -235,6 +236,7 @@ export default function LabsPage() {
       return {
         id: entry.editorial.href,
         title: entry.editorial.title,
+        description: entry.editorial.description,
         category: labCategory(entry.editorial),
         flagship: !!entry.editorial.flagship,
         href: entry.editorial.href,
@@ -245,6 +247,7 @@ export default function LabsPage() {
     return {
       id: product.id,
       title: product.name,
+      description: divisionMissions.get(product.division) ?? product.product_family,
       category: divisionLabCategory[product.division] ?? "explorations",
       flagship: false,
       href: linkableRoute(product) ?? "/labs",
