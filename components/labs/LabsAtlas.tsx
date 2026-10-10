@@ -157,7 +157,7 @@ function useAtlasScene(
       const byCategory = new Map<LabCategory, THREE.Object3D[]>();
       const hubPositions = new Map<LabCategory, THREE.Vector3>();
 
-      function makeLabel(text: string, color: string) {
+      function makeLabel(text: string, color: string, scale = 1) {
         const c = document.createElement("canvas");
         const font = `500 40px "Paper Mono", ui-monospace, monospace`;
         const meas = c.getContext("2d")!;
@@ -174,7 +174,11 @@ function useAtlasScene(
         const sp = new THREE.Sprite(
           new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }),
         );
-        sp.scale.set((c.width / 110) * labelScale, (c.height / 110) * labelScale, 1);
+        sp.scale.set(
+          (c.width / 110) * labelScale * scale,
+          (c.height / 110) * labelScale * scale,
+          1,
+        );
         return sp;
       }
 
@@ -191,7 +195,7 @@ function useAtlasScene(
        * Shared node builder used by every style: visible sphere, generous
        * invisible hit proxy (1.6u — nodes drift), and the title label.
        */
-      function addNodeMesh(node: AtlasNode, p: THREE.Vector3, group: THREE.Object3D[]) {
+      function addNodeMesh(node: AtlasNode, p: THREE.Vector3, group: THREE.Object3D[], labelDy = 0) {
         const size = node.flagship ? 0.62 : 0.34;
         const mesh = new THREE.Mesh(
           new THREE.SphereGeometry(size, 20, 20),
@@ -220,7 +224,7 @@ function useAtlasScene(
         group.push(hit);
 
         const label = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8");
-        label.position.copy(p).add(new THREE.Vector3(0, size + 0.85, 0));
+        label.position.copy(p).add(new THREE.Vector3(0, size + 0.85 + labelDy, 0));
         root.add(label);
         group.push(label);
       }
@@ -440,14 +444,15 @@ function useAtlasScene(
               (rand(ci * 67 + ni * 11 + 5) - 0.5) * 1.4,
               z + (rand(ci * 83 + ni * 19 + 13) - 0.5) * 1.2,
             );
-            addNodeMesh(node, p, group);
+            // Stagger labels so labs sharing a maturity stage stay readable.
+            addNodeMesh(node, p, group, (ni % 3) * 0.65);
           });
           byCategory.set(cat, group);
         });
         const stages = ["Concept", "Build", "Pilot", "Live"];
         stages.forEach((s, si) => {
-          const tick = makeLabel(s, "#8a93a6");
-          tick.position.set(-9 + si * 6, -3.0, laneZ(ORDER.length - 1) + 1.4);
+          const tick = makeLabel(s, "#c7cdd8", 1.2);
+          tick.position.set(-9 + si * 6, -2.4, laneZ(ORDER.length - 1));
           root.add(tick);
         });
       } else {
@@ -480,10 +485,11 @@ function useAtlasScene(
           root.add(branch);
           group.push(branch);
           catNodes.forEach((node, ni) => {
-            const t = catNodes.length === 1 ? 0.62 : 0.34 + (ni / (catNodes.length - 1)) * 0.56;
+            // Leaves start well clear of the hub so labels never pile at the root.
+            const t = catNodes.length === 1 ? 0.72 : 0.52 + (ni / (catNodes.length - 1)) * 0.43;
             const p = curve.getPoint(t);
             p.y += (rand(ci * 101 + ni * 43 + 17) - 0.5) * 1.1;
-            addNodeMesh(node, p, group);
+            addNodeMesh(node, p, group, (ni % 2) * 0.7);
           });
           byCategory.set(cat, group);
         });
