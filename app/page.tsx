@@ -110,19 +110,19 @@ export default function HomePage() {
           </picture>
           {/* Blueprint duotone: brand blue takes the photo's hue, keeps its light. */}
           <div className="absolute inset-0 bg-[#274b8f] opacity-45 mix-blend-color" />
-          {/* Fine blueprint grid, kept whisper-quiet. */}
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px)",
-              backgroundSize: "44px 44px",
-            }}
-          />
           {/* Readability washes. --lunar flips with the theme (dark at night,
               light in day), so overlaid type stays readable in both. */}
           <div className="absolute inset-0 bg-lunar/65" />
           <div className="absolute inset-0 bg-gradient-to-b from-lunar/40 via-transparent to-background" />
+          {/* Fine blueprint grid drawn over the faded photo, whisper-quiet. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
+              backgroundSize: "52px 52px",
+            }}
+          />
         </div>
         {/* Greek-key rails top and bottom, echoing the Artemis mark. */}
         <div
