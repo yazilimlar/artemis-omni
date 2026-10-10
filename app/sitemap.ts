@@ -45,6 +45,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/platform",
     "/about",
     "/contact",
+    "/site-map",
   ].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,

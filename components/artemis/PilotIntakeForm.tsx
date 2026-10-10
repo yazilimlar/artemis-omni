@@ -4,7 +4,6 @@ import * as React from "react";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { products } from "@/lib/artemis/products";
-import { siteConfig } from "@/lib/site";
 
 /**
  * Pilot intake form.
@@ -184,7 +183,7 @@ export function PilotIntakeForm() {
           <div>
             <p>{errorMessage}</p>
             <p className="mt-1 text-red-100/75">
-              You can also email {siteConfig.links.pilotEmail} while we check the connection.
+              Please check your connection and try submitting the form again.
             </p>
           </div>
         </div>
