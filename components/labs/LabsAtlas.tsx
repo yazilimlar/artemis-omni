@@ -117,6 +117,7 @@ function useAtlasScene(
       // Flatter, higher framings for the map-like styles so the layout reads.
       if (style === "archipelago") camera.position.set(0, 15, 17);
       else if (style === "strata") camera.position.set(0, 10, 22);
+      else if (style === "radial") camera.position.set(0, 9, 31);
       else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -472,7 +473,7 @@ function useAtlasScene(
           const group: THREE.Object3D[] = [];
           const ra = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
           const dir = new THREE.Vector3(Math.cos(ra), 0, Math.sin(ra));
-          const far = 5 + catNodes.length * 2.4;
+          const far = 9 + catNodes.length * 3.6;
           const curve = new THREE.QuadraticBezierCurve3(
             new THREE.Vector3(0, 0, 0),
             dir.clone().multiplyScalar(far * 0.5).add(new THREE.Vector3(0, 1.4, 0)),
@@ -486,10 +487,18 @@ function useAtlasScene(
           group.push(branch);
           catNodes.forEach((node, ni) => {
             // Leaves start well clear of the hub so labels never pile at the root.
-            const t = catNodes.length === 1 ? 0.72 : 0.52 + (ni / (catNodes.length - 1)) * 0.43;
+            const t = catNodes.length === 1 ? 0.7 : 0.45 + (ni / (catNodes.length - 1)) * 0.5;
             const p = curve.getPoint(t);
             p.y += (rand(ci * 101 + ni * 43 + 17) - 0.5) * 1.1;
             addNodeMesh(node, p, group, (ni % 2) * 0.7);
+            // Push this node's label outward along the branch (away from the
+            // hub) instead of straight up — labels radiate instead of stacking.
+            const lbl = group[group.length - 1] as THREE.Sprite;
+            lbl.position
+              .copy(p)
+              .addScaledVector(dir, 2.1)
+              .add(new THREE.Vector3(0, 0.9 + (ni % 2) * 0.7, 0));
+            lbl.scale.multiplyScalar(0.85);
           });
           byCategory.set(cat, group);
         });
