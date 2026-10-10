@@ -363,3 +363,18 @@ html[data-theme="day"] iframe {
     scroll-behavior: auto !important;
   }
 }
+
+/* Crossfade for the value-chain before/after toggle. */
+@keyframes vc-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.vc-fade {
+  animation: vc-fade 280ms ease-out;
+}

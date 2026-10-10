@@ -3,8 +3,10 @@ import { Container } from "@/components/ui/container";
 import { ConfidenceNote } from "@/components/showcase/ConfidenceNote";
 import { ExecutiveSectionHeader } from "@/components/showcase/ExecutiveSectionHeader";
 import { ValueChainDiagram } from "@/components/home/ValueChainDiagram";
+import { ValueChainToggle } from "@/components/home/ValueChainToggle";
 import { TempleBackdrop } from "@/components/home/TempleBackdrop";
 import { DianaDrift } from "@/components/home/DianaDrift";
+import { StickyNav } from "@/components/home/StickyNav";
 import { IntroVideo } from "@/components/home/IntroVideo";
 import { createMetadata } from "@/lib/seo/metadata";
 
@@ -92,7 +94,7 @@ export default function HomePage() {
   return (
     <>
       {/* 1 — Hero (immersive temple backdrop + Diana drift) */}
-      <section className="relative flex min-h-[100svh] overflow-hidden border-b border-border/60">
+      <section id="top" className="relative flex min-h-[100svh] overflow-hidden border-b border-border/60">
         <TempleBackdrop />
         {/* Greek-key rails top and bottom, echoing the Artemis mark. */}
         <div
@@ -150,6 +152,8 @@ export default function HomePage() {
         </Container>
       </section>
 
+      <StickyNav ctaHref={`mailto:${PILOT_EMAIL}`} />
+
       {/* 1b — Intro video (click-to-play; nothing loads until watched) */}
       <section className="border-b border-border/60">
         <Container className={`${CONTENT_WIDTH} py-12`}>
@@ -163,14 +167,14 @@ export default function HomePage() {
       </section>
 
       {/* 2 — Value chain */}
-      <section id="how-it-works" className="scroll-mt-24 border-b border-border/60">
+      <section id="how-it-works" className="scroll-mt-32 border-b border-border/60">
         <Container className={`${CONTENT_WIDTH} py-12`}>
           <ExecutiveSectionHeader
             title="From project fundamentals to executive action."
             description="Field reports, schedules, cost codes, and forecasts live in separate systems that never quite agree. Artemis draws those scattered signals into one reviewable control plane."
           />
           <div className="mt-8">
-            <ValueChainDiagram idPrefix="section-value-chain" />
+            <ValueChainToggle />
           </div>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
             Each handoff is explicit — because handoffs are where forecasts, cashflow,
@@ -180,7 +184,7 @@ export default function HomePage() {
       </section>
 
       {/* 3 — Proof */}
-      <section className="border-b border-border/60">
+      <section id="proof" className="scroll-mt-32 border-b border-border/60">
         <Container className={`${CONTENT_WIDTH} py-12`}>
           <ExecutiveSectionHeader
             title="Proof, as it lands."
@@ -250,7 +254,7 @@ export default function HomePage() {
       </section>
 
       {/* 5 — Who it's for */}
-      <section className="border-b border-border/60">
+      <section id="who" className="scroll-mt-32 border-b border-border/60">
         <Container className={`${CONTENT_WIDTH} py-12`}>
           <ExecutiveSectionHeader
             title="Built for the people who have to implement."
@@ -275,7 +279,7 @@ export default function HomePage() {
       </section>
 
       {/* 6 — First sprint */}
-      <section className="border-b border-border/60">
+      <section id="sprint" className="scroll-mt-32 border-b border-border/60">
         <Container className={`${CONTENT_WIDTH} py-12`}>
           <ExecutiveSectionHeader
             title="The first sprint makes the argument visible."
@@ -303,7 +307,7 @@ export default function HomePage() {
       </section>
 
       {/* 7 — Pilot CTA */}
-      <section id="pilot" className="scroll-mt-24">
+      <section id="pilot" className="scroll-mt-32">
         <Container className={`${CONTENT_WIDTH} py-12`}>
           <div className="relative overflow-hidden rounded-2xl border border-gold/25 bg-navy-deep/60 p-8 text-center lg:p-12">
             <div
