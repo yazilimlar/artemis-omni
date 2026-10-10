@@ -252,11 +252,26 @@ function useAtlasScene(
           return;
         }
         const mesh = pick(ev);
-        report?.(
-          mesh
-            ? `debug: HIT ${(mesh.userData.node as AtlasNode).title}`
-            : "debug: click miss (no node hit)",
-        );
+        if (mesh) {
+          report?.(`debug: HIT ${(mesh.userData.node as AtlasNode).title}`);
+        } else {
+          // Diagnose: how close did the ray pass to the nearest proxy?
+          const rect = renderer.domElement.getBoundingClientRect();
+          const nx = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+          const ny = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+          ray.setFromCamera(new THREE.Vector2(nx, ny), camera);
+          const v = new THREE.Vector3();
+          let best = Infinity;
+          for (const m of hitMeshes) {
+            if (!m.visible) continue;
+            m.getWorldPosition(v);
+            const d = ray.distanceToPoint(v);
+            if (d < best) best = d;
+          }
+          report?.(
+            `debug: MISS ndc(${nx.toFixed(2)},${ny.toFixed(2)}) nearest=${best.toFixed(2)}u targets=${hitMeshes.length} camdist=${camera.position.length().toFixed(1)}`,
+          );
+        }
         if (selected && selected !== mesh) selected.scale.setScalar(selected.userData.baseScale);
         selected = mesh;
         if (selected) selected.scale.setScalar(selected.userData.baseScale * 1.7);
@@ -293,6 +308,8 @@ function useAtlasScene(
       }
       const ro = new ResizeObserver(onResize);
       ro.observe(mount);
+
+      report?.(`debug: scene built, ${hitMeshes.length} hit targets, ${meshes.length} nodes`);
 
       setHandle({
         setCategoryVisible: (cat, visible) => {
