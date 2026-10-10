@@ -7,6 +7,7 @@ import { ValueChainToggle } from "@/components/home/ValueChainToggle";
 import { TempleBackdrop } from "@/components/home/TempleBackdrop";
 import { DianaDrift } from "@/components/home/DianaDrift";
 import { StickyNav } from "@/components/home/StickyNav";
+import { CinematicCloser } from "@/components/home/CinematicCloser";
 import { IntroVideo } from "@/components/home/IntroVideo";
 import { createMetadata } from "@/lib/seo/metadata";
 
@@ -329,6 +330,9 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* 8 — Cinematic closer (trimmed blueprint build; gibberish middle cut) */}
+      <CinematicCloser />
     </>
   );
 }
