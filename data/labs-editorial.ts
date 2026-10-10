@@ -5,6 +5,10 @@ import {
   Globe2,
   Landmark,
   Map as MapIcon,
+  Sparkles,
+  Waves,
+  Wind,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import type { StatusTone } from "@/data/proofLibrary";
@@ -14,7 +18,44 @@ import type { StatusTone } from "@/data/proofLibrary";
  * live in ENGINEERING/PRODUCT_REGISTRY.yaml; this file holds the reviewed
  * narrative for each lab. `registryId: null` marks editorial-only content that
  * has no registry entry yet.
+ *
+ * `category` is the visitor-facing taxonomy for the labs index. It is optional
+ * so older branches that add entries without it still typecheck; uncategorized
+ * entries fall back to "explorations" (see labCategory()).
  */
+export type LabCategory = "construction" | "controls" | "bid" | "brand" | "explorations";
+
+export const labCategoryMeta: Record<LabCategory, { label: string; blurb: string }> = {
+  construction: {
+    label: "Construction Intelligence",
+    blurb: "Flagship proofs: utility, mechanical, and sewer bridges plus the simulators that argue Artemis is an implementation system.",
+  },
+  controls: {
+    label: "Project Controls & Finance",
+    blurb: "Estimating tools, finance architecture, and decision-system prototypes.",
+  },
+  bid: {
+    label: "Bid & Procurement",
+    blurb: "Bidroom and procurement intelligence surfaces.",
+  },
+  brand: {
+    label: "Brand & Experience",
+    blurb: "The executive-grade visual language: Diana, the emblem system, and experience direction.",
+  },
+  explorations: {
+    label: "Explorations",
+    blurb: "Playgrounds, atlases, and art demos. Lighter fare, honestly labeled.",
+  },
+};
+
+export const labCategoryOrder: LabCategory[] = [
+  "construction",
+  "controls",
+  "bid",
+  "brand",
+  "explorations",
+];
+
 export type LabEditorial = {
   registryId: string | null;
   title: string;
@@ -28,9 +69,96 @@ export type LabEditorial = {
   signals: string[];
   commercialPath: string;
   boundary: string;
+  category?: LabCategory;
+  /** Pinned to the flagship strip at the top of the labs index. */
+  flagship?: boolean;
+  /** Collapsed variant links (e.g. LEGO editions) rendered inside one card. */
+  editions?: { label: string; href: string }[];
 };
 
+export function labCategory(entry: LabEditorial): LabCategory {
+  return entry.category ?? "explorations";
+}
+
 export const labsEditorial: LabEditorial[] = [
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "Utility Intelligence Bridge",
+    eyebrow: "Construction Intelligence",
+    href: "/labs/utility-intelligence-bridge",
+    statusLabel: "RC8.2",
+    statusTone: "test",
+    Icon: Zap,
+    accentIcon: Landmark,
+    description:
+      "The public utility construction-intelligence bridge: a 3D model view with an Actuals & Claims demo studio — deterministic datasets, reconciliation checks, and source-labeled imports.",
+    signals: ["3D model view", "Actuals & Claims studio", "Source-labeled data", "CSV/JSON import-export"],
+    commercialPath:
+      "Best pilot path: utility project-controls reviews, actuals-vs-forecast reconciliation workshops, and executive program briefings.",
+    boundary:
+      "Demonstration build with synthetic and illustrative data. It is not a system of record, a bid, or engineering advice.",
+    category: "construction",
+    flagship: true,
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "HVAC Mechanical Intelligence Bridge",
+    eyebrow: "Construction Intelligence",
+    href: "/labs/hvac-mechanical-intelligence-bridge",
+    statusLabel: "RC8.11",
+    statusTone: "test",
+    Icon: Wind,
+    accentIcon: Landmark,
+    description:
+      "A full-screen 3D exploded rooftop-unit System Lab for mechanical construction intelligence: equipment anatomy, system relationships, and reviewable engineering views.",
+    signals: ["Exploded 3D rooftop unit", "System Lab views", "Reviewable diagrams"],
+    commercialPath:
+      "Best pilot path: mechanical precon reviews, equipment submittal walkthroughs, and field-lead training.",
+    boundary:
+      "Demonstration build with illustrative data. It is not a submittal, a bid, or engineering advice.",
+    category: "construction",
+    flagship: true,
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "Sewer Utility Intelligence Bridge",
+    eyebrow: "Construction Intelligence",
+    href: "/labs/sewer-utility-intelligence-bridge",
+    statusLabel: "v1",
+    statusTone: "test",
+    Icon: Waves,
+    accentIcon: Landmark,
+    description:
+      "The sewer utility intelligence lab: an exploded 3D segment view with hydraulics and HGL analysis, pump-station electrical checks, compatibility checks, and a 24-hour flow duty view.",
+    signals: ["Exploded 3D segment", "Hydraulics + HGL", "Compatibility checks", "24-h flow duty"],
+    commercialPath:
+      "Best pilot path: utility program reviews, hydraulics workshops, and operator training briefings.",
+    boundary:
+      "Demonstration build with illustrative data. It is not a design, a bid, or engineering advice.",
+    category: "construction",
+    flagship: true,
+  },
+  {
+    registryId: "diana-moonshot",
+    title: "Diana Moonshot",
+    eyebrow: "Brand Experience",
+    href: "/labs/diana-moonshot",
+    statusLabel: "Interactive 3D",
+    statusTone: "test",
+    Icon: Sparkles,
+    accentIcon: Crown,
+    description:
+      "The Artemis brand-experience lab, now with the interactive Diana 3D demonstrator: orbit the archer mark, switch camera angles, and feel the executive-grade visual language.",
+    signals: ["Interactive 3D demonstrator", "Camera presets", "Brand system"],
+    commercialPath:
+      "Best pilot path: executive brand reviews, keynote visuals, and experience-direction sign-off.",
+    boundary:
+      "A brand-experience proof. It is not a product line or current product-capability evidence.",
+    category: "brand",
+  },
   {
     registryId: "geometric-workbench",
     title: "ARTEMIS Geometric Workbench",
@@ -47,6 +175,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: geometric design studies, geometry education, fabrication-feasibility exploration, and qualified professional project review.",
     boundary:
       "All fabrication, quantity, connection, material, and BOM outputs are preliminary and require qualified engineering and fabrication review before construction or manufacturing.",
+    category: "construction",
   },
   {
     registryId: "tax-architecture-2026",
@@ -64,6 +193,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: executive education, scenario workshops, creator-led finance storytelling, and advisory intake.",
     boundary:
       "Educational prototype only. It is not tax advice, filing software, or a replacement for professional review.",
+    category: "controls",
   },
   {
     registryId: "turkiye-atlas",
@@ -81,6 +211,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: tourism campaigns, local partner discovery, itinerary products, sponsorship packages, and destination intelligence.",
     boundary:
       "Contains a public Mapbox pk token that must remain URL-restricted before stronger public promotion.",
+    category: "explorations",
   },
   {
     registryId: "time-atlas-troy",
@@ -98,6 +229,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: history education embeds, archaeology-tech social clips, museum/tour-guide storytelling, classroom modules, and future paid site/era packs.",
     boundary:
       "Evidence-graded public prototype only. Coordinates are research anchors in a compressed diorama, not a survey-grade GIS reconstruction or official archaeological map.",
+    category: "explorations",
   },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
@@ -116,6 +248,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: character-led destination quests, sponsored route packs, mobile itinerary funnels, and premium cultural game tours.",
     boundary:
       "This is a lightweight standalone iPhone game prototype with approximate lon/lat projection. It is not a full GIS dataset, navigation product, or production booking engine.",
+    category: "explorations",
   },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
@@ -134,6 +267,7 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: precon scenario workshops, bid strategy reviews, and executive briefing demos.",
     boundary:
       "Demonstration model with illustrative data. It is not a bid, a schedule of record, or engineering advice.",
+    category: "construction",
   },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
@@ -152,94 +286,33 @@ export const labsEditorial: LabEditorial[] = [
       "Best pilot path: publication QA reviews, stakeholder screenshot decks, and utility program briefings.",
     boundary:
       "QA and capture tooling with illustrative data. Visual presets change presentation only; quantity, schedule, and cost logic are untouched.",
+    category: "construction",
   },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    // The five LEGO editions are collapsed into one card; variants link out from inside.
     registryId: null,
     title: "LEGO Build Studio",
     eyebrow: "Art / Demo",
     href: "/labs/lego-build-studio",
-    statusLabel: "v1",
+    statusLabel: "5 editions",
     statusTone: "test",
     Icon: Gamepad2,
     accentIcon: Landmark,
     description:
-      "An animated brick-by-brick construction studio: 9 world monuments rebuilt in Three.js across 10 color palettes, with timeline scrubbing, a live BOM view, and day/night orbit presentation.",
-    signals: ["Three.js animation", "9 monuments", "10 palettes", "Live BOM"],
-    commercialPath:
-      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
-    boundary:
-      "Artistic demonstration with illustrative geometry. It is not a LEGO product, a construction model, or engineering advice.",
-  },
-  {
-    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
-    registryId: null,
-    title: "LEGO Build Studio \u00b7 Music Edition",
-    eyebrow: "Art / Demo",
-    href: "/labs/lego-build-studio-music",
-    statusLabel: "v5.0",
-    statusTone: "test",
-    Icon: Gamepad2,
-    accentIcon: Landmark,
-    description:
-      "The music edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js across 10 color palettes, driven by a generative Web Audio music engine, with timeline scrubbing and a live BOM view.",
-    signals: ["Generative Web Audio music", "Three.js animation", "9 monuments", "Live BOM"],
+      "An animated brick-by-brick construction studio: world monuments rebuilt in Three.js across 10 color palettes, with timeline scrubbing, a live BOM view, generative music modes, and a Fourier-epicycles ARTEMIS inscription.",
+    signals: ["Three.js animation", "10 monuments", "10 palettes", "Live BOM"],
     commercialPath:
       "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
     boundary:
       "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
-  },
-  {
-    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
-    registryId: null,
-    title: "LEGO Build Studio \u00b7 Artemis Edition",
-    eyebrow: "Art / Demo",
-    href: "/labs/lego-build-studio-artemis",
-    statusLabel: "v5.0 Artemis",
-    statusTone: "test",
-    Icon: Gamepad2,
-    accentIcon: Landmark,
-    description:
-      "The Artemis edition of the animated LEGO construction studio: 9 world monuments rebuilt brick-by-brick in Three.js with a generative Web Audio music engine, a Fourier-epicycles ARTEMIS inscription linking to artemis.agoraxai.com, a clean-view presentation mode, and a translucent studio UI.",
-    signals: ["Fourier ARTEMIS inscription", "Generative Web Audio music", "Clean-view mode", "9 monuments"],
-    commercialPath:
-      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
-    boundary:
-      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
-  },
-  {
-    registryId: null,
-    title: "LEGO Build Studio \u00b7 Ultimate Edition",
-    eyebrow: "Art / Demo",
-    href: "/labs/lego-build-studio-ultimate",
-    statusLabel: "v5.0 Ultimate",
-    statusTone: "test",
-    Icon: Gamepad2,
-    accentIcon: Landmark,
-    description:
-      "The ultimate edition of the animated LEGO construction studio: 10 world monuments rebuilt brick-by-brick in Three.js \u2014 a Fourier-series crane fleet, 9 generative Web Audio music modes, 10 color modes, a live bill of materials, and a Fourier-drawn ARTEMIS inscription.",
-    signals: ["Fourier crane fleet", "9 generative music modes", "10 monuments", "Live bill of materials"],
-    commercialPath:
-      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
-    boundary:
-      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
-  },
-  {
-    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
-    registryId: null,
-    title: "LEGO Build Studio \u00b7 Artemis Music Edition",
-    eyebrow: "Art / Demo",
-    href: "/labs/lego-build-studio-artemis-music",
-    statusLabel: "v5.0 Artemis",
-    statusTone: "test",
-    Icon: Gamepad2,
-    accentIcon: Landmark,
-    description:
-      "The Artemis music edition of the animated LEGO construction studio: 10 world monuments including Hagia Sophia rebuilt brick-by-brick in Three.js, a 9-mode generative Web Audio music engine (Techno, Deep House, Psytrance, Hip-Hop, Rap, Rock, Classical, Jazz, Pop), a Fourier-epicycles ARTEMIS inscription linking to artemis.agoraxai.com, a clean-view presentation mode, and a translucent studio UI.",
-    signals: ["9-mode generative music", "Fourier ARTEMIS inscription", "10 monuments", "Clean-view mode"],
-    commercialPath:
-      "Best pilot path: public engagement demos, education and outreach, and visual storytelling showcases.",
-    boundary:
-      "Artistic demonstration with illustrative geometry and generative audio. It is not a LEGO product, a construction model, or engineering advice.",
+    category: "explorations",
+    editions: [
+      { label: "v1", href: "/labs/lego-build-studio" },
+      { label: "Music v5.0", href: "/labs/lego-build-studio-music" },
+      { label: "Artemis v5.0", href: "/labs/lego-build-studio-artemis" },
+      { label: "Ultimate v5.0", href: "/labs/lego-build-studio-ultimate" },
+      { label: "Artemis Music", href: "/labs/lego-build-studio-artemis-music" },
+    ],
   },
 ];

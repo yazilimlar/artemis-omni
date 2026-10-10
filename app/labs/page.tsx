@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/showcase/StatusBadge";
 import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
-import { labsEditorial, type LabEditorial } from "@/data/labs-editorial";
+import { labsEditorial, labCategory, labCategoryMeta, labCategoryOrder, type LabCategory, type LabEditorial } from "@/data/labs-editorial";
 import allScenes from "@/data/scene-registry.json";
 import { proofModules } from "@/data/proofLibrary";
 import {
@@ -35,9 +35,18 @@ export const metadata = createMetadata({
     "Artemis Labs is an executive proof library for public-safe narratives, synthetic showcases, system diagrams, and private-demo boundaries.",
 });
 
-function EditorialLabCard({ module }: { module: LabEditorial }) {
+function EditorialLabCard({
+  module,
+  featured = false,
+  monoVoice = false,
+}: {
+  module: LabEditorial;
+  featured?: boolean;
+  monoVoice?: boolean;
+}) {
   const Icon = module.Icon;
   const AccentIcon = module.accentIcon;
+  const mono = monoVoice ? "font-papermono" : "font-mono";
   return (
     <article className="group relative min-w-0 overflow-hidden rounded-lg border border-border/70 bg-navy-deep/50 p-6 shadow-panel transition-colors hover:border-gold/45">
       <div
@@ -47,8 +56,12 @@ function EditorialLabCard({ module }: { module: LabEditorial }) {
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
-            <StatusBadge tone={module.statusTone}>{module.statusLabel}</StatusBadge>
-            <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+            {featured ? (
+              <StatusBadge tone="reference">Flagship proof</StatusBadge>
+            ) : (
+              <StatusBadge tone={module.statusTone}>{module.statusLabel}</StatusBadge>
+            )}
+            <span className={`${mono} text-[0.62rem] uppercase tracking-wider text-signal-soft`}>
               {module.eyebrow}
             </span>
           </div>
@@ -69,16 +82,33 @@ function EditorialLabCard({ module }: { module: LabEditorial }) {
         {module.signals.map((signal) => (
           <span
             key={signal}
-            className="rounded-full border border-border/60 bg-background/35 px-2.5 py-1 text-xs text-muted-foreground"
+            className={`rounded-full border border-border/60 bg-background/35 px-2.5 py-1 text-xs text-muted-foreground ${monoVoice ? "font-papermono" : ""}`}
           >
             {signal}
           </span>
         ))}
       </div>
 
+      {module.editions ? (
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span className={`${mono} text-[0.62rem] uppercase tracking-wider text-signal-soft`}>
+            Editions
+          </span>
+          {module.editions.map((edition) => (
+            <Link
+              key={edition.href}
+              href={edition.href}
+              className="text-sm text-gold-soft underline-offset-4 hover:underline"
+            >
+              {edition.label}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <div className="rounded-md border border-gold/20 bg-gold/5 p-4">
-          <div className="flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-wider text-gold-soft">
+          <div className={`flex items-center gap-2 ${mono} text-[0.62rem] uppercase tracking-wider text-gold-soft`}>
             <AccentIcon className="h-4 w-4" aria-hidden />
             Revenue Path
           </div>
@@ -87,7 +117,7 @@ function EditorialLabCard({ module }: { module: LabEditorial }) {
           </p>
         </div>
         <div className="rounded-md border border-border/60 bg-background/30 p-4">
-          <div className="flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+          <div className={`flex items-center gap-2 ${mono} text-[0.62rem] uppercase tracking-wider text-signal-soft`}>
             <ShieldCheck className="h-4 w-4" aria-hidden />
             Review Boundary
           </div>
@@ -154,9 +184,35 @@ const sceneRegistry = allScenes.filter((scene) => scene.route.startsWith("/labs/
 
 const MORE_LAB_REGISTRY_IDS = ["artemis-nomad", "bidroom-exemplary-contractor"];
 
+/** Registry division → visitor-facing lab category (editorial entries carry their own). */
+const divisionLabCategory: Record<string, LabCategory> = {
+  "infrastructure-construction": "construction",
+  "core-platform": "construction",
+  "finance-decision-systems": "controls",
+  "studio-media": "brand",
+  "atlas-places": "explorations",
+  "knowledge-academy": "explorations",
+  "natural-systems": "explorations",
+};
+
 export default function LabsPage() {
   const products = loadProducts();
   const labEntries = mergeRegistryOverlay(products, labsEditorial);
+  // Taxonomy: flagships pin to the top strip; everything else groups by category.
+  const flagships = labEntries.filter((entry) => entry.editorial?.flagship);
+  const grouped = new Map<LabCategory, typeof labEntries>();
+  for (const entry of labEntries) {
+    if (entry.editorial?.flagship) continue;
+    const category: LabCategory = entry.editorial
+      ? labCategory(entry.editorial)
+      : (entry.product
+          ? (divisionLabCategory[entry.product.division] ?? "explorations")
+          : "explorations");
+    const list = grouped.get(category) ?? [];
+    list.push(entry);
+    grouped.set(category, list);
+  }
+  const visibleCategories = labCategoryOrder.filter((cat) => (grouped.get(cat) ?? []).length > 0);
   // Site audit F-2 / B-1: registered public_safe_demo labs with no other inbound
   // link (not added to the sitemap: not "public"), plus Botanical, which moved
   // out of the header into Labs.
@@ -203,28 +259,100 @@ export default function LabsPage() {
         </Container>
       </section>
 
-      <section className="border-b border-border/60 py-16 lg:py-20">
+      {/* Category jump nav — browse the proof library by what things are. */}
+      <section className="border-b border-border/60 py-8">
+        <Container>
+          <nav
+            aria-label="Browse labs by category"
+            className="flex flex-wrap items-center gap-x-6 gap-y-3"
+          >
+            <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+              Browse
+            </span>
+            <a
+              href="#flagships"
+              className="text-sm text-gold-soft underline-offset-4 hover:underline"
+            >
+              Flagships
+            </a>
+            {visibleCategories.map((cat) => (
+              <a
+                key={cat}
+                href={`#labs-${cat}`}
+                className="text-sm text-foreground/75 underline-offset-4 transition-colors hover:text-gold hover:underline"
+              >
+                {labCategoryMeta[cat].label}
+              </a>
+            ))}
+          </nav>
+        </Container>
+      </section>
+
+      {/* Flagship construction proofs — pinned above the taxonomy. */}
+      <section id="flagships" className="scroll-mt-24 border-b border-border/60 py-16 lg:py-20">
         <Container>
           <ExecutiveSectionHeader
-            eyebrow="Standalone Modules"
-            title="Reviewed prototypes now become public Artemis Labs"
-            description="These modules preserve the original standalone HTML engines for speed and visibility, while the surrounding Artemis site provides route discipline, catalog context, commercial direction, and review boundaries."
+            eyebrow="Flagship proofs"
+            title="Construction intelligence, front and center"
+            description="The three bridges that carry the implementation argument — utility, mechanical, and sewer. Each is a reviewable, public-safe construction intelligence lab."
           />
-          <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-            {labEntries.map((entry) =>
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            {flagships.map((entry) =>
               entry.editorial ? (
-                <EditorialLabCard key={entry.editorial.href} module={entry.editorial} />
-              ) : entry.product ? (
-                <RegistryLabCard
-                  key={entry.product.id}
-                  product={entry.product}
-                  divisionName={divisionNames.get(entry.product.division) ?? "Unclassified"}
-                />
+                <EditorialLabCard key={entry.editorial.href} module={entry.editorial} featured />
               ) : null,
             )}
           </div>
+        </Container>
+      </section>
+
+      {visibleCategories.map((cat, catIndex) => {
+        const meta = labCategoryMeta[cat];
+        const entries = grouped.get(cat) ?? [];
+        const playful = cat === "explorations";
+        return (
+          <section
+            key={cat}
+            id={`labs-${cat}`}
+            className="scroll-mt-24 border-b border-border/60 py-16 lg:py-20"
+          >
+            <Container>
+              <ExecutiveSectionHeader
+                eyebrow={`${String(catIndex + 1).padStart(2, "0")} · Labs`}
+                title={meta.label}
+                description={meta.blurb}
+              />
+              {playful ? (
+                <p className="font-papermono mt-4 text-xs text-signal-soft" aria-hidden>
+                  {"~/labs/explorations — playful builds, honestly labeled_"}
+                </p>
+              ) : null}
+              <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+                {entries.map((entry) =>
+                  entry.editorial ? (
+                    <EditorialLabCard
+                      key={entry.editorial.href}
+                      module={entry.editorial}
+                      monoVoice={playful}
+                    />
+                  ) : entry.product ? (
+                    <RegistryLabCard
+                      key={entry.product.id}
+                      product={entry.product}
+                      divisionName={divisionNames.get(entry.product.division) ?? "Unclassified"}
+                    />
+                  ) : null,
+                )}
+              </div>
+            </Container>
+          </section>
+        );
+      })}
+
+      <section className="border-b border-border/60 py-10">
+        <Container>
           {moreLabs.length > 0 ? (
-            <p className="mt-8 flex flex-wrap items-baseline gap-x-5 gap-y-2 text-sm">
+            <p className="flex flex-wrap items-baseline gap-x-5 gap-y-2 text-sm">
               <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
                 More from Labs
               </span>
