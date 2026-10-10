@@ -87,7 +87,7 @@ const MEANDER_BG =
 
 // Inquiry email for the pilot CTA. Used in the mailto link target only —
 // the address is never rendered as visible page text.
-const PILOT_EMAIL = "greatorder@greatorder.org";
+const PILOT_EMAIL = "gokmen1313@gmail.com";
 
 const CONTENT_WIDTH = "max-w-[1120px]";
 
