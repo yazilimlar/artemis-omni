@@ -44,6 +44,7 @@ function useAtlasScene(
   mountRef: React.RefObject<HTMLDivElement | null>,
   nodes: AtlasNode[],
   style: AtlasStyle,
+  report?: (msg: string) => void,
 ): SceneHandle | null {
   const [handle, setHandle] = useState<SceneHandle | null>(null);
 
@@ -57,6 +58,7 @@ function useAtlasScene(
       const THREE = await import("three");
       const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
       if (disposed || !mountRef.current) return;
+      report?.("debug: three.js loaded, building scene");
 
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const width = mount.clientWidth || 800;
@@ -242,10 +244,19 @@ function useAtlasScene(
       const onDown = (ev: PointerEvent) => {
         downX = ev.clientX;
         downY = ev.clientY;
+        report?.(`debug: pointerdown @${Math.round(ev.clientX)},${Math.round(ev.clientY)}`);
       };
       const onClick = (ev: PointerEvent) => {
-        if (Math.hypot(ev.clientX - downX, ev.clientY - downY) > 6) return;
+        if (Math.hypot(ev.clientX - downX, ev.clientY - downY) > 6) {
+          report?.("debug: click ignored (drag)");
+          return;
+        }
         const mesh = pick(ev);
+        report?.(
+          mesh
+            ? `debug: HIT ${(mesh.userData.node as AtlasNode).title}`
+            : "debug: click miss (no node hit)",
+        );
         if (selected && selected !== mesh) selected.scale.setScalar(selected.userData.baseScale);
         selected = mesh;
         if (selected) selected.scale.setScalar(selected.userData.baseScale * 1.7);
@@ -352,10 +363,12 @@ export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [selected, setSelected] = useState<AtlasNode | null>(null);
   const [ready, setReady] = useState(false);
+  // TEMPORARY click-diagnosis readout — remove before production.
+  const [debugMsg, setDebugMsg] = useState("debug: waiting for scene");
 
   // Remount the scene when the display style changes.
   const [sceneKey, setSceneKey] = useState(0);
-  const handle = useAtlasScene(mountRef, nodes, style);
+  const handle = useAtlasScene(mountRef, nodes, style, setDebugMsg);
 
   useEffect(() => {
     setReady(!!handle);
@@ -478,6 +491,10 @@ export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
             <p className="font-papermono text-xs text-muted-foreground">charting the constellation…</p>
           </div>
         ) : null}
+        {/* TEMPORARY diagnosis readout — remove before production. */}
+        <p className="pointer-events-none absolute bottom-3 left-4 font-papermono text-[0.65rem] text-gold-soft/80">
+          {debugMsg}
+        </p>
         {selected ? (
           <div className="absolute right-4 top-4 w-64 rounded-xl border border-gold/30 bg-navy-deep/90 p-5 shadow-panel backdrop-blur">
             <p className="font-papermono text-[0.62rem] uppercase tracking-wider text-signal-soft">
