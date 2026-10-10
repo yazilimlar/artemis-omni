@@ -49,6 +49,7 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
       { title: "Platform", href: "/platform" },
       { title: "Departments Artemis Serves", href: "/departments" },
       { title: "Contact", href: "/contact" },
+      { title: "Site Map", href: "/site-map" },
     ],
   },
 ];
