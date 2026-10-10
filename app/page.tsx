@@ -75,8 +75,9 @@ const whatItIsNot = [
   "Not a replacement for PMs, engineers, finance leaders, field teams, or reviewers.",
 ];
 
-// PLACEHOLDER: pilot contact email — the owner supplies the address. Do not guess.
-const PILOT_EMAIL_PLACEHOLDER = "PILOT_EMAIL_TO_BE_PROVIDED_BY_OWNER";
+// Inquiry email for the pilot CTA. Used in the mailto link target only —
+// the address is never rendered as visible page text.
+const PILOT_EMAIL = "greatorder@greatorder.org";
 
 const CONTENT_WIDTH = "max-w-[1120px]";
 
@@ -283,8 +284,7 @@ export default function HomePage() {
               proof. Artemis turns that into a pilot-ready implementation path.
             </p>
             <div className="mt-8 flex justify-center">
-              {/* PLACEHOLDER: pilot contact email — the owner supplies the address. Do not guess. */}
-              <Button href={`mailto:${PILOT_EMAIL_PLACEHOLDER}`} size="lg">
+              <Button href={`mailto:${PILOT_EMAIL}`} size="lg">
                 Start the conversation →
               </Button>
             </div>
