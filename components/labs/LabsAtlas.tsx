@@ -44,21 +44,20 @@ function useAtlasScene(
   mountRef: React.RefObject<HTMLDivElement | null>,
   nodes: AtlasNode[],
   style: AtlasStyle,
-  report?: (msg: string) => void,
 ): SceneHandle | null {
   const [handle, setHandle] = useState<SceneHandle | null>(null);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
-    let disposed = false;
+    let cancelled = false;
+    let dispose: (() => void) | undefined;
     let selectCb: (node: AtlasNode | null) => void = () => {};
 
     (async () => {
       const THREE = await import("three");
       const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
-      if (disposed || !mountRef.current) return;
-      report?.("debug: three.js loaded, building scene");
+      if (cancelled || !mountRef.current) return;
 
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const width = mount.clientWidth || 800;
@@ -180,8 +179,9 @@ function useAtlasScene(
           group.push(mesh);
 
           // Invisible, generous hit target — raycast-tested, never rendered.
+          // Sized larger than the visible node so clicks land while nodes drift.
           const hit = new THREE.Mesh(
-            new THREE.SphereGeometry(1.05, 8, 8),
+            new THREE.SphereGeometry(1.6, 8, 8),
             new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false }),
           );
           hit.position.copy(p);
@@ -241,37 +241,21 @@ function useAtlasScene(
       // not a node selection.
       let downX = 0;
       let downY = 0;
+      let hovering = false;
       const onDown = (ev: PointerEvent) => {
         downX = ev.clientX;
         downY = ev.clientY;
-        report?.(`debug: pointerdown @${Math.round(ev.clientX)},${Math.round(ev.clientY)}`);
+      };
+      const onEnter = () => {
+        hovering = true;
+      };
+      const onLeave = () => {
+        hovering = false;
+        setHover(null);
       };
       const onClick = (ev: PointerEvent) => {
-        if (Math.hypot(ev.clientX - downX, ev.clientY - downY) > 6) {
-          report?.("debug: click ignored (drag)");
-          return;
-        }
+        if (Math.hypot(ev.clientX - downX, ev.clientY - downY) > 6) return;
         const mesh = pick(ev);
-        if (mesh) {
-          report?.(`debug: HIT ${(mesh.userData.node as AtlasNode).title}`);
-        } else {
-          // Diagnose: how close did the ray pass to the nearest proxy?
-          const rect = renderer.domElement.getBoundingClientRect();
-          const nx = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
-          const ny = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
-          ray.setFromCamera(new THREE.Vector2(nx, ny), camera);
-          const v = new THREE.Vector3();
-          let best = Infinity;
-          for (const m of hitMeshes) {
-            if (!m.visible) continue;
-            m.getWorldPosition(v);
-            const d = ray.ray.distanceToPoint(v);
-            if (d < best) best = d;
-          }
-          report?.(
-            `debug: MISS ndc(${nx.toFixed(2)},${ny.toFixed(2)}) nearest=${best.toFixed(2)}u targets=${hitMeshes.length} camdist=${camera.position.length().toFixed(1)}`,
-          );
-        }
         if (selected && selected !== mesh) selected.scale.setScalar(selected.userData.baseScale);
         selected = mesh;
         if (selected) selected.scale.setScalar(selected.userData.baseScale * 1.7);
@@ -279,14 +263,20 @@ function useAtlasScene(
       };
       renderer.domElement.addEventListener("pointermove", onMove);
       renderer.domElement.addEventListener("pointerdown", onDown);
+      renderer.domElement.addEventListener("pointerenter", onEnter);
+      renderer.domElement.addEventListener("pointerleave", onLeave);
       renderer.domElement.addEventListener("click", onClick);
 
       const clock = new THREE.Clock();
       let raf = 0;
       function tick() {
         raf = requestAnimationFrame(tick);
-        const t = clock.getElapsedTime();
-        if (!reduced) root.rotation.y = t * 0.03;
+        const dt = Math.min(clock.getDelta(), 0.05);
+        const t = clock.elapsedTime;
+        // Pause the drift while the visitor's pointer is over the canvas —
+        // moving targets are miserable to click.
+        if (!reduced && !hovering) root.rotation.y += dt * 0.03;
+        controls.autoRotate = !reduced && !hovering;
         // Flagship pulse.
         for (const m of meshes) {
           const node = m.userData.node as AtlasNode;
@@ -308,8 +298,6 @@ function useAtlasScene(
       }
       const ro = new ResizeObserver(onResize);
       ro.observe(mount);
-
-      report?.(`debug: scene built, ${hitMeshes.length} hit targets, ${meshes.length} nodes`);
 
       setHandle({
         setCategoryVisible: (cat, visible) => {
@@ -337,12 +325,13 @@ function useAtlasScene(
         },
       });
 
-      return () => {
-        disposed = true;
+      dispose = () => {
         cancelAnimationFrame(raf);
         ro.disconnect();
         renderer.domElement.removeEventListener("pointermove", onMove);
         renderer.domElement.removeEventListener("pointerdown", onDown);
+        renderer.domElement.removeEventListener("pointerenter", onEnter);
+        renderer.domElement.removeEventListener("pointerleave", onLeave);
         renderer.domElement.removeEventListener("click", onClick);
         controls.dispose();
         scene.traverse((o) => {
@@ -357,9 +346,14 @@ function useAtlasScene(
           }
         });
         renderer.dispose();
-        mount.removeChild(renderer.domElement);
+        if (renderer.domElement.parentElement === mount) mount.removeChild(renderer.domElement);
       };
     })();
+
+    return () => {
+      cancelled = true;
+      dispose?.();
+    };
   }, [mountRef, style]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return handle;
@@ -380,12 +374,10 @@ export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [selected, setSelected] = useState<AtlasNode | null>(null);
   const [ready, setReady] = useState(false);
-  // TEMPORARY click-diagnosis readout — remove before production.
-  const [debugMsg, setDebugMsg] = useState("debug: waiting for scene");
 
   // Remount the scene when the display style changes.
   const [sceneKey, setSceneKey] = useState(0);
-  const handle = useAtlasScene(mountRef, nodes, style, setDebugMsg);
+  const handle = useAtlasScene(mountRef, nodes, style);
 
   useEffect(() => {
     setReady(!!handle);
@@ -508,10 +500,6 @@ export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
             <p className="font-papermono text-xs text-muted-foreground">charting the constellation…</p>
           </div>
         ) : null}
-        {/* TEMPORARY diagnosis readout — remove before production. */}
-        <p className="pointer-events-none absolute bottom-3 left-4 font-papermono text-[0.65rem] text-gold-soft/80">
-          {debugMsg}
-        </p>
         {selected ? (
           <div className="absolute right-4 top-4 w-64 rounded-xl border border-gold/30 bg-navy-deep/90 p-5 shadow-panel backdrop-blur">
             <p className="font-papermono text-[0.62rem] uppercase tracking-wider text-signal-soft">
