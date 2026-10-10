@@ -507,6 +507,7 @@ export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
               {selected.flagship ? " · ◈ flagship" : ""}
             </p>
             <p className="display-serif mt-2 text-xl text-parchment">{selected.title}</p>
+            <p className="mt-2 text-sm leading-relaxed text-mist">{selected.description}</p>
             <p className="mt-1 font-papermono text-xs text-muted-foreground">{selected.status}</p>
             <div className="mt-4 flex gap-2">
               <Link
