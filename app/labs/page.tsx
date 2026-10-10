@@ -17,6 +17,8 @@ import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { ValueChainStrip } from "@/components/showcase/ValueChainStrip";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
 import { labsEditorial, labCategory, labCategoryMeta, labCategoryOrder, type LabCategory, type LabEditorial } from "@/data/labs-editorial";
+import { LabsShell } from "@/components/labs/LabsShell";
+import type { AtlasNode } from "@/components/labs/LabsAtlas";
 import allScenes from "@/data/scene-registry.json";
 import { proofModules } from "@/data/proofLibrary";
 import {
@@ -225,6 +227,120 @@ export default function LabsPage() {
     { title: "Rainbow House Botanical Encyclopedia", href: "/labs/rainbow-house-botanical" },
   ];
   const divisionNames = new Map(loadDivisions().map((division) => [division.id, division.name]));
+
+  // Serializable node list for the Atlas view — no component references cross
+  // the server/client boundary.
+  const atlasNodes: AtlasNode[] = labEntries.map((entry) => {
+    if (entry.editorial) {
+      return {
+        id: entry.editorial.href,
+        title: entry.editorial.title,
+        category: labCategory(entry.editorial),
+        flagship: !!entry.editorial.flagship,
+        href: entry.editorial.href,
+        status: entry.editorial.statusLabel,
+      };
+    }
+    const product = entry.product!;
+    return {
+      id: product.id,
+      title: product.name,
+      category: divisionLabCategory[product.division] ?? "explorations",
+      flagship: false,
+      href: linkableRoute(product) ?? "/labs",
+      status: divisionNames.get(product.division) ?? "Lab",
+    };
+  });
+
+  const flagshipSection = (
+    <section id="flagships" className="scroll-mt-24 border-b border-border/60 py-16 lg:py-20">
+      <Container>
+        <ExecutiveSectionHeader
+          eyebrow="Flagship proofs"
+          title="Construction intelligence, front and center"
+          description="The three bridges that carry the implementation argument — utility, mechanical, and sewer. Each is a reviewable, public-safe construction intelligence lab."
+        />
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {flagships.map((entry) =>
+            entry.editorial ? (
+              <EditorialLabCard key={entry.editorial.href} module={entry.editorial} featured />
+            ) : null,
+          )}
+        </div>
+      </Container>
+    </section>
+  );
+
+  const categorySections = visibleCategories.map((cat) => {
+    const meta = labCategoryMeta[cat];
+    const entries = grouped.get(cat) ?? [];
+    const playful = cat === "explorations";
+    const num = String(labCategoryOrder.indexOf(cat) + 1).padStart(2, "0");
+    return {
+      id: cat,
+      node: (
+        <section
+          key={cat}
+          id={`labs-${cat}`}
+          className="scroll-mt-24 border-b border-border/60 py-16 lg:py-20"
+        >
+          <Container>
+            <ExecutiveSectionHeader
+              eyebrow={`${num} · Labs`}
+              title={meta.label}
+              description={meta.blurb}
+            />
+            {playful ? (
+              <p className="font-papermono mt-4 text-xs text-signal-soft" aria-hidden>
+                {"~/labs/explorations — playful builds, honestly labeled_"}
+              </p>
+            ) : null}
+            <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+              {entries.map((entry) =>
+                entry.editorial ? (
+                  <EditorialLabCard
+                    key={entry.editorial.href}
+                    module={entry.editorial}
+                    monoVoice={playful}
+                  />
+                ) : entry.product ? (
+                  <RegistryLabCard
+                    key={entry.product.id}
+                    product={entry.product}
+                    divisionName={divisionNames.get(entry.product.division) ?? "Unclassified"}
+                  />
+                ) : null,
+              )}
+            </div>
+          </Container>
+        </section>
+      ),
+    };
+  });
+
+  const moreLabsSection = (
+    <section className="border-b border-border/60 py-10">
+      <Container>
+        {moreLabs.length > 0 ? (
+          <p className="flex flex-wrap items-baseline gap-x-5 gap-y-2 text-sm">
+            <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
+              More from Labs
+            </span>
+            {moreLabs.map((lab) => (
+              <Link
+                key={lab.href}
+                href={lab.href}
+                className="text-gold-soft underline-offset-4 hover:underline"
+              >
+                {lab.title}
+              </Link>
+            ))}
+          </p>
+        ) : null}
+      </Container>
+    </section>
+  );
+
   return (
     <>
       <PageHero
@@ -259,116 +375,12 @@ export default function LabsPage() {
         </Container>
       </section>
 
-      {/* Category jump nav — browse the proof library by what things are. */}
-      <section className="border-b border-border/60 py-8">
-        <Container>
-          <nav
-            aria-label="Browse labs by category"
-            className="flex flex-wrap items-center gap-x-6 gap-y-3"
-          >
-            <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
-              Browse
-            </span>
-            <a
-              href="#flagships"
-              className="text-sm text-gold-soft underline-offset-4 hover:underline"
-            >
-              Flagships
-            </a>
-            {visibleCategories.map((cat) => (
-              <a
-                key={cat}
-                href={`#labs-${cat}`}
-                className="text-sm text-foreground/75 underline-offset-4 transition-colors hover:text-gold hover:underline"
-              >
-                {labCategoryMeta[cat].label}
-              </a>
-            ))}
-          </nav>
-        </Container>
-      </section>
-
-      {/* Flagship construction proofs — pinned above the taxonomy. */}
-      <section id="flagships" className="scroll-mt-24 border-b border-border/60 py-16 lg:py-20">
-        <Container>
-          <ExecutiveSectionHeader
-            eyebrow="Flagship proofs"
-            title="Construction intelligence, front and center"
-            description="The three bridges that carry the implementation argument — utility, mechanical, and sewer. Each is a reviewable, public-safe construction intelligence lab."
-          />
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {flagships.map((entry) =>
-              entry.editorial ? (
-                <EditorialLabCard key={entry.editorial.href} module={entry.editorial} featured />
-              ) : null,
-            )}
-          </div>
-        </Container>
-      </section>
-
-      {visibleCategories.map((cat, catIndex) => {
-        const meta = labCategoryMeta[cat];
-        const entries = grouped.get(cat) ?? [];
-        const playful = cat === "explorations";
-        return (
-          <section
-            key={cat}
-            id={`labs-${cat}`}
-            className="scroll-mt-24 border-b border-border/60 py-16 lg:py-20"
-          >
-            <Container>
-              <ExecutiveSectionHeader
-                eyebrow={`${String(catIndex + 1).padStart(2, "0")} · Labs`}
-                title={meta.label}
-                description={meta.blurb}
-              />
-              {playful ? (
-                <p className="font-papermono mt-4 text-xs text-signal-soft" aria-hidden>
-                  {"~/labs/explorations — playful builds, honestly labeled_"}
-                </p>
-              ) : null}
-              <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-                {entries.map((entry) =>
-                  entry.editorial ? (
-                    <EditorialLabCard
-                      key={entry.editorial.href}
-                      module={entry.editorial}
-                      monoVoice={playful}
-                    />
-                  ) : entry.product ? (
-                    <RegistryLabCard
-                      key={entry.product.id}
-                      product={entry.product}
-                      divisionName={divisionNames.get(entry.product.division) ?? "Unclassified"}
-                    />
-                  ) : null,
-                )}
-              </div>
-            </Container>
-          </section>
-        );
-      })}
-
-      <section className="border-b border-border/60 py-10">
-        <Container>
-          {moreLabs.length > 0 ? (
-            <p className="flex flex-wrap items-baseline gap-x-5 gap-y-2 text-sm">
-              <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
-                More from Labs
-              </span>
-              {moreLabs.map((lab) => (
-                <Link
-                  key={lab.href}
-                  href={lab.href}
-                  className="text-gold-soft underline-offset-4 hover:underline"
-                >
-                  {lab.title}
-                </Link>
-              ))}
-            </p>
-          ) : null}
-        </Container>
-      </section>
+      <LabsShell
+        flagshipSection={flagshipSection}
+        sections={categorySections}
+        moreLabs={moreLabsSection}
+        nodes={atlasNodes}
+      />
 
       {sceneRegistry.length > 0 ? (
         <section className="border-b border-border/60 py-16 lg:py-20">
