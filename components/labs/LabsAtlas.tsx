@@ -15,7 +15,16 @@ export type AtlasNode = {
   status: string;
 };
 
-export type AtlasStyle = "constellation" | "forum" | "archipelago" | "orbit" | "strata" | "radial";
+export type AtlasStyle =
+  | "constellation"
+  | "forum"
+  | "archipelago"
+  | "orbit"
+  | "strata"
+  | "radial"
+  | "pantheon"
+  | "colosseum"
+  | "agora";
 
 export const ATLAS_STYLES: AtlasStyle[] = [
   "constellation",
@@ -24,6 +33,9 @@ export const ATLAS_STYLES: AtlasStyle[] = [
   "orbit",
   "strata",
   "radial",
+  "pantheon",
+  "colosseum",
+  "agora",
 ];
 
 /** Header copy per display style — the same map, six ways to read it. */
@@ -57,6 +69,21 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
     title: "The labs as a tree",
     blurb:
       "Artemis at the root, five branches, every lab a leaf on its category's branch. Drag to orbit, click a leaf to open its lab.",
+  },
+  pantheon: {
+    title: "The labs as a pantheon",
+    blurb:
+      "A domed hall where every lab holds a niche — five sectors, one per category — and the flagships stand in the light of the oculus. Drag to look around, click a node to open its lab.",
+  },
+  colosseum: {
+    title: "The labs as a colosseum",
+    blurb:
+      "Five tiers rise around the sand, one per category; the three flagships perform in the arena. Drag to orbit, click a node to open its lab.",
+  },
+  agora: {
+    title: "The labs as an agora",
+    blurb:
+      "The marketplace: every lab keeps a stall around the shared plaza, flagships nearest the bema. Drag to orbit, click a stall to open its lab.",
   },
 };
 
@@ -114,11 +141,14 @@ function useAtlasScene(
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 200);
-      // Flatter, higher framings for the map-like styles so the layout reads.
-      // Radial is a top-down canopy: branches spread in the XZ plane.
+      // Framing per style. Radial is a top-down canopy; pantheon sits the
+      // visitor inside the dome; colosseum takes a three-quarter arena view.
       if (style === "archipelago") camera.position.set(0, 15, 17);
       else if (style === "strata") camera.position.set(0, 10, 22);
       else if (style === "radial") camera.position.set(0, 27, 13);
+      else if (style === "pantheon") camera.position.set(0, 4, 11);
+      else if (style === "colosseum") camera.position.set(0, 15, 27);
+      else if (style === "agora") camera.position.set(0, 16, 21);
       else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -129,6 +159,9 @@ function useAtlasScene(
       controls.maxDistance = 48;
       controls.autoRotate = !reduced;
       controls.autoRotateSpeed = 0.5;
+      // Aim the orbit pivot per style: mid-dome for pantheon, mid-tiers for colosseum.
+      if (style === "pantheon") controls.target.set(0, 6, 0);
+      else if (style === "colosseum") controls.target.set(0, 4, 0);
 
       const root = new THREE.Group();
       scene.add(root);
@@ -456,6 +489,256 @@ function useAtlasScene(
           const tick = makeLabel(s, "#c7cdd8", 1.2);
           tick.position.set(-9 + si * 6, -2.4, laneZ(ORDER.length - 1));
           root.add(tick);
+        });
+      } else if (style === "pantheon") {
+        // Pantheon: a domed hall viewed from inside. Five sectors of niches —
+        // one per category — rise across the dome; the flagships stand in the
+        // shaft of light beneath the oculus.
+        const DOME_R = 13;
+        const stone = new THREE.MeshBasicMaterial({ color: "#9aa2b5", transparent: true, opacity: 0.5 });
+        // Rotunda floor.
+        const floor = new THREE.Mesh(
+          new THREE.CircleGeometry(14.5, 64),
+          new THREE.MeshBasicMaterial({ color: "#3a4152", transparent: true, opacity: 0.5 }),
+        );
+        floor.rotation.x = -Math.PI / 2;
+        root.add(floor);
+        // Colonnade ring.
+        for (let k = 0; k < 16; k++) {
+          const ca = (k / 16) * Math.PI * 2;
+          const col = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 8.5, 10), stone);
+          col.position.set(Math.cos(ca) * 12.2, 4.25, Math.sin(ca) * 12.2);
+          root.add(col);
+        }
+        const cornice = new THREE.Mesh(
+          new THREE.TorusGeometry(12.2, 0.18, 8, 96),
+          new THREE.MeshBasicMaterial({ color: "#9aa2b5", transparent: true, opacity: 0.55 }),
+        );
+        cornice.rotation.x = Math.PI / 2;
+        cornice.position.y = 8.5;
+        root.add(cornice);
+        // Coffer bands across the dome.
+        for (const [elDeg, op] of [
+          [28, 0.3],
+          [46, 0.25],
+          [64, 0.2],
+        ] as const) {
+          const el = (elDeg * Math.PI) / 180;
+          const band = new THREE.Mesh(
+            new THREE.TorusGeometry(DOME_R * Math.cos(el), 0.05, 8, 96),
+            new THREE.MeshBasicMaterial({ color: "#8a93a6", transparent: true, opacity: op }),
+          );
+          band.rotation.x = Math.PI / 2;
+          band.position.y = DOME_R * Math.sin(el);
+          root.add(band);
+        }
+        // Oculus ring + light shaft.
+        const oculus = new THREE.Mesh(
+          new THREE.TorusGeometry(1.6, 0.12, 8, 48),
+          new THREE.MeshBasicMaterial({ color: "#f0d49a", transparent: true, opacity: 0.9 }),
+        );
+        oculus.rotation.x = Math.PI / 2;
+        oculus.position.y = DOME_R;
+        root.add(oculus);
+        const shaft = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.6, 3.4, DOME_R, 24, 1, true),
+          new THREE.MeshBasicMaterial({
+            color: "#f0d49a",
+            transparent: true,
+            opacity: 0.07,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+          }),
+        );
+        shaft.position.y = DOME_R / 2;
+        root.add(shaft);
+        ORDER.forEach((cat, ci) => {
+          const catNodes = nodes.filter((n) => n.category === cat);
+          if (catNodes.length === 0) return;
+          const group: THREE.Object3D[] = [];
+          const baseA = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
+          const domePt = (az: number, elDeg: number) => {
+            const el = (elDeg * Math.PI) / 180;
+            return new THREE.Vector3(
+              DOME_R * Math.cos(el) * Math.cos(az),
+              DOME_R * Math.sin(el),
+              DOME_R * Math.cos(el) * Math.sin(az),
+            );
+          };
+          catNodes
+            .filter((n) => !n.flagship)
+            .forEach((node, ni, arr) => {
+              const az = baseA + (ni - (arr.length - 1) / 2) * 0.26;
+              const elDeg = 30 + (ni % 3) * 13 + rand(ci * 53 + ni * 29 + 7) * 6;
+              addNodeMesh(node, domePt(az, elDeg), group, (ni % 2) * 0.6);
+            });
+          // Flagships ascend into the oculus light.
+          catNodes
+            .filter((n) => n.flagship)
+            .forEach((node, fi) => {
+              addNodeMesh(node, domePt(baseA + (fi - 0.5) * 0.5, 76), group);
+            });
+          const lab = makeLabel(labCategoryMeta[cat].label, CATEGORY_COLORS[cat]);
+          lab.position.copy(domePt(baseA, 19));
+          root.add(lab);
+          group.push(lab);
+          byCategory.set(cat, group);
+        });
+      } else if (style === "colosseum") {
+        // Colosseum: a tiered elliptical arena. Five tiers — one per category —
+        // rise around the sand; the flagships perform in the arena.
+        const tierOf = (ci: number) => ({ y: 2.4 + ci * 2.0, rx: 9.0 + ci * 2.1, rz: 6.4 + ci * 1.5 });
+        // Arena sand.
+        const sand = new THREE.Mesh(
+          new THREE.CircleGeometry(6.4, 48),
+          new THREE.MeshBasicMaterial({ color: "#c8a86a", transparent: true, opacity: 0.22 }),
+        );
+        sand.rotation.x = -Math.PI / 2;
+        sand.scale.set(1, 0.72, 1);
+        root.add(sand);
+        // Flagships perform in the arena; they stay in their category groups
+        // so the category filters still catch them.
+        const groups = new Map<LabCategory, THREE.Object3D[]>();
+        ORDER.forEach((cat) => groups.set(cat, []));
+        nodes
+          .filter((n) => n.flagship)
+          .forEach((node, i, arr) => {
+            const fa = (i / Math.max(arr.length, 1)) * Math.PI * 2 - Math.PI / 2;
+            addNodeMesh(node, new THREE.Vector3(Math.cos(fa) * 3.1, 0.9, Math.sin(fa) * 2.2), groups.get(node.category)!);
+          });
+        ORDER.forEach((cat, ci) => {
+          const { y, rx, rz } = tierOf(ci);
+          const group = groups.get(cat)!;
+          // Seating step: a flat elliptical band in the category color.
+          const step = new THREE.Mesh(
+            new THREE.RingGeometry(0.84, 1.0, 96),
+            new THREE.MeshBasicMaterial({ color: CATEGORY_COLORS[cat], transparent: true, opacity: 0.1, side: THREE.DoubleSide }),
+          );
+          step.rotation.x = -Math.PI / 2;
+          step.scale.set(rx, rz, 1);
+          step.position.y = y - 0.05;
+          root.add(step);
+          group.push(step);
+          // Tier edge ring.
+          const edge = new THREE.Mesh(
+            new THREE.TorusGeometry(1, 0.04, 8, 128),
+            new THREE.MeshBasicMaterial({ color: CATEGORY_COLORS[cat], transparent: true, opacity: 0.35 }),
+          );
+          edge.rotation.x = Math.PI / 2;
+          edge.scale.set(rx, rz, 1);
+          edge.position.y = y;
+          root.add(edge);
+          group.push(edge);
+          const catNodes = nodes.filter((n) => n.category === cat && !n.flagship);
+          const baseA = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
+          catNodes.forEach((node, ni) => {
+            const a = baseA + (catNodes.length === 1 ? 0 : (ni / (catNodes.length - 1) - 0.5) * 1.8);
+            addNodeMesh(node, new THREE.Vector3(Math.cos(a) * rx, y + 0.55, Math.sin(a) * rz), group, (ni % 2) * 0.6);
+          });
+          const lab = makeLabel(labCategoryMeta[cat].label, CATEGORY_COLORS[cat]);
+          lab.position.set(Math.cos(baseA) * rx, y + 2.0, Math.sin(baseA) * rz);
+          root.add(lab);
+          group.push(lab);
+          byCategory.set(cat, group);
+        });
+        // Ruined outer wall: a broken travertine arc around the tiers.
+        const wall = new THREE.Mesh(
+          new THREE.CylinderGeometry(19.5, 19.5, 10, 64, 1, true, Math.PI * 0.15, Math.PI * 1.1),
+          new THREE.MeshBasicMaterial({ color: "#b8a888", transparent: true, opacity: 0.16, side: THREE.DoubleSide }),
+        );
+        wall.position.y = 5;
+        wall.scale.set(1, 1, 0.72);
+        root.add(wall);
+      } else if (style === "agora") {
+        // Agora: the marketplace. Every lab keeps a stall around the shared
+        // plaza; flagships hold the stalls nearest the central bema.
+        const plaza = new THREE.Mesh(
+          new THREE.CircleGeometry(14, 64),
+          new THREE.MeshBasicMaterial({ color: "#414a5e", transparent: true, opacity: 0.45 }),
+        );
+        plaza.rotation.x = -Math.PI / 2;
+        root.add(plaza);
+        for (const [rr, op] of [
+          [5, 0.3],
+          [9.5, 0.2],
+          [13, 0.28],
+        ] as const) {
+          const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(rr, 0.03, 8, 96),
+            new THREE.MeshBasicMaterial({ color: "#8a93a6", transparent: true, opacity: op }),
+          );
+          ring.rotation.x = Math.PI / 2;
+          ring.position.y = 0.02;
+          root.add(ring);
+        }
+        // Bema: the speaker's platform at the center.
+        const bemaBase = new THREE.Mesh(
+          new THREE.CylinderGeometry(2.2, 2.5, 0.5, 32),
+          new THREE.MeshBasicMaterial({ color: "#9aa2b5", transparent: true, opacity: 0.6 }),
+        );
+        bemaBase.position.y = 0.25;
+        root.add(bemaBase);
+        const bemaTop = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.4, 1.6, 0.5, 32),
+          new THREE.MeshBasicMaterial({ color: "#9aa2b5", transparent: true, opacity: 0.6 }),
+        );
+        bemaTop.position.y = 0.75;
+        root.add(bemaTop);
+        const bemaLabel = makeLabel("Artemis", "#f0d49a");
+        bemaLabel.position.set(0, 2.7, 0);
+        root.add(bemaLabel);
+        ORDER.forEach((cat, ci) => {
+          const catNodes = nodes.filter((n) => n.category === cat);
+          if (catNodes.length === 0) return;
+          const group: THREE.Object3D[] = [];
+          const a = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
+          const cx = Math.cos(a) * 10.5;
+          const cz = Math.sin(a) * 10.5;
+          // Market rug under this category's stalls.
+          const rug = new THREE.Mesh(
+            new THREE.CircleGeometry(3.4, 40),
+            new THREE.MeshBasicMaterial({ color: CATEGORY_COLORS[cat], transparent: true, opacity: 0.08 }),
+          );
+          rug.rotation.x = -Math.PI / 2;
+          rug.position.set(cx, 0.03, cz);
+          root.add(rug);
+          group.push(rug);
+          const lab = makeLabel(labCategoryMeta[cat].label, CATEGORY_COLORS[cat]);
+          lab.position.set(cx, 3.6, cz);
+          root.add(lab);
+          group.push(lab);
+          catNodes.forEach((node, ni) => {
+            const na = rand(ci * 131 + ni * 17 + 5) * Math.PI * 2;
+            const nr = 0.6 + rand(ci * 57 + ni * 29 + 11) * 1.9;
+            const px = cx + Math.cos(na) * nr;
+            const pz = cz + Math.sin(na) * nr;
+            const plinthH = node.flagship ? 1.5 : 0.9;
+            // Stall table.
+            const table = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.5, 0.62, plinthH, 12),
+              new THREE.MeshBasicMaterial({ color: "#6b5b3e", transparent: true, opacity: 0.85 }),
+            );
+            table.position.set(px, plinthH / 2, pz);
+            root.add(table);
+            group.push(table);
+            // Awning in the category color — gold for flagships.
+            const awn = new THREE.Mesh(
+              new THREE.PlaneGeometry(1.7, 1.7),
+              new THREE.MeshBasicMaterial({
+                color: node.flagship ? "#e0b65a" : CATEGORY_COLORS[cat],
+                transparent: true,
+                opacity: 0.5,
+                side: THREE.DoubleSide,
+              }),
+            );
+            awn.position.set(px, plinthH + 1.2, pz);
+            awn.rotation.x = -Math.PI / 2 + 0.35;
+            awn.rotation.z = rand(ci * 17 + ni * 41 + 3) * Math.PI;
+            root.add(awn);
+            group.push(awn);
+            addNodeMesh(node, new THREE.Vector3(px, plinthH + 0.55, pz), group, (ni % 2) * 0.6);
+          });
+          byCategory.set(cat, group);
         });
       } else {
         // Radial: Artemis at the root, one branch per category, every lab a
