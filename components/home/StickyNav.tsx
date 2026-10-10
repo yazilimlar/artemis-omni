@@ -46,8 +46,8 @@ export function StickyNav({ ctaHref }: { ctaHref: string }) {
   return (
     <nav
       aria-label="Page sections"
-      className={`fixed inset-x-0 top-16 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md transition-transform duration-300 motion-reduce:transition-none ${
-        visible ? "translate-y-0" : "-translate-y-[110%]"
+      className={`fixed inset-x-0 top-16 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md transition-[transform,visibility] duration-300 motion-reduce:transition-none ${
+        visible ? "translate-y-0 visible" : "-translate-y-[calc(100%+4.5rem)] invisible"
       }`}
     >
       <div className="mx-auto flex h-12 max-w-[1120px] items-center justify-between gap-2 px-6">
