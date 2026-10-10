@@ -12,6 +12,8 @@ type ValueChainDiagramProps = {
   idPrefix: string;
   /** Light the nodes in sequence. Default false (static diagram). */
   animated?: boolean;
+  /** Extra classes for the panel (e.g. stronger backdrop over photography). */
+  className?: string;
 };
 
 export const VALUE_CHAIN_STAGES = [
@@ -32,7 +34,7 @@ export const VALUE_CHAIN_STAGES = [
 
 const LOOP_SECONDS = 10;
 
-export function ValueChainDiagram({ idPrefix, animated = false }: ValueChainDiagramProps) {
+export function ValueChainDiagram({ idPrefix, animated = false, className }: ValueChainDiagramProps) {
   const titleId = `${idPrefix}-title`;
   const descId = `${idPrefix}-desc`;
   return (
@@ -40,7 +42,7 @@ export function ValueChainDiagram({ idPrefix, animated = false }: ValueChainDiag
       role="img"
       aria-labelledby={titleId}
       aria-describedby={descId}
-      className="rounded-2xl border border-border/60 bg-navy-deep/40 p-6"
+      className={`rounded-2xl border border-border/60 bg-navy-deep/40 p-6 ${className ?? ""}`}
     >
       <span id={titleId} className="sr-only">
         Artemis value chain

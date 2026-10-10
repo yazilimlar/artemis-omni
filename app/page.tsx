@@ -84,9 +84,31 @@ const CONTENT_WIDTH = "max-w-[1120px]";
 export default function HomePage() {
   return (
     <>
-      {/* 1 — Hero */}
-      <section className="border-b border-border/60">
-        <Container className={`${CONTENT_WIDTH} py-12`}>
+      {/* 1 — Hero (Temple of Artemis backdrop, art-directed desktop/mobile) */}
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div className="absolute inset-0" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <picture className="absolute inset-0 block h-full w-full">
+            <source
+              media="(min-width: 768px)"
+              srcSet="/images/temple-bg-desktop.webp"
+              type="image/webp"
+            />
+            <source media="(min-width: 768px)" srcSet="/images/temple-bg-desktop.jpg" />
+            <source srcSet="/images/temple-bg-mobile.webp" type="image/webp" />
+            <img
+              src="/images/temple-bg-mobile.jpg"
+              alt=""
+              className="h-full w-full object-cover"
+              fetchPriority="high"
+            />
+          </picture>
+          {/* Readability washes. --lunar flips with the theme (dark at night,
+              light in day), so overlaid type stays readable in both. */}
+          <div className="absolute inset-0 bg-lunar/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-lunar/60 via-transparent to-background" />
+        </div>
+        <Container className={`${CONTENT_WIDTH} relative py-12`}>
           <p className="eyebrow">Artemis · AI Implementation</p>
           <h1 className="display-serif mt-4 max-w-3xl text-balance text-4xl leading-[1.1] text-parchment">
             Turn project fundamentals into AI-enabled execution.
@@ -111,7 +133,11 @@ export default function HomePage() {
             System ID ARTEMIS-OMNI-2026 · Public-safe proof
           </p>
           <div className="mt-6">
-            <ValueChainDiagram idPrefix="hero-value-chain" animated />
+            <ValueChainDiagram
+              idPrefix="hero-value-chain"
+              animated
+              className="bg-navy-deep/70 backdrop-blur-sm"
+            />
           </div>
         </Container>
       </section>
