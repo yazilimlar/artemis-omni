@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Paper Mono (paper.design) — free & open source (OFL). Self-hosted variable
+   weight 100–800. Used for the Labs explorations/games voice and mono accents. */
+@font-face {
+  font-family: "Paper Mono";
+  src: url("/fonts/PaperMono-Variable.woff2") format("woff2-variations");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 /*
   Artemis Omni design tokens.
   HSL channels (no hsl() wrapper) so Tailwind's <alpha-value> works on semantic tokens.
@@ -35,6 +45,7 @@
     --font-sans: var(--font-artemis-sans), ui-sans-serif, system-ui, sans-serif;
     --font-serif: var(--font-artemis-serif), "Georgia", "Cambria", serif;
     --font-mono: var(--font-artemis-mono), ui-monospace, SFMono-Regular, monospace;
+    --font-papermono: "Paper Mono", ui-monospace, SFMono-Regular, monospace;
   }
 
   html[data-theme="day"] {
@@ -377,4 +388,9 @@ html[data-theme="day"] iframe {
 }
 .vc-fade {
   animation: vc-fade 280ms ease-out;
+}
+
+/* Paper Mono utility — the explorations/games voice on Labs. */
+.font-papermono {
+  font-family: var(--font-papermono);
 }
