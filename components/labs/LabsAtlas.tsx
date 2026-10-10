@@ -15,7 +15,50 @@ export type AtlasNode = {
   status: string;
 };
 
-export type AtlasStyle = "constellation" | "forum";
+export type AtlasStyle = "constellation" | "forum" | "archipelago" | "orbit" | "strata" | "radial";
+
+export const ATLAS_STYLES: AtlasStyle[] = [
+  "constellation",
+  "forum",
+  "archipelago",
+  "orbit",
+  "strata",
+  "radial",
+];
+
+/** Header copy per display style — the same map, six ways to read it. */
+export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string }> = {
+  constellation: {
+    title: "The labs as a constellation",
+    blurb:
+      "Every lab, one shared sky. Nodes cluster by category; gold nodes are the construction flagships. Drag to orbit, click a node to open its lab.",
+  },
+  forum: {
+    title: "The labs as a forum",
+    blurb:
+      "Category rings gather the conversation; gold nodes carry the flagship arguments. Drag to orbit, click a node to open its lab.",
+  },
+  archipelago: {
+    title: "The labs as an archipelago",
+    blurb:
+      "Five islands on a dark ocean — one per category. Flagships rise as the highest peaks. Drag to orbit, click a peak to open its lab.",
+  },
+  orbit: {
+    title: "The labs in orbit",
+    blurb:
+      "Everything revolves around proof: the flagships circle closest to Artemis, every other lab on its category ring. Drag to orbit, click a node to open its lab.",
+  },
+  strata: {
+    title: "The labs by readiness",
+    blurb:
+      "Concept → Build → Pilot → Live, left to right. One lane per category; a lab's position is its maturity. Drag to orbit, click a node to open its lab.",
+  },
+  radial: {
+    title: "The labs as a tree",
+    blurb:
+      "Artemis at the root, five branches, every lab a leaf on its category's branch. Drag to orbit, click a leaf to open its lab.",
+  },
+};
 
 const CATEGORY_COLORS: Record<LabCategory, string> = {
   construction: "#e0b65a",
@@ -71,7 +114,10 @@ function useAtlasScene(
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 200);
-      camera.position.set(0, 7, 24);
+      // Flatter, higher framings for the map-like styles so the layout reads.
+      if (style === "archipelago") camera.position.set(0, 15, 17);
+      else if (style === "strata") camera.position.set(0, 10, 22);
+      else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
@@ -132,6 +178,54 @@ function useAtlasScene(
         return sp;
       }
 
+      /** Strata style: map a lab's status label onto a 0–3 maturity stage. */
+      function maturityOf(status: string): number {
+        const s = status.toLowerCase();
+        if (/live/.test(s)) return 3;
+        if (/rc|beta|pilot/.test(s)) return 2;
+        if (/v\d|alpha/.test(s)) return 1;
+        return 0;
+      }
+
+      /**
+       * Shared node builder used by every style: visible sphere, generous
+       * invisible hit proxy (1.6u — nodes drift), and the title label.
+       */
+      function addNodeMesh(node: AtlasNode, p: THREE.Vector3, group: THREE.Object3D[]) {
+        const size = node.flagship ? 0.62 : 0.34;
+        const mesh = new THREE.Mesh(
+          new THREE.SphereGeometry(size, 20, 20),
+          new THREE.MeshBasicMaterial({
+            color: node.flagship ? "#e0b65a" : CATEGORY_COLORS[node.category],
+            transparent: true,
+            opacity: 0.95,
+          }),
+        );
+        mesh.position.copy(p);
+        mesh.userData.node = node;
+        mesh.userData.baseScale = 1;
+        root.add(mesh);
+        meshes.push(mesh);
+        group.push(mesh);
+
+        const hit = new THREE.Mesh(
+          new THREE.SphereGeometry(1.6, 8, 8),
+          new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false }),
+        );
+        hit.position.copy(p);
+        hit.userData.node = node;
+        hit.userData.visual = mesh;
+        root.add(hit);
+        hitMeshes.push(hit);
+        group.push(hit);
+
+        const label = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8");
+        label.position.copy(p).add(new THREE.Vector3(0, size + 0.85, 0));
+        root.add(label);
+        group.push(label);
+      }
+
+      if (style === "constellation" || style === "forum") {
       ORDER.forEach((cat, ci) => {
         const catNodes = nodes.filter((n) => n.category === cat);
         if (catNodes.length === 0) return;
@@ -209,6 +303,191 @@ function useAtlasScene(
         group.push(lines);
         byCategory.set(cat, group);
       });
+      } else if (style === "archipelago") {
+        // Archipelago: each category is an island on a dark ocean. Flagships
+        // rise as peaks. A 2.5D cartographic read — the atlas as a literal map.
+        ORDER.forEach((cat, ci) => {
+          const catNodes = nodes.filter((n) => n.category === cat);
+          if (catNodes.length === 0) return;
+          const a = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
+          const center = new THREE.Vector3(Math.cos(a) * 9.2, 0, Math.sin(a) * 9.2);
+          const group: THREE.Object3D[] = [];
+          const catColor = CATEGORY_COLORS[cat];
+          const disc = new THREE.Mesh(
+            new THREE.CylinderGeometry(3.7, 4.1, 0.3, 48),
+            new THREE.MeshBasicMaterial({ color: catColor, transparent: true, opacity: 0.1 }),
+          );
+          disc.position.copy(center);
+          root.add(disc);
+          group.push(disc);
+          const contours: Array<[number, number]> = [
+            [2.4, 0.38],
+            [3.2, 0.2],
+          ];
+          for (const [rr, op] of contours) {
+            const ring = new THREE.Mesh(
+              new THREE.TorusGeometry(rr, 0.025, 8, 80),
+              new THREE.MeshBasicMaterial({ color: catColor, transparent: true, opacity: op }),
+            );
+            ring.rotation.x = Math.PI / 2;
+            ring.position.set(center.x, 0.18, center.z);
+            root.add(ring);
+            group.push(ring);
+          }
+          const isl = makeLabel(labCategoryMeta[cat].label, catColor);
+          isl.position.set(center.x, 3.2, center.z);
+          root.add(isl);
+          group.push(isl);
+          catNodes.forEach((node, ni) => {
+            const na = rand(ci * 131 + ni * 17 + 5) * Math.PI * 2;
+            const nr = 0.7 + rand(ci * 57 + ni * 29 + 11) * 2.0;
+            const p = new THREE.Vector3(
+              center.x + Math.cos(na) * nr,
+              0.75 + (node.flagship ? 1.0 : 0) + rand(ci * 91 + ni * 37 + 23) * 0.35,
+              center.z + Math.sin(na) * nr,
+            );
+            addNodeMesh(node, p, group);
+          });
+          byCategory.set(cat, group);
+        });
+      } else if (style === "orbit") {
+        // Orbit: flagships on the inner ring around the Artemis sun; every
+        // other lab circles on its category ring. The executive read.
+        const groups = new Map<LabCategory, THREE.Object3D[]>();
+        ORDER.forEach((cat) => groups.set(cat, []));
+        const sun = new THREE.Mesh(
+          new THREE.SphereGeometry(1.25, 28, 28),
+          new THREE.MeshBasicMaterial({ color: "#e0b65a", transparent: true, opacity: 0.95 }),
+        );
+        root.add(sun);
+        const sunShell = new THREE.Mesh(
+          new THREE.WireframeGeometry(new THREE.SphereGeometry(1.7, 12, 12)),
+          new THREE.MeshBasicMaterial({ color: "#e0b65a", transparent: true, opacity: 0.28 }),
+        );
+        root.add(sunShell);
+        const sunLabel = makeLabel("Artemis", "#f0d49a");
+        sunLabel.position.set(0, 2.7, 0);
+        root.add(sunLabel);
+        const flagRingR = 5.4;
+        const flagRing = new THREE.Mesh(
+          new THREE.TorusGeometry(flagRingR, 0.03, 8, 96),
+          new THREE.MeshBasicMaterial({ color: "#e0b65a", transparent: true, opacity: 0.4 }),
+        );
+        flagRing.rotation.x = Math.PI / 2;
+        root.add(flagRing);
+        const flagships = nodes.filter((n) => n.flagship);
+        flagships.forEach((node, i) => {
+          const fa = (i / Math.max(flagships.length, 1)) * Math.PI * 2 - Math.PI / 2;
+          const p = new THREE.Vector3(
+            Math.cos(fa) * flagRingR,
+            (rand(i * 31 + 7) - 0.5) * 1.4,
+            Math.sin(fa) * flagRingR,
+          );
+          addNodeMesh(node, p, groups.get(node.category)!);
+        });
+        ORDER.forEach((cat, ci) => {
+          const catNodes = nodes.filter((n) => n.category === cat && !n.flagship);
+          if (catNodes.length === 0) return;
+          const R = 9.2 + ci * 1.7;
+          const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(R, 0.02, 8, 128),
+            new THREE.MeshBasicMaterial({ color: CATEGORY_COLORS[cat], transparent: true, opacity: 0.3 }),
+          );
+          ring.rotation.x = Math.PI / 2;
+          root.add(ring);
+          const group = groups.get(cat)!;
+          group.push(ring);
+          const baseA = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
+          catNodes.forEach((node, ni) => {
+            const oa = baseA + (ni - (catNodes.length - 1) / 2) * 0.38;
+            const p = new THREE.Vector3(
+              Math.cos(oa) * R,
+              (rand(ci * 77 + ni * 13 + 3) - 0.5) * 1.8,
+              Math.sin(oa) * R,
+            );
+            addNodeMesh(node, p, group);
+          });
+          byCategory.set(cat, group);
+        });
+        // Categories whose only nodes are flagships still need their group registered.
+        ORDER.forEach((cat) => {
+          if (!byCategory.has(cat)) byCategory.set(cat, groups.get(cat)!);
+        });
+      } else if (style === "strata") {
+        // Strata: maturity along x (Concept → Build → Pilot → Live), one lane
+        // per category. The finance read — readiness at a glance.
+        const laneZ = (ci: number) => (ci - (ORDER.length - 1) / 2) * 3.6;
+        ORDER.forEach((cat, ci) => {
+          const catNodes = nodes.filter((n) => n.category === cat);
+          if (catNodes.length === 0) return;
+          const group: THREE.Object3D[] = [];
+          const z = laneZ(ci);
+          const baseline = new THREE.Mesh(
+            new THREE.BoxGeometry(21, 0.05, 0.05),
+            new THREE.MeshBasicMaterial({ color: CATEGORY_COLORS[cat], transparent: true, opacity: 0.22 }),
+          );
+          baseline.position.set(0, -1.7, z);
+          root.add(baseline);
+          group.push(baseline);
+          const laneLabel = makeLabel(labCategoryMeta[cat].label, CATEGORY_COLORS[cat]);
+          laneLabel.position.set(-12.4, 0, z);
+          root.add(laneLabel);
+          group.push(laneLabel);
+          catNodes.forEach((node, ni) => {
+            const m = maturityOf(node.status);
+            const p = new THREE.Vector3(
+              -9 + m * 6 + (rand(ci * 41 + ni * 23 + 9) - 0.5) * 1.6,
+              (rand(ci * 67 + ni * 11 + 5) - 0.5) * 1.4,
+              z + (rand(ci * 83 + ni * 19 + 13) - 0.5) * 1.2,
+            );
+            addNodeMesh(node, p, group);
+          });
+          byCategory.set(cat, group);
+        });
+        const stages = ["Concept", "Build", "Pilot", "Live"];
+        stages.forEach((s, si) => {
+          const tick = makeLabel(s, "#8a93a6");
+          tick.position.set(-9 + si * 6, -3.0, laneZ(ORDER.length - 1) + 1.4);
+          root.add(tick);
+        });
+      } else {
+        // Radial: Artemis at the root, one branch per category, every lab a
+        // leaf along its branch. The hierarchy read.
+        const hubCore = new THREE.Mesh(
+          new THREE.OctahedronGeometry(1.0),
+          new THREE.MeshBasicMaterial({ color: "#e0b65a", wireframe: true, transparent: true, opacity: 0.7 }),
+        );
+        root.add(hubCore);
+        const hubLabel = makeLabel("Artemis", "#f0d49a");
+        hubLabel.position.set(0, 2.3, 0);
+        root.add(hubLabel);
+        ORDER.forEach((cat, ci) => {
+          const catNodes = nodes.filter((n) => n.category === cat);
+          if (catNodes.length === 0) return;
+          const group: THREE.Object3D[] = [];
+          const ra = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
+          const dir = new THREE.Vector3(Math.cos(ra), 0, Math.sin(ra));
+          const far = 5 + catNodes.length * 2.4;
+          const curve = new THREE.QuadraticBezierCurve3(
+            new THREE.Vector3(0, 0, 0),
+            dir.clone().multiplyScalar(far * 0.5).add(new THREE.Vector3(0, 1.4, 0)),
+            dir.clone().multiplyScalar(far),
+          );
+          const branch = new THREE.Mesh(
+            new THREE.TubeGeometry(curve, 40, 0.035, 6),
+            new THREE.MeshBasicMaterial({ color: CATEGORY_COLORS[cat], transparent: true, opacity: 0.35 }),
+          );
+          root.add(branch);
+          group.push(branch);
+          catNodes.forEach((node, ni) => {
+            const t = catNodes.length === 1 ? 0.62 : 0.34 + (ni / (catNodes.length - 1)) * 0.56;
+            const p = curve.getPoint(t);
+            p.y += (rand(ci * 101 + ni * 43 + 17) - 0.5) * 1.1;
+            addNodeMesh(node, p, group);
+          });
+          byCategory.set(cat, group);
+        });
+      }
 
       // Interaction: hover highlight + click select.
       const ray = new THREE.Raycaster();
@@ -367,9 +646,16 @@ function useAtlasScene(
  * picks the Atlas view). One shared canvas, nodes clustered by category,
  * flagships in gold. Reduced-motion visitors get a static scene.
  */
-export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
+export function LabsAtlas({
+  nodes,
+  style,
+  onStyleChange,
+}: {
+  nodes: AtlasNode[];
+  style: AtlasStyle;
+  onStyleChange: (s: AtlasStyle) => void;
+}) {
   const mountRef = useRef<HTMLDivElement | null>(null);
-  const [style, setStyle] = useState<AtlasStyle>("constellation");
   const [hiddenCats, setHiddenCats] = useState<Set<LabCategory>>(new Set());
   const [flagshipFocus, setFlagshipFocus] = useState(false);
   const [consoleOpen, setConsoleOpen] = useState(false);
@@ -417,7 +703,7 @@ export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
 
   function switchStyle(s: AtlasStyle) {
     if (s === style) return;
-    setStyle(s);
+    onStyleChange(s);
     setSelected(null);
     setSceneKey((k) => k + 1);
   }
@@ -463,8 +749,8 @@ export function LabsAtlas({ nodes }: { nodes: AtlasNode[] }) {
         >
           ◈ Flagships
         </button>
-        <div className="flex items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Display style">
-          {(["constellation", "forum"] as AtlasStyle[]).map((s) => (
+        <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Display style">
+          {ATLAS_STYLES.map((s) => (
             <button
               key={s}
               type="button"

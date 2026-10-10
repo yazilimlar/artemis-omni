@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { labCategoryMeta, labCategoryOrder, type LabCategory } from "@/data/labs-editorial";
-import { LabsAtlas, type AtlasNode } from "@/components/labs/LabsAtlas";
+import { LabsAtlas, ATLAS_STYLE_META, type AtlasNode, type AtlasStyle } from "@/components/labs/LabsAtlas";
 
 type View = "index" | "atlas";
 type PathId = "all" | "executive" | "engineer" | "finance";
@@ -28,6 +28,16 @@ const PATHS: Record<PathId, { label: string; order: LabCategory[] | null; captio
 
 const VIEW_KEY = "labs-view";
 const PATH_KEY = "labs-path";
+const STYLE_KEY = "labs-atlas-style";
+
+const ATLAS_STYLE_IDS: AtlasStyle[] = [
+  "constellation",
+  "forum",
+  "archipelago",
+  "orbit",
+  "strata",
+  "radial",
+];
 
 /**
  * LabsShell — the interactive frame for /labs.
@@ -49,6 +59,7 @@ export function LabsShell({
 }) {
   const [view, setView] = useState<View>("index");
   const [path, setPath] = useState<PathId>("all");
+  const [atlasStyle, setAtlasStyle] = useState<AtlasStyle>("constellation");
   const topRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -57,6 +68,8 @@ export function LabsShell({
       if (v === "index" || v === "atlas") setView(v);
       const p = window.localStorage.getItem(PATH_KEY);
       if (p === "executive" || p === "engineer" || p === "finance") setPath(p);
+      const s = window.localStorage.getItem(STYLE_KEY);
+      if (s && (ATLAS_STYLE_IDS as string[]).includes(s)) setAtlasStyle(s as AtlasStyle);
     } catch {
       /* private mode — defaults stand */
     }
@@ -68,6 +81,13 @@ export function LabsShell({
       window.localStorage.setItem(VIEW_KEY, v);
     } catch { /* ignore */ }
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function pickAtlasStyle(s: AtlasStyle) {
+    setAtlasStyle(s);
+    try {
+      window.localStorage.setItem(STYLE_KEY, s);
+    } catch { /* ignore */ }
   }
 
   function pickPath(p: PathId) {
@@ -184,14 +204,13 @@ export function LabsShell({
           <div className="mx-auto w-full max-w-[1120px] px-4 sm:px-6">
             <p className="eyebrow">Atlas view</p>
             <h2 className="display-serif mt-3 text-balance text-3xl text-parchment sm:text-4xl">
-              The labs as a constellation
+              {ATLAS_STYLE_META[atlasStyle].title}
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Every lab, one shared sky. Nodes cluster by category; gold nodes are the
-              construction flagships. Drag to orbit, click a node to open its lab.
+              {ATLAS_STYLE_META[atlasStyle].blurb}
             </p>
             <div className="mt-8">
-              <LabsAtlas nodes={nodes} />
+              <LabsAtlas nodes={nodes} style={atlasStyle} onStyleChange={pickAtlasStyle} />
             </div>
           </div>
         </section>
