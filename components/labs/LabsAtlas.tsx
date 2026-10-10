@@ -87,6 +87,69 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   },
 };
 
+/**
+ * Per-style environment. Every display style is its own universe — its own
+ * sky, air, and ground — so no two views share the same black space.
+ */
+type AtlasEnv = {
+  skyTop: string;
+  skyBottom: string;
+  fog: string;
+  fogNear: number;
+  fogFar: number;
+  starColor: string;
+  starOpacity: number;
+  starCount: number;
+  ground?: { color: string; opacity: number; radius: number; y: number };
+  /** Drafting-table grid under the scene (strata). */
+  grid?: boolean;
+};
+
+const ATLAS_ENV: Record<AtlasStyle, AtlasEnv> = {
+  constellation: {
+    skyTop: "#04060f", skyBottom: "#0b1026", fog: "#04060f", fogNear: 40, fogFar: 120,
+    starColor: "#aab4d4", starOpacity: 0.8, starCount: 700,
+  },
+  forum: {
+    skyTop: "#0b0e1c", skyBottom: "#2b2133", fog: "#141021", fogNear: 35, fogFar: 110,
+    starColor: "#c9b8d4", starOpacity: 0.5, starCount: 300,
+    ground: { color: "#6b5f4c", opacity: 0.4, radius: 16, y: -0.1 },
+  },
+  archipelago: {
+    skyTop: "#06202b", skyBottom: "#0d4253", fog: "#062a38", fogNear: 30, fogFar: 100,
+    starColor: "#bfe3ea", starOpacity: 0.35, starCount: 200,
+    ground: { color: "#0a3542", opacity: 0.92, radius: 42, y: -0.45 },
+  },
+  orbit: {
+    skyTop: "#080514", skyBottom: "#1e1133", fog: "#0d0819", fogNear: 40, fogFar: 120,
+    starColor: "#d4c9f0", starOpacity: 0.7, starCount: 600,
+  },
+  strata: {
+    skyTop: "#081226", skyBottom: "#0e2140", fog: "#0a1830", fogNear: 35, fogFar: 110,
+    starColor: "#7fa8d4", starOpacity: 0.3, starCount: 150, grid: true,
+  },
+  radial: {
+    skyTop: "#04140f", skyBottom: "#0b2d1e", fog: "#06170f", fogNear: 30, fogFar: 100,
+    starColor: "#b8d4a8", starOpacity: 0.4, starCount: 250,
+    ground: { color: "#0a1f16", opacity: 0.6, radius: 30, y: -0.5 },
+  },
+  pantheon: {
+    skyTop: "#171008", skyBottom: "#2e1f10", fog: "#1c130a", fogNear: 25, fogFar: 90,
+    starColor: "#e8c87a", starOpacity: 0.5, starCount: 220,
+    ground: { color: "#3a4152", opacity: 0.5, radius: 14.5, y: 0 },
+  },
+  colosseum: {
+    skyTop: "#0d0a12", skyBottom: "#4d2f16", fog: "#241408", fogNear: 35, fogFar: 110,
+    starColor: "#e8b878", starOpacity: 0.4, starCount: 200,
+    ground: { color: "#8a7355", opacity: 0.35, radius: 34, y: -0.15 },
+  },
+  agora: {
+    skyTop: "#0e2036", skyBottom: "#3d5c7d", fog: "#1a2c44", fogNear: 30, fogFar: 110,
+    starColor: "#e8d9b0", starOpacity: 0.45, starCount: 250,
+    ground: { color: "#5a6a85", opacity: 0.6, radius: 14, y: 0 },
+  },
+};
+
 const CATEGORY_COLORS: Record<LabCategory, string> = {
   construction: "#e0b65a",
   controls: "#6cb2f0",
@@ -166,11 +229,37 @@ function useAtlasScene(
       const root = new THREE.Group();
       scene.add(root);
 
-      // Starfield backdrop.
+      // Environment: every style gets its own sky, air, and ground, so no
+      // two universes share the same black space.
+      const env = ATLAS_ENV[style];
+      {
+        // Gradient sky dome (BackSide, unfogged) enclosing the scene.
+        const skyGeo = new THREE.SphereGeometry(95, 24, 16);
+        const topC = new THREE.Color(env.skyTop);
+        const botC = new THREE.Color(env.skyBottom);
+        const sPos = skyGeo.attributes.position;
+        const sCol = new Float32Array(sPos.count * 3);
+        for (let i = 0; i < sPos.count; i++) {
+          const t = THREE.MathUtils.clamp((sPos.getY(i) / 95 + 1) / 2, 0, 1);
+          const c = botC.clone().lerp(topC, Math.pow(t, 1.25));
+          sCol[i * 3] = c.r;
+          sCol[i * 3 + 1] = c.g;
+          sCol[i * 3 + 2] = c.b;
+        }
+        skyGeo.setAttribute("color", new THREE.BufferAttribute(sCol, 3));
+        const sky = new THREE.Mesh(
+          skyGeo,
+          new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, depthWrite: false, fog: false }),
+        );
+        sky.renderOrder = -1;
+        scene.add(sky);
+      }
+      scene.fog = new THREE.Fog(new THREE.Color(env.fog), env.fogNear, env.fogFar);
+
+      // Starfield / dust, tinted per universe.
       const starGeo = new THREE.BufferGeometry();
-      const starCount = style === "constellation" ? 700 : 350;
-      const pos = new Float32Array(starCount * 3);
-      for (let i = 0; i < starCount; i++) {
+      const pos = new Float32Array(env.starCount * 3);
+      for (let i = 0; i < env.starCount; i++) {
         const r = 45 + rand(i * 7 + 1) * 40;
         const th = rand(i * 13 + 2) * Math.PI * 2;
         const ph = Math.acos(2 * rand(i * 17 + 3) - 1);
@@ -182,9 +271,29 @@ function useAtlasScene(
       root.add(
         new THREE.Points(
           starGeo,
-          new THREE.PointsMaterial({ color: 0x8a93a6, size: 0.14, transparent: true, opacity: 0.7 }),
+          new THREE.PointsMaterial({ color: env.starColor, size: 0.14, transparent: true, opacity: env.starOpacity }),
         ),
       );
+
+      // Ground plane per universe (static — it does not drift with root).
+      if (env.ground) {
+        const g = new THREE.Mesh(
+          new THREE.CircleGeometry(env.ground.radius, 64),
+          new THREE.MeshBasicMaterial({ color: env.ground.color, transparent: true, opacity: env.ground.opacity }),
+        );
+        g.rotation.x = -Math.PI / 2;
+        g.position.y = env.ground.y;
+        scene.add(g);
+      }
+      // Drafting-table grid for strata.
+      if (env.grid) {
+        const grid = new THREE.GridHelper(60, 30, 0x2a4a6a, 0x16283f);
+        const gm = grid.material as THREE.Material;
+        gm.transparent = true;
+        gm.opacity = 0.45;
+        grid.position.y = -2.6;
+        scene.add(grid);
+      }
 
       const labelScale = style === "forum" ? 1.25 : 1;
       const meshes: THREE.Mesh[] = [];
@@ -496,13 +605,7 @@ function useAtlasScene(
         // shaft of light beneath the oculus.
         const DOME_R = 13;
         const stone = new THREE.MeshBasicMaterial({ color: "#9aa2b5", transparent: true, opacity: 0.5 });
-        // Rotunda floor.
-        const floor = new THREE.Mesh(
-          new THREE.CircleGeometry(14.5, 64),
-          new THREE.MeshBasicMaterial({ color: "#3a4152", transparent: true, opacity: 0.5 }),
-        );
-        floor.rotation.x = -Math.PI / 2;
-        root.add(floor);
+        // Rotunda floor comes from the environment ground.
         // Colonnade ring.
         for (let k = 0; k < 16; k++) {
           const ca = (k / 16) * Math.PI * 2;
@@ -552,6 +655,19 @@ function useAtlasScene(
         );
         shaft.position.y = DOME_R / 2;
         root.add(shaft);
+        // Enclosing inner dome: a warm marble shell so the hall feels
+        // interior, not floating in void.
+        const shell = new THREE.Mesh(
+          new THREE.SphereGeometry(DOME_R + 0.9, 32, 24),
+          new THREE.MeshBasicMaterial({
+            color: "#2a1e12",
+            transparent: true,
+            opacity: 0.55,
+            side: THREE.BackSide,
+            fog: false,
+          }),
+        );
+        root.add(shell);
         ORDER.forEach((cat, ci) => {
           const catNodes = nodes.filter((n) => n.category === cat);
           if (catNodes.length === 0) return;
@@ -652,12 +768,7 @@ function useAtlasScene(
       } else if (style === "agora") {
         // Agora: the marketplace. Every lab keeps a stall around the shared
         // plaza; flagships hold the stalls nearest the central bema.
-        const plaza = new THREE.Mesh(
-          new THREE.CircleGeometry(14, 64),
-          new THREE.MeshBasicMaterial({ color: "#414a5e", transparent: true, opacity: 0.45 }),
-        );
-        plaza.rotation.x = -Math.PI / 2;
-        root.add(plaza);
+        // (Plaza floor comes from the environment ground.)
         for (const [rr, op] of [
           [5, 0.3],
           [9.5, 0.2],
