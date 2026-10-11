@@ -1501,8 +1501,10 @@ function useAtlasScene(
         pedTrim.rotation.x = Math.PI / 2;
         pedTrim.position.y = 3.62;
         dianaGroup.add(pedTrim);
+        // Floating nameplate on the visitor side, high enough to clear the
+        // dais from the default camera angle.
         const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 2.4);
-        dianaPlate.position.set(0, 1.8, -5.45);
+        dianaPlate.position.set(0, 6.5, -8);
         dianaGroup.add(dianaPlate);
         // Moon disc behind her — she is the moon goddess, after all.
         const moon = new THREE.Sprite(
