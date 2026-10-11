@@ -432,7 +432,7 @@ html[data-theme="day"] iframe {
   overflow-x: clip;
   background-color: hsl(var(--background));
   background-image:
-    radial-gradient(1100px 520px at 50% -8%, hsl(var(--signal-blue) / 0.14), transparent 62%),
+    radial-gradient(1100px 520px at 50% -8%, hsl(var(--signal-blue) / 0.18), transparent 62%),
     linear-gradient(hsl(var(--signal-blue) / 0.095) 1px, transparent 1px),
     linear-gradient(90deg, hsl(var(--signal-blue) / 0.095) 1px, transparent 1px),
     linear-gradient(hsl(var(--signal-blue) / 0.06) 1px, transparent 1px),
@@ -450,13 +450,13 @@ html[data-theme="day"] iframe {
 /* Breathing glow that drifts across the page */
 .notebook-bg::before {
   inset: 6% 4%;
-  background: radial-gradient(closest-side, hsl(var(--crescent-blue) / 0.13), transparent 72%);
+  background: radial-gradient(closest-side, hsl(var(--crescent-blue) / 0.18), transparent 72%);
   animation: notebook-drift 17s ease-in-out infinite;
 }
 /* Soft diagonal beam sweeping behind the content */
 .notebook-bg::after {
   inset: -12% -32%;
-  background: linear-gradient(105deg, transparent 40%, hsl(var(--signal-blue) / 0.12) 50%, transparent 60%);
+  background: linear-gradient(105deg, transparent 36%, hsl(var(--signal-blue) / 0.20) 50%, transparent 64%);
   -webkit-mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
   mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
   animation: notebook-beam 24s ease-in-out infinite alternate;
@@ -466,8 +466,9 @@ html[data-theme="day"] iframe {
   50% { transform: translate3d(4%, 3%, 0) scale(1.08); opacity: 1; }
 }
 @keyframes notebook-beam {
-  0% { transform: translate3d(-24%, 0, 0); }
-  100% { transform: translate3d(24%, 0, 0); }
+  0% { transform: translate3d(-24%, 0, 0); opacity: 0.35; }
+  50% { opacity: 1; }
+  100% { transform: translate3d(24%, 0, 0); opacity: 0.35; }
 }
 @media (prefers-reduced-motion: reduce) {
   .notebook-bg::before, .notebook-bg::after { animation: none; }
