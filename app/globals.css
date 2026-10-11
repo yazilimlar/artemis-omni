@@ -419,3 +419,59 @@ html[data-theme="day"] iframe {
 @media (prefers-reduced-motion: reduce) {
   .diana-shot-card, .diana-shot-flash, .diana-shot-veil { animation-duration: 0.01s; }
 }
+
+/*
+  Engineer's notebook grid for the Labs surfaces.
+  Replaces the flat near-black with faint semi-transparent blue graph paper,
+  a slow-breathing blue glow, and a soft light beam that sweeps behind the
+  content. All motion pauses under prefers-reduced-motion.
+*/
+.labs-notebook {
+  position: relative;
+  overflow-x: clip;
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(1100px 520px at 50% -8%, hsl(var(--signal-blue) / 0.09), transparent 62%),
+    linear-gradient(hsl(var(--signal-blue) / 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--signal-blue) / 0.075) 1px, transparent 1px),
+    linear-gradient(hsl(var(--signal-blue) / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--signal-blue) / 0.045) 1px, transparent 1px);
+  background-size: auto, 180px 180px, 180px 180px, 36px 36px, 36px 36px;
+}
+.labs-notebook::before,
+.labs-notebook::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Breathing glow that drifts across the page */
+.labs-notebook::before {
+  inset: 6% 4%;
+  background: radial-gradient(closest-side, hsl(var(--crescent-blue) / 0.075), transparent 72%);
+  animation: labs-notebook-drift 34s ease-in-out infinite;
+}
+/* Soft diagonal beam sweeping behind the content */
+.labs-notebook::after {
+  inset: -12% -32%;
+  background: linear-gradient(105deg, transparent 41%, hsl(var(--signal-blue) / 0.065) 50%, transparent 59%);
+  -webkit-mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
+  mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
+  animation: labs-notebook-beam 48s ease-in-out infinite alternate;
+}
+.labs-notebook > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes labs-notebook-drift {
+  0%, 100% { transform: translate3d(-4%, -2%, 0) scale(1); opacity: 0.85; }
+  50% { transform: translate3d(4%, 3%, 0) scale(1.08); opacity: 1; }
+}
+@keyframes labs-notebook-beam {
+  0% { transform: translate3d(-24%, 0, 0); }
+  100% { transform: translate3d(24%, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .labs-notebook::before, .labs-notebook::after { animation: none; }
+}
