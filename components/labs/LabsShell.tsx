@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { labCategoryMeta, labCategoryOrder, type LabCategory } from "@/data/labs-editorial";
+import { labCategoryMeta, type LabCategory } from "@/data/labs-editorial";
 import { LabsAtlas, ATLAS_STYLE_META, type AtlasNode, type AtlasStyle } from "@/components/labs/LabsAtlas";
 
 type View = "index" | "atlas";
@@ -113,11 +113,6 @@ export function LabsShell({
     );
   }, [sections, path]);
 
-  const visibleCats = useMemo(
-    () => labCategoryOrder.filter((c) => sections.some((s) => s.id === c)),
-    [sections],
-  );
-
   return (
     <div ref={topRef} className="scroll-mt-24">
       {/* View toggle */}
@@ -174,32 +169,6 @@ export function LabsShell({
 
       {view === "index" ? (
         <>
-          {/* Category jump nav */}
-          <section className="border-b border-border/60 py-8">
-            <div className="mx-auto w-full max-w-[1120px] px-4 sm:px-6">
-              <nav aria-label="Browse labs by category" className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                <span className="font-mono text-[0.62rem] uppercase tracking-wider text-signal-soft">
-                  Browse
-                </span>
-                <a href="#flagships" className="text-sm text-gold-soft underline-offset-4 hover:underline">
-                  Flagships
-                </a>
-                {ordered
-                  .map((s) => s.id)
-                  .filter((c) => visibleCats.includes(c))
-                  .map((cat) => (
-                    <a
-                      key={cat}
-                      href={`#labs-${cat}`}
-                      className="text-sm text-foreground/75 underline-offset-4 transition-colors hover:text-gold hover:underline"
-                    >
-                      {labCategoryMeta[cat].label}
-                    </a>
-                  ))}
-              </nav>
-            </div>
-          </section>
-
           {flagshipSection}
           {ordered.map((s) => (
             <div key={s.id}>{s.node}</div>

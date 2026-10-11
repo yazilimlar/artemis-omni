@@ -394,15 +394,3 @@ html[data-theme="day"] iframe {
 .font-papermono {
   font-family: var(--font-papermono);
 }
-
-/* Labs atlas live meter. */
-@keyframes atlas-meter-slide {
-  0% { transform: translateX(-110%); }
-  100% { transform: translateX(320%); }
-}
-.atlas-meter {
-  animation: atlas-meter-slide 2.6s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .atlas-meter { animation: none; }
-}

@@ -550,6 +550,8 @@ function useAtlasScene(
       }
 
       if (style === "constellation" || style === "forum") {
+      // Global label stagger so neighboring nodes' labels don't collide.
+      let labelIdx = 0;
       ORDER.forEach((cat, ci) => {
         const catNodes = nodes.filter((n) => n.category === cat);
         if (catNodes.length === 0) return;
@@ -611,7 +613,7 @@ function useAtlasScene(
           group.push(hit);
 
           const label = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8");
-          label.position.copy(p).add(new THREE.Vector3(0, size + 0.85, 0));
+          label.position.copy(p).add(new THREE.Vector3(0, size + 0.85 + (labelIdx++ % 3) * 0.55, 0));
           root.add(label);
           group.push(label);
 
@@ -1638,7 +1640,6 @@ export function LabsAtlas({
   const mountRef = useRef<HTMLDivElement | null>(null);
   const [hiddenCats, setHiddenCats] = useState<Set<LabCategory>>(new Set());
   const [flagshipFocus, setFlagshipFocus] = useState(false);
-  const [consoleOpen, setConsoleOpen] = useState(false);
   const [selected, setSelected] = useState<AtlasNode | null>(null);
   const [hoveredNode, setHoveredNode] = useState<AtlasNode | null>(null);
   const [ready, setReady] = useState(false);
@@ -1702,12 +1703,6 @@ export function LabsAtlas({
     () => nodes.filter((n) => !hiddenCats.has(n.category)),
     [nodes, hiddenCats],
   );
-  const flagships = useMemo(() => nodes.filter((n) => n.flagship), [nodes]);
-  const counts = useMemo(() => {
-    const m = new Map<LabCategory, number>();
-    for (const n of nodes) m.set(n.category, (m.get(n.category) ?? 0) + 1);
-    return m;
-  }, [nodes]);
 
   function toggleCat(cat: LabCategory) {
     setHiddenCats((prev) => {
@@ -1816,14 +1811,14 @@ export function LabsAtlas({
         >
           ◈ Flagships
         </button>
-        <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Display style">
+        <div className="flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-full border border-border/60 p-1" role="group" aria-label="Display style">
           {ATLAS_STYLES.map((s) => (
             <button
               key={s}
               type="button"
               aria-pressed={style === s}
               onClick={() => switchStyle(s)}
-              className={`rounded-full px-3 py-1 font-papermono text-xs capitalize transition-colors ${
+              className={`shrink-0 rounded-full px-3 py-1 font-papermono text-xs capitalize transition-colors ${
                 style === s ? "bg-gold/15 text-gold-soft" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -1906,18 +1901,6 @@ export function LabsAtlas({
             </label>
           </div>
         ) : null}
-        <button
-          type="button"
-          aria-pressed={consoleOpen}
-          onClick={() => setConsoleOpen((v) => !v)}
-          className={`rounded-full border px-3 py-1.5 font-papermono text-xs transition-colors ${
-            consoleOpen
-              ? "border-gold/60 bg-gold/15 text-gold-soft"
-              : "border-border/60 text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          Master console
-        </button>
       </div>
 
       {/* Canvas */}
@@ -1973,32 +1956,6 @@ export function LabsAtlas({
           </div>
         ) : null}
       </div>
-
-      {/* Master console */}
-      {consoleOpen ? (
-        <div className="mt-4 rounded-2xl border border-border/60 bg-navy-deep/50 p-5">
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-            <p className="font-papermono text-[0.62rem] uppercase tracking-wider text-signal-soft">
-              Master console
-            </p>
-            {ORDER.map((cat) => (
-              <p key={cat} className="font-papermono text-xs text-muted-foreground">
-                <span style={{ color: CATEGORY_COLORS[cat] }} aria-hidden>● </span>
-                {labCategoryMeta[cat].label}: {counts.get(cat) ?? 0}
-              </p>
-            ))}
-            <p className="font-papermono text-xs text-gold-soft">◈ flagships: {flagships.length}</p>
-          </div>
-          <div className="mt-4" aria-hidden>
-            <div className="h-1.5 overflow-hidden rounded-full bg-background/60">
-              <div className="atlas-meter h-full w-1/3 rounded-full bg-gradient-to-r from-gold/70 to-gold-soft" />
-            </div>
-            <p className="mt-2 font-papermono text-[0.62rem] uppercase tracking-wider text-muted-foreground">
-              live meter · constellation activity
-            </p>
-          </div>
-        </div>
-      ) : null}
 
       {/* Keyboard/screen-reader complete lab list */}
       <div className="mt-6">
