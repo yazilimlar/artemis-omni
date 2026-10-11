@@ -195,7 +195,7 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   gallery: {
     title: "The labs as a gallery",
     blurb:
-      "The Architect's wall — thirteen live screens in a dark room, Diana standing guard at the center. Hover to lean in; click a screen and she'll loose a golden arrow to open its lab.",
+      "The Architect's wall — thirteen live screens in a dark room, the colossus Diana standing guard at the center. Hover to lean in; click a screen and she'll loose a golden arrow to open its lab.",
   },
 };
 
@@ -341,7 +341,7 @@ function useAtlasScene(
     // Diana's statue + finish. The finish can be set before the lazy GLB
     // arrives; the loader applies whatever is current.
     let dianaStatue: THREE.Group | null = null;
-    let dianaMaterialId: DianaMaterialId = "gold";
+    let dianaMaterialId: DianaMaterialId = "wireframe";
 
     (async () => {
       const THREE = await import("three");
@@ -373,9 +373,10 @@ function useAtlasScene(
       else if (style === "rotonda") camera.position.set(0, 20, 15);
       else if (style === "gallery") {
         const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        // Grids pull back so the whole wall stays in frame.
-        if (gl.classic) camera.position.set(0, 5, 21);
-        else camera.position.set(0, 5.5, 26);
+        // Diana the colossus dominates — pull back so she and the wall share
+        // the frame. Grids pull slightly further.
+        if (gl.classic) camera.position.set(0, 16, 46);
+        else camera.position.set(0, 17, 47);
       } else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -393,7 +394,7 @@ function useAtlasScene(
       else if (style === "octagon") controls.target.set(0, 3, 0);
       else if (style === "gallery") {
         const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        controls.target.set(0, gl.classic ? 4 : 4.8, gl.classic ? 6 : 3);
+        controls.target.set(0, gl.classic ? 10 : 10.5, gl.classic ? 5 : 4);
       }
 
       const root = new THREE.Group();
@@ -552,7 +553,7 @@ function useAtlasScene(
           case "bronze":
             return new THREE.MeshBasicMaterial({ color: "#8a6134" });
           case "wireframe":
-            return new THREE.MeshBasicMaterial({ color: "#f0d49a", wireframe: true });
+            return new THREE.MeshBasicMaterial({ color: "#6fb7ff", wireframe: true });
         }
       }
       function applyDianaMaterial() {
@@ -1473,29 +1474,29 @@ function useAtlasScene(
         }
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
 
-        // --- Diana centerpiece: the archer at the heart of the gallery. ---
+        // --- Diana centerpiece: the colossus at the heart of the gallery. ---
         // A classical Diana (GLB, lazy-loaded so other styles never pay for
-        // it) on a stone pedestal between the visitor and the wall. Clicking
-        // a screen makes her loose a golden arrow at it; the impact opens
-        // the lab cinematically.
+        // it) towering over the room on a stone dais. Clicking a screen makes
+        // her loose a golden arrow at it; the impact opens the lab
+        // cinematically.
         const dianaGroup = new THREE.Group();
         dianaGroup.position.set(0, 0, 5);
         root.add(dianaGroup);
         const pedestal = new THREE.Mesh(
-          new THREE.CylinderGeometry(1.05, 1.32, 0.9, 48),
+          new THREE.CylinderGeometry(4.2, 5.28, 3.6, 48),
           new THREE.MeshBasicMaterial({ color: "#1b2233" }),
         );
-        pedestal.position.y = 0.45;
+        pedestal.position.y = 1.8;
         dianaGroup.add(pedestal);
         const pedTrim = new THREE.Mesh(
-          new THREE.TorusGeometry(1.06, 0.05, 10, 72),
+          new THREE.TorusGeometry(4.24, 0.2, 10, 72),
           new THREE.MeshBasicMaterial({ color: "#a8873f" }),
         );
         pedTrim.rotation.x = Math.PI / 2;
-        pedTrim.position.y = 0.92;
+        pedTrim.position.y = 3.62;
         dianaGroup.add(pedTrim);
-        const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 0.62);
-        dianaPlate.position.set(0, 0.42, 1.36);
+        const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 2.4);
+        dianaPlate.position.set(0, 1.8, 5.45);
         dianaGroup.add(dianaPlate);
         // Moon disc behind her — she is the moon goddess, after all.
         const moon = new THREE.Sprite(
@@ -1506,11 +1507,11 @@ function useAtlasScene(
             depthWrite: false,
           }),
         );
-        moon.scale.set(6.6, 6.6, 1);
-        moon.position.set(0, 4.0, -1.1);
+        moon.scale.set(22, 22, 1);
+        moon.position.set(0, 33, 2);
         dianaGroup.add(moon);
-        // Arrow origin in root space: above the pedestal, at her bow arm.
-        const bowOrigin = new THREE.Vector3(0, 3.1, 5.8);
+        // Arrow origin in root space: high at her bow arm.
+        const bowOrigin = new THREE.Vector3(0, 26, 6);
         (async () => {
           try {
             const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
@@ -1521,11 +1522,11 @@ function useAtlasScene(
             statue.rotation.y = Math.PI;
             const bb = new THREE.Box3().setFromObject(statue);
             const sz = bb.getSize(new THREE.Vector3());
-            const s = 3.6 / sz.y;
+            const s = 36 / sz.y;
             statue.scale.setScalar(s);
             const bb2 = new THREE.Box3().setFromObject(statue);
             const ctr2 = bb2.getCenter(new THREE.Vector3());
-            statue.position.set(-ctr2.x, 0.9 - bb2.min.y, -ctr2.z);
+            statue.position.set(-ctr2.x, 3.6 - bb2.min.y, -ctr2.z);
             dianaStatue = statue;
             applyDianaMaterial();
             dianaGroup.add(statue);
@@ -1551,14 +1552,14 @@ function useAtlasScene(
         // The arrow: gold shaft + bright head + halo, with a fading trail.
         const arrowGroup = new THREE.Group();
         const shaft = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.035, 0.035, 1.15, 8),
+          new THREE.CylinderGeometry(0.09, 0.09, 2.6, 8),
           new THREE.MeshBasicMaterial({ color: "#f0d49a" }),
         );
         const arrowHead = new THREE.Mesh(
-          new THREE.ConeGeometry(0.08, 0.26, 10),
+          new THREE.ConeGeometry(0.18, 0.55, 10),
           new THREE.MeshBasicMaterial({ color: "#ffe9b8" }),
         );
-        arrowHead.position.y = 0.7;
+        arrowHead.position.y = 1.55;
         const arrowHalo = new THREE.Sprite(
           new THREE.SpriteMaterial({
             map: dianaGlowTex,
@@ -1568,7 +1569,7 @@ function useAtlasScene(
             blending: THREE.AdditiveBlending,
           }),
         );
-        arrowHalo.scale.set(1.5, 1.5, 1);
+        arrowHalo.scale.set(3.4, 3.4, 1);
         arrowGroup.add(shaft, arrowHead, arrowHalo);
         arrowGroup.visible = false;
         root.add(arrowGroup);
@@ -1625,13 +1626,13 @@ function useAtlasScene(
           shotT += dt;
           if (shotPhase === "charging") {
             const k = Math.min(shotT / 0.45, 1);
-            setGlow(chargeGlow, k * 0.9, 0.6 + k * 1.7);
+            setGlow(chargeGlow, k * 0.9, 2 + k * 5);
             if (k >= 1) {
               shotPhase = "flying";
               shotT = 0;
               shotFrom.copy(bowOrigin);
               shotCtrl.copy(shotFrom).lerp(shotTo, 0.5);
-              shotCtrl.y += 1.4;
+              shotCtrl.y += 3;
               shotCurve = new THREE.QuadraticBezierCurve3(
                 shotFrom.clone(),
                 shotCtrl.clone(),
@@ -1642,7 +1643,8 @@ function useAtlasScene(
               setGlow(chargeGlow, 0, 0.6);
             }
           } else if (shotPhase === "flying" && shotCurve) {
-            const k = Math.min(shotT / 0.75, 1);
+            // A colossus looses across a long room — give the flight room to breathe.
+            const k = Math.min(shotT / 1.0, 1);
             const p = shotCurve.getPoint(k);
             const tan = shotCurve.getTangent(k);
             arrowGroup.position.copy(p);
@@ -1665,7 +1667,7 @@ function useAtlasScene(
             }
           } else if (shotPhase === "impact") {
             const k = Math.min(shotT / 0.5, 1);
-            setGlow(flash, 0.95 * (1 - k), 1 + k * 7);
+            setGlow(flash, 0.95 * (1 - k), 3 + k * 20);
             if (k >= 1) {
               flash.visible = false;
               shotPhase = "idle";
@@ -1926,7 +1928,7 @@ export function LabsAtlas({
   const [galleryLayout, setGalleryLayout] = useState<GalleryLayoutId>("wall");
   const [roomId, setRoomId] = useState<string>("void");
   const [customHex, setCustomHex] = useState("#1a2340");
-  const [dianaMaterial, setDianaMaterial] = useState<DianaMaterialId>("gold");
+  const [dianaMaterial, setDianaMaterial] = useState<DianaMaterialId>("wireframe");
   // Gallery: Diana's arrow struck — the cinematic lab opening.
   const [cinematic, setCinematic] = useState<AtlasNode | null>(null);
   const router = useRouter();
