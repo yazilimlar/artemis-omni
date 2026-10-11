@@ -120,6 +120,10 @@ const DIANA_MATERIALS: { id: DianaMaterialId; label: string }[] = [
 ];
 const DIANA_MATERIAL_KEY = "labs-diana-material";
 const DIANA_SCALE_KEY = "labs-diana-scale";
+/** Display styles where Diana stands guard at the center. */
+const DIANA_STYLES: AtlasStyle[] = ["gallery", "pantheon", "agora", "geodesic", "octagon", "rotonda"];
+/** Diana's GLB: fetched once per page session, fitted once, cloned per style. */
+let dianaLoadPromise: Promise<any> | null = null;
 
 /** Multiply a hex color by f (clamped) — derives room tones from one swatch. */
 function shade(hex: string, f: number): string {
@@ -166,7 +170,7 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   pantheon: {
     title: "The labs as a pantheon",
     blurb:
-      "A domed hall where every lab holds a niche — five sectors, one per category — and the flagships stand in the light of the oculus. Drag to look around, click a node to open its lab.",
+      "A domed hall where every lab holds a niche — five sectors, one per category — the flagships stand in the light of the oculus, and Diana keeps watch from the center of the floor. Drag to look around, click a node to open its lab.",
   },
   colosseum: {
     title: "The labs as a colosseum",
@@ -176,22 +180,22 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   agora: {
     title: "The labs as an agora",
     blurb:
-      "The marketplace: every lab keeps a stall around the shared plaza, flagships nearest the bema. Drag to orbit, click a stall to open its lab.",
+      "The marketplace: every lab keeps a stall around the shared plaza, flagships nearest the bema — and Diana addresses the crowd from the bema itself. Drag to orbit, click a stall to open its lab.",
   },
   geodesic: {
     title: "The labs as a geodesic dome",
     blurb:
-      "A lattice under tension — thirteen nodes in a triangulated shell, flagships nearest the crown. Drag to orbit, click a node to open its lab.",
+      "A lattice under tension — thirteen nodes in a triangulated shell, flagships nearest the crown, Diana standing guard at the heart of the dome. Drag to orbit, click a node to open its lab.",
   },
   octagon: {
     title: "The labs as an octagon",
     blurb:
-      "A two-story octagonal hall — eight sides around an open court, flagships on the piano nobile. Drag to orbit, click a node to open its lab.",
+      "A two-story octagonal hall — eight sides around an open court, flagships on the piano nobile, Diana holding the court at the center. Drag to orbit, click a node to open its lab.",
   },
   rotonda: {
     title: "The labs as a sala rotonda",
     blurb:
-      "A round mosaic hall — thirteen medallions inlaid in concentric rings beneath the oculus, flagships in the innermost ring. Drag to orbit, click a medallion to open its lab.",
+      "A round mosaic hall — thirteen medallions inlaid in concentric rings beneath the oculus, flagships in the innermost ring, Diana standing on the central medallion. Drag to orbit, click a medallion to open its lab.",
   },
   gallery: {
     title: "The labs as a gallery",
@@ -310,9 +314,10 @@ type SceneHandle = {
   setRoom: (re: RoomEnv) => void;
   /** Gallery: Diana's arrow struck a screen — open its lab cinematically. */
   onDianaShot: (cb: (node: AtlasNode) => void) => void;
-  /** Gallery: re-cast Diana's finish live — no scene rebuild. */
+  /** Diana styles: re-cast her finish live — no scene rebuild. */
+  /** Diana styles: re-cast her finish live — no scene rebuild. */
   setDianaMaterial: (m: DianaMaterialId) => void;
-  /** Gallery: scale Diana live — no scene rebuild. */
+  /** Diana styles: scale her live — no scene rebuild. */
   setDianaScale: (f: number) => void;
 };
 
@@ -341,12 +346,13 @@ function useAtlasScene(
     // Gallery-only: assigned inside the gallery branch.
     let fireShot: ((node: AtlasNode, screen: THREE.Mesh) => void) | null = null;
     let shotTick: (dt: number) => void = () => {};
-    // Diana's statue + finish. The finish can be set before the lazy GLB
-    // arrives; the loader applies whatever is current.
-    let dianaStatue: THREE.Group | null = null;
+    // Diana's statues + finish. The finish can be set before the lazy GLB
+    // arrives; the loader applies whatever is current, to every statue.
+    const dianaStatues: THREE.Group[] = [];
     let dianaMaterialId: DianaMaterialId = "wireframe";
-    // Gallery-only: assigned inside the gallery branch.
-    let setDianaScaleFn: ((f: number) => void) | null = null;
+    /** Every Diana centerpiece registers here: counter-rotation + live scale. */
+    const dianaSpinners: Array<(dt: number) => void> = [];
+    const dianaScaleFns: Array<(f: number) => void> = [];
     let dianaScaleF = 1;
 
     (async () => {
@@ -563,11 +569,12 @@ function useAtlasScene(
         }
       }
       function applyDianaMaterial() {
-        if (!dianaStatue) return;
         const mat = dianaMaterialFor(dianaMaterialId);
-        dianaStatue.traverse((o) => {
-          if (o instanceof THREE.Mesh) o.material = mat;
-        });
+        for (const statue of dianaStatues) {
+          statue.traverse((o) => {
+            if (o instanceof THREE.Mesh) o.material = mat;
+          });
+        }
       }
 
       /** Strata style: map a lab's status label onto a 0–3 maturity stage. */
@@ -615,6 +622,91 @@ function useAtlasScene(
         label.position.copy(p).add(new THREE.Vector3(0, size + 0.85 + labelDy, 0));
         root.add(label);
         group.push(label);
+      }
+
+      /**
+       * Diana's statue, shared across styles: the GLB loads once per page
+       * session, is fitted once, and every style gets a clone. Null when the
+       * asset can't load — the dais still holds her place.
+       */
+      async function getDianaStatue(): Promise<any> {
+        try {
+          if (!dianaLoadPromise) {
+            dianaLoadPromise = (async () => {
+              const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
+              const gltf = await new GLTFLoader().loadAsync("/labs/diana.glb");
+              const statue = gltf.scene;
+              // Face her toward the visitor (rotation changes the bbox, so fit after).
+              statue.rotation.y = 0;
+              const bb = new THREE.Box3().setFromObject(statue);
+              const sz = bb.getSize(new THREE.Vector3());
+              statue.scale.setScalar(36 / sz.y);
+              const bb2 = new THREE.Box3().setFromObject(statue);
+              const ctr2 = bb2.getCenter(new THREE.Vector3());
+              statue.position.set(-ctr2.x, 3.6 - bb2.min.y, -ctr2.z);
+              return statue;
+            })();
+          }
+          const fitted = await dianaLoadPromise;
+          return fitted.clone();
+        } catch {
+          dianaLoadPromise = null;
+          return null;
+        }
+      }
+
+      /**
+       * Diana centerpiece — the archer on her stone dais, at home in any
+       * style. Registers her counter-rotation spin (against the room's
+       * orbit) and her live size; the finish toggle re-casts every statue.
+       */
+      function buildDianaCenterpiece(px: number, py: number, pz: number) {
+        const dianaGroup = new THREE.Group();
+        dianaGroup.position.set(px, py, pz);
+        root.add(dianaGroup);
+        const pedestal = new THREE.Mesh(
+          new THREE.CylinderGeometry(4.2, 5.28, 3.6, 48),
+          new THREE.MeshBasicMaterial({ color: "#1b2233" }),
+        );
+        pedestal.position.y = 1.8;
+        dianaGroup.add(pedestal);
+        const pedTrim = new THREE.Mesh(
+          new THREE.TorusGeometry(4.24, 0.2, 10, 72),
+          new THREE.MeshBasicMaterial({ color: "#a8873f" }),
+        );
+        pedTrim.rotation.x = Math.PI / 2;
+        pedTrim.position.y = 3.62;
+        dianaGroup.add(pedTrim);
+        // Floating nameplate on the visitor side, high enough to clear the
+        // dais from the default camera angle.
+        const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 2.4);
+        dianaPlate.position.set(0, 6.5, -8);
+        dianaGroup.add(dianaPlate);
+        // Moon disc behind her — she is the moon goddess, after all.
+        const moon = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: glowTexture("#cdd9f5"),
+            transparent: true,
+            opacity: 0.42,
+            depthWrite: false,
+          }),
+        );
+        moon.scale.set(22, 22, 1);
+        moon.position.set(0, 33, 2);
+        dianaGroup.add(moon);
+        // Statue arrives lazily; the dais holds her place until then.
+        getDianaStatue().then((statue) => {
+          if (!statue || cancelled) return;
+          dianaGroup.add(statue);
+          dianaStatues.push(statue);
+          applyDianaMaterial();
+        });
+        dianaScaleFns.push((f) => dianaGroup.scale.setScalar(f));
+        dianaGroup.scale.setScalar(dianaScaleF);
+        dianaSpinners.push((dt) => {
+          dianaGroup.rotation.y -= dt * 0.06;
+        });
+        return dianaGroup;
       }
 
       if (style === "constellation" || style === "forum") {
@@ -914,6 +1006,8 @@ function useAtlasScene(
           }),
         );
         root.add(shell);
+        // Diana keeps watch from the floor, standing in the oculus light.
+        buildDianaCenterpiece(0, 0, 0);
         ORDER.forEach((cat, ci) => {
           const catNodes = nodes.filter((n) => n.category === cat);
           if (catNodes.length === 0) return;
@@ -1041,9 +1135,8 @@ function useAtlasScene(
         );
         bemaTop.position.y = 0.75;
         root.add(bemaTop);
-        const bemaLabel = makeLabel("Artemis", "#f0d49a");
-        bemaLabel.position.set(0, 2.7, 0);
-        root.add(bemaLabel);
+        // Diana addresses the marketplace from the bema itself.
+        buildDianaCenterpiece(0, 0.5, 0);
         ORDER.forEach((cat, ci) => {
           const catNodes = nodes.filter((n) => n.category === cat);
           if (catNodes.length === 0) return;
@@ -1116,6 +1209,8 @@ function useAtlasScene(
         );
         crown.position.y = DOME_R + 0.5;
         root.add(crown);
+        // Diana stands guard at the heart of the dome.
+        buildDianaCenterpiece(0, 0, 0);
         const shellPt = (az: number, elDeg: number) => {
           const el = (elDeg * Math.PI) / 180;
           return new THREE.Vector3(
@@ -1181,16 +1276,8 @@ function useAtlasScene(
           col.position.set(Math.cos(a) * R, LEVELS[1] / 2, Math.sin(a) * R);
           root.add(col);
         }
-        // Central court marker.
-        const court = new THREE.Mesh(
-          new THREE.OctahedronGeometry(0.8),
-          new THREE.MeshBasicMaterial({ color: "#e0b65a", wireframe: true, transparent: true, opacity: 0.7 }),
-        );
-        court.position.y = 3.2;
-        root.add(court);
-        const courtLabel = makeLabel("Artemis", "#e8c88a", 1.6);
-        courtLabel.position.y = 4.4;
-        root.add(courtLabel);
+        // Diana holds the open court — the court's Artemis, in person.
+        buildDianaCenterpiece(0, 0, 0);
         // Place labs: flagships on the upper level, the rest around the
         // ground level first, then the upper level.
         const init = new Map<LabCategory, THREE.Object3D[]>();
@@ -1248,9 +1335,8 @@ function useAtlasScene(
         med.rotation.x = -Math.PI / 2;
         med.position.y = 0.03;
         root.add(med);
-        const medLabel = makeLabel("Artemis", "#f0d49a", 1.8);
-        medLabel.position.y = 2.2;
-        root.add(medLabel);
+        // Diana stands on the central medallion — the sala's Artemis, in person.
+        buildDianaCenterpiece(0, 0, 0);
         // Perimeter columns.
         const colM = new THREE.MeshBasicMaterial({ color: "#9aa2b5", transparent: true, opacity: 0.5 });
         for (let k = 0; k < 12; k++) {
@@ -1481,69 +1567,14 @@ function useAtlasScene(
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
 
         // --- Diana centerpiece: the colossus at the heart of the gallery. ---
-        // A classical Diana (GLB, lazy-loaded so other styles never pay for
-        // it) towering over the room on a stone dais. Clicking a screen makes
-        // her loose a golden arrow at it; the impact opens the lab
-        // cinematically.
-        const dianaGroup = new THREE.Group();
-        dianaGroup.position.set(0, 0, 5);
-        root.add(dianaGroup);
-        const pedestal = new THREE.Mesh(
-          new THREE.CylinderGeometry(4.2, 5.28, 3.6, 48),
-          new THREE.MeshBasicMaterial({ color: "#1b2233" }),
-        );
-        pedestal.position.y = 1.8;
-        dianaGroup.add(pedestal);
-        const pedTrim = new THREE.Mesh(
-          new THREE.TorusGeometry(4.24, 0.2, 10, 72),
-          new THREE.MeshBasicMaterial({ color: "#a8873f" }),
-        );
-        pedTrim.rotation.x = Math.PI / 2;
-        pedTrim.position.y = 3.62;
-        dianaGroup.add(pedTrim);
-        // Floating nameplate on the visitor side, high enough to clear the
-        // dais from the default camera angle.
-        const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 2.4);
-        dianaPlate.position.set(0, 6.5, -8);
-        dianaGroup.add(dianaPlate);
-        // Moon disc behind her — she is the moon goddess, after all.
-        const moon = new THREE.Sprite(
-          new THREE.SpriteMaterial({
-            map: glowTexture("#cdd9f5"),
-            transparent: true,
-            opacity: 0.42,
-            depthWrite: false,
-          }),
-        );
-        moon.scale.set(22, 22, 1);
-        moon.position.set(0, 33, 2);
-        dianaGroup.add(moon);
+        // A classical Diana towering over the room on a stone dais. Clicking
+        // a screen makes her loose a golden arrow at it; the impact opens the
+        // lab cinematically.
+        const dianaGroup = buildDianaCenterpiece(0, 0, 5);
         // Arrow origin in root space, refreshed from her live orientation at
         // every shot — she counter-rotates, so her bow is never where it was.
         const bowOrigin = new THREE.Vector3(0, 26, 4);
         const BOW_LOCAL = new THREE.Vector3(0, 26, -1);
-        (async () => {
-          try {
-            const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
-            const gltf = await new GLTFLoader().loadAsync("/labs/diana.glb");
-            if (cancelled) return;
-            const statue = gltf.scene;
-            // Face her toward the visitor (rotation changes the bbox, so fit after).
-            statue.rotation.y = 0;
-            const bb = new THREE.Box3().setFromObject(statue);
-            const sz = bb.getSize(new THREE.Vector3());
-            const s = 36 / sz.y;
-            statue.scale.setScalar(s);
-            const bb2 = new THREE.Box3().setFromObject(statue);
-            const ctr2 = bb2.getCenter(new THREE.Vector3());
-            statue.position.set(-ctr2.x, 3.6 - bb2.min.y, -ctr2.z);
-            dianaStatue = statue;
-            applyDianaMaterial();
-            dianaGroup.add(statue);
-          } catch {
-            /* pedestal still anchors the shot */
-          }
-        })();
 
         // Charge glow at the bow.
         const dianaGlowTex = glowTexture("#ffd98a");
@@ -1607,14 +1638,9 @@ function useAtlasScene(
         flash.visible = false;
         root.add(flash);
 
-        // Live size control: scale the whole centerpiece (dais, statue,
-        // moon, plate) about the ground, and keep the arrow origin, arrow
-        // size, and glow sizes glued to her at every size.
-        setDianaScaleFn = (f: number) => {
-          dianaScaleF = f;
-          dianaGroup.scale.setScalar(f);
-          arrowGroup.scale.setScalar(Math.max(f, 0.15));
-        };
+        // Live size control: keep the arrow glued to her at every size.
+        // (Her own group scale is registered by the centerpiece builder.)
+        dianaScaleFns.push((f) => arrowGroup.scale.setScalar(Math.max(f, 0.15)));
 
         // Shot state machine: charge → flight → impact → cinematic open.
         let shotPhase: "idle" | "charging" | "flying" | "impact" = "idle";
@@ -1646,9 +1672,6 @@ function useAtlasScene(
           shotT = 0;
         };
         shotTick = (dt: number) => {
-          // Counter-rotation: the room orbits one way, Diana turns the other.
-          // Pauses with the room when the visitor leans in, and for reduced motion.
-          if (!reduced && !hovering) dianaGroup.rotation.y -= dt * 0.06;
           if (shotPhase === "idle") return;
           shotT += dt;
           if (shotPhase === "charging") {
@@ -1828,6 +1851,9 @@ function useAtlasScene(
         // moving targets are miserable to click.
         if (!reduced && !hovering) root.rotation.y += dt * 0.03;
         controls.autoRotate = !reduced && !hovering;
+        // Diana counter-rotates against the room's orbit — pauses with the
+        // room when the visitor leans in, and for reduced motion.
+        if (!reduced && !hovering) for (const spin of dianaSpinners) spin(dt);
         shotTick(dt);
         // Flagship pulse.
         for (const m of meshes) {
@@ -1882,12 +1908,15 @@ function useAtlasScene(
         onDianaShot: (cb) => {
           dianaShotCb = cb;
         },
+        /** Diana styles: re-cast her finish live — no scene rebuild. */
         setDianaMaterial: (m) => {
           dianaMaterialId = m;
           applyDianaMaterial();
         },
+        /** Diana styles: scale her live — no scene rebuild. */
         setDianaScale: (f) => {
-          if (setDianaScaleFn) setDianaScaleFn(f);
+          dianaScaleF = f;
+          for (const fn of dianaScaleFns) fn(f);
         },
         setRoom: (re) => {
           if (style !== "gallery") return;
@@ -2268,7 +2297,7 @@ export function LabsAtlas({
             </label>
           </div>
         ) : null}
-        {style === "gallery" ? (
+        {DIANA_STYLES.includes(style) ? (
           <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Diana's finish">
             <span className="px-2 font-papermono text-xs text-muted-foreground">Diana</span>
             {DIANA_MATERIALS.map((m) => (

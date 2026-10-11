@@ -432,11 +432,11 @@ html[data-theme="day"] iframe {
   overflow-x: clip;
   background-color: hsl(var(--background));
   background-image:
-    radial-gradient(1100px 520px at 50% -8%, hsl(var(--signal-blue) / 0.09), transparent 62%),
-    linear-gradient(hsl(var(--signal-blue) / 0.075) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--signal-blue) / 0.075) 1px, transparent 1px),
-    linear-gradient(hsl(var(--signal-blue) / 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--signal-blue) / 0.045) 1px, transparent 1px);
+    radial-gradient(1100px 520px at 50% -8%, hsl(var(--signal-blue) / 0.14), transparent 62%),
+    linear-gradient(hsl(var(--signal-blue) / 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--signal-blue) / 0.095) 1px, transparent 1px),
+    linear-gradient(hsl(var(--signal-blue) / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--signal-blue) / 0.06) 1px, transparent 1px);
   background-size: auto, 180px 180px, 180px 180px, 36px 36px, 36px 36px;
 }
 .notebook-bg::before,
@@ -450,16 +450,16 @@ html[data-theme="day"] iframe {
 /* Breathing glow that drifts across the page */
 .notebook-bg::before {
   inset: 6% 4%;
-  background: radial-gradient(closest-side, hsl(var(--crescent-blue) / 0.075), transparent 72%);
-  animation: notebook-drift 34s ease-in-out infinite;
+  background: radial-gradient(closest-side, hsl(var(--crescent-blue) / 0.13), transparent 72%);
+  animation: notebook-drift 17s ease-in-out infinite;
 }
 /* Soft diagonal beam sweeping behind the content */
 .notebook-bg::after {
   inset: -12% -32%;
-  background: linear-gradient(105deg, transparent 41%, hsl(var(--signal-blue) / 0.065) 50%, transparent 59%);
+  background: linear-gradient(105deg, transparent 40%, hsl(var(--signal-blue) / 0.12) 50%, transparent 60%);
   -webkit-mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
   mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
-  animation: notebook-beam 48s ease-in-out infinite alternate;
+  animation: notebook-beam 24s ease-in-out infinite alternate;
 }
 @keyframes notebook-drift {
   0%, 100% { transform: translate3d(-4%, -2%, 0) scale(1); opacity: 0.85; }
