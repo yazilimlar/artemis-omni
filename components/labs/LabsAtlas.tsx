@@ -24,7 +24,10 @@ export type AtlasStyle =
   | "radial"
   | "pantheon"
   | "colosseum"
-  | "agora";
+  | "agora"
+  | "geodesic"
+  | "octagon"
+  | "rotonda";
 
 export const ATLAS_STYLES: AtlasStyle[] = [
   "constellation",
@@ -36,7 +39,21 @@ export const ATLAS_STYLES: AtlasStyle[] = [
   "pantheon",
   "colosseum",
   "agora",
+  "geodesic",
+  "octagon",
+  "rotonda",
 ];
+
+/** Canvas viewport sizes — the visitor controls how much screen the view takes. */
+export type AtlasViewport = "compact" | "standard" | "cinematic";
+
+export const ATLAS_VIEWPORTS: Record<AtlasViewport, { label: string; ratio: number; min: number; max: number }> = {
+  compact: { label: "Compact", ratio: 0.42, min: 340, max: 460 },
+  standard: { label: "Standard", ratio: 0.55, min: 420, max: 640 },
+  cinematic: { label: "Cinematic", ratio: 0.72, min: 560, max: 880 },
+};
+
+const VIEWPORT_KEY = "labs-atlas-viewport";
 
 /** Header copy per display style — the same map, six ways to read it. */
 export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string }> = {
@@ -84,6 +101,21 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
     title: "The labs as an agora",
     blurb:
       "The marketplace: every lab keeps a stall around the shared plaza, flagships nearest the bema. Drag to orbit, click a stall to open its lab.",
+  },
+  geodesic: {
+    title: "The labs as a geodesic dome",
+    blurb:
+      "A lattice under tension — thirteen nodes in a triangulated shell, flagships nearest the crown. Drag to orbit, click a node to open its lab.",
+  },
+  octagon: {
+    title: "The labs as an octagon",
+    blurb:
+      "A two-story octagonal hall — eight sides around an open court, flagships on the piano nobile. Drag to orbit, click a node to open its lab.",
+  },
+  rotonda: {
+    title: "The labs as a sala rotonda",
+    blurb:
+      "A round mosaic hall — thirteen medallions inlaid in concentric rings beneath the oculus, flagships in the innermost ring. Drag to orbit, click a medallion to open its lab.",
   },
 };
 
@@ -148,6 +180,21 @@ const ATLAS_ENV: Record<AtlasStyle, AtlasEnv> = {
     starColor: "#e8d9b0", starOpacity: 0.45, starCount: 250,
     ground: { color: "#5a6a85", opacity: 0.6, radius: 14, y: 0 },
   },
+  geodesic: {
+    skyTop: "#0a141f", skyBottom: "#1a2c3d", fog: "#0c1622", fogNear: 35, fogFar: 110,
+    starColor: "#9fd4e8", starOpacity: 0.55, starCount: 400,
+    ground: { color: "#101c28", opacity: 0.7, radius: 20, y: -0.1 },
+  },
+  octagon: {
+    skyTop: "#141009", skyBottom: "#3a2a1a", fog: "#1d130c", fogNear: 30, fogFar: 100,
+    starColor: "#e8c88a", starOpacity: 0.45, starCount: 250,
+    ground: { color: "#4a3826", opacity: 0.6, radius: 16, y: -0.05 },
+  },
+  rotonda: {
+    skyTop: "#0c1220", skyBottom: "#26314c", fog: "#101623", fogNear: 35, fogFar: 110,
+    starColor: "#c8d4ea", starOpacity: 0.4, starCount: 250,
+    ground: { color: "#6a7690", opacity: 0.5, radius: 16, y: -0.02 },
+  },
 };
 
 const CATEGORY_COLORS: Record<LabCategory, string> = {
@@ -178,6 +225,7 @@ function useAtlasScene(
   mountRef: React.RefObject<HTMLDivElement | null>,
   nodes: AtlasNode[],
   style: AtlasStyle,
+  viewport: AtlasViewport,
 ): SceneHandle | null {
   const [handle, setHandle] = useState<SceneHandle | null>(null);
 
@@ -195,7 +243,8 @@ function useAtlasScene(
 
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const width = mount.clientWidth || 800;
-      const height = Math.max(420, Math.min(640, Math.floor(width * 0.55)));
+      const vp = ATLAS_VIEWPORTS[viewport];
+      const height = Math.max(vp.min, Math.min(vp.max, Math.floor(width * vp.ratio)));
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -212,6 +261,9 @@ function useAtlasScene(
       else if (style === "pantheon") camera.position.set(0, 4, 11);
       else if (style === "colosseum") camera.position.set(0, 15, 27);
       else if (style === "agora") camera.position.set(0, 16, 21);
+      else if (style === "geodesic") camera.position.set(0, 12, 27);
+      else if (style === "octagon") camera.position.set(0, 13, 25);
+      else if (style === "rotonda") camera.position.set(0, 20, 15);
       else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -225,6 +277,8 @@ function useAtlasScene(
       // Aim the orbit pivot per style: mid-dome for pantheon, mid-tiers for colosseum.
       if (style === "pantheon") controls.target.set(0, 6, 0);
       else if (style === "colosseum") controls.target.set(0, 4, 0);
+      else if (style === "geodesic") controls.target.set(0, 4, 0);
+      else if (style === "octagon") controls.target.set(0, 3, 0);
 
       const root = new THREE.Group();
       scene.add(root);
@@ -851,6 +905,213 @@ function useAtlasScene(
           });
           byCategory.set(cat, group);
         });
+      } else if (style === "geodesic") {
+        // Geodesic: a triangulated lattice dome under tension. Labs ride the
+        // shell; flagships sit nearest the crown.
+        const DOME_R = 14;
+        // Wireframe lattice — the lower hemisphere sinks beneath the ground
+        // disc, leaving a clean dome.
+        const lattice = new THREE.Mesh(
+          new THREE.IcosahedronGeometry(DOME_R, 2),
+          new THREE.MeshBasicMaterial({ color: "#9fd4e8", wireframe: true, transparent: true, opacity: 0.28 }),
+        );
+        lattice.position.y = 0.5;
+        root.add(lattice);
+        // Crown hub.
+        const crown = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.9),
+          new THREE.MeshBasicMaterial({ color: "#e0b65a", wireframe: true, transparent: true, opacity: 0.7 }),
+        );
+        crown.position.y = DOME_R + 0.5;
+        root.add(crown);
+        const shellPt = (az: number, elDeg: number) => {
+          const el = (elDeg * Math.PI) / 180;
+          return new THREE.Vector3(
+            Math.cos(az) * Math.cos(el) * DOME_R,
+            Math.sin(el) * DOME_R + 0.5,
+            Math.sin(az) * Math.cos(el) * DOME_R,
+          );
+        };
+        ORDER.forEach((cat, ci) => {
+          const catNodes = nodes.filter((n) => n.category === cat);
+          if (!catNodes.length) return;
+          const group: THREE.Object3D[] = [];
+          const baseA = (ci / ORDER.length) * Math.PI * 2 - Math.PI / 2;
+          const regular = catNodes.filter((n) => !n.flagship);
+          const flags = catNodes.filter((n) => n.flagship);
+          const sectorW = (Math.PI * 2) / ORDER.length;
+          regular.forEach((node, ni) => {
+            const az = baseA + (regular.length > 1 ? (ni / (regular.length - 1) - 0.5) * sectorW * 0.8 : 0);
+            const el = 16 + (ni % 3) * 14 + rand(ci * 31 + ni * 13) * 6;
+            addNodeMesh(node, shellPt(az, el), group, (ni % 2) * 0.5);
+          });
+          flags.forEach((node, ni) => {
+            const az = baseA + (flags.length > 1 ? (ni / (flags.length - 1) - 0.5) * 0.3 : 0);
+            addNodeMesh(node, shellPt(az, 72), group, 0);
+          });
+          // Sector name rides the dome base.
+          const bl = makeLabel(cat, "#9fd4e8", 1.5);
+          const bp = shellPt(baseA, 6);
+          bp.multiplyScalar(1.12);
+          bp.y = 0.6;
+          bl.position.copy(bp);
+          root.add(bl);
+          group.push(bl);
+          byCategory.set(cat, group);
+        });
+      } else if (style === "octagon") {
+        // Octagon: a two-story octagonal hall. Eight sides ring an open
+        // court; flagships hold the piano nobile (upper level).
+        const SIDES = 8;
+        const R = 9;
+        const LEVELS = [0, 5];
+        const beamM = new THREE.LineBasicMaterial({ color: "#a08c68", transparent: true, opacity: 0.6 });
+        const stoneM = new THREE.MeshBasicMaterial({ color: "#8f7d5e", transparent: true, opacity: 0.55 });
+        // Upper floor slab + ring beams.
+        const slab = new THREE.Mesh(
+          new THREE.CylinderGeometry(R, R, 0.25, 8),
+          new THREE.MeshBasicMaterial({ color: "#4a3826", transparent: true, opacity: 0.55 }),
+        );
+        slab.position.y = LEVELS[1] - 0.12;
+        root.add(slab);
+        for (const y of LEVELS) {
+          const beam = new THREE.LineSegments(
+            new THREE.EdgesGeometry(new THREE.CylinderGeometry(R, R, 0.18, 8)),
+            beamM,
+          );
+          beam.position.y = y + 0.1;
+          root.add(beam);
+        }
+        // Eight columns at the vertices, full height.
+        for (let k = 0; k < SIDES; k++) {
+          const a = (k / SIDES) * Math.PI * 2;
+          const col = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, LEVELS[1], 8), stoneM);
+          col.position.set(Math.cos(a) * R, LEVELS[1] / 2, Math.sin(a) * R);
+          root.add(col);
+        }
+        // Central court marker.
+        const court = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.8),
+          new THREE.MeshBasicMaterial({ color: "#e0b65a", wireframe: true, transparent: true, opacity: 0.7 }),
+        );
+        court.position.y = 3.2;
+        root.add(court);
+        const courtLabel = makeLabel("Artemis", "#e8c88a", 1.6);
+        courtLabel.position.y = 4.4;
+        root.add(courtLabel);
+        // Place labs: flagships on the upper level, the rest around the
+        // ground level first, then the upper level.
+        const init = new Map<LabCategory, THREE.Object3D[]>();
+        for (const c of ORDER) init.set(c, []);
+        const vertex = (k: number, lv: number) => {
+          const a = (k / SIDES) * Math.PI * 2;
+          return new THREE.Vector3(Math.cos(a) * (R - 1.7), lv + 0.9, Math.sin(a) * (R - 1.7));
+        };
+        const flags = nodes.filter((n) => n.flagship);
+        const rest = nodes.filter((n) => !n.flagship);
+        flags.forEach((node, fi) => {
+          addNodeMesh(node, vertex(fi % SIDES, LEVELS[1]), init.get(node.category)!, 0);
+        });
+        rest.forEach((node, ri) => {
+          const lv = ri < SIDES ? LEVELS[0] : LEVELS[1];
+          addNodeMesh(node, vertex((ri + flags.length) % SIDES, lv), init.get(node.category)!, (ri % 2) * 0.5);
+        });
+        // Category names above the upper beam, near their first lab.
+        for (const c of ORDER) {
+          const objs = init.get(c)!;
+          if (!objs.length) continue;
+          const first = objs[0].position;
+          const la = Math.atan2(first.z, first.x);
+          const label = makeLabel(c, "#e8c88a", 1.5);
+          label.position.set(Math.cos(la) * (R - 1.7), LEVELS[1] + 2.4, Math.sin(la) * (R - 1.7));
+          root.add(label);
+          objs.push(label);
+        }
+        for (const c of ORDER) byCategory.set(c, init.get(c)!);
+      } else if (style === "rotonda") {
+        // Sala Rotonda: the mosaic floor is the protagonist. Concentric
+        // inlaid rings; the labs are medallions set into the floor;
+        // flagships in the innermost ring around the central medallion.
+        const mosaicCols = ["#c8a24a", "#8a2f2b", "#3f6b5a", "#b8b0a0", "#c8a24a"];
+        const ringRadii = [3.2, 5.2, 7.4, 9.6, 11.8];
+        ringRadii.forEach((rr, i) => {
+          const ring = new THREE.Mesh(
+            new THREE.RingGeometry(rr - 0.55, rr, 96),
+            new THREE.MeshBasicMaterial({
+              color: mosaicCols[i % mosaicCols.length],
+              transparent: true,
+              opacity: 0.5,
+              side: THREE.DoubleSide,
+            }),
+          );
+          ring.rotation.x = -Math.PI / 2;
+          ring.position.y = 0.02 + i * 0.002;
+          root.add(ring);
+        });
+        // Central medallion.
+        const med = new THREE.Mesh(
+          new THREE.CircleGeometry(1.6, 48),
+          new THREE.MeshBasicMaterial({ color: "#e0b65a", transparent: true, opacity: 0.5, side: THREE.DoubleSide }),
+        );
+        med.rotation.x = -Math.PI / 2;
+        med.position.y = 0.03;
+        root.add(med);
+        const medLabel = makeLabel("Artemis", "#f0d49a", 1.8);
+        medLabel.position.y = 2.2;
+        root.add(medLabel);
+        // Perimeter columns.
+        const colM = new THREE.MeshBasicMaterial({ color: "#9aa2b5", transparent: true, opacity: 0.5 });
+        for (let k = 0; k < 12; k++) {
+          const a = (k / 12) * Math.PI * 2;
+          const col = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 7, 10), colM);
+          col.position.set(Math.cos(a) * 13.2, 3.5, Math.sin(a) * 13.2);
+          root.add(col);
+        }
+        // Oculus hint above.
+        const oculus = new THREE.Mesh(
+          new THREE.RingGeometry(1.6, 2.4, 48),
+          new THREE.MeshBasicMaterial({ color: "#f0d49a", transparent: true, opacity: 0.35, side: THREE.DoubleSide }),
+        );
+        oculus.rotation.x = -Math.PI / 2;
+        oculus.position.y = 12;
+        root.add(oculus);
+        // Medallion settings + nodes.
+        const settingM = new THREE.MeshBasicMaterial({ color: "#141a28", transparent: true, opacity: 0.8, side: THREE.DoubleSide });
+        const init = new Map<LabCategory, THREE.Object3D[]>();
+        for (const c of ORDER) init.set(c, []);
+        const flags = nodes.filter((n) => n.flagship);
+        const rest = nodes.filter((n) => !n.flagship);
+        const place = (node: AtlasNode, rr: number, az: number, stagger: number) => {
+          const x = Math.cos(az) * rr;
+          const z = Math.sin(az) * rr;
+          const setting = new THREE.Mesh(new THREE.CircleGeometry(0.85, 24), settingM);
+          setting.rotation.x = -Math.PI / 2;
+          setting.position.set(x, 0.045, z);
+          root.add(setting);
+          const group = init.get(node.category)!;
+          group.push(setting);
+          addNodeMesh(node, new THREE.Vector3(x, 0.75, z), group, stagger);
+        };
+        flags.forEach((node, fi) => {
+          place(node, ringRadii[0], (fi / Math.max(flags.length, 1)) * Math.PI * 2 + 0.5, 0);
+        });
+        rest.forEach((node, ri) => {
+          const rr = ringRadii[1 + (ri % (ringRadii.length - 1))];
+          const az = (ri / rest.length) * Math.PI * 2 + rand(ri * 29 + 7) * 0.6;
+          place(node, rr, az, (ri % 2) * 0.7);
+        });
+        // Category names at the outer ring, near their first medallion.
+        for (const c of ORDER) {
+          const objs = init.get(c)!;
+          const nodeObj = objs.find((o) => o.userData.baseY !== undefined);
+          if (!nodeObj) continue;
+          const la = Math.atan2(nodeObj.position.z, nodeObj.position.x);
+          const label = makeLabel(c, "#c8d4ea", 1.5);
+          label.position.set(Math.cos(la) * 13.0, 1.4, Math.sin(la) * 13.0);
+          root.add(label);
+          objs.push(label);
+        }
+        for (const c of ORDER) byCategory.set(c, init.get(c)!);
       } else {
         // Radial: Artemis at the root, one branch per category, every lab a
         // leaf along its branch. The hierarchy read.
@@ -981,7 +1242,8 @@ function useAtlasScene(
 
       function onResize() {
         const w = mount!.clientWidth || 800;
-        const h = Math.max(420, Math.min(640, Math.floor(w * 0.55)));
+        const vpr = ATLAS_VIEWPORTS[viewport];
+        const h = Math.max(vpr.min, Math.min(vpr.max, Math.floor(w * vpr.ratio)));
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
@@ -1044,7 +1306,7 @@ function useAtlasScene(
       cancelled = true;
       dispose?.();
     };
-  }, [mountRef, style]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [mountRef, style, viewport]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return handle;
 }
@@ -1071,10 +1333,20 @@ export function LabsAtlas({
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [selected, setSelected] = useState<AtlasNode | null>(null);
   const [ready, setReady] = useState(false);
+  const [viewport, setViewport] = useState<AtlasViewport>("standard");
 
-  // Remount the scene when the display style changes.
+  // Remount the scene when the display style or viewport changes.
   const [sceneKey, setSceneKey] = useState(0);
-  const handle = useAtlasScene(mountRef, nodes, style);
+  const handle = useAtlasScene(mountRef, nodes, style, viewport);
+
+  useEffect(() => {
+    try {
+      const v = window.localStorage.getItem(VIEWPORT_KEY);
+      if (v === "compact" || v === "standard" || v === "cinematic") setViewport(v);
+    } catch {
+      /* private mode — default stands */
+    }
+  }, []);
 
   useEffect(() => {
     setReady(!!handle);
@@ -1114,6 +1386,18 @@ export function LabsAtlas({
   function switchStyle(s: AtlasStyle) {
     if (s === style) return;
     onStyleChange(s);
+    setSelected(null);
+    setSceneKey((k) => k + 1);
+  }
+
+  function switchViewport(v: AtlasViewport) {
+    if (v === viewport) return;
+    setViewport(v);
+    try {
+      window.localStorage.setItem(VIEWPORT_KEY, v);
+    } catch {
+      /* ignore */
+    }
     setSelected(null);
     setSceneKey((k) => k + 1);
   }
@@ -1171,6 +1455,21 @@ export function LabsAtlas({
               }`}
             >
               {s}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Canvas size">
+          {(Object.keys(ATLAS_VIEWPORTS) as AtlasViewport[]).map((v) => (
+            <button
+              key={v}
+              type="button"
+              aria-pressed={viewport === v}
+              onClick={() => switchViewport(v)}
+              className={`rounded-full px-3 py-1 font-papermono text-xs transition-colors ${
+                viewport === v ? "bg-gold/15 text-gold-soft" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {ATLAS_VIEWPORTS[v].label}
             </button>
           ))}
         </div>
