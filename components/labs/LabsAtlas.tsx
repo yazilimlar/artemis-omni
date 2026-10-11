@@ -78,6 +78,47 @@ const ATLAS_THUMBS: Record<string, string> = {
   "/labs/civicbid-intelligence-bridge": "/labs/thumbs/civicbid.jpg",
 };
 
+/** Gallery wall layouts — the visitor reconfigures the Architect's wall. */
+export type GalleryLayoutId = "wall" | "3x5" | "4x4" | "4x12" | "6x8";
+
+type GalleryLayout = { id: GalleryLayoutId; label: string; rows: number; cols: number; classic?: boolean };
+
+const GALLERY_LAYOUTS: GalleryLayout[] = [
+  { id: "wall", label: "Wall", rows: 2, cols: 7, classic: true },
+  { id: "3x5", label: "3×5", rows: 3, cols: 5 },
+  { id: "4x4", label: "4×4", rows: 4, cols: 4 },
+  { id: "4x12", label: "4×12", rows: 4, cols: 12 },
+  { id: "6x8", label: "6×8", rows: 6, cols: 8 },
+];
+
+const GALLERY_LAYOUT_KEY = "labs-gallery-layout";
+
+/** Room atmospheres for the gallery — the visitor tints the screening room. */
+type RoomEnv = { skyTop: string; skyBottom: string; fog: string; ground: string; star: string };
+
+type GalleryRoom = { id: string; label: string; swatch: string } & RoomEnv;
+
+const GALLERY_ROOMS: GalleryRoom[] = [
+  { id: "void", label: "Void", swatch: "#0a0e16", skyTop: "#05070c", skyBottom: "#0d1420", fog: "#05070c", ground: "#0a0d14", star: "#5a6a85" },
+  { id: "abyss", label: "Abyss", swatch: "#12294d", skyTop: "#060b16", skyBottom: "#12294d", fog: "#0a1626", ground: "#0c1626", star: "#7fa8d4" },
+  { id: "ember", label: "Ember", swatch: "#3d1a12", skyTop: "#0d0505", skyBottom: "#3d1a12", fog: "#160a08", ground: "#1c0f0c", star: "#d4a07a" },
+  { id: "moss", label: "Moss", swatch: "#14301f", skyTop: "#040b07", skyBottom: "#14301f", fog: "#081209", ground: "#0b1710", star: "#9fc48a" },
+  { id: "bone", label: "Bone", swatch: "#8a8478", skyTop: "#3a3a3c", skyBottom: "#8a8478", fog: "#55524a", ground: "#6a655a", star: "#e8e0cc" },
+];
+
+const GALLERY_ROOM_KEY = "labs-gallery-room";
+const GALLERY_ROOM_CUSTOM_KEY = "labs-gallery-room-custom";
+
+/** Multiply a hex color by f (clamped) — derives room tones from one swatch. */
+function shade(hex: string, f: number): string {
+  const n = parseInt(hex.slice(1), 16);
+  const cl = (v: number) => Math.max(0, Math.min(255, Math.round(v * f)));
+  const r = cl((n >> 16) & 255);
+  const g = cl((n >> 8) & 255);
+  const b = cl(n & 255);
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
 /** Header copy per display style — the same map, six ways to read it. */
 export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string }> = {
   constellation: {
@@ -253,6 +294,8 @@ type SceneHandle = {
   setFlagshipFocus: (on: boolean) => void;
   onSelect: (cb: (node: AtlasNode | null) => void) => void;
   onHover: (cb: (node: AtlasNode | null) => void) => void;
+  /** Repaint the gallery room live — no scene rebuild. */
+  setRoom: (re: RoomEnv) => void;
 };
 
 function useAtlasScene(
@@ -260,8 +303,14 @@ function useAtlasScene(
   nodes: AtlasNode[],
   style: AtlasStyle,
   viewport: AtlasViewport,
+  galleryLayout: GalleryLayoutId,
+  roomEnv: RoomEnv | null,
 ): SceneHandle | null {
   const [handle, setHandle] = useState<SceneHandle | null>(null);
+  // Room tint is applied live (setRoom) without rebuilding the scene, so the
+  // effect reads it through a ref instead of a dep.
+  const roomEnvRef = useRef(roomEnv);
+  roomEnvRef.current = roomEnv;
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -322,7 +371,35 @@ function useAtlasScene(
 
       // Environment: every style gets its own sky, air, and ground, so no
       // two universes share the same black space.
-      const env = ATLAS_ENV[style];
+      const baseEnv = ATLAS_ENV[style];
+      // Gallery: the visitor's room tint overrides the style environment.
+      const room = style === "gallery" ? roomEnvRef.current : null;
+      const env: AtlasEnv = room
+        ? {
+            ...baseEnv,
+            skyTop: room.skyTop,
+            skyBottom: room.skyBottom,
+            fog: room.fog,
+            starColor: room.star,
+            ground: baseEnv.ground ? { ...baseEnv.ground, color: room.ground } : undefined,
+          }
+        : baseEnv;
+      // Live room refs — setRoom repaints these without rebuilding the scene.
+      let skyGeoRef: THREE.BufferGeometry | null = null;
+      let groundMeshRef: THREE.Mesh | null = null;
+      let starPtsRef: THREE.Points | null = null;
+      function paintSky(geo: THREE.BufferGeometry, top: string, bottom: string) {
+        const topC = new THREE.Color(top);
+        const botC = new THREE.Color(bottom);
+        const p = geo.attributes.position;
+        const col = geo.attributes.color as THREE.BufferAttribute;
+        for (let i = 0; i < p.count; i++) {
+          const t = THREE.MathUtils.clamp((p.getY(i) / 95 + 1) / 2, 0, 1);
+          const c = botC.clone().lerp(topC, Math.pow(t, 1.25));
+          col.setXYZ(i, c.r, c.g, c.b);
+        }
+        col.needsUpdate = true;
+      }
       {
         // Gradient sky dome (BackSide, unfogged) enclosing the scene.
         const skyGeo = new THREE.SphereGeometry(95, 24, 16);
@@ -344,6 +421,7 @@ function useAtlasScene(
         );
         sky.renderOrder = -1;
         scene.add(sky);
+        skyGeoRef = skyGeo;
       }
       scene.fog = new THREE.Fog(new THREE.Color(env.fog), env.fogNear, env.fogFar);
 
@@ -359,12 +437,11 @@ function useAtlasScene(
         pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
       }
       starGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      root.add(
-        new THREE.Points(
-          starGeo,
-          new THREE.PointsMaterial({ color: env.starColor, size: 0.14, transparent: true, opacity: env.starOpacity }),
-        ),
+      starPtsRef = new THREE.Points(
+        starGeo,
+        new THREE.PointsMaterial({ color: env.starColor, size: 0.14, transparent: true, opacity: env.starOpacity }),
       );
+      root.add(starPtsRef);
 
       // Ground plane per universe (static — it does not drift with root).
       if (env.ground) {
@@ -375,6 +452,7 @@ function useAtlasScene(
         g.rotation.x = -Math.PI / 2;
         g.position.y = env.ground.y;
         scene.add(g);
+        groundMeshRef = g;
       }
       // Drafting-table grid for strata.
       if (env.grid) {
@@ -1206,10 +1284,6 @@ function useAtlasScene(
 
         const R = 15;
         const ordered = [...nodes].sort((a, b) => Number(b.flagship) - Number(a.flagship));
-        const rows = [
-          { count: 7, y: 2.7, w: 3.3, h: 2.0625, spread: 126 },
-          { count: 6, y: 5.6, w: 2.9, h: 1.8125, spread: 105 },
-        ];
         // Center-out slot order so flagships take center stage.
         const centerOut = (n: number) => {
           const order: number[] = [];
@@ -1223,46 +1297,104 @@ function useAtlasScene(
         };
         const init = new Map<LabCategory, THREE.Object3D[]>();
         for (const c of ORDER) init.set(c, []);
-        let placed = 0;
-        for (const row of rows) {
-          const slots = centerOut(row.count);
-          for (let s = 0; s < row.count && placed < ordered.length; s++) {
-            const node = ordered[placed++];
-            const slot = slots[s];
-            const a = ((slot / (row.count - 1) - 0.5) * row.spread * Math.PI) / 180;
-            const boost = node.flagship ? 1.22 : 1;
-            const w = row.w * boost;
-            const h = row.h * boost;
-            const group = new THREE.Group();
-            const frame = new THREE.Mesh(
-              new THREE.PlaneGeometry(w + 0.16, h + 0.16),
-              new THREE.MeshBasicMaterial({
-                color: node.flagship ? "#a8873f" : "#4a5468",
-                transparent: true,
-                opacity: 0.95,
-              }),
-            );
+        /** One screen (or dormant frame) on the wall, facing the visitor. */
+        const addScreen = (
+          node: AtlasNode | null,
+          tex: THREE.Texture | null,
+          w: number,
+          h: number,
+          px: number,
+          py: number,
+          pz: number,
+          plateScale: number,
+          showPlate: boolean,
+        ) => {
+          const group = new THREE.Group();
+          const frame = new THREE.Mesh(
+            new THREE.PlaneGeometry(w + 0.16, h + 0.16),
+            new THREE.MeshBasicMaterial({
+              color: !node ? "#232a38" : node.flagship ? "#a8873f" : "#4a5468",
+              transparent: true,
+              opacity: node ? 0.95 : 0.28,
+            }),
+          );
+          group.add(frame);
+          if (node && tex) {
             const screen = new THREE.Mesh(
               new THREE.PlaneGeometry(w, h),
-              new THREE.MeshBasicMaterial({ map: textures[nodes.indexOf(node)], transparent: true, opacity: 1 }),
+              new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 1 }),
             );
             screen.position.z = 0.012;
             screen.userData.node = node;
             screen.userData.baseScale = 1;
             screen.userData.visual = screen;
-            const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", 0.8);
-            plate.position.y = -h / 2 - 0.5;
-            group.add(frame, screen, plate);
-            const px = Math.sin(a) * R;
-            const pz = Math.cos(a) * R;
-            group.position.set(px, row.y, pz);
-            // Convex wall: screens face outward, toward the visitor.
-            group.lookAt(px * 2, row.y, pz * 2);
-            root.add(group);
+            group.add(screen);
             meshes.push(screen);
             hitMeshes.push(screen);
-            const catGroup = init.get(node.category)!;
-            catGroup.push(frame, screen, plate);
+            if (showPlate) {
+              const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", plateScale);
+              plate.position.y = -h / 2 - 0.5;
+              group.add(plate);
+              init.get(node.category)!.push(plate);
+            }
+            init.get(node.category)!.push(frame, screen);
+          }
+          group.position.set(px, py, pz);
+          // Convex wall: screens face outward, toward the visitor.
+          group.lookAt(px * 2, py, pz * 2);
+          root.add(group);
+        };
+        const texOf = (node: AtlasNode) => textures[nodes.indexOf(node)];
+        const layout = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        if (layout.classic) {
+          // The classic wall: two staggered rows, flagships larger.
+          const rows = [
+            { count: 7, y: 2.7, w: 3.3, h: 2.0625, spread: 126 },
+            { count: 6, y: 5.6, w: 2.9, h: 1.8125, spread: 105 },
+          ];
+          let placed = 0;
+          for (const row of rows) {
+            const slots = centerOut(row.count);
+            for (let s = 0; s < row.count && placed < ordered.length; s++) {
+              const node = ordered[placed++];
+              const slot = slots[s];
+              const a = ((slot / (row.count - 1) - 0.5) * row.spread * Math.PI) / 180;
+              const boost = node.flagship ? 1.22 : 1;
+              const w = row.w * boost;
+              const h = row.h * boost;
+              addScreen(node, texOf(node), w, h, Math.sin(a) * R, row.y, Math.cos(a) * R, 0.8, true);
+            }
+          }
+        } else {
+          // Reconfigurable grid: uniform cells; empty slots stay as dormant
+          // frames so the wall reads intentional at any size.
+          const { rows, cols } = layout;
+          const yTop = 8.4;
+          const yBottom = 1.9;
+          const cellH = ((yTop - yBottom) / rows) * 0.78;
+          const cellW = cellH * 1.6;
+          const spreadDeg = Math.min(280, ((cols * cellW * 1.18) / R) * 57.2958);
+          const showPlate = cellW >= 2.2;
+          let idx = 0;
+          for (let r = 0; r < rows; r++) {
+            const y = yTop - ((r + 0.5) / rows) * (yTop - yBottom);
+            const slots = centerOut(cols);
+            for (let s = 0; s < cols; s++) {
+              const slot = slots[s];
+              const a = cols === 1 ? 0 : ((slot / (cols - 1) - 0.5) * spreadDeg * Math.PI) / 180;
+              const node = idx < ordered.length ? ordered[idx++] : null;
+              addScreen(
+                node,
+                node ? texOf(node) : null,
+                cellW,
+                cellH,
+                Math.sin(a) * R,
+                y,
+                Math.cos(a) * R,
+                Math.min(0.75, cellW / 5),
+                showPlate,
+              );
+            }
           }
         }
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
@@ -1433,6 +1565,13 @@ function useAtlasScene(
         onHover: (cb) => {
           hoverCb = cb;
         },
+        setRoom: (re) => {
+          if (style !== "gallery") return;
+          if (skyGeoRef) paintSky(skyGeoRef, re.skyTop, re.skyBottom);
+          (scene.fog as THREE.Fog | null)?.color.set(re.fog);
+          if (groundMeshRef) (groundMeshRef.material as THREE.MeshBasicMaterial).color.set(re.ground);
+          if (starPtsRef) (starPtsRef.material as THREE.PointsMaterial).color.set(re.star);
+        },
       });
 
       dispose = () => {
@@ -1464,7 +1603,7 @@ function useAtlasScene(
       cancelled = true;
       dispose?.();
     };
-  }, [mountRef, style, viewport]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [mountRef, style, viewport, galleryLayout]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return handle;
 }
@@ -1493,17 +1632,43 @@ export function LabsAtlas({
   const [hoveredNode, setHoveredNode] = useState<AtlasNode | null>(null);
   const [ready, setReady] = useState(false);
   const [viewport, setViewport] = useState<AtlasViewport>("standard");
+  const [galleryLayout, setGalleryLayout] = useState<GalleryLayoutId>("wall");
+  const [roomId, setRoomId] = useState<string>("void");
+  const [customHex, setCustomHex] = useState("#1a2340");
 
-  // Remount the scene when the display style or viewport changes.
+  // Remount the scene when the display style, viewport, or wall layout changes.
+  // (Room tint applies live via setRoom — no rebuild.)
   const [sceneKey, setSceneKey] = useState(0);
-  const handle = useAtlasScene(mountRef, nodes, style, viewport);
+  const roomEnv: RoomEnv | null = useMemo(() => {
+    if (style !== "gallery") return null;
+    if (roomId === "custom") {
+      return {
+        skyTop: shade(customHex, 0.22),
+        skyBottom: shade(customHex, 0.8),
+        fog: shade(customHex, 0.55),
+        ground: shade(customHex, 0.35),
+        star: shade(customHex, 1.6),
+      };
+    }
+    const r = GALLERY_ROOMS.find((x) => x.id === roomId) ?? GALLERY_ROOMS[0];
+    return { skyTop: r.skyTop, skyBottom: r.skyBottom, fog: r.fog, ground: r.ground, star: r.star };
+  }, [style, roomId, customHex]);
+  const handle = useAtlasScene(mountRef, nodes, style, viewport, galleryLayout, roomEnv);
 
   useEffect(() => {
     try {
       const v = window.localStorage.getItem(VIEWPORT_KEY);
       if (v === "compact" || v === "standard" || v === "cinematic") setViewport(v);
+      const gl = window.localStorage.getItem(GALLERY_LAYOUT_KEY);
+      if (gl && (GALLERY_LAYOUTS as { id: string }[]).some((l) => l.id === gl)) {
+        setGalleryLayout(gl as GalleryLayoutId);
+      }
+      const rm = window.localStorage.getItem(GALLERY_ROOM_KEY);
+      if (rm && (rm === "custom" || GALLERY_ROOMS.some((r) => r.id === rm))) setRoomId(rm);
+      const ch = window.localStorage.getItem(GALLERY_ROOM_CUSTOM_KEY);
+      if (ch && /^#[0-9a-fA-F]{6}$/.test(ch)) setCustomHex(ch);
     } catch {
-      /* private mode — default stands */
+      /* private mode — defaults stand */
     }
   }, []);
 
@@ -1563,6 +1728,39 @@ export function LabsAtlas({
     setHoveredNode(null);
     setSceneKey((k) => k + 1);
   }
+
+  function switchGalleryLayout(l: GalleryLayoutId) {
+    if (l === galleryLayout) return;
+    setGalleryLayout(l);
+    try {
+      window.localStorage.setItem(GALLERY_LAYOUT_KEY, l);
+    } catch {
+      /* ignore */
+    }
+    setSelected(null);
+    setHoveredNode(null);
+    setSceneKey((k) => k + 1);
+  }
+
+  function switchRoom(id: string, hex?: string) {
+    const nextHex = hex ?? customHex;
+    if (id === roomId && nextHex === customHex) return;
+    setRoomId(id);
+    if (hex) setCustomHex(hex);
+    try {
+      window.localStorage.setItem(GALLERY_ROOM_KEY, id);
+      if (hex) window.localStorage.setItem(GALLERY_ROOM_CUSTOM_KEY, hex);
+    } catch {
+      /* ignore */
+    }
+    // Live repaint — no scene rebuild.
+  }
+
+  // Apply the room tint live whenever it (or the scene) changes.
+  useEffect(() => {
+    if (!handle || !roomEnv) return;
+    handle.setRoom(roomEnv);
+  }, [handle, roomEnv]);
 
   const galleryThumb = style === "gallery" && selected ? ATLAS_THUMBS[selected.href] : undefined;
 
@@ -1637,6 +1835,66 @@ export function LabsAtlas({
             </button>
           ))}
         </div>
+        {style === "gallery" ? (
+          <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Wall layout">
+            {GALLERY_LAYOUTS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                aria-pressed={galleryLayout === l.id}
+                onClick={() => switchGalleryLayout(l.id)}
+                className={`rounded-full px-3 py-1 font-papermono text-xs transition-colors ${
+                  galleryLayout === l.id ? "bg-gold/15 text-gold-soft" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {style === "gallery" ? (
+          <div className="flex flex-wrap items-center gap-2 rounded-full border border-border/60 px-3 py-1.5" role="group" aria-label="Room color">
+            <span className="font-papermono text-xs text-muted-foreground">Room</span>
+            {GALLERY_ROOMS.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                title={r.label}
+                aria-label={`${r.label} room`}
+                aria-pressed={roomId === r.id}
+                onClick={() => switchRoom(r.id)}
+                className={`h-6 w-6 rounded-full border-2 transition-transform ${
+                  roomId === r.id ? "scale-110 border-gold" : "border-white/20 hover:scale-105"
+                }`}
+                style={{ background: r.swatch }}
+              />
+            ))}
+            <label
+              className={`relative h-6 w-6 cursor-pointer overflow-hidden rounded-full border-2 transition-transform ${
+                roomId === "custom" ? "scale-110 border-gold" : "border-dashed border-white/30 hover:scale-105"
+              }`}
+              title="Custom room color"
+            >
+              <span className="sr-only">Custom room color</span>
+              <span
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    roomId === "custom"
+                      ? customHex
+                      : "conic-gradient(#f66,#fd6,#6f6,#6df,#a6f,#f66)",
+                }}
+              />
+              <input
+                type="color"
+                value={customHex}
+                onChange={(e) => switchRoom("custom", e.target.value)}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                aria-label="Custom room color"
+              />
+            </label>
+          </div>
+        ) : null}
         <button
           type="button"
           aria-pressed={consoleOpen}
