@@ -119,6 +119,7 @@ const DIANA_MATERIALS: { id: DianaMaterialId; label: string }[] = [
   { id: "wireframe", label: "Wireframe" },
 ];
 const DIANA_MATERIAL_KEY = "labs-diana-material";
+const DIANA_SCALE_KEY = "labs-diana-scale";
 
 /** Multiply a hex color by f (clamped) — derives room tones from one swatch. */
 function shade(hex: string, f: number): string {
@@ -311,6 +312,8 @@ type SceneHandle = {
   onDianaShot: (cb: (node: AtlasNode) => void) => void;
   /** Gallery: re-cast Diana's finish live — no scene rebuild. */
   setDianaMaterial: (m: DianaMaterialId) => void;
+  /** Gallery: scale Diana live — no scene rebuild. */
+  setDianaScale: (f: number) => void;
 };
 
 function useAtlasScene(
@@ -342,6 +345,8 @@ function useAtlasScene(
     // arrives; the loader applies whatever is current.
     let dianaStatue: THREE.Group | null = null;
     let dianaMaterialId: DianaMaterialId = "wireframe";
+    // Gallery-only: assigned inside the gallery branch.
+    let setDianaScaleFn: ((f: number) => void) | null = null;
 
     (async () => {
       const THREE = await import("three");
@@ -1535,6 +1540,13 @@ function useAtlasScene(
           }
         })();
 
+        // Live size control: scale the whole group (dais, statue, moon,
+        // plate) about the ground, and keep the arrow origin glued to her bow.
+        setDianaScaleFn = (f: number) => {
+          dianaGroup.scale.setScalar(f);
+          bowOrigin.set(0, 26 * f, 5 + f);
+        };
+
         // Charge glow at the bow.
         const dianaGlowTex = glowTexture("#ffd98a");
         const chargeGlow = new THREE.Sprite(
@@ -1859,6 +1871,9 @@ function useAtlasScene(
           dianaMaterialId = m;
           applyDianaMaterial();
         },
+        setDianaScale: (f) => {
+          if (setDianaScaleFn) setDianaScaleFn(f);
+        },
         setRoom: (re) => {
           if (style !== "gallery") return;
           if (skyGeoRef) paintSky(skyGeoRef, re.skyTop, re.skyBottom);
@@ -1929,6 +1944,7 @@ export function LabsAtlas({
   const [roomId, setRoomId] = useState<string>("void");
   const [customHex, setCustomHex] = useState("#1a2340");
   const [dianaMaterial, setDianaMaterial] = useState<DianaMaterialId>("wireframe");
+  const [dianaScale, setDianaScale] = useState(1);
   // Gallery: Diana's arrow struck — the cinematic lab opening.
   const [cinematic, setCinematic] = useState<AtlasNode | null>(null);
   const router = useRouter();
@@ -1967,6 +1983,11 @@ export function LabsAtlas({
       const dm = window.localStorage.getItem(DIANA_MATERIAL_KEY);
       if (dm && (DIANA_MATERIALS as { id: string }[]).some((m) => m.id === dm)) {
         setDianaMaterial(dm as DianaMaterialId);
+      }
+      const ds = window.localStorage.getItem(DIANA_SCALE_KEY);
+      if (ds) {
+        const f = parseFloat(ds);
+        if (Number.isFinite(f) && f >= 0.1 && f <= 1) setDianaScale(f);
       }
     } catch {
       /* private mode — defaults stand */
@@ -2082,6 +2103,22 @@ export function LabsAtlas({
     if (!handle) return;
     handle.setDianaMaterial(dianaMaterial);
   }, [handle, dianaMaterial]);
+
+  function switchDianaScale(f: number) {
+    setDianaScale(f);
+    try {
+      window.localStorage.setItem(DIANA_SCALE_KEY, String(f));
+    } catch {
+      /* ignore */
+    }
+    handle?.setDianaScale(f);
+  }
+
+  // Apply Diana's size live whenever it (or the scene) changes.
+  useEffect(() => {
+    if (!handle) return;
+    handle.setDianaScale(dianaScale);
+  }, [handle, dianaScale]);
 
   const galleryThumb = style === "gallery" && selected ? ATLAS_THUMBS[selected.href] : undefined;
 
@@ -2232,6 +2269,20 @@ export function LabsAtlas({
                 {m.label}
               </button>
             ))}
+            <label className="flex items-center gap-2 px-2 font-papermono text-xs text-muted-foreground">
+              Size
+              <input
+                type="range"
+                min={0.1}
+                max={1}
+                step={0.05}
+                value={dianaScale}
+                onChange={(e) => switchDianaScale(parseFloat(e.target.value))}
+                className="h-1 w-24 cursor-pointer accent-[#e0b65a]"
+                aria-label="Diana size"
+              />
+              <span className="w-12 text-gold-soft">{dianaScale.toFixed(2)}×</span>
+            </label>
           </div>
         ) : null}
       </div>
