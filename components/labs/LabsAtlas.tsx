@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type * as THREE from "three";
 import { labCategoryMeta, type LabCategory } from "@/data/labs-editorial";
@@ -27,7 +28,8 @@ export type AtlasStyle =
   | "agora"
   | "geodesic"
   | "octagon"
-  | "rotonda";
+  | "rotonda"
+  | "gallery";
 
 export const ATLAS_STYLES: AtlasStyle[] = [
   "constellation",
@@ -42,6 +44,7 @@ export const ATLAS_STYLES: AtlasStyle[] = [
   "geodesic",
   "octagon",
   "rotonda",
+  "gallery",
 ];
 
 /** Canvas viewport sizes — the visitor controls how much screen the view takes. */
@@ -54,6 +57,26 @@ export const ATLAS_VIEWPORTS: Record<AtlasViewport, { label: string; ratio: numb
 };
 
 const VIEWPORT_KEY = "labs-atlas-viewport";
+
+/**
+ * Gallery style: lab href → app screenshot thumbnail (public/labs/thumbs).
+ * Labs without a matching screenshot get a generated title card in-scene.
+ */
+const ATLAS_THUMBS: Record<string, string> = {
+  "/labs/utility-intelligence-bridge": "/labs/thumbs/utility.jpg",
+  "/labs/hvac-mechanical-intelligence-bridge": "/labs/thumbs/hvac.jpg",
+  "/labs/sewer-utility-intelligence-bridge": "/labs/thumbs/sewer.jpg",
+  "/labs/diana-moonshot": "/labs/thumbs/diana.jpg",
+  "/labs/geometric-workbench/v5-8": "/labs/thumbs/workbench.jpg",
+  "/labs/tax-architecture-2026": "/labs/thumbs/finance.jpg",
+  "/labs/turkiye-atlas": "/labs/thumbs/turkiye.jpg",
+  "/labs/troy-time-atlas": "/labs/thumbs/troy.jpg",
+  "/labs/george-aegean-quest": "/labs/thumbs/aegean.jpg",
+  "/labs/nyc-sewer-simulator": "/labs/thumbs/nycsewer.jpg",
+  "/labs/utility-intelligence-bridge/qa-capture-studio": "/labs/thumbs/depqa.jpg",
+  "/labs/lego-build-studio": "/labs/thumbs/lego.jpg",
+  "/labs/civicbid-intelligence-bridge": "/labs/thumbs/civicbid.jpg",
+};
 
 /** Header copy per display style — the same map, six ways to read it. */
 export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string }> = {
@@ -116,6 +139,11 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
     title: "The labs as a sala rotonda",
     blurb:
       "A round mosaic hall — thirteen medallions inlaid in concentric rings beneath the oculus, flagships in the innermost ring. Drag to orbit, click a medallion to open its lab.",
+  },
+  gallery: {
+    title: "The labs as a gallery",
+    blurb:
+      "The Architect's wall — thirteen live screens in a dark room, every app at a glance. Hover to lean in, click a screen to open its lab.",
   },
 };
 
@@ -195,6 +223,11 @@ const ATLAS_ENV: Record<AtlasStyle, AtlasEnv> = {
     starColor: "#c8d4ea", starOpacity: 0.4, starCount: 250,
     ground: { color: "#6a7690", opacity: 0.5, radius: 16, y: -0.02 },
   },
+  gallery: {
+    skyTop: "#05070c", skyBottom: "#0d1420", fog: "#05070c", fogNear: 30, fogFar: 100,
+    starColor: "#5a6a85", starOpacity: 0.3, starCount: 150,
+    ground: { color: "#0a0d14", opacity: 0.8, radius: 20, y: -0.1 },
+  },
 };
 
 const CATEGORY_COLORS: Record<LabCategory, string> = {
@@ -219,6 +252,7 @@ type SceneHandle = {
   setCategoryVisible: (cat: LabCategory, visible: boolean) => void;
   setFlagshipFocus: (on: boolean) => void;
   onSelect: (cb: (node: AtlasNode | null) => void) => void;
+  onHover: (cb: (node: AtlasNode | null) => void) => void;
 };
 
 function useAtlasScene(
@@ -235,6 +269,7 @@ function useAtlasScene(
     let cancelled = false;
     let dispose: (() => void) | undefined;
     let selectCb: (node: AtlasNode | null) => void = () => {};
+    let hoverCb: (node: AtlasNode | null) => void = () => {};
 
     (async () => {
       const THREE = await import("three");
@@ -264,6 +299,7 @@ function useAtlasScene(
       else if (style === "geodesic") camera.position.set(0, 12, 27);
       else if (style === "octagon") camera.position.set(0, 13, 25);
       else if (style === "rotonda") camera.position.set(0, 20, 15);
+      else if (style === "gallery") camera.position.set(0, 5, 21);
       else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -279,6 +315,7 @@ function useAtlasScene(
       else if (style === "colosseum") controls.target.set(0, 4, 0);
       else if (style === "geodesic") controls.target.set(0, 4, 0);
       else if (style === "octagon") controls.target.set(0, 3, 0);
+      else if (style === "gallery") controls.target.set(0, 4, 6);
 
       const root = new THREE.Group();
       scene.add(root);
@@ -1112,6 +1149,123 @@ function useAtlasScene(
           objs.push(label);
         }
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
+      } else if (style === "gallery") {
+        // Gallery: the Architect's wall — thirteen live screens on a curved
+        // video wall in a dark screening room. Flagships get larger screens,
+        // center stage.
+        const fallbackTex = (title: string) => {
+          const c = document.createElement("canvas");
+          c.width = 640;
+          c.height = 400;
+          const ctx = c.getContext("2d")!;
+          ctx.fillStyle = "#10141c";
+          ctx.fillRect(0, 0, 640, 400);
+          ctx.strokeStyle = "#8a6f3c";
+          ctx.lineWidth = 6;
+          ctx.strokeRect(12, 12, 616, 376);
+          ctx.fillStyle = "#e0b65a";
+          ctx.font = "500 34px ui-monospace, monospace";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const words = title.split(" ");
+          const lines: string[] = [];
+          let line = "";
+          for (const w of words) {
+            if ((line + " " + w).trim().length > 22) {
+              lines.push(line.trim());
+              line = w;
+            } else {
+              line += " " + w;
+            }
+          }
+          lines.push(line.trim());
+          lines.slice(0, 3).forEach((l, i) => ctx.fillText(l, 320, 168 + i * 44));
+          ctx.fillStyle = "#5a6a85";
+          ctx.font = "500 22px ui-monospace, monospace";
+          ctx.fillText("ARTEMIS", 320, 320);
+          const tex = new THREE.CanvasTexture(c);
+          tex.colorSpace = THREE.SRGBColorSpace;
+          return tex;
+        };
+        const loader = new THREE.TextureLoader();
+        const loadTex = (node: AtlasNode) =>
+          new Promise<THREE.Texture>((resolve) => {
+            const url = ATLAS_THUMBS[node.href];
+            if (!url) return resolve(fallbackTex(node.title));
+            loader.load(
+              url,
+              (t) => {
+                t.colorSpace = THREE.SRGBColorSpace;
+                resolve(t);
+              },
+              undefined,
+              () => resolve(fallbackTex(node.title)),
+            );
+          });
+        const textures = await Promise.all(nodes.map(loadTex));
+
+        const R = 15;
+        const ordered = [...nodes].sort((a, b) => Number(b.flagship) - Number(a.flagship));
+        const rows = [
+          { count: 7, y: 2.7, w: 3.3, h: 2.0625, spread: 126 },
+          { count: 6, y: 5.6, w: 2.9, h: 1.8125, spread: 105 },
+        ];
+        // Center-out slot order so flagships take center stage.
+        const centerOut = (n: number) => {
+          const order: number[] = [];
+          const mid = Math.floor(n / 2);
+          order.push(mid);
+          for (let d = 1; order.length < n; d++) {
+            if (mid - d >= 0) order.push(mid - d);
+            if (mid + d < n) order.push(mid + d);
+          }
+          return order;
+        };
+        const init = new Map<LabCategory, THREE.Object3D[]>();
+        for (const c of ORDER) init.set(c, []);
+        let placed = 0;
+        for (const row of rows) {
+          const slots = centerOut(row.count);
+          for (let s = 0; s < row.count && placed < ordered.length; s++) {
+            const node = ordered[placed++];
+            const slot = slots[s];
+            const a = ((slot / (row.count - 1) - 0.5) * row.spread * Math.PI) / 180;
+            const boost = node.flagship ? 1.22 : 1;
+            const w = row.w * boost;
+            const h = row.h * boost;
+            const group = new THREE.Group();
+            const frame = new THREE.Mesh(
+              new THREE.PlaneGeometry(w + 0.16, h + 0.16),
+              new THREE.MeshBasicMaterial({
+                color: node.flagship ? "#a8873f" : "#4a5468",
+                transparent: true,
+                opacity: 0.95,
+              }),
+            );
+            const screen = new THREE.Mesh(
+              new THREE.PlaneGeometry(w, h),
+              new THREE.MeshBasicMaterial({ map: textures[nodes.indexOf(node)], transparent: true, opacity: 1 }),
+            );
+            screen.position.z = 0.012;
+            screen.userData.node = node;
+            screen.userData.baseScale = 1;
+            screen.userData.visual = screen;
+            const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", 1.15);
+            plate.position.y = -h / 2 - 0.5;
+            group.add(frame, screen, plate);
+            const px = Math.sin(a) * R;
+            const pz = Math.cos(a) * R;
+            group.position.set(px, row.y, pz);
+            // Convex wall: screens face outward, toward the visitor.
+            group.lookAt(px * 2, row.y, pz * 2);
+            root.add(group);
+            meshes.push(screen);
+            hitMeshes.push(screen);
+            const catGroup = init.get(node.category)!;
+            catGroup.push(frame, screen, plate);
+          }
+        }
+        for (const c of ORDER) byCategory.set(c, init.get(c)!);
       } else {
         // Radial: Artemis at the root, one branch per category, every lab a
         // leaf along its branch. The hierarchy read.
@@ -1185,6 +1339,7 @@ function useAtlasScene(
         } else {
           renderer.domElement.style.cursor = "";
         }
+        hoverCb(hovered ? ((hovered.userData.node as AtlasNode) ?? null) : null);
       }
 
       const onMove = (ev: PointerEvent) => setHover(pick(ev));
@@ -1275,6 +1430,9 @@ function useAtlasScene(
         onSelect: (cb) => {
           selectCb = cb;
         },
+        onHover: (cb) => {
+          hoverCb = cb;
+        },
       });
 
       dispose = () => {
@@ -1332,6 +1490,7 @@ export function LabsAtlas({
   const [flagshipFocus, setFlagshipFocus] = useState(false);
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [selected, setSelected] = useState<AtlasNode | null>(null);
+  const [hoveredNode, setHoveredNode] = useState<AtlasNode | null>(null);
   const [ready, setReady] = useState(false);
   const [viewport, setViewport] = useState<AtlasViewport>("standard");
 
@@ -1351,6 +1510,7 @@ export function LabsAtlas({
   useEffect(() => {
     setReady(!!handle);
     handle?.onSelect(setSelected);
+    handle?.onHover(setHoveredNode);
   }, [handle]);
 
   useEffect(() => {
@@ -1387,6 +1547,7 @@ export function LabsAtlas({
     if (s === style) return;
     onStyleChange(s);
     setSelected(null);
+    setHoveredNode(null);
     setSceneKey((k) => k + 1);
   }
 
@@ -1399,8 +1560,11 @@ export function LabsAtlas({
       /* ignore */
     }
     setSelected(null);
+    setHoveredNode(null);
     setSceneKey((k) => k + 1);
   }
+
+  const galleryThumb = style === "gallery" && selected ? ATLAS_THUMBS[selected.href] : undefined;
 
   return (
     <div>
@@ -1496,12 +1660,29 @@ export function LabsAtlas({
             <p className="font-papermono text-xs text-muted-foreground">charting the constellation…</p>
           </div>
         ) : null}
+        {hoveredNode && !selected ? (
+          <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-gold/30 bg-navy-deep/85 px-4 py-1.5 backdrop-blur">
+            <p className="font-papermono text-xs text-gold-soft">
+              ◉ Now previewing — {hoveredNode.title} · {hoveredNode.status}
+            </p>
+          </div>
+        ) : null}
         {selected ? (
           <div className="absolute right-4 top-4 w-64 rounded-xl border border-gold/30 bg-navy-deep/90 p-5 shadow-panel backdrop-blur">
             <p className="font-papermono text-[0.62rem] uppercase tracking-wider text-signal-soft">
               {labCategoryMeta[selected.category].label}
               {selected.flagship ? " · ◈ flagship" : ""}
             </p>
+            {galleryThumb ? (
+              <Image
+                src={galleryThumb}
+                alt={`Preview of ${selected.title}`}
+                width={640}
+                height={400}
+                className="mb-3 mt-3 w-full rounded-lg border border-border/60"
+                loading="lazy"
+              />
+            ) : null}
             <p className="display-serif mt-2 text-xl text-parchment">{selected.title}</p>
             <p className="mt-2 text-sm leading-relaxed text-mist">{selected.description}</p>
             <p className="mt-1 font-papermono text-xs text-muted-foreground">{selected.status}</p>

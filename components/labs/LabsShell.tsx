@@ -43,6 +43,7 @@ const ATLAS_STYLE_IDS: AtlasStyle[] = [
   "geodesic",
   "octagon",
   "rotonda",
+  "gallery",
 ];
 
 /**
