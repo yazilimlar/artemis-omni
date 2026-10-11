@@ -1516,8 +1516,10 @@ function useAtlasScene(
         moon.scale.set(22, 22, 1);
         moon.position.set(0, 33, 2);
         dianaGroup.add(moon);
-        // Arrow origin in root space: at her bow, now on the visitor side.
+        // Arrow origin in root space, refreshed from her live orientation at
+        // every shot — she counter-rotates, so her bow is never where it was.
         const bowOrigin = new THREE.Vector3(0, 26, 4);
+        const BOW_LOCAL = new THREE.Vector3(0, 26, -1);
         (async () => {
           try {
             const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
@@ -1609,7 +1611,6 @@ function useAtlasScene(
         setDianaScaleFn = (f: number) => {
           dianaScaleF = f;
           dianaGroup.scale.setScalar(f);
-          bowOrigin.set(0, 26 * f, 5 - f);
           arrowGroup.scale.setScalar(Math.max(f, 0.15));
         };
 
@@ -1629,6 +1630,11 @@ function useAtlasScene(
           if (shotPhase !== "idle") return;
           screen.getWorldPosition(shotTo);
           root.worldToLocal(shotTo);
+          // Her bow has moved with the counter-rotation — recompute it.
+          dianaGroup.updateWorldMatrix(true, false);
+          bowOrigin.copy(BOW_LOCAL).applyMatrix4(dianaGroup.matrixWorld);
+          root.worldToLocal(bowOrigin);
+          chargeGlow.position.copy(bowOrigin);
           shotNode = node;
           if (reduced) {
             dianaShotCb(node);
@@ -1638,6 +1644,9 @@ function useAtlasScene(
           shotT = 0;
         };
         shotTick = (dt: number) => {
+          // Counter-rotation: the room orbits one way, Diana turns the other.
+          // Pauses with the room when the visitor leans in, and for reduced motion.
+          if (!reduced && !hovering) dianaGroup.rotation.y -= dt * 0.06;
           if (shotPhase === "idle") return;
           shotT += dt;
           if (shotPhase === "charging") {
