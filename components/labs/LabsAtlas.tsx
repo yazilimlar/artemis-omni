@@ -348,8 +348,12 @@ function useAtlasScene(
       else if (style === "geodesic") camera.position.set(0, 12, 27);
       else if (style === "octagon") camera.position.set(0, 13, 25);
       else if (style === "rotonda") camera.position.set(0, 20, 15);
-      else if (style === "gallery") camera.position.set(0, 5, 21);
-      else camera.position.set(0, 7, 24);
+      else if (style === "gallery") {
+        const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        // Grids pull back so the whole wall stays in frame.
+        if (gl.classic) camera.position.set(0, 5, 21);
+        else camera.position.set(0, 5.5, 26);
+      } else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
@@ -364,7 +368,10 @@ function useAtlasScene(
       else if (style === "colosseum") controls.target.set(0, 4, 0);
       else if (style === "geodesic") controls.target.set(0, 4, 0);
       else if (style === "octagon") controls.target.set(0, 3, 0);
-      else if (style === "gallery") controls.target.set(0, 4, 6);
+      else if (style === "gallery") {
+        const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        controls.target.set(0, gl.classic ? 4 : 4.8, gl.classic ? 6 : 3);
+      }
 
       const root = new THREE.Group();
       scene.add(root);
@@ -1315,7 +1322,7 @@ function useAtlasScene(
             new THREE.MeshBasicMaterial({
               color: !node ? "#232a38" : node.flagship ? "#a8873f" : "#4a5468",
               transparent: true,
-              opacity: node ? 0.95 : 0.28,
+              opacity: node ? 0.95 : 0.2,
             }),
           );
           group.add(frame);
@@ -1375,14 +1382,18 @@ function useAtlasScene(
           const cellW = cellH * 1.6;
           const spreadDeg = Math.min(280, ((cols * cellW * 1.18) / R) * 57.2958);
           const showPlate = cellW >= 2.2;
-          let idx = 0;
+          // Round-robin across rows so the thirteen screens spread over the
+          // whole wall instead of clustering in the top row.
+          const rowNodes: (AtlasNode | null)[][] = Array.from({ length: rows }, () => []);
+          ordered.forEach((node, i) => rowNodes[i % rows].push(node));
           for (let r = 0; r < rows; r++) {
             const y = yTop - ((r + 0.5) / rows) * (yTop - yBottom);
             const slots = centerOut(cols);
+            const list = rowNodes[r];
             for (let s = 0; s < cols; s++) {
               const slot = slots[s];
               const a = cols === 1 ? 0 : ((slot / (cols - 1) - 0.5) * spreadDeg * Math.PI) / 180;
-              const node = idx < ordered.length ? ordered[idx++] : null;
+              const node = s < list.length ? list[s] : null;
               addScreen(
                 node,
                 node ? texOf(node) : null,
