@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Paper Mono (paper.design) — free & open source (OFL). Self-hosted variable
+   weight 100–800. Used for the Labs explorations/games voice and mono accents. */
+@font-face {
+  font-family: "Paper Mono";
+  src: url("/fonts/PaperMono-Variable.woff2") format("woff2-variations");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 /*
   Artemis Omni design tokens.
   HSL channels (no hsl() wrapper) so Tailwind's <alpha-value> works on semantic tokens.
@@ -35,6 +45,7 @@
     --font-sans: var(--font-artemis-sans), ui-sans-serif, system-ui, sans-serif;
     --font-serif: var(--font-artemis-serif), "Georgia", "Cambria", serif;
     --font-mono: var(--font-artemis-mono), ui-monospace, SFMono-Regular, monospace;
+    --font-papermono: "Paper Mono", ui-monospace, SFMono-Regular, monospace;
   }
 
   html[data-theme="day"] {
@@ -377,4 +388,88 @@ html[data-theme="day"] iframe {
 }
 .vc-fade {
   animation: vc-fade 280ms ease-out;
+}
+
+/* Paper Mono utility — the explorations/games voice on Labs. */
+.font-papermono {
+  font-family: var(--font-papermono);
+}
+
+/* Diana's shot — the cinematic lab opening (gallery view). */
+@keyframes diana-shot-veil {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes diana-shot-card {
+  0% { transform: scale(0.55); opacity: 0; }
+  55% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1.12); opacity: 1; }
+}
+@keyframes diana-shot-flash {
+  0% { opacity: 0; }
+  18% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+.diana-shot-veil { animation: diana-shot-veil 0.3s ease-out both; }
+.diana-shot-card { animation: diana-shot-card 1.1s cubic-bezier(0.2, 0.9, 0.25, 1.15) both; }
+.diana-shot-flash {
+  background: radial-gradient(circle at 50% 50%, rgba(240, 212, 154, 0.55), transparent 60%);
+  animation: diana-shot-flash 1.5s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .diana-shot-card, .diana-shot-flash, .diana-shot-veil { animation-duration: 0.01s; }
+}
+
+/*
+  Engineer's notebook grid — the site-wide page background.
+  Replaces the flat near-black with faint semi-transparent blue graph paper,
+  a slow-breathing blue glow, and a soft light beam that sweeps behind the
+  content. All motion pauses under prefers-reduced-motion.
+*/
+.notebook-bg {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(1100px 520px at 50% -8%, hsl(var(--signal-blue) / 0.18), transparent 62%),
+    linear-gradient(hsl(var(--signal-blue) / 0.095) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--signal-blue) / 0.095) 1px, transparent 1px),
+    linear-gradient(hsl(var(--signal-blue) / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--signal-blue) / 0.06) 1px, transparent 1px);
+  background-size: auto, 180px 180px, 180px 180px, 36px 36px, 36px 36px;
+}
+.notebook-bg::before,
+.notebook-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+/* Breathing glow that drifts across the page */
+.notebook-bg::before {
+  inset: 6% 4%;
+  background: radial-gradient(closest-side, hsl(var(--crescent-blue) / 0.18), transparent 72%);
+  animation: notebook-drift 17s ease-in-out infinite;
+}
+/* Soft diagonal beam sweeping behind the content */
+.notebook-bg::after {
+  inset: -12% -32%;
+  background: linear-gradient(105deg, transparent 36%, hsl(var(--signal-blue) / 0.20) 50%, transparent 64%);
+  -webkit-mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
+  mask-image: radial-gradient(78% 62% at 50% 38%, black 28%, transparent 74%);
+  animation: notebook-beam 24s ease-in-out infinite alternate;
+}
+@keyframes notebook-drift {
+  0%, 100% { transform: translate3d(-4%, -2%, 0) scale(1); opacity: 0.85; }
+  50% { transform: translate3d(4%, 3%, 0) scale(1.08); opacity: 1; }
+}
+@keyframes notebook-beam {
+  0% { transform: translate3d(-24%, 0, 0); opacity: 0.35; }
+  50% { opacity: 1; }
+  100% { transform: translate3d(24%, 0, 0); opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notebook-bg::before, .notebook-bg::after { animation: none; }
 }

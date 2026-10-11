@@ -14,6 +14,7 @@ import { SystemDiagramCard } from "@/components/showcase/SystemDiagramCard";
 import { WhatItIsNotBox } from "@/components/showcase/WhatItIsNotBox";
 import { createMetadata } from "@/lib/seo/metadata";
 import { getProofModules } from "@/data/proofLibrary";
+import { DianaDemonstrator } from "@/components/labs/DianaDemonstrator";
 
 export const metadata = createMetadata({
   title: "Diana Moonshot / Brand Experience",
@@ -44,6 +45,23 @@ export default function DianaMoonshotPage() {
           </Button>
         </div>
       </PageHero>
+
+      <section className="py-16 lg:py-20">
+        <Container>
+          <ExecutiveSectionHeader
+            eyebrow="Interactive Demonstrator"
+            title="Orbit the archer mark"
+            description="The Diana 3D demonstrator, live in the page. Drag to orbit, scroll to zoom, and use the camera presets inside to direct the shot — brand proof you can play with, not just read about."
+          />
+          <div className="mt-10">
+            <DianaDemonstrator />
+            <p className="mt-4 text-xs text-muted-foreground">
+              Sample visualization — an interactive 3D brand study. Loads only when you ask
+              it to.
+            </p>
+          </div>
+        </Container>
+      </section>
 
       <section className="py-16 lg:py-20">
         <Container className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
