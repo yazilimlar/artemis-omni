@@ -1945,7 +1945,7 @@ export function LabsAtlas({
   const [ready, setReady] = useState(false);
   const [viewport, setViewport] = useState<AtlasViewport>("standard");
   const [galleryLayout, setGalleryLayout] = useState<GalleryLayoutId>("wall");
-  const [roomId, setRoomId] = useState<string>("void");
+  const [roomId, setRoomId] = useState<string>("abyss");
   const [customHex, setCustomHex] = useState("#1a2340");
   const [dianaMaterial, setDianaMaterial] = useState<DianaMaterialId>("wireframe");
   const [dianaScale, setDianaScale] = useState(0.2);
