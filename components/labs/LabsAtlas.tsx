@@ -1250,7 +1250,7 @@ function useAtlasScene(
             screen.userData.node = node;
             screen.userData.baseScale = 1;
             screen.userData.visual = screen;
-            const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", 1.15);
+            const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", 0.8);
             plate.position.y = -h / 2 - 0.5;
             group.add(frame, screen, plate);
             const px = Math.sin(a) * R;
