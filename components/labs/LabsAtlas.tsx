@@ -1502,7 +1502,7 @@ function useAtlasScene(
         pedTrim.position.y = 3.62;
         dianaGroup.add(pedTrim);
         const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 2.4);
-        dianaPlate.position.set(0, 1.8, 5.45);
+        dianaPlate.position.set(0, 1.8, -5.45);
         dianaGroup.add(dianaPlate);
         // Moon disc behind her — she is the moon goddess, after all.
         const moon = new THREE.Sprite(
@@ -1516,16 +1516,16 @@ function useAtlasScene(
         moon.scale.set(22, 22, 1);
         moon.position.set(0, 33, 2);
         dianaGroup.add(moon);
-        // Arrow origin in root space: high at her bow arm.
-        const bowOrigin = new THREE.Vector3(0, 26, 6);
+        // Arrow origin in root space: at her bow, now on the visitor side.
+        const bowOrigin = new THREE.Vector3(0, 26, 4);
         (async () => {
           try {
             const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
             const gltf = await new GLTFLoader().loadAsync("/labs/diana.glb");
             if (cancelled) return;
             const statue = gltf.scene;
-            // Aim her at the wall first, then fit — rotation changes the bbox.
-            statue.rotation.y = Math.PI;
+            // Face her toward the visitor (rotation changes the bbox, so fit after).
+            statue.rotation.y = 0;
             const bb = new THREE.Box3().setFromObject(statue);
             const sz = bb.getSize(new THREE.Vector3());
             const s = 36 / sz.y;
@@ -1609,7 +1609,7 @@ function useAtlasScene(
         setDianaScaleFn = (f: number) => {
           dianaScaleF = f;
           dianaGroup.scale.setScalar(f);
-          bowOrigin.set(0, 26 * f, 5 + f);
+          bowOrigin.set(0, 26 * f, 5 - f);
           arrowGroup.scale.setScalar(Math.max(f, 0.15));
         };
 
