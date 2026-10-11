@@ -347,6 +347,7 @@ function useAtlasScene(
     let dianaMaterialId: DianaMaterialId = "wireframe";
     // Gallery-only: assigned inside the gallery branch.
     let setDianaScaleFn: ((f: number) => void) | null = null;
+    let dianaScaleF = 1;
 
     (async () => {
       const THREE = await import("three");
@@ -378,10 +379,10 @@ function useAtlasScene(
       else if (style === "rotonda") camera.position.set(0, 20, 15);
       else if (style === "gallery") {
         const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        // Diana the colossus dominates — pull back so she (head at ~40) and
-        // the wall share the frame. Grids pull slightly further.
-        if (gl.classic) camera.position.set(0, 23, 58);
-        else camera.position.set(0, 24, 59);
+        // Framed for Diana at her tuned size with the wall behind her.
+        // Grids pull slightly further.
+        if (gl.classic) camera.position.set(0, 8, 30);
+        else camera.position.set(0, 8.5, 32);
       } else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -389,7 +390,7 @@ function useAtlasScene(
       controls.dampingFactor = 0.08;
       controls.enablePan = false;
       controls.minDistance = 10;
-      controls.maxDistance = style === "gallery" ? 70 : 48;
+      controls.maxDistance = style === "gallery" ? 60 : 48;
       controls.autoRotate = !reduced;
       controls.autoRotateSpeed = 0.5;
       // Aim the orbit pivot per style: mid-dome for pantheon, mid-tiers for colosseum.
@@ -399,7 +400,7 @@ function useAtlasScene(
       else if (style === "octagon") controls.target.set(0, 3, 0);
       else if (style === "gallery") {
         const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        controls.target.set(0, gl.classic ? 16 : 16.5, gl.classic ? 5 : 4);
+        controls.target.set(0, gl.classic ? 4.5 : 5, gl.classic ? 6 : 5);
       }
 
       const root = new THREE.Group();
@@ -1540,13 +1541,6 @@ function useAtlasScene(
           }
         })();
 
-        // Live size control: scale the whole group (dais, statue, moon,
-        // plate) about the ground, and keep the arrow origin glued to her bow.
-        setDianaScaleFn = (f: number) => {
-          dianaGroup.scale.setScalar(f);
-          bowOrigin.set(0, 26 * f, 5 + f);
-        };
-
         // Charge glow at the bow.
         const dianaGlowTex = glowTexture("#ffd98a");
         const chargeGlow = new THREE.Sprite(
@@ -1609,6 +1603,16 @@ function useAtlasScene(
         flash.visible = false;
         root.add(flash);
 
+        // Live size control: scale the whole centerpiece (dais, statue,
+        // moon, plate) about the ground, and keep the arrow origin, arrow
+        // size, and glow sizes glued to her at every size.
+        setDianaScaleFn = (f: number) => {
+          dianaScaleF = f;
+          dianaGroup.scale.setScalar(f);
+          bowOrigin.set(0, 26 * f, 5 + f);
+          arrowGroup.scale.setScalar(Math.max(f, 0.15));
+        };
+
         // Shot state machine: charge → flight → impact → cinematic open.
         let shotPhase: "idle" | "charging" | "flying" | "impact" = "idle";
         let shotT = 0;
@@ -1638,13 +1642,13 @@ function useAtlasScene(
           shotT += dt;
           if (shotPhase === "charging") {
             const k = Math.min(shotT / 0.45, 1);
-            setGlow(chargeGlow, k * 0.9, 2 + k * 5);
+            setGlow(chargeGlow, k * 0.9, (2 + k * 5) * dianaScaleF);
             if (k >= 1) {
               shotPhase = "flying";
               shotT = 0;
               shotFrom.copy(bowOrigin);
               shotCtrl.copy(shotFrom).lerp(shotTo, 0.5);
-              shotCtrl.y += 3;
+              shotCtrl.y += 1.4 + 1.6 * dianaScaleF;
               shotCurve = new THREE.QuadraticBezierCurve3(
                 shotFrom.clone(),
                 shotCtrl.clone(),
@@ -1656,7 +1660,7 @@ function useAtlasScene(
             }
           } else if (shotPhase === "flying" && shotCurve) {
             // A colossus looses across a long room — give the flight room to breathe.
-            const k = Math.min(shotT / 1.0, 1);
+            const k = Math.min(shotT / (0.5 + 0.5 * dianaScaleF), 1);
             const p = shotCurve.getPoint(k);
             const tan = shotCurve.getTangent(k);
             arrowGroup.position.copy(p);
@@ -1679,7 +1683,7 @@ function useAtlasScene(
             }
           } else if (shotPhase === "impact") {
             const k = Math.min(shotT / 0.5, 1);
-            setGlow(flash, 0.95 * (1 - k), 3 + k * 20);
+            setGlow(flash, 0.95 * (1 - k), (3 + k * 20) * dianaScaleF);
             if (k >= 1) {
               flash.visible = false;
               shotPhase = "idle";
@@ -1944,7 +1948,7 @@ export function LabsAtlas({
   const [roomId, setRoomId] = useState<string>("void");
   const [customHex, setCustomHex] = useState("#1a2340");
   const [dianaMaterial, setDianaMaterial] = useState<DianaMaterialId>("wireframe");
-  const [dianaScale, setDianaScale] = useState(1);
+  const [dianaScale, setDianaScale] = useState(0.2);
   // Gallery: Diana's arrow struck — the cinematic lab opening.
   const [cinematic, setCinematic] = useState<AtlasNode | null>(null);
   const router = useRouter();
