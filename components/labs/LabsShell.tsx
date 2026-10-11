@@ -64,9 +64,9 @@ export function LabsShell({
   moreLabs: ReactNode;
   nodes: AtlasNode[];
 }) {
-  const [view, setView] = useState<View>("index");
+  const [view, setView] = useState<View>("atlas");
   const [path, setPath] = useState<PathId>("all");
-  const [atlasStyle, setAtlasStyle] = useState<AtlasStyle>("constellation");
+  const [atlasStyle, setAtlasStyle] = useState<AtlasStyle>("gallery");
   const topRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

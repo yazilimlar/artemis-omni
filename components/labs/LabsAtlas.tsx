@@ -110,6 +110,16 @@ const GALLERY_ROOMS: GalleryRoom[] = [
 const GALLERY_ROOM_KEY = "labs-gallery-room";
 const GALLERY_ROOM_CUSTOM_KEY = "labs-gallery-room-custom";
 
+/** Diana's finishes — the visitor re-casts the archer live. */
+export type DianaMaterialId = "blue" | "gold" | "bronze" | "wireframe";
+const DIANA_MATERIALS: { id: DianaMaterialId; label: string }[] = [
+  { id: "blue", label: "Blue" },
+  { id: "gold", label: "Gold" },
+  { id: "bronze", label: "Bronze" },
+  { id: "wireframe", label: "Wireframe" },
+];
+const DIANA_MATERIAL_KEY = "labs-diana-material";
+
 /** Multiply a hex color by f (clamped) — derives room tones from one swatch. */
 function shade(hex: string, f: number): string {
   const n = parseInt(hex.slice(1), 16);
@@ -299,6 +309,8 @@ type SceneHandle = {
   setRoom: (re: RoomEnv) => void;
   /** Gallery: Diana's arrow struck a screen — open its lab cinematically. */
   onDianaShot: (cb: (node: AtlasNode) => void) => void;
+  /** Gallery: re-cast Diana's finish live — no scene rebuild. */
+  setDianaMaterial: (m: DianaMaterialId) => void;
 };
 
 function useAtlasScene(
@@ -326,6 +338,10 @@ function useAtlasScene(
     // Gallery-only: assigned inside the gallery branch.
     let fireShot: ((node: AtlasNode, screen: THREE.Mesh) => void) | null = null;
     let shotTick: (dt: number) => void = () => {};
+    // Diana's statue + finish. The finish can be set before the lazy GLB
+    // arrives; the loader applies whatever is current.
+    let dianaStatue: THREE.Group | null = null;
+    let dianaMaterialId: DianaMaterialId = "gold";
 
     (async () => {
       const THREE = await import("three");
@@ -524,6 +540,27 @@ function useAtlasScene(
         const tex = new THREE.CanvasTexture(c);
         tex.colorSpace = THREE.SRGBColorSpace;
         return tex;
+      }
+
+      /** Diana's finishes — unlit, the room has no lights, only glow. */
+      function dianaMaterialFor(id: DianaMaterialId): THREE.Material {
+        switch (id) {
+          case "blue":
+            return new THREE.MeshBasicMaterial({ color: "#6fb7ff", transparent: true, opacity: 0.8 });
+          case "gold":
+            return new THREE.MeshBasicMaterial({ color: "#e0b65a" });
+          case "bronze":
+            return new THREE.MeshBasicMaterial({ color: "#8a6134" });
+          case "wireframe":
+            return new THREE.MeshBasicMaterial({ color: "#f0d49a", wireframe: true });
+        }
+      }
+      function applyDianaMaterial() {
+        if (!dianaStatue) return;
+        const mat = dianaMaterialFor(dianaMaterialId);
+        dianaStatue.traverse((o) => {
+          if (o instanceof THREE.Mesh) o.material = mat;
+        });
       }
 
       /** Strata style: map a lab's status label onto a 0–3 maturity stage. */
@@ -1469,11 +1506,11 @@ function useAtlasScene(
             depthWrite: false,
           }),
         );
-        moon.scale.set(5.4, 5.4, 1);
-        moon.position.set(0, 3.2, -1.1);
+        moon.scale.set(6.6, 6.6, 1);
+        moon.position.set(0, 4.0, -1.1);
         dianaGroup.add(moon);
         // Arrow origin in root space: above the pedestal, at her bow arm.
-        const bowOrigin = new THREE.Vector3(0, 2.55, 5.8);
+        const bowOrigin = new THREE.Vector3(0, 3.1, 5.8);
         (async () => {
           try {
             const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
@@ -1484,17 +1521,13 @@ function useAtlasScene(
             statue.rotation.y = Math.PI;
             const bb = new THREE.Box3().setFromObject(statue);
             const sz = bb.getSize(new THREE.Vector3());
-            const s = 2.6 / sz.y;
+            const s = 3.6 / sz.y;
             statue.scale.setScalar(s);
             const bb2 = new THREE.Box3().setFromObject(statue);
             const ctr2 = bb2.getCenter(new THREE.Vector3());
             statue.position.set(-ctr2.x, 0.9 - bb2.min.y, -ctr2.z);
-            // Unlit warm marble — the room has no lights, only glow.
-            statue.traverse((o) => {
-              if (o instanceof THREE.Mesh) {
-                o.material = new THREE.MeshBasicMaterial({ color: "#c9b591" });
-              }
-            });
+            dianaStatue = statue;
+            applyDianaMaterial();
             dianaGroup.add(statue);
           } catch {
             /* pedestal still anchors the shot */
@@ -1820,6 +1853,10 @@ function useAtlasScene(
         onDianaShot: (cb) => {
           dianaShotCb = cb;
         },
+        setDianaMaterial: (m) => {
+          dianaMaterialId = m;
+          applyDianaMaterial();
+        },
         setRoom: (re) => {
           if (style !== "gallery") return;
           if (skyGeoRef) paintSky(skyGeoRef, re.skyTop, re.skyBottom);
@@ -1889,6 +1926,7 @@ export function LabsAtlas({
   const [galleryLayout, setGalleryLayout] = useState<GalleryLayoutId>("wall");
   const [roomId, setRoomId] = useState<string>("void");
   const [customHex, setCustomHex] = useState("#1a2340");
+  const [dianaMaterial, setDianaMaterial] = useState<DianaMaterialId>("gold");
   // Gallery: Diana's arrow struck — the cinematic lab opening.
   const [cinematic, setCinematic] = useState<AtlasNode | null>(null);
   const router = useRouter();
@@ -1924,6 +1962,10 @@ export function LabsAtlas({
       if (rm && (rm === "custom" || GALLERY_ROOMS.some((r) => r.id === rm))) setRoomId(rm);
       const ch = window.localStorage.getItem(GALLERY_ROOM_CUSTOM_KEY);
       if (ch && /^#[0-9a-fA-F]{6}$/.test(ch)) setCustomHex(ch);
+      const dm = window.localStorage.getItem(DIANA_MATERIAL_KEY);
+      if (dm && (DIANA_MATERIALS as { id: string }[]).some((m) => m.id === dm)) {
+        setDianaMaterial(dm as DianaMaterialId);
+      }
     } catch {
       /* private mode — defaults stand */
     }
@@ -2021,6 +2063,23 @@ export function LabsAtlas({
     if (!handle || !roomEnv) return;
     handle.setRoom(roomEnv);
   }, [handle, roomEnv]);
+
+  function switchDianaMaterial(m: DianaMaterialId) {
+    if (m === dianaMaterial) return;
+    setDianaMaterial(m);
+    try {
+      window.localStorage.setItem(DIANA_MATERIAL_KEY, m);
+    } catch {
+      /* ignore */
+    }
+    // Live re-cast — no scene rebuild.
+  }
+
+  // Apply Diana's finish live whenever it (or the scene) changes.
+  useEffect(() => {
+    if (!handle) return;
+    handle.setDianaMaterial(dianaMaterial);
+  }, [handle, dianaMaterial]);
 
   const galleryThumb = style === "gallery" && selected ? ATLAS_THUMBS[selected.href] : undefined;
 
@@ -2153,6 +2212,24 @@ export function LabsAtlas({
                 aria-label="Custom room color"
               />
             </label>
+          </div>
+        ) : null}
+        {style === "gallery" ? (
+          <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Diana's finish">
+            <span className="px-2 font-papermono text-xs text-muted-foreground">Diana</span>
+            {DIANA_MATERIALS.map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                aria-pressed={dianaMaterial === m.id}
+                onClick={() => switchDianaMaterial(m.id)}
+                className={`rounded-full px-3 py-1 font-papermono text-xs transition-colors ${
+                  dianaMaterial === m.id ? "bg-gold/15 text-gold-soft" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {m.label}
+              </button>
+            ))}
           </div>
         ) : null}
       </div>
