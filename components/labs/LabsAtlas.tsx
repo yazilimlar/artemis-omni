@@ -373,10 +373,10 @@ function useAtlasScene(
       else if (style === "rotonda") camera.position.set(0, 20, 15);
       else if (style === "gallery") {
         const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        // Diana the colossus dominates — pull back so she and the wall share
-        // the frame. Grids pull slightly further.
-        if (gl.classic) camera.position.set(0, 16, 46);
-        else camera.position.set(0, 17, 47);
+        // Diana the colossus dominates — pull back so she (head at ~40) and
+        // the wall share the frame. Grids pull slightly further.
+        if (gl.classic) camera.position.set(0, 23, 58);
+        else camera.position.set(0, 24, 59);
       } else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -384,7 +384,7 @@ function useAtlasScene(
       controls.dampingFactor = 0.08;
       controls.enablePan = false;
       controls.minDistance = 10;
-      controls.maxDistance = 48;
+      controls.maxDistance = style === "gallery" ? 70 : 48;
       controls.autoRotate = !reduced;
       controls.autoRotateSpeed = 0.5;
       // Aim the orbit pivot per style: mid-dome for pantheon, mid-tiers for colosseum.
@@ -394,7 +394,7 @@ function useAtlasScene(
       else if (style === "octagon") controls.target.set(0, 3, 0);
       else if (style === "gallery") {
         const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        controls.target.set(0, gl.classic ? 10 : 10.5, gl.classic ? 5 : 4);
+        controls.target.set(0, gl.classic ? 16 : 16.5, gl.classic ? 5 : 4);
       }
 
       const root = new THREE.Group();
