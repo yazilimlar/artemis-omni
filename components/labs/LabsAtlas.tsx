@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type * as THREE from "three";
 import { labCategoryMeta, type LabCategory } from "@/data/labs-editorial";
@@ -184,7 +185,7 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   gallery: {
     title: "The labs as a gallery",
     blurb:
-      "The Architect's wall — thirteen live screens in a dark room, every app at a glance. Hover to lean in, click a screen to open its lab.",
+      "The Architect's wall — thirteen live screens in a dark room, Diana standing guard at the center. Hover to lean in; click a screen and she'll loose a golden arrow to open its lab.",
   },
 };
 
@@ -296,6 +297,8 @@ type SceneHandle = {
   onHover: (cb: (node: AtlasNode | null) => void) => void;
   /** Repaint the gallery room live — no scene rebuild. */
   setRoom: (re: RoomEnv) => void;
+  /** Gallery: Diana's arrow struck a screen — open its lab cinematically. */
+  onDianaShot: (cb: (node: AtlasNode) => void) => void;
 };
 
 function useAtlasScene(
@@ -319,6 +322,10 @@ function useAtlasScene(
     let dispose: (() => void) | undefined;
     let selectCb: (node: AtlasNode | null) => void = () => {};
     let hoverCb: (node: AtlasNode | null) => void = () => {};
+    let dianaShotCb: (node: AtlasNode) => void = () => {};
+    // Gallery-only: assigned inside the gallery branch.
+    let fireShot: ((node: AtlasNode, screen: THREE.Mesh) => void) | null = null;
+    let shotTick: (dt: number) => void = () => {};
 
     (async () => {
       const THREE = await import("three");
@@ -500,6 +507,23 @@ function useAtlasScene(
           1,
         );
         return sp;
+      }
+
+      /** Soft radial glow sprite texture — Diana's charge, arrow trail, impact flash. */
+      function glowTexture(color: string) {
+        const c = document.createElement("canvas");
+        c.width = 128;
+        c.height = 128;
+        const ctx = c.getContext("2d")!;
+        const g = ctx.createRadialGradient(64, 64, 2, 64, 64, 64);
+        g.addColorStop(0, "#ffffff");
+        g.addColorStop(0.25, color);
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 128, 128);
+        const tex = new THREE.CanvasTexture(c);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
       }
 
       /** Strata style: map a lab's status label onto a 0–3 maturity stage. */
@@ -1411,6 +1435,213 @@ function useAtlasScene(
           }
         }
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
+
+        // --- Diana centerpiece: the archer at the heart of the gallery. ---
+        // A classical Diana (GLB, lazy-loaded so other styles never pay for
+        // it) on a stone pedestal between the visitor and the wall. Clicking
+        // a screen makes her loose a golden arrow at it; the impact opens
+        // the lab cinematically.
+        const dianaGroup = new THREE.Group();
+        dianaGroup.position.set(0, 0, 5);
+        root.add(dianaGroup);
+        const pedestal = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.05, 1.32, 0.9, 48),
+          new THREE.MeshBasicMaterial({ color: "#1b2233" }),
+        );
+        pedestal.position.y = 0.45;
+        dianaGroup.add(pedestal);
+        const pedTrim = new THREE.Mesh(
+          new THREE.TorusGeometry(1.06, 0.05, 10, 72),
+          new THREE.MeshBasicMaterial({ color: "#a8873f" }),
+        );
+        pedTrim.rotation.x = Math.PI / 2;
+        pedTrim.position.y = 0.92;
+        dianaGroup.add(pedTrim);
+        const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 0.62);
+        dianaPlate.position.set(0, 0.42, 1.36);
+        dianaGroup.add(dianaPlate);
+        // Moon disc behind her — she is the moon goddess, after all.
+        const moon = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: glowTexture("#cdd9f5"),
+            transparent: true,
+            opacity: 0.42,
+            depthWrite: false,
+          }),
+        );
+        moon.scale.set(5.4, 5.4, 1);
+        moon.position.set(0, 3.2, -1.1);
+        dianaGroup.add(moon);
+        // Arrow origin in root space: above the pedestal, at her bow arm.
+        const bowOrigin = new THREE.Vector3(0, 2.55, 5.8);
+        (async () => {
+          try {
+            const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
+            const gltf = await new GLTFLoader().loadAsync("/labs/diana.glb");
+            if (cancelled) return;
+            const statue = gltf.scene;
+            // Aim her at the wall first, then fit — rotation changes the bbox.
+            statue.rotation.y = Math.PI;
+            const bb = new THREE.Box3().setFromObject(statue);
+            const sz = bb.getSize(new THREE.Vector3());
+            const s = 2.6 / sz.y;
+            statue.scale.setScalar(s);
+            const bb2 = new THREE.Box3().setFromObject(statue);
+            const ctr2 = bb2.getCenter(new THREE.Vector3());
+            statue.position.set(-ctr2.x, 0.9 - bb2.min.y, -ctr2.z);
+            // Unlit warm marble — the room has no lights, only glow.
+            statue.traverse((o) => {
+              if (o instanceof THREE.Mesh) {
+                o.material = new THREE.MeshBasicMaterial({ color: "#c9b591" });
+              }
+            });
+            dianaGroup.add(statue);
+          } catch {
+            /* pedestal still anchors the shot */
+          }
+        })();
+
+        // Charge glow at the bow.
+        const dianaGlowTex = glowTexture("#ffd98a");
+        const chargeGlow = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: dianaGlowTex,
+            transparent: true,
+            opacity: 0,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          }),
+        );
+        chargeGlow.position.copy(bowOrigin);
+        chargeGlow.scale.set(0.6, 0.6, 1);
+        root.add(chargeGlow);
+        // The arrow: gold shaft + bright head + halo, with a fading trail.
+        const arrowGroup = new THREE.Group();
+        const shaft = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.035, 0.035, 1.15, 8),
+          new THREE.MeshBasicMaterial({ color: "#f0d49a" }),
+        );
+        const arrowHead = new THREE.Mesh(
+          new THREE.ConeGeometry(0.08, 0.26, 10),
+          new THREE.MeshBasicMaterial({ color: "#ffe9b8" }),
+        );
+        arrowHead.position.y = 0.7;
+        const arrowHalo = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: dianaGlowTex,
+            transparent: true,
+            opacity: 0.85,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          }),
+        );
+        arrowHalo.scale.set(1.5, 1.5, 1);
+        arrowGroup.add(shaft, arrowHead, arrowHalo);
+        arrowGroup.visible = false;
+        root.add(arrowGroup);
+        const TRAIL_N = 26;
+        const trailGeo = new THREE.BufferGeometry();
+        const trailArr = new Float32Array(TRAIL_N * 3);
+        trailGeo.setAttribute("position", new THREE.BufferAttribute(trailArr, 3));
+        const trail = new THREE.Line(
+          trailGeo,
+          new THREE.LineBasicMaterial({ color: "#f0d49a", transparent: true, opacity: 0.75 }),
+        );
+        trail.visible = false;
+        trail.frustumCulled = false;
+        root.add(trail);
+        // Impact flash on the struck screen.
+        const flash = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: dianaGlowTex,
+            transparent: true,
+            opacity: 0,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          }),
+        );
+        flash.visible = false;
+        root.add(flash);
+
+        // Shot state machine: charge → flight → impact → cinematic open.
+        let shotPhase: "idle" | "charging" | "flying" | "impact" = "idle";
+        let shotT = 0;
+        let shotNode: AtlasNode | null = null;
+        const shotFrom = new THREE.Vector3();
+        const shotCtrl = new THREE.Vector3();
+        const shotTo = new THREE.Vector3();
+        let shotCurve: THREE.QuadraticBezierCurve3 | null = null;
+        const setGlow = (sp: THREE.Sprite, opacity: number, s: number) => {
+          (sp.material as THREE.SpriteMaterial).opacity = opacity;
+          sp.scale.set(s, s, 1);
+        };
+        fireShot = (node: AtlasNode, screen: THREE.Mesh) => {
+          if (shotPhase !== "idle") return;
+          screen.getWorldPosition(shotTo);
+          root.worldToLocal(shotTo);
+          shotNode = node;
+          if (reduced) {
+            dianaShotCb(node);
+            return;
+          }
+          shotPhase = "charging";
+          shotT = 0;
+        };
+        shotTick = (dt: number) => {
+          if (shotPhase === "idle") return;
+          shotT += dt;
+          if (shotPhase === "charging") {
+            const k = Math.min(shotT / 0.45, 1);
+            setGlow(chargeGlow, k * 0.9, 0.6 + k * 1.7);
+            if (k >= 1) {
+              shotPhase = "flying";
+              shotT = 0;
+              shotFrom.copy(bowOrigin);
+              shotCtrl.copy(shotFrom).lerp(shotTo, 0.5);
+              shotCtrl.y += 1.4;
+              shotCurve = new THREE.QuadraticBezierCurve3(
+                shotFrom.clone(),
+                shotCtrl.clone(),
+                shotTo.clone(),
+              );
+              arrowGroup.visible = true;
+              trail.visible = true;
+              setGlow(chargeGlow, 0, 0.6);
+            }
+          } else if (shotPhase === "flying" && shotCurve) {
+            const k = Math.min(shotT / 0.75, 1);
+            const p = shotCurve.getPoint(k);
+            const tan = shotCurve.getTangent(k);
+            arrowGroup.position.copy(p);
+            arrowGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tan);
+            for (let i = 0; i < TRAIL_N; i++) {
+              const tp = shotCurve.getPoint(Math.max(0, k - i * 0.022));
+              trailArr[i * 3] = tp.x;
+              trailArr[i * 3 + 1] = tp.y;
+              trailArr[i * 3 + 2] = tp.z;
+            }
+            (trailGeo.getAttribute("position") as THREE.BufferAttribute).needsUpdate = true;
+            if (k >= 1) {
+              shotPhase = "impact";
+              shotT = 0;
+              arrowGroup.visible = false;
+              trail.visible = false;
+              flash.position.copy(shotTo);
+              flash.visible = true;
+              setGlow(flash, 0.95, 1);
+            }
+          } else if (shotPhase === "impact") {
+            const k = Math.min(shotT / 0.5, 1);
+            setGlow(flash, 0.95 * (1 - k), 1 + k * 7);
+            if (k >= 1) {
+              flash.visible = false;
+              shotPhase = "idle";
+              const n = shotNode;
+              shotNode = null;
+              if (n) dianaShotCb(n);
+            }
+          }
+        };
       } else {
         // Radial: Artemis at the root, one branch per category, every lab a
         // leaf along its branch. The hierarchy read.
@@ -1507,10 +1738,17 @@ function useAtlasScene(
       const onClick = (ev: PointerEvent) => {
         if (Math.hypot(ev.clientX - downX, ev.clientY - downY) > 6) return;
         const mesh = pick(ev);
+        const node = mesh ? ((mesh.userData.node as AtlasNode) ?? null) : null;
+        // Gallery: Diana looses an arrow at the chosen screen; the impact
+        // opens the lab cinematically — no inspector in between.
+        if (style === "gallery" && node && mesh && fireShot) {
+          fireShot(node, mesh);
+          return;
+        }
         if (selected && selected !== mesh) selected.scale.setScalar(selected.userData.baseScale);
         selected = mesh;
         if (selected) selected.scale.setScalar(selected.userData.baseScale * 1.7);
-        selectCb(mesh ? (mesh.userData.node as AtlasNode) : null);
+        selectCb(node);
       };
       renderer.domElement.addEventListener("pointermove", onMove);
       renderer.domElement.addEventListener("pointerdown", onDown);
@@ -1528,6 +1766,7 @@ function useAtlasScene(
         // moving targets are miserable to click.
         if (!reduced && !hovering) root.rotation.y += dt * 0.03;
         controls.autoRotate = !reduced && !hovering;
+        shotTick(dt);
         // Flagship pulse.
         for (const m of meshes) {
           const node = m.userData.node as AtlasNode;
@@ -1577,6 +1816,9 @@ function useAtlasScene(
         },
         onHover: (cb) => {
           hoverCb = cb;
+        },
+        onDianaShot: (cb) => {
+          dianaShotCb = cb;
         },
         setRoom: (re) => {
           if (style !== "gallery") return;
@@ -1647,6 +1889,9 @@ export function LabsAtlas({
   const [galleryLayout, setGalleryLayout] = useState<GalleryLayoutId>("wall");
   const [roomId, setRoomId] = useState<string>("void");
   const [customHex, setCustomHex] = useState("#1a2340");
+  // Gallery: Diana's arrow struck — the cinematic lab opening.
+  const [cinematic, setCinematic] = useState<AtlasNode | null>(null);
+  const router = useRouter();
 
   // Remount the scene when the display style, viewport, or wall layout changes.
   // (Room tint applies live via setRoom — no rebuild.)
@@ -1688,7 +1933,15 @@ export function LabsAtlas({
     setReady(!!handle);
     handle?.onSelect(setSelected);
     handle?.onHover(setHoveredNode);
+    handle?.onDianaShot(setCinematic);
   }, [handle]);
+
+  // After the cinematic beat, actually enter the lab.
+  useEffect(() => {
+    if (!cinematic) return;
+    const id = window.setTimeout(() => router.push(cinematic.href), 1600);
+    return () => window.clearTimeout(id);
+  }, [cinematic, router]);
 
   useEffect(() => {
     if (!handle) return;
@@ -1719,6 +1972,7 @@ export function LabsAtlas({
     onStyleChange(s);
     setSelected(null);
     setHoveredNode(null);
+    setCinematic(null);
     setSceneKey((k) => k + 1);
   }
 
@@ -1956,6 +2210,28 @@ export function LabsAtlas({
           </div>
         ) : null}
       </div>
+
+      {/* Diana's shot: the cinematic lab opening (gallery only). */}
+      {cinematic ? (
+        <div className="pointer-events-none fixed inset-0 z-[90] flex items-center justify-center" aria-hidden>
+          <div className="diana-shot-veil absolute inset-0 bg-lunar/70" />
+          <div className="diana-shot-card relative overflow-hidden rounded-2xl border border-gold/50 shadow-panel">
+            {ATLAS_THUMBS[cinematic.href] ? (
+              <Image
+                src={ATLAS_THUMBS[cinematic.href]}
+                alt=""
+                width={640}
+                height={400}
+                className="h-auto w-[min(72vw,560px)]"
+              />
+            ) : null}
+            <p className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-lunar/95 to-transparent px-5 pb-4 pt-10 text-center font-papermono text-sm text-gold-soft">
+              ➶ Entering — {cinematic.title}
+            </p>
+          </div>
+          <div className="diana-shot-flash absolute inset-0" />
+        </div>
+      ) : null}
 
       {/* Keyboard/screen-reader complete lab list */}
       <div className="mt-6">
