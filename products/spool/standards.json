@@ -1,0 +1,50 @@
+{
+  "_doc": "Representative standards table for the spool engine. Nothing here is a sealed-design value. Every entry says where it came from and how well it was verified. 'unverified' = assumed/representative or recalled and NOT retrieved from the cited document in this session.",
+  "label": "representative — verify against submittals, not sealed design",
+  "citations": {
+    "SMACNA_HVAC_DCS": "SMACNA HVAC Duct Construction Standards - Metal and Flexible (Ch. 4 reinforcement/joints, Ch. 5 hangers and supports). Governs hanger spacing and sizes. Table values NOT retrieved in P2; no table in it was confirmed to give a maximum shop/handling section length.",
+    "SMACNA_SEISMIC": "SMACNA Seismic Restraint Manual: Guidelines for Mechanical Systems (ANSI/SMACNA 001-2008 3rd ed.; 4th ed. 2025). Brace spacing depends on Seismic Hazard Level (A/B/C); values NOT retrieved in P2.",
+    "ASME_B36_10M": "ASME B36.10M welded and seamless wrought steel pipe: OD and plain-end weight per foot. Table NOT retrieved in P2 (search could not confirm the figures).",
+    "HERCULES_STEEL_CHART": "https://www.herculesindustries.com/sites/default/files/pdf/Hercules-Industries-Steel-Chart.pdf - galvanized sheet weight by gauge",
+    "WINNIPEG_230529": "City of Winnipeg spec section 230529 (hanger spacing for steel pipe) - a municipal spec, NOT MSS SP-69: https://legacy.winnipeg.ca/finance/findata/matmgt/documents/2012/45-2012/45-2012_Specification_230529.pdf"
+  },
+  "sheetWeightLbPerSf": {
+    "values": { "26": 0.90625, "24": 1.156, "22": 1.406, "20": 1.65625 },
+    "confidence": "secondary",
+    "source": "HERCULES_STEEL_CHART (26, 22, 20 ga); 24 ga from mepacademy.com galvanized weight chart. Whether G90 coating weight is included was not confirmed."
+  },
+  "maxSpoolLenFt": {
+    "values": { "rectangular_galvanized": 5, "spiral_round": 10, "hydronic": 20 },
+    "confidence": "unverified",
+    "source": "NO SMACNA TABLE CITED. Representative shop/handling limits chosen for the model (typical flanged rectangular sections 4-5 ft; spiral 10 ft; steel pipe ~20 ft random length). Replace with the fabricator's or the project's handling limit."
+  },
+  "hanger": {
+    "ductHorizontalMaxSpacingFt": { "value": 10, "confidence": "unverified", "source": "SMACNA_HVAC_DCS Ch. 5 governs; 'not exceeding 10 ft' is from secondary study-guide text only." },
+    "pipeHorizontalMaxSpacingM": { "values": { "2": 3.0, "4": 4.2, "6": 5.1 }, "confidence": "secondary", "source": "WINNIPEG_230529 steel pipe water, NPS -> metres (2 in 3.0 m, 4 in 4.2 m, 6 in 5.1 m). Not MSS SP-69." },
+    "verticalOnePerFloor": { "value": true, "confidence": "unverified", "source": "assumed riser clamp at each floor" }
+  },
+  "seismic": {
+    "hazardLevel": "representative (not selected)",
+    "ductSpacingFt": { "transverse": 30, "longitudinal": 60, "confidence": "unverified", "source": "SMACNA_SEISMIC governs; figures recalled, not retrieved" },
+    "pipeSpacingFt": { "transverse": 40, "longitudinal": 80, "confidence": "unverified", "source": "SMACNA_SEISMIC governs; figures recalled, not retrieved" }
+  },
+  "layout": {
+    "floorToFloorFt": { "value": 13, "confidence": "unverified", "source": "assumed" },
+    "planAspectXtoY": { "value": 2, "confidence": "unverified", "source": "assumed rectangular floorplate" },
+    "branchesPerZoneSearch": [1, 40]
+  },
+  "sections": {
+    "HVAC-DUCT-RECT-001": {
+      "gauge": "24", "confidence": "unverified", "source": "assumed sizes; gauge from lab ductStandards PC2 (not checked against SMACNA)",
+      "byKind": { "riser": { "wIn": 36, "hIn": 24 }, "trunk": { "wIn": 30, "hIn": 16 }, "branch": { "wIn": 16, "hIn": 10 } }
+    },
+    "HVAC-DUCT-SPIRAL-001": {
+      "gauge": "26", "confidence": "unverified", "source": "assumed diameters and gauge",
+      "byKind": { "riser": { "dIn": 24 }, "trunk": { "dIn": 20 }, "branch": { "dIn": 10 } }
+    },
+    "HVAC-PIPE-HYD-001": {
+      "confidence": "unverified", "source": "ASME_B36_10M Sch 40 recalled, not retrieved; NPS mix assumed",
+      "byKind": { "riser": { "nps": 6, "odIn": 6.625, "lbPerFt": 18.97 }, "trunk": { "nps": 4, "odIn": 4.5, "lbPerFt": 10.79 }, "branch": { "nps": 2, "odIn": 2.375, "lbPerFt": 3.65 } }
+    }
+  }
+}
