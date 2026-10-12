@@ -1,0 +1,1032 @@
+{
+ "schema": "cx-panel-snapshot-1",
+ "source": {
+  "fixture": "products/commissioning/fixtures/matrix.json",
+  "fixtureHash": "sha256:13ada30fd85b2638540efb2e8d35de5cd77f21b7cbdfba8ce84d35e781bb1000",
+  "moduleVersion": "p4a-1",
+  "contractVersion": "evidence-v2-e0"
+ },
+ "banners": {
+  "data": "SYNTHETIC DATA - representative values, simulated observations",
+  "passMeaning": "PASS recorded values satisfy the selected criteria; not code compliance, not EoR acceptance",
+  "complianceClaim": "NONE"
+ },
+ "product": {
+  "id": "HVAC-EXFAN-001",
+  "manufacturer": "Greenheck",
+  "model": "CUBE-180-3130GQD-DR2",
+  "label": "representative — verify against submittals, not sealed design"
+ },
+ "instance": {
+  "instanceId": "EQI-6e498e38d4ae",
+  "productId": "HVAC-EXFAN-001",
+  "tag": "EF-1 (SYNTHETIC)",
+  "inputs": {
+   "designCfm": 2922,
+   "designStaticInWg": 0.25,
+   "rpmMin": 690,
+   "rpmMax": 860
+  },
+  "inputsHash": "sha256:3eef0f2eb5a698f78be0b8e852a53fafe227fcf710cae3f7d2d4bca557eb7549",
+  "dataMode": "synthetic"
+ },
+ "definitions": [
+  {
+   "definitionId": "CXD-EXFAN-001",
+   "revision": 1,
+   "applicability": {
+    "productId": "HVAC-EXFAN-001",
+    "system": "exhaust-fan"
+   },
+   "procedure": "Run the fan at full speed in manual mode at steady state; record airflow and fan speed; compare to the acceptance ranges. SYNTHETIC placeholder procedure.",
+   "parameters": [
+    {
+     "id": "airflow",
+     "unit": "CFM",
+     "comparator": "BETWEEN",
+     "range": {
+      "mode": "pctOfInput",
+      "input": "designCfm",
+      "lowPct": 90,
+      "highPct": 110
+     }
+    },
+    {
+     "id": "fanSpeed",
+     "unit": "RPM",
+     "comparator": "BETWEEN",
+     "range": {
+      "mode": "inputBounds",
+      "lowInput": "rpmMin",
+      "highInput": "rpmMax"
+     }
+    }
+   ],
+   "conditions": [
+    {
+     "id": "steadyStateMinutes",
+     "comparator": "GTE",
+     "value": 10
+    },
+    {
+     "id": "controlMode",
+     "comparator": "EQUALS",
+     "value": "manual-full-speed"
+    }
+   ],
+   "provenance": {
+    "source": null,
+    "edition": null,
+    "section": null,
+    "applicability": "synthetic lab exhaust fan HVAC-EXFAN-001 only",
+    "verificationStatus": "unverified",
+    "representative": true,
+    "note": "representative placeholder: the 90-110 % airflow band, the 10 min steady-state time and the mode name are NOT taken from AABC/NEBB/ASHRAE/AMCA procedures; fan speed bounds and design point come from the P1 catalog row (manufacturer data, confirm against cut sheet)"
+   }
+  },
+  {
+   "definitionId": "CXD-EXFAN-001",
+   "revision": 2,
+   "applicability": {
+    "productId": "HVAC-EXFAN-001",
+    "system": "exhaust-fan"
+   },
+   "procedure": "Run the fan at full speed in manual mode at steady state; record airflow and fan speed; compare to the acceptance ranges. SYNTHETIC placeholder procedure.",
+   "parameters": [
+    {
+     "id": "airflow",
+     "unit": "CFM",
+     "comparator": "BETWEEN",
+     "range": {
+      "mode": "pctOfInput",
+      "input": "designCfm",
+      "lowPct": 95,
+      "highPct": 105
+     }
+    },
+    {
+     "id": "fanSpeed",
+     "unit": "RPM",
+     "comparator": "BETWEEN",
+     "range": {
+      "mode": "inputBounds",
+      "lowInput": "rpmMin",
+      "highInput": "rpmMax"
+     }
+    }
+   ],
+   "conditions": [
+    {
+     "id": "steadyStateMinutes",
+     "comparator": "GTE",
+     "value": 10
+    },
+    {
+     "id": "controlMode",
+     "comparator": "EQUALS",
+     "value": "manual-full-speed"
+    }
+   ],
+   "provenance": {
+    "source": null,
+    "edition": null,
+    "section": null,
+    "applicability": "synthetic lab exhaust fan HVAC-EXFAN-001 only",
+    "verificationStatus": "unverified",
+    "representative": true,
+    "note": "representative placeholder: the 90-110 % airflow band, the 10 min steady-state time and the mode name are NOT taken from AABC/NEBB/ASHRAE/AMCA procedures; fan speed bounds and design point come from the P1 catalog row (manufacturer data, confirm against cut sheet)"
+   }
+  }
+ ],
+ "acts": {
+  "readOnly": true,
+  "productId": "HVAC-EXFAN-001",
+  "productActivity": {
+   "id": "A07",
+   "code": "0510-SET",
+   "name": "Equipment Setting / Rigging"
+  },
+  "commissioningActivity": {
+   "id": "A14",
+   "code": "0820-CX",
+   "name": "Startup / Commissioning",
+   "driver": "DAYS",
+   "unit": "DAY",
+   "crew": "Startup/Cx",
+   "kind": "span"
+  },
+  "costCodes": [
+   "0820-CX-L",
+   "0820-CX-M",
+   "0820-CX-C",
+   "0820-CX-S",
+   "0820-CX-E"
+  ],
+  "note": "reference only: no quantity, cost or estimate() change; A14 is driven by DAYS, not by this test"
+ },
+ "counts": {
+  "evaluatorCases": 22,
+  "badDefinitions": 3,
+  "validLifecycles": 7,
+  "negativeLifecycles": 21
+ },
+ "lifecycles": [
+  {
+   "name": "passing execution: submit, verify, accept, close",
+   "revisions": [
+    {
+     "revision": 1,
+     "revisionId": "REV-5d9f83f065cf",
+     "supersedes": null,
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:3e9976dfa707c6021dccfa99d60b55a07bd9911c4e0b23211207de7e68ca75ae",
+     "outcome": "PASS",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2922,
+       "unit": "CFM"
+      },
+      "fanSpeed": {
+       "value": 800,
+       "unit": "RPM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2922,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "IN_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": 800,
+       "low": 690,
+       "high": 860,
+       "result": "IN_RANGE"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "verified",
+       "scope": "mathematical",
+       "method": "re-run deterministic evaluator on recorded values",
+       "verifiedRevisionId": "REV-5d9f83f065cf"
+      },
+      "validity": "current",
+      "workflow": "closed",
+      "approval": {
+       "state": "accepted",
+       "pinnedRevisionId": "REV-5d9f83f065cf"
+      }
+     },
+     "complianceClaim": "NONE"
+    }
+   ],
+   "events": [
+    {
+     "seq": 1,
+     "timestamp": "2026-10-12T08:01:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-9851feb8dc36"
+    },
+    {
+     "seq": 2,
+     "timestamp": "2026-10-12T08:02:00Z",
+     "actorRole": "reviewer",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "verification",
+     "from": "unverified",
+     "to": "verified",
+     "eventId": "EVT-f07c4367f66d"
+    },
+    {
+     "seq": 3,
+     "timestamp": "2026-10-12T08:03:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "approval",
+     "from": "pending",
+     "to": "accepted",
+     "eventId": "EVT-c85d9ce1bfcb"
+    },
+    {
+     "seq": 4,
+     "timestamp": "2026-10-12T08:04:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "workflow",
+     "from": "submitted",
+     "to": "closed",
+     "eventId": "EVT-15aedefbbc29"
+    }
+   ]
+  },
+  {
+   "name": "failing execution: verified as evidence, then rejected",
+   "revisions": [
+    {
+     "revision": 1,
+     "revisionId": "REV-5c99419dee8d",
+     "supersedes": null,
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:b65b819809da6ae4a993df088a5698b525ea00d214b0463ae56980f914baca87",
+     "outcome": "FAIL",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2000,
+       "unit": "CFM"
+      },
+      "fanSpeed": {
+       "value": 800,
+       "unit": "RPM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2000,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "OUT_OF_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": 800,
+       "low": 690,
+       "high": 860,
+       "result": "IN_RANGE"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "verified",
+       "scope": "mathematical",
+       "method": "re-run deterministic evaluator on recorded values",
+       "verifiedRevisionId": "REV-5c99419dee8d"
+      },
+      "validity": "current",
+      "workflow": "closed",
+      "approval": {
+       "state": "rejected",
+       "pinnedRevisionId": null
+      }
+     },
+     "complianceClaim": "NONE"
+    }
+   ],
+   "events": [
+    {
+     "seq": 1,
+     "timestamp": "2026-10-12T08:01:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-9f6b9283a127"
+    },
+    {
+     "seq": 2,
+     "timestamp": "2026-10-12T08:02:00Z",
+     "actorRole": "reviewer",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "verification",
+     "from": "unverified",
+     "to": "verified",
+     "eventId": "EVT-d0fec2aa05a0"
+    },
+    {
+     "seq": 3,
+     "timestamp": "2026-10-12T08:03:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "approval",
+     "from": "pending",
+     "to": "rejected",
+     "eventId": "EVT-3351ce9e49b2"
+    },
+    {
+     "seq": 4,
+     "timestamp": "2026-10-12T08:04:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "workflow",
+     "from": "submitted",
+     "to": "closed",
+     "eventId": "EVT-9edfa405e2e9"
+    }
+   ]
+  },
+  {
+   "name": "successful re-test preserving the failure (rev 2 supersedes rev 1)",
+   "revisions": [
+    {
+     "revision": 1,
+     "revisionId": "REV-5c99419dee8d",
+     "supersedes": null,
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:b65b819809da6ae4a993df088a5698b525ea00d214b0463ae56980f914baca87",
+     "outcome": "FAIL",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2000,
+       "unit": "CFM"
+      },
+      "fanSpeed": {
+       "value": 800,
+       "unit": "RPM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2000,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "OUT_OF_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": 800,
+       "low": 690,
+       "high": 860,
+       "result": "IN_RANGE"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "verified",
+       "scope": "mathematical",
+       "method": "re-run deterministic evaluator on recorded values",
+       "verifiedRevisionId": "REV-5c99419dee8d"
+      },
+      "validity": "current",
+      "workflow": "closed",
+      "approval": {
+       "state": "rejected",
+       "pinnedRevisionId": null
+      }
+     },
+     "complianceClaim": "NONE"
+    },
+    {
+     "revision": 2,
+     "revisionId": "REV-73d63ae31b20",
+     "supersedes": "REV-5c99419dee8d",
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:713f275f03462455ec6be3b4545c27f4cdf72cc78925bdc9d40ab8249857f02a",
+     "outcome": "PASS",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2900,
+       "unit": "CFM"
+      },
+      "fanSpeed": {
+       "value": 790,
+       "unit": "RPM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2900,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "IN_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": 790,
+       "low": 690,
+       "high": 860,
+       "result": "IN_RANGE"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "verified",
+       "scope": "mathematical",
+       "method": "re-run deterministic evaluator on recorded values",
+       "verifiedRevisionId": "REV-73d63ae31b20"
+      },
+      "validity": "current",
+      "workflow": "closed",
+      "approval": {
+       "state": "accepted",
+       "pinnedRevisionId": "REV-73d63ae31b20"
+      }
+     },
+     "complianceClaim": "NONE"
+    }
+   ],
+   "events": [
+    {
+     "seq": 1,
+     "timestamp": "2026-10-12T08:01:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-9f6b9283a127"
+    },
+    {
+     "seq": 2,
+     "timestamp": "2026-10-12T08:02:00Z",
+     "actorRole": "reviewer",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "verification",
+     "from": "unverified",
+     "to": "verified",
+     "eventId": "EVT-d0fec2aa05a0"
+    },
+    {
+     "seq": 3,
+     "timestamp": "2026-10-12T08:03:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "approval",
+     "from": "pending",
+     "to": "rejected",
+     "eventId": "EVT-3351ce9e49b2"
+    },
+    {
+     "seq": 4,
+     "timestamp": "2026-10-12T08:04:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-5c99419dee8d",
+     "dimension": "workflow",
+     "from": "submitted",
+     "to": "closed",
+     "eventId": "EVT-9edfa405e2e9"
+    },
+    {
+     "seq": 5,
+     "timestamp": "2026-10-12T08:05:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-73d63ae31b20",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-7494d9e870fc"
+    },
+    {
+     "seq": 6,
+     "timestamp": "2026-10-12T08:06:00Z",
+     "actorRole": "reviewer",
+     "revisionId": "REV-73d63ae31b20",
+     "dimension": "verification",
+     "from": "unverified",
+     "to": "verified",
+     "eventId": "EVT-cef709792de7"
+    },
+    {
+     "seq": 7,
+     "timestamp": "2026-10-12T08:07:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-73d63ae31b20",
+     "dimension": "approval",
+     "from": "pending",
+     "to": "accepted",
+     "eventId": "EVT-0e3039b80874"
+    },
+    {
+     "seq": 8,
+     "timestamp": "2026-10-12T08:08:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-73d63ae31b20",
+     "dimension": "workflow",
+     "from": "submitted",
+     "to": "closed",
+     "eventId": "EVT-4fc596aa1ccd"
+    }
+   ]
+  },
+  {
+   "name": "INCOMPLETE execution (missing fanSpeed) blocked by reviewer",
+   "revisions": [
+    {
+     "revision": 1,
+     "revisionId": "REV-540409de12b9",
+     "supersedes": null,
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:30015bb9607c901bf37b854ec280668b0778013e95417e9116e8a9a8e671c4b2",
+     "outcome": "INCOMPLETE",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2922,
+       "unit": "CFM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2922,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "IN_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": null,
+       "low": 690,
+       "high": 860,
+       "result": "MISSING"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "unverified",
+       "scope": null,
+       "method": null,
+       "verifiedRevisionId": null
+      },
+      "validity": "current",
+      "workflow": "blocked",
+      "approval": {
+       "state": "pending",
+       "pinnedRevisionId": null
+      }
+     },
+     "complianceClaim": "NONE"
+    }
+   ],
+   "events": [
+    {
+     "seq": 1,
+     "timestamp": "2026-10-12T08:01:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-540409de12b9",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-b293e8f63d04"
+    },
+    {
+     "seq": 2,
+     "timestamp": "2026-10-12T08:02:00Z",
+     "actorRole": "reviewer",
+     "revisionId": "REV-540409de12b9",
+     "dimension": "workflow",
+     "from": "submitted",
+     "to": "blocked",
+     "eventId": "EVT-818658d9f5cc"
+    }
+   ]
+  },
+  {
+   "name": "PASS may remain unverified (outcome separate from verification)",
+   "revisions": [
+    {
+     "revision": 1,
+     "revisionId": "REV-5d9f83f065cf",
+     "supersedes": null,
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:3e9976dfa707c6021dccfa99d60b55a07bd9911c4e0b23211207de7e68ca75ae",
+     "outcome": "PASS",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2922,
+       "unit": "CFM"
+      },
+      "fanSpeed": {
+       "value": 800,
+       "unit": "RPM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2922,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "IN_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": 800,
+       "low": 690,
+       "high": 860,
+       "result": "IN_RANGE"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "unverified",
+       "scope": null,
+       "method": null,
+       "verifiedRevisionId": null
+      },
+      "validity": "current",
+      "workflow": "submitted",
+      "approval": {
+       "state": "pending",
+       "pinnedRevisionId": null
+      }
+     },
+     "complianceClaim": "NONE"
+    }
+   ],
+   "events": [
+    {
+     "seq": 1,
+     "timestamp": "2026-10-12T08:01:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-9851feb8dc36"
+    }
+   ]
+  },
+  {
+   "name": "definition revised after verification: system marks it stale",
+   "revisions": [
+    {
+     "revision": 1,
+     "revisionId": "REV-5d9f83f065cf",
+     "supersedes": null,
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:3e9976dfa707c6021dccfa99d60b55a07bd9911c4e0b23211207de7e68ca75ae",
+     "outcome": "PASS",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2922,
+       "unit": "CFM"
+      },
+      "fanSpeed": {
+       "value": 800,
+       "unit": "RPM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2922,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "IN_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": 800,
+       "low": 690,
+       "high": 860,
+       "result": "IN_RANGE"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "verified",
+       "scope": "mathematical",
+       "method": "re-run deterministic evaluator on recorded values",
+       "verifiedRevisionId": "REV-5d9f83f065cf"
+      },
+      "validity": "stale",
+      "workflow": "submitted",
+      "approval": {
+       "state": "accepted",
+       "pinnedRevisionId": "REV-5d9f83f065cf"
+      }
+     },
+     "complianceClaim": "NONE"
+    }
+   ],
+   "events": [
+    {
+     "seq": 1,
+     "timestamp": "2026-10-12T08:01:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-9851feb8dc36"
+    },
+    {
+     "seq": 2,
+     "timestamp": "2026-10-12T08:02:00Z",
+     "actorRole": "reviewer",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "verification",
+     "from": "unverified",
+     "to": "verified",
+     "eventId": "EVT-f07c4367f66d"
+    },
+    {
+     "seq": 3,
+     "timestamp": "2026-10-12T08:03:00Z",
+     "actorRole": "approver",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "approval",
+     "from": "pending",
+     "to": "accepted",
+     "eventId": "EVT-c85d9ce1bfcb"
+    },
+    {
+     "seq": 4,
+     "timestamp": "2026-10-12T08:04:00Z",
+     "actorRole": "system",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "validity",
+     "from": "current",
+     "to": "stale",
+     "eventId": "EVT-bac41fea84ee"
+    }
+   ]
+  },
+  {
+   "name": "equipment inputs changed after verification: system marks it stale",
+   "revisions": [
+    {
+     "revision": 1,
+     "revisionId": "REV-5d9f83f065cf",
+     "supersedes": null,
+     "logicalId": "CX-d7814559cea6",
+     "contentHash": "sha256:3e9976dfa707c6021dccfa99d60b55a07bd9911c4e0b23211207de7e68ca75ae",
+     "outcome": "PASS",
+     "definitionRevision": 1,
+     "observations": {
+      "airflow": {
+       "value": 2922,
+       "unit": "CFM"
+      },
+      "fanSpeed": {
+       "value": 800,
+       "unit": "RPM"
+      }
+     },
+     "conditionResults": [
+      {
+       "id": "steadyStateMinutes",
+       "comparator": "GTE",
+       "required": 10,
+       "observed": 12,
+       "result": "MET"
+      },
+      {
+       "id": "controlMode",
+       "comparator": "EQUALS",
+       "required": "manual-full-speed",
+       "observed": "manual-full-speed",
+       "result": "MET"
+      }
+     ],
+     "parameterResults": [
+      {
+       "id": "airflow",
+       "unit": "CFM",
+       "observed": 2922,
+       "low": 2629.8,
+       "high": 3214.2,
+       "result": "IN_RANGE"
+      },
+      {
+       "id": "fanSpeed",
+       "unit": "RPM",
+       "observed": 800,
+       "low": 690,
+       "high": 860,
+       "result": "IN_RANGE"
+      }
+     ],
+     "dimensions": {
+      "basis": "declared",
+      "verification": {
+       "state": "verified",
+       "scope": "mathematical",
+       "method": "re-run deterministic evaluator on recorded values",
+       "verifiedRevisionId": "REV-5d9f83f065cf"
+      },
+      "validity": "stale",
+      "workflow": "submitted",
+      "approval": {
+       "state": "pending",
+       "pinnedRevisionId": null
+      }
+     },
+     "complianceClaim": "NONE"
+    }
+   ],
+   "events": [
+    {
+     "seq": 1,
+     "timestamp": "2026-10-12T08:01:00Z",
+     "actorRole": "executor",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "workflow",
+     "from": "draft",
+     "to": "submitted",
+     "eventId": "EVT-9851feb8dc36"
+    },
+    {
+     "seq": 2,
+     "timestamp": "2026-10-12T08:02:00Z",
+     "actorRole": "reviewer",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "verification",
+     "from": "unverified",
+     "to": "verified",
+     "eventId": "EVT-f07c4367f66d"
+    },
+    {
+     "seq": 3,
+     "timestamp": "2026-10-12T08:03:00Z",
+     "actorRole": "system",
+     "revisionId": "REV-5d9f83f065cf",
+     "dimension": "validity",
+     "from": "current",
+     "to": "stale",
+     "eventId": "EVT-c45ba8332787"
+    }
+   ]
+  }
+ ]
+}

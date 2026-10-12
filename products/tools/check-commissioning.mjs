@@ -14,7 +14,10 @@ import * as ev from "../evidence/evidence.mjs";
 
 const fx = readJson("../commissioning/fixtures/matrix.json");
 const products = readJson("../hvac/hvac-products.sample.json");
+// P4a-V: the lab page now carries the read-only panel (marked CXP regions). The pre-panel lab text is still pinned: the page
+// with those regions removed must hash to the original baseline (check-commissioning-panel.mjs proves the same, plus freshness).
 const LAB_SHA = "d3f0caaf5f71b8f61285a4def88f8870e7e11e40cb2d66137d9d9db0d2e54047";
+const stripPanel = h => ["TAB", "PAGE", "DATA", "SCRIPT"].reduce((t, r) => t.replace(new RegExp(`^<!-- CXP:${r}:BEGIN -->\\n[\\s\\S]*?^<!-- CXP:${r}:END -->\\n`, "gm"), ""), h);
 let failures = 0;
 const fail = m => { failures++; console.log("  FAIL  " + m); };
 const ok = m => console.log("  ok    " + m);
@@ -112,7 +115,8 @@ const code = src.replace(/\/\/.*$/gm, "");
 check(!/QTY-|quantities\//.test(code) && !/QTY-|quantities\//.test(JSON.stringify(fx)), "does not consume or parse P2.1 quantity records");
 check(ev.CONTRACT_VERSION === "evidence-v2-e0" && ev.KINDS.join() === "clash,spool,commissioning-test", "E0 contract unchanged (version evidence-v2-e0; kinds clash, spool, commissioning-test)");
 const lab = loadLab();
-check(lab.sha256 === LAB_SHA, `lab file sha256 unchanged (${lab.sha256.slice(0, 16)}…)`, `lab sha256 changed: ${lab.sha256}`);
+const labNoPanel = (await import("node:crypto")).createHash("sha256").update(stripPanel(fs.readFileSync(new URL("../../public/standalone/hvac-mechanical-intelligence-bridge/index.html", import.meta.url), "utf8"))).digest("hex");
+check(labNoPanel === LAB_SHA, `lab file (excluding the marked read-only panel regions) sha256 unchanged (${labNoPanel.slice(0, 16)}…)`, `lab sha256 changed outside the panel: ${labNoPanel}`);
 const fan = products.find(p => p.id === "HVAC-EXFAN-001");
 const assoc = cx.resolveActsAssociation(deepFreeze(clone(lab.acts)), fan);
 check(assoc && assoc.readOnly === true && assoc.productActivity.id === "A07" && assoc.commissioningActivity.id === "A14" && assoc.commissioningActivity.code === "0820-CX" && assoc.commissioningActivity.driver === "DAYS" && assoc.costCodes.join() === "0820-CX-L,0820-CX-M,0820-CX-C,0820-CX-S,0820-CX-E", "read-only ACTS association resolved: fan A07 -> commissioning A14 0820-CX (DAYS), cost codes 0820-CX-L/M/C/S/E");
