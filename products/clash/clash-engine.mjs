@@ -9,6 +9,8 @@
 //                     so any overlap involving one is only a POTENTIAL intersection. It is never
 //                     promoted to a verified solid intersection. Narrow-phase is NOT implemented.
 // Invalid or incomplete geometry is rejected and reported; no dimension is ever assumed.
+// LIMITATION: hanger/brace/support envelopes are EXCLUDED from clash extents (Segment.extents =
+//   centerline + half section + insulation only). Do not assume a clean result covers supports.
 import crypto from "node:crypto";
 
 export const ENGINE_VERSION = "p3-l0-1";

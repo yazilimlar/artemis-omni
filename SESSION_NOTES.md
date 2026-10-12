@@ -58,17 +58,22 @@ Lab sha256 `d3f0caaf5f71b8f61285a4def88f8870e7e11e40cb2d66137d9d9db0d2e54047`.
 - Standalone `tsc --strict` over five TS files: clean. No validation tooling modified; `lab-bridge.mjs` unchanged.
 
 ## Built (anchors)
-- `clash/clash-engine.mjs`: validateEnvelope :32, normalizeObject :62, core :108, service zones :222, `detectClashes` :274 (readiness gate), `labRouteReadiness` :281.
+- `clash/clash-engine.mjs`: validateEnvelope :34, normalizeObject :64, core :110, service zones :224, `detectClashes` :276 (readiness gate), `labRouteReadiness` :283.
 - `clash/resolution.mjs`: `planRevision` :18, `reconcileRevision` :34. `clash/rules.json`, `clash/clash.schema.ts`, `clash/fixtures/matrix.json`, `tools/check-clash.mjs`.
 
 ## Decisions
 - **Geometry resolution: L0 AABB.** EXACT_BOX overlap is verified for the supplied box geometry only; any conservative overlap is POTENTIAL, never promoted. No narrow-phase.
 - **Rule provenance:** geometric rules are engine definitions; R-MNT-001's 3 ft is an illustrative assumption; code rules are not-implemented stubs. `complianceClaim: NONE` everywhere.
 - Readiness is earned: each fixture's claim must equal its computed validation. Lab routes stay false.
-- Mutation-tested: 8 engine breaks (tolerance, exactness promotion, ordering, exemptions, units...) each fail the gate. One initial gap (tolerance-unit bug) found and closed with F9 boundary pairs.
+- Boundary and contract tests in `check-clash.mjs` cover the listed failure modes (determinism, ordering, exemptions, F9 inches boundary pairs). No mutation suite was built.
 
 ## Blockers / limits
 Fixture expectations are hand-derived but authored by the same builder: Grok should re-derive. Revision mechanism is defined, never run end to end. Hanger/clearance envelopes excluded from extents. P3b (representative model) not started.
 
 ## Next
 P3b: constrained layout and representative model validation, then adapter from route model to clash input.
+
+## P3 micro-fix (2026-10-12)
+1. Mutation-testing claim softened above to "boundary and contract tests cover the listed failure modes"; no mutation suite built.
+2. Hanger/brace envelope exclusion from clash extents now stated in the `clash-engine.mjs` header and the `SCHEMA.md` Phase-3 section. Doc/comment only; engine anchors shifted +2 lines (updated).
+Rerun: `check-clash.mjs` `PASSED: 0 failure(s), 0 warning(s)` (unchanged); lab sha256 d3f0caaf5f71b8f6 unchanged.
