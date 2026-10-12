@@ -39,3 +39,8 @@ Owner: infrastructure-construction / `hvac-mechanical-intelligence-bridge`. Life
 - **Limitation:** hanger/brace/support envelopes are excluded from clash extents (`Segment.extents` = centerline + half section + insulation); a consumer must not assume supports are covered.
 - **Invariant:** detection output contains no quantity, cost, BOM, EVM or claim fields and never mutates spools, estimates or routes.
 - `clash/fixtures/matrix.json` - 14 cases with hand-derived expected results. `tools/check-clash.mjs` is the P3 gate. Run `check.mjs`, `check-spool.mjs`, then `check-clash.mjs`.
+
+## Phase 2.1 - model-derived quantity drivers
+- `DUCT_LF`, `FITTING_EA`, `HANGER_EA`, `SEISMIC_BRACE_EA` moved `proposed` -> `registered` in `schema/qty-drivers.json` with `modelDerived: true` and source `model-derived (spool/routing)`. They are **not** lab `qtyFor()` keys and no ACTS row uses them, so they never reach `estimate()` (status `derived-not-in-estimate`); the lab file is untouched. `check.mjs` asserts this exact state for `modelDerived` entries (not a qtyFor() key, no ACTS consumer, flags and note present) rather than skipping them.
+- `quantities/model-quantities.mjs` - `deriveQuantityRecords(spoolResult, scenario)`: one E0 evidence envelope (kind `spool`, see `evidence/`) per driver; values are sums over `buildSpools().perRun` only (single source). Level **L2 parametric**: schematic layout, representative/unverified spool lengths and spacings. Records are unverified, draft, `complianceClaim: NONE`.
+- `tools/check-quantities.mjs` - P2.1 gate: independent re-aggregation from raw spools/routes, exactly-once audit with injected second-path faults, E0 validation.

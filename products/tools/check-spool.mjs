@@ -25,7 +25,7 @@ const sum = (a, f) => a.reduce((x, y) => x + f(y), 0);
 console.log("== standards labelling");
 for (const [k, v] of Object.entries({ maxSpoolLenFt: std.maxSpoolLenFt, sheetWeight: std.sheetWeightLbPerSf })) check(["unverified", "secondary", "manufacturer"].includes(v.confidence), `${k} confidence '${v.confidence}'`);
 check(std.maxSpoolLenFt.confidence === "unverified" && !/SMACNA table/i.test(std.maxSpoolLenFt.source.replace(/NO SMACNA TABLE CITED/, "")), "max spool length is declared unverified and cites no SMACNA table");
-for (const q of Object.values(DERIVED_QUANTITIES)) check(q.driver in drivers.HVAC.proposed, `derived quantity driver ${q.driver} is registered as proposed`);
+for (const q of Object.values(DERIVED_QUANTITIES)) { const r = drivers.HVAC.registered[q.driver]; check(r && r.modelDerived === true && r.source === "model-derived (spool/routing)" && r.inEstimate === false && /No ACTS activity consumes/.test(r.note ?? "") && !(q.driver in drivers.HVAC.proposed), `derived quantity driver ${q.driver} is registered, modelDerived, source 'model-derived (spool/routing)', no ACTS consumer`); };
 
 const totals = {};
 for (const [name, sc] of Object.entries(fx.scenarios)) {
