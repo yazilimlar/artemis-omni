@@ -129,3 +129,9 @@ Criteria (90-110 % airflow, 10 min) are representative, unsourced.
 
 ## P4a doc notes (Grok)
 Comments only: ledger anchor assumption (header of `commissioning.mjs` and `check-commissioning.mjs`) and stale-detection location (`commissioning.mjs`). Suite rerun unchanged.
+
+# P4a-V - commissioning visibility panel (labs/p4av-visibility-panel)
+Owner-authorized additive lab edit: tab `tCxp`, page, JSON data block and renderer script, each between `CXP:*` markers in `index.html`. Read-only; touches only `#cxpRoot`.
+Data: `node products/tools/gen-commissioning-panel.mjs --write` reruns `products/commissioning` over its fixtures (snapshot carries the fixture hash). Rerun after any fixture or module change. The page renders a pre-validated snapshot; staleness is caught by `check-commissioning-panel.mjs`, not the page.
+Regression gates: marker-strip restores the old file byte for byte; geometry, ACTS, qtyFor, estimate identical (both scenarios); committed `check-lab-dom.mjs` loads the page with and without the panel in jsdom (needs `JSDOM_DIR`; exit 2 if absent): no exceptions, identical tab list, view text and RC7 QA.
+Lab sha256 `d3f0caaf5f71b8f6` → `53a58411de4e1ed0` (final). `lab-bridge.mjs` gained optional `opts.html`.

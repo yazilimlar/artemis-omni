@@ -27,8 +27,9 @@ function controlDefaults(html) {
   return d;
 }
 
-export function loadLab(overrides = {}) {
-  const html = fs.readFileSync(LAB_PATH, "utf8");
+export function loadLab(overrides = {}, opts = {}) {
+  // opts.html (P4a-V): evaluate a supplied page text instead of the file, so the panel checker can compare the page with and without the panel.
+  const html = opts.html ?? fs.readFileSync(LAB_PATH, "utf8");
   const sha256 = crypto.createHash("sha256").update(html).digest("hex");
   const values = { ...controlDefaults(html), ...overrides };
   const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
