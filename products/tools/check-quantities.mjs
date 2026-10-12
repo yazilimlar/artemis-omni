@@ -4,6 +4,9 @@
 // aggregation of the routing/spool model, and in NO estimate()/qtyFor() path. Then injects each kind of
 // second path into the audit and requires it to be flagged (the audit must fail loudly, not pass by default).
 // Run after check.mjs, check-spool.mjs, check-clash.mjs, check-evidence.mjs.
+// SURFACE INVENTORY: the exactly-once claim covers exactly five surfaces: (1) quantity records, (2) qtyFor source,
+// (3) estimate rows, (4) attachSpoolsToEstimate output string, (5) spoolTable numeric totals. Any new display or
+// aggregation path MUST be added to both the audit surface list and the fault-injection set, or the claim no longer holds.
 import { loadLab } from "./lab-bridge.mjs";
 import { readJson } from "./util.mjs";
 import { generateRoutes } from "../routing/route-generator.mjs";

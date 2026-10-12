@@ -114,3 +114,7 @@ Tooling change (driven by this phase): `check.mjs` and `check-spool.mjs` now ass
 `check-quantities.mjs` 0/0: exactly once across all surfaces; 7 injected faults caught.
 Flag: envelope kind `spool` used; a `quantity` kind via CONTRACT_VERSION bump is a Grok follow-up.
 Spacings and spool lengths remain representative, unverified.
+
+## P2.1 doc notes (Grok) - OPEN ITEM
+Before any non-spool consumer of the quantity records (P4a commissioning, P5 sizing, or an estimate attachment), bump CONTRACT_VERSION and add kind "quantity" to the E0 contract. Until then, every consumer must key on logicalId prefix QTY- rather than kind.
+Comments only: five-surface inventory in `check-quantities.mjs`, L2/L3 boundary in `model-quantities.mjs`. Suite rerun unchanged.

@@ -5,6 +5,7 @@
 // (status derived-not-in-estimate). Each record is an E0 evidence envelope (products/evidence/), kind "spool".
 // QTO level L2 (parametric): the layout is schematic (calibrated to qtyFor() targets), spool max length,
 // hanger and brace spacings are representative/unverified, so no value is promoted to L3 (geometry-derived).
+// L2 is used because the values are parametric sums over a calibrated model; they remain ineligible for promotion to L3 until P3b constrains the layout and the footprint overrun is zero.
 import { contentHashOf, revisionIdOf } from "../evidence/evidence.mjs";
 
 export const LABEL = "representative — verify against submittals, not sealed design";
