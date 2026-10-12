@@ -1,0 +1,409 @@
+[
+  {
+    "id": "HVAC-DUCT-RECT-001",
+    "category": "duct",
+    "ductType": "rectangular_galvanized",
+    "manufacturer": "Ductmate Industries",
+    "model": "Ductmate 35",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "transverseJointEquivalent": "secondary",
+        "flangeGaugeRange": "secondary",
+        "smacnaPressureClassesInWg": "unverified",
+        "ductWallGaugeByClass": "unverified",
+        "sealClassByClass": "unverified"
+      },
+      "sources": [
+        "https://www.conklinmetal.com/wp-content/uploads/2015/10/Ductmate-DC3A-Spec-Sheet.pdf"
+      ],
+      "system": "Ductmate 35 flanged transverse-joint system on field/shop-fabricated galvanized rectangular duct",
+      "transverseJointEquivalent": "SMACNA Class J (tested without external sealant)",
+      "flangeGaugeRange": "26-16 ga",
+      "smacnaPressureClassesInWg": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ductWallGaugeByClass": {
+        "1": "26 ga",
+        "2": "24 ga",
+        "3": "22 ga",
+        "4": "20 ga"
+      },
+      "sealClassByClass": {
+        "1": "C",
+        "2": "B",
+        "3": "A",
+        "4": "A"
+      },
+      "note": "Gauge/seal-by-class values are the lab's ductStandards PC1-PC4, NOT checked against SMACNA HVAC DCS tables (real gauge also depends on duct width and reinforcement). Duct sheet itself is fabricated, not a catalog item."
+    },
+    "unit": "LB",
+    "qtyDriver": "DUCT_LBS",
+    "driverStatus": "registered",
+    "costCode": "0410-DUCT-M",
+    "activityId": "A04",
+    "spoolable": true,
+    "clashClass": "DUCT_RIGID",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-DUCT-SPIRAL-001",
+    "category": "duct",
+    "ductType": "spiral_round",
+    "manufacturer": "Ductmate Industries",
+    "model": "Spiralmate",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "testedPressurePositiveInWg": "secondary",
+        "testedPressureNegativeInWg": "secondary",
+        "ductWallGauge": "unverified",
+        "diameterRangeIn": "unverified"
+      },
+      "sources": [
+        "https://www.herculesindustries.com/item/ductmate-sm42"
+      ],
+      "system": "Spiralmate connection system for spiral lock-seam round duct",
+      "testedPressurePositiveInWg": 18,
+      "testedPressureNegativeInWg": 10,
+      "note": "Listing is for Spiralmate connectors; the spiral duct itself is mill/shop product. Wall gauge and diameter range not verified."
+    },
+    "unit": "LB",
+    "qtyDriver": "DUCT_LBS",
+    "driverStatus": "registered",
+    "costCode": "0410-DUCT-M",
+    "activityId": "A04",
+    "spoolable": true,
+    "clashClass": "DUCT_RIGID",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-DMPR-FSD-001",
+    "category": "fitting_damper",
+    "manufacturer": "Ruskin",
+    "model": "FSD60",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "ul555": "secondary",
+        "ul555s": "secondary",
+        "fireRatingHr": "secondary",
+        "smokeLeakageClass": "secondary",
+        "maxVelocityFpm": "unverified",
+        "maxPressureInWg": "unverified"
+      },
+      "sources": [
+        "https://www.bimobject.com/da/ruskin/product/rd-00317-001",
+        "https://www.svl.com/?p=3578"
+      ],
+      "type": "Combination fire/smoke damper, airfoil blade",
+      "ul555": true,
+      "ul555s": true,
+      "fireRatingHr": 1.5,
+      "smokeLeakageClass": "I",
+      "note": "Distributor listings conflict on velocity/pressure (3000 fpm/4 in vs 4000 fpm/8 in) - left unset on purpose. Confirm UL listing and sleeve/actuator before use. Driver DAMPER_FSD_EA is registered in qtyFor(), but geometry does not yet supply damperFsdEA, so quantities are 0 until a later phase provides it."
+    },
+    "unit": "EA",
+    "qtyDriver": "DAMPER_FSD_EA",
+    "driverStatus": "registered",
+    "costCode": "0410-DUCT-M",
+    "activityId": "A04",
+    "spoolable": false,
+    "clashClass": "RATED_PENETRATION",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-VAV-HW-001",
+    "category": "terminal_unit",
+    "manufacturer": "Titus",
+    "model": "DESV (single-duct, hot-water reheat coil option)",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "coilFins": "secondary",
+        "coilConnections": "secondary",
+        "coilRating": "secondary",
+        "inletSizeIn": "unverified",
+        "maxCfm": "unverified",
+        "coilCapacityMbh": "unverified"
+      },
+      "sources": [
+        "https://www.titus-hvac.com/file/13104/DESV_Submittal.pdf",
+        "https://www.titus-hvac.com/file/1162/esvHWC_singledual_2023_V2.pdf"
+      ],
+      "reheat": "hot water",
+      "coilFins": "aluminum ripple fin, 10 per inch",
+      "coilConnections": "male sweat, Type L copper",
+      "coilRating": "AHRI 410",
+      "note": "Inlet size / max CFM / MBH depend on unit size and selection; the lab's vavStd values are lab assumptions, not Titus data."
+    },
+    "unit": "EA",
+    "qtyDriver": "VAV_EA",
+    "driverStatus": "registered",
+    "costCode": "0520-VAV-M",
+    "activityId": "A08",
+    "spoolable": false,
+    "clashClass": "TERMINAL_DEVICE",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-DIFF-001",
+    "category": "air_distribution",
+    "manufacturer": "Titus",
+    "model": "TDC",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "type": "secondary",
+        "material": "secondary",
+        "neckSizeRangeIn": "secondary",
+        "throwNcCfm": "unverified"
+      },
+      "sources": [
+        "https://www.titus-hvac.com/file/300/tdc.pdf"
+      ],
+      "type": "Square/rectangular louvered-face ceiling diffuser, high capacity",
+      "material": "steel",
+      "neckSizeRangeIn": "6x6 to 48x48 (surface-mount border)",
+      "note": "Lab diffuserStandards use lay-in perforated / slot / swirl classes; TDC is louvered face, so the lab's unit cost is not a TDC price. DIFF_EA catalog coverage is illustrative only: real selection must map to the lab's diffuserStandards classes (lay-in / perforated / slot / swirl)."
+    },
+    "unit": "EA",
+    "qtyDriver": "DIFF_EA",
+    "driverStatus": "registered",
+    "costCode": "0530-DIFF-M",
+    "activityId": "A09",
+    "spoolable": false,
+    "clashClass": "TERMINAL_DEVICE",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-RTU-001",
+    "category": "equipment",
+    "manufacturer": "Trane",
+    "model": "Precedent YZK300",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "modelString": "secondary",
+        "nominalTons": "secondary",
+        "eerOrIeer": "unverified",
+        "electricalMcaMocp": "unverified",
+        "operatingWeightLb": "unverified",
+        "curbDimensionsIn": "unverified"
+      },
+      "sources": [
+        "https://elibrary.tranetechnologies.com/public/commercial-hvac/Literature/Product%20Catalog/PKGP-PRC023F-EN_07182026.pdf"
+      ],
+      "family": "Precedent packaged rooftop",
+      "nominalTons": 25,
+      "note": "25-ton = size code 300 per Trane Precedent catalog excerpt; prefix (YZK vs YHC/YSC) and every electrical/weight/curb/efficiency number NOT retrieved - pull from the PKGP-PRC023F catalog or unit submittal. Equipment cost attaches at equipEA x equipUnitCost (A07), never at this row.",
+      "modelString": "Precedent YZK300"
+    },
+    "unit": "EA",
+    "qtyDriver": "EQUIP_EA",
+    "driverStatus": "registered",
+    "costCode": "0510-SET-M",
+    "activityId": "A07",
+    "spoolable": false,
+    "clashClass": "EQUIPMENT_MAJOR",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-EXFAN-001",
+    "category": "exhaust_fan",
+    "manufacturer": "Greenheck",
+    "model": "CUBE-180-3130GQD-DR2",
+    "spec": {
+      "confidence": "manufacturer",
+      "fieldConfidence": {
+        "motorHp": "manufacturer",
+        "voltage": "manufacturer",
+        "drive": "manufacturer",
+        "weightLb": "manufacturer",
+        "listings": "manufacturer",
+        "performance": "manufacturer"
+      },
+      "sources": [
+        "https://www.greenheck.com/shop/wall-mounted-fans/cube/cube-180-3130gqd-dr2"
+      ],
+      "type": "Centrifugal upblast exhaust fan, belt drive",
+      "motorHp": "1/3",
+      "voltage": "115/208-230 V, 1 ph, 60 Hz",
+      "drive": "belt (motor and drives shipped loose)",
+      "rpmMinMax": [
+        690,
+        860
+      ],
+      "weightLb": 104,
+      "listings": [
+        "AMCA Sound & Air",
+        "UL/cUL 705 Supplement SC"
+      ],
+      "performance": [
+        {
+          "staticInWg": 0,
+          "cfm": 3249,
+          "sones": 12.6,
+          "bhp": 0.34
+        },
+        {
+          "staticInWg": 0.125,
+          "cfm": 3074,
+          "sones": 11.8,
+          "bhp": 0.37
+        },
+        {
+          "staticInWg": 0.25,
+          "cfm": 2922,
+          "sones": 11.4,
+          "bhp": 0.39
+        },
+        {
+          "staticInWg": 0.375,
+          "cfm": 2732,
+          "sones": 11.0,
+          "bhp": 0.4
+        },
+        {
+          "staticInWg": 0.5,
+          "cfm": 2474,
+          "sones": 10.4,
+          "bhp": 0.4
+        },
+        {
+          "staticInWg": 0.625,
+          "cfm": 2171,
+          "sones": 9.7,
+          "bhp": 0.39
+        }
+      ],
+      "note": "Values read from Greenheck product page via fetch summary; confirm against cut sheet. Driver EXH_FAN_EA is registered in qtyFor(), but geometry does not yet supply exhFanEA, so quantities are 0 until a later phase provides it."
+    },
+    "unit": "EA",
+    "qtyDriver": "EXH_FAN_EA",
+    "driverStatus": "registered",
+    "costCode": "0510-SET-M",
+    "activityId": "A07",
+    "spoolable": false,
+    "clashClass": "EQUIPMENT_MAJOR",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-PIPE-HYD-001",
+    "category": "piping",
+    "pipeType": "hydronic",
+    "manufacturer": "Victaulic",
+    "model": "Style 07 Zero-Flex rigid coupling (grooved CHW/HW)",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "couplingMaxPsi": "secondary",
+        "couplingSizeRangeIn": "secondary",
+        "pipeMaterial": "unverified",
+        "pipeSchedule": "unverified"
+      },
+      "sources": [
+        "https://acceldx.roccommercecloud.com/assets/8d/75/8d75d379-c94f-41a0-bb7c-ca2ede55161e/Victaulic_L010007PE0_Specification_Sheet.pdf"
+      ],
+      "couplingMaxPsi": 750,
+      "couplingSizeRangeIn": "1-12",
+      "pipeMaterial": "steel (assumed)",
+      "pipeSchedule": "40 (assumed)",
+      "note": "750 psi is the general datasheet figure; a retailer shows 500 psi at 10 in, so rating is size-specific. Pipe is not a Victaulic item; material/schedule are assumptions."
+    },
+    "unit": "LF",
+    "qtyDriver": "PIPE_LF",
+    "driverStatus": "registered",
+    "costCode": "0420-HPIP-M",
+    "activityId": "A05",
+    "spoolable": true,
+    "clashClass": "PIPE_PRESSURE",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-PIPE-REF-001",
+    "category": "piping",
+    "pipeType": "refrigerant",
+    "manufacturer": "Mueller Industries",
+    "model": "Streamline ACR copper tube",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "standard": "secondary",
+        "material": "secondary",
+        "charge": "secondary",
+        "workingPressurePsi": "unverified"
+      },
+      "sources": [
+        "https://www.gtsanders.com/Product/CPACRG",
+        "https://images.salsify.com/image/upload/s--N7vFV3NH--/6dbf4bc077198bf46e2b73b30200e84a97a40ba2.pdf"
+      ],
+      "standard": "ASTM B280",
+      "material": "UNS C12200 copper, hard drawn",
+      "charge": "nitrogen, rubber-plugged",
+      "note": "Reseller pressure ratings disagree by size and seller; not recorded. Lab line sets (A06) are priced per LF, not per Mueller SKU."
+    },
+    "unit": "LF",
+    "qtyDriver": "LINESET_LF",
+    "driverStatus": "registered",
+    "costCode": "0430-RPIP-M",
+    "activityId": "A06",
+    "spoolable": false,
+    "clashClass": "PIPE_PRESSURE",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  },
+  {
+    "id": "HVAC-CTRL-DDC-001",
+    "category": "controls",
+    "manufacturer": "Johnson Controls",
+    "model": "Metasys MS-VMA1630-1",
+    "spec": {
+      "confidence": "unverified",
+      "fieldConfidence": {
+        "supply": "secondary",
+        "protocols": "secondary",
+        "operatingTemp": "unverified",
+        "approvals": "unverified",
+        "universalInputs": "secondary",
+        "binaryOutputs": "secondary",
+        "configurableOutputs": "secondary",
+        "ioPointsPerUnit": "secondary"
+      },
+      "sources": [
+        "https://www.dosupply.com/automation/johnson-controls/metasys-ms/MS-VMA1630-1"
+      ],
+      "type": "VAV box controller with integral actuator and DP transducer",
+      "universalInputs": 3,
+      "binaryOutputs": 3,
+      "configurableOutputs": 2,
+      "ioPointsPerUnit": 8,
+      "supply": "24 VAC",
+      "protocols": [
+        "BACnet MS/TP",
+        "N2"
+      ],
+      "note": "Reseller listing only; no JCI datasheet retrieved. Operating-temp figures conflict between resellers. In the lab, PTS_EA counts DDC POINTS (unit EA), so controllers served = points / ioPointsPerUnit (derived, label as such)."
+    },
+    "unit": "EA",
+    "qtyDriver": "PTS_EA",
+    "driverStatus": "registered",
+    "costCode": "0720-DDC-M",
+    "activityId": "A12",
+    "spoolable": false,
+    "clashClass": "CONTROL_DEVICE",
+    "discipline": "HVAC",
+    "label": "representative — verify against submittals, not sealed design"
+  }
+]

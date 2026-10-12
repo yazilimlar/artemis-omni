@@ -1,0 +1,59 @@
+{
+  "_label": "SYNTHETIC fixture - allocation weights are illustrative, not takeoff data. Quantities are never stored here; they are apportioned from qtyFor() at check time.",
+  "rounding": {
+    "method": "largest-remainder apportionment to integers",
+    "toleranceByUnit": {
+      "LB": 0,
+      "LF": 0,
+      "EA": 0
+    },
+    "estimateQtyTolerance": 1e-09
+  },
+  "scenarios": {
+    "labDefaults": {
+      "overrides": {}
+    },
+    "scaledUp": {
+      "overrides": {
+        "condSF": "200000",
+        "tonnage": "1200",
+        "floors": "10",
+        "vavCount": "150",
+        "diffCount": "1000"
+      }
+    }
+  },
+  "allocations": {
+    "DUCT_LBS": {
+      "HVAC-DUCT-RECT-001": 70,
+      "HVAC-DUCT-SPIRAL-001": 20,
+      "OTHER": 10
+    },
+    "PIPE_LF": {
+      "HVAC-PIPE-HYD-001": 1
+    },
+    "LINESET_LF": {
+      "HVAC-PIPE-REF-001": 1
+    },
+    "EQUIP_EA": {
+      "HVAC-RTU-001": 6,
+      "OTHER": 5
+    },
+    "VAV_EA": {
+      "HVAC-VAV-HW-001": 1
+    },
+    "DIFF_EA": {
+      "HVAC-DIFF-001": 1
+    },
+    "PTS_EA": {
+      "HVAC-CTRL-DDC-001": 3,
+      "OTHER": 5
+    }
+  },
+  "notes": {
+    "EQUIP_EA": "6:5 = RTU vs (AHU+chiller+boiler) from the lab's 6:2:1:2 mix comment (index.html:3008).",
+    "OTHER": "Catalog rows not yet written (flex duct, AHU, chiller, boiler, other controls). Reported as coverage < 100%.",
+    "unreconciled": "DAMPER_FSD_EA and EXH_FAN_EA are registered in qtyFor() but geometry() does not supply their g fields, so the quantity is 0 and rows HVAC-DMPR-FSD-001 / HVAC-EXFAN-001 are listed, not reconciled.",
+    "DIFF_EA": "Illustrative only: 100% to HVAC-DIFF-001 (Titus TDC, louvered face) is a placeholder. Real selection must map to the lab's diffuserStandards classes (lay-in / perforated / slot / swirl)."
+  }
+}

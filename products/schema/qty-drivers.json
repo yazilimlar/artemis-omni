@@ -1,0 +1,82 @@
+{
+  "_doc": "Driver registry for the products module. 'registered' entries exist in the lab's qtyFor() at RC8.11 and are verified against the live lab file by tools/check.mjs (drift => failure). 'proposed' entries do not exist in the lab (currently none for HVAC). Entries flagged qtyForOnly are keys in qtyFor() that no ACTS row uses as its driver; entries flagged awaitingGeometry return 0 until geometry() supplies the g field.",
+  "labSource": "public/standalone/hvac-mechanical-intelligence-bridge/index.html",
+  "HVAC": {
+    "registered": {
+      "DUCT_LBS": {
+        "activityId": "A04",
+        "unit": "LB",
+        "qtySource": "g.ductLbs",
+        "costAttachment": "A04 M = qty*matU*costF + g.takeoffEA*85*costF"
+      },
+      "PIPE_LF": {
+        "activityId": "A05",
+        "unit": "LF",
+        "qtySource": "g.hydronicLF",
+        "costAttachment": "A05 M = qty*matU*costF + g.risers*1800*costF"
+      },
+      "LINESET_LF": {
+        "activityId": "A06",
+        "unit": "LF",
+        "qtySource": "g.refrigerantLF",
+        "costAttachment": "A06 M = qty*matU*costF"
+      },
+      "EQUIP_EA": {
+        "activityId": "A07",
+        "unit": "EA",
+        "qtySource": "g.equipEA",
+        "costAttachment": "A07 M = qty*g.equipUnitCost*costF (flat 62000/EA, index.html:2094-2095); EQT meshes are proxy boxes only"
+      },
+      "VAV_EA": {
+        "activityId": "A08",
+        "unit": "EA",
+        "qtySource": "g.vavCount",
+        "costAttachment": "A08 M = qty*g.vav.unitCost*costF (vavStandards)"
+      },
+      "DIFF_EA": {
+        "activityId": "A09",
+        "unit": "EA",
+        "qtySource": "g.diffCount",
+        "costAttachment": "A09 M = qty*g.diff.unitCost*costF (diffuserStandards)"
+      },
+      "PTS_EA": {
+        "activityId": "A12",
+        "unit": "EA",
+        "qtySource": "g.ddcPts",
+        "costAttachment": "A12 M = qty*matU*costF; EA counts DDC points"
+      },
+      "DAMPER_FSD_EA": {
+        "activityId": "A04",
+        "unit": "EA",
+        "qtySource": "g.damperFsdEA",
+        "qtyForOnly": true,
+        "awaitingGeometry": true,
+        "costAttachment": "none yet: A04's ACTS driver is DUCT_LBS; a cost allowance in estimate() is a later phase",
+        "note": "Registered in qtyFor() (index.html:2113). geometry() does not yet supply damperFsdEA, so the quantity is 0 until a later phase provides it."
+      },
+      "EXH_FAN_EA": {
+        "activityId": "A07",
+        "unit": "EA",
+        "qtySource": "g.exhFanEA",
+        "qtyForOnly": true,
+        "awaitingGeometry": true,
+        "costAttachment": "none yet: A07 cost is equipEA x equipUnitCost and excludes exhaust fans; an estimate() allowance is a later phase",
+        "note": "Registered in qtyFor() (index.html:2114). geometry() does not yet supply exhFanEA, so the quantity is 0 until a later phase provides it."
+      }
+    },
+    "proposed": {},
+    "leftAlone": {
+      "TAKEOFF_EA": "qtyFor() key not used as any ACTS driver; estimate() reads g.takeoffEA directly inside A04. Not used by this module."
+    }
+  },
+  "PLUMBING": {
+    "_status": "STUB",
+    "registered": {},
+    "proposed": {}
+  },
+  "FIRE_SUPPRESSION": {
+    "_status": "STUB",
+    "registered": {},
+    "proposed": {}
+  }
+}

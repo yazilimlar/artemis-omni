@@ -2110,8 +2110,8 @@ function geometry(){
 }
 function qtyFor(driver,g){
   return {LS:1,DEMO_SF:g.demoSF,DUCT_LBS:g.ductLbs,PIPE_LF:g.hydronicLF,LINESET_LF:g.refrigerantLF,
-    EQUIP_EA:g.equipEA,VAV_EA:g.vavCount,DIFF_EA:g.diffCount,TAKEOFF_EA:g.takeoffEA,
-    INSUL_SF:g.insulSF,CTRL_LF:g.ctrlLF,PTS_EA:g.ddcPts,TONNAGE:g.tonnage,DAYS:g.cxDays,SF:g.length}[driver]||0;
+    EQUIP_EA:g.equipEA,VAV_EA:g.vavCount,DIFF_EA:g.diffCount,TAKEOFF_EA:g.takeoffEA,DAMPER_FSD_EA:g.damperFsdEA,
+    INSUL_SF:g.insulSF,CTRL_LF:g.ctrlLF,PTS_EA:g.ddcPts,TONNAGE:g.tonnage,DAYS:g.cxDays,SF:g.length,EXH_FAN_EA:g.exhFanEA}[driver]||0;
 }
 </script>
 <script>
