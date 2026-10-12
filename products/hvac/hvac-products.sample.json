@@ -106,11 +106,11 @@
       "ul555s": true,
       "fireRatingHr": 1.5,
       "smokeLeakageClass": "I",
-      "note": "Distributor listings conflict on velocity/pressure (3000 fpm/4 in vs 4000 fpm/8 in) - left unset on purpose. Confirm UL listing and sleeve/actuator before use."
+      "note": "Distributor listings conflict on velocity/pressure (3000 fpm/4 in vs 4000 fpm/8 in) - left unset on purpose. Confirm UL listing and sleeve/actuator before use. Driver DAMPER_FSD_EA is registered in qtyFor(), but geometry does not yet supply damperFsdEA, so quantities are 0 until a later phase provides it."
     },
     "unit": "EA",
     "qtyDriver": "DAMPER_FSD_EA",
-    "driverStatus": "proposed",
+    "driverStatus": "registered",
     "costCode": "0410-DUCT-M",
     "activityId": "A04",
     "spoolable": false,
@@ -172,7 +172,7 @@
       "type": "Square/rectangular louvered-face ceiling diffuser, high capacity",
       "material": "steel",
       "neckSizeRangeIn": "6x6 to 48x48 (surface-mount border)",
-      "note": "Lab diffuserStandards use lay-in perforated / slot / swirl classes; TDC is louvered face, so the lab's unit cost is not a TDC price."
+      "note": "Lab diffuserStandards use lay-in perforated / slot / swirl classes; TDC is louvered face, so the lab's unit cost is not a TDC price. DIFF_EA catalog coverage is illustrative only: real selection must map to the lab's diffuserStandards classes (lay-in / perforated / slot / swirl)."
     },
     "unit": "EA",
     "qtyDriver": "DIFF_EA",
@@ -286,11 +286,11 @@
           "bhp": 0.39
         }
       ],
-      "note": "Values read from Greenheck product page via fetch summary; confirm against cut sheet."
+      "note": "Values read from Greenheck product page via fetch summary; confirm against cut sheet. Driver EXH_FAN_EA is registered in qtyFor(), but geometry does not yet supply exhFanEA, so quantities are 0 until a later phase provides it."
     },
     "unit": "EA",
     "qtyDriver": "EXH_FAN_EA",
-    "driverStatus": "proposed",
+    "driverStatus": "registered",
     "costCode": "0510-SET-M",
     "activityId": "A07",
     "spoolable": false,

@@ -16,5 +16,5 @@ Owner: infrastructure-construction / `hvac-mechanical-intelligence-bridge`. Life
 4. **Chain** exists only on linear activities (A02-A06, A10, A11, A13). It is derived from `ACTS[activityId]`, never stored; `spoolable:true` is allowed only on those activities (module invariant, not a lab rule).
 5. **TAKEOFF_\*:** `TAKEOFF_EA` is in `qtyFor()` but is no ACTS driver; `estimate()` reads `g.takeoffEA` inside A04. Left alone; not used here.
 6. `spec.confidence` = `'unverified'` if any key field is; `spec.fieldConfidence` gives per-field `manufacturer | secondary | unverified`. Unverifiable values are omitted, not guessed.
-7. `driverStatus:'proposed'` rows (fire/smoke damper, exhaust fan) have no pipeline quantity and are listed as unreconciled until someone with authority changes `qtyFor()`/`estimate()`.
+7. `DAMPER_FSD_EA` and `EXH_FAN_EA` are registered in `qtyFor()` (index.html:2113-2114), but `geometry()` does not supply `damperFsdEA`/`exhFanEA`, so their quantities are 0 and the rows are reported as WARN, not reconciled. `driverStatus:'proposed'` stays valid for future drivers not yet in `qtyFor()`.
 8. `costCode` = `${ACTS[activityId].code}-M`; `clashClass`/`spoolable` are new proposed vocabularies (the lab has neither concept).

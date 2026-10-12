@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed (2026-10-11)
+Accepted (2026-10-12; owner sign-off)
 
 ## Context
 

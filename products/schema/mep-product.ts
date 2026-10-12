@@ -7,11 +7,14 @@
  *
  * Quantity rule: a product row never carries a quantity. Quantities come from the lab
  * pipeline (qtyFor()/estimate()) via `qtyDriver`; see products/SCHEMA.md.
+ *
+ * `product_family` (a product-registry field) is intentionally not modelled here; it is
+ * deferred to a later phase.
  */
 
 export type MepDiscipline = "HVAC" | "PLUMBING" | "FIRE_SUPPRESSION";
 
-/** registered = exists in the lab's qtyFor(); proposed = needs a qtyFor()/estimate() change (not made here). */
+/** registered = key exists in the lab's qtyFor() (may return 0 until geometry() supplies it); proposed = not in qtyFor() yet. */
 export type DriverStatus = "registered" | "proposed";
 
 export type SpecConfidence = "manufacturer" | "secondary" | "unverified";

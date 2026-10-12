@@ -43,6 +43,7 @@ export function loadLab(overrides = {}) {
   const g = run("geometry()");
   return {
     sha256, g,
+    qtyForSource: run("qtyFor.toString()"),
     acts: run("JSON.parse(JSON.stringify(ACTS))"),
     qtyFor: driver => run(`qtyFor(${JSON.stringify(driver)}, geometry())`),
     estimate: () => run("(function(){const e=estimate(geometry());return {rows:e.rows.map(r=>({id:r.id,driver:r.driver,qty:r.qty,M:r.cat.M,matU:r.matU})),costF:({best:.96,base:1,worst:1.12,recovery:1.18})[val('scenario')]||1}})()"),

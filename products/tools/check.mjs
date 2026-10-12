@@ -28,7 +28,14 @@ console.log(`  lab sha256 ${lab0.sha256.slice(0, 16)}…`);
 const acts = Object.fromEntries(lab0.acts.map(a => [a.id, a]));
 for (const [d, e] of Object.entries(drivers.HVAC.registered)) {
   const a = acts[e.activityId];
-  if (!a || a.driver !== d || a.unit !== e.unit) fail(`driver registry drift: ${d} -> ${e.activityId} ${a ? `(lab: ${a.driver}/${a.unit})` : "(missing)"}`);
+  if (!a) { fail(`driver ${d}: unknown activity ${e.activityId}`); continue; }
+  if (e.qtyForOnly) {
+    if (!new RegExp(`\\b${d}:`).test(lab0.qtyForSource)) fail(`driver ${d} flagged registered but is not a key in the lab's qtyFor()`);
+    if (lab0.qtyFor(d) === 0 && e.awaitingGeometry) continue;
+    if (lab0.qtyFor(d) === 0) fail(`registered driver ${d} gives 0 but is not flagged awaitingGeometry`);
+    continue;
+  }
+  if (a.driver !== d || a.unit !== e.unit) fail(`driver registry drift: ${d} -> ${e.activityId} (lab: ${a.driver}/${a.unit})`);
   else if (!Number.isFinite(lab0.qtyFor(d)) || lab0.qtyFor(d) <= 0) fail(`registered driver ${d} gives no quantity in qtyFor()`);
 }
 const ids = new Set();
@@ -107,7 +114,11 @@ for (const [name, sc] of Object.entries(fx.scenarios)) {
   const expect = lab.g.equipEA * lab.g.equipUnitCost * est.costF;
   (Math.abs(a07.M - expect) < 1e-6 ? ok : fail)(`A07 material = equipEA(${lab.g.equipEA}) x equipUnitCost(${lab.g.equipUnitCost}) x costF = ${expect}`);
 }
-console.log("== unreconciled (proposed drivers, no pipeline quantity)");
-for (const r of rows.filter(r => r.driverStatus === "proposed")) warn(`${r.id} -> ${r.qtyDriver} (${drivers.HVAC.proposed[r.qtyDriver]?.needs})`);
+console.log("== unreconciled (registered in qtyFor() but zero until geometry() supplies the g field)");
+for (const r of rows) {
+  const e = drivers.HVAC.registered[r.qtyDriver];
+  if (e?.awaitingGeometry) warn(`${r.id} -> ${r.qtyDriver} = ${lab0.qtyFor(r.qtyDriver)} (needs ${e.qtySource})`);
+  if (r.driverStatus === "proposed") warn(`${r.id} -> ${r.qtyDriver} is proposed (not in qtyFor)`);
+}
 console.log(`\n${failures ? "FAILED" : "PASSED"}: ${failures} failure(s), ${warnings} warning(s)`);
 process.exit(failures ? 1 : 0);
