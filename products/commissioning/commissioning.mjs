@@ -9,6 +9,8 @@
 //   append-only, hash-chained LEDGER of transition events; `materialize()` folds the ledger into an E0 envelope view.
 //   PASS means "recorded values satisfy the selected criteria". It is never code compliance or EoR acceptance.
 //   Outcome (PASS/FAIL/INCOMPLETE) is a separate dimension from verification (a FAIL may be verified).
+// ANCHOR ASSUMPTION: Append-only integrity requires the caller to retain at least one previously observed eventId as an anchor (or the complete prior ledger). A fully rewritten but internally consistent ledger is accepted if no anchors are supplied; the ledger is not self-certifying.
+// STALE DETECTION: Stale detection lives in validateLifecycle, not in the ledger fold. Callers that accept a ledger as authoritative must also run validateLifecycle against the current definition/instance set; the ledger alone does not auto-stale prior revisions.
 import crypto from "node:crypto";
 import { canonical, contentHashOf, revisionIdOf, validateEnvelope, validateChain } from "../evidence/evidence.mjs";
 

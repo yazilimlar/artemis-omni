@@ -126,3 +126,6 @@ Fixtures: 22 evaluator cases (boundaries, INCOMPLETE, malformed), 3 bad definiti
 Invariants covered: verify-before-accept, exact-revision pin, re-test keeps failure, stale invalidation, roles, legal transitions, ledger integrity.
 Results: check-commissioning 0f/0w; all prior checkers at baseline; tsc clean; lab `d3f0caaf5f71b8f6` unchanged.
 Criteria (90-110 % airflow, 10 min) are representative, unsourced.
+
+## P4a doc notes (Grok)
+Comments only: ledger anchor assumption (header of `commissioning.mjs` and `check-commissioning.mjs`) and stale-detection location (`commissioning.mjs`). Suite rerun unchanged.

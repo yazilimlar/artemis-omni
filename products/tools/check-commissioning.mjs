@@ -5,6 +5,7 @@
 // invariants (verification before acceptance, exact-revision pinning, re-test preserves the failure, stale
 // invalidation, role separation, legal transitions only). Every negative fixture must produce exactly its expected
 // violation codes. PASS here means "recorded values satisfy the selected criteria", never compliance.
+// ANCHOR ASSUMPTION: Append-only integrity requires the caller to retain at least one previously observed eventId as an anchor (or the complete prior ledger). A fully rewritten but internally consistent ledger is accepted if no anchors are supplied; the ledger is not self-certifying.
 import fs from "node:fs";
 import { loadLab } from "./lab-bridge.mjs";
 import { readJson } from "./util.mjs";
