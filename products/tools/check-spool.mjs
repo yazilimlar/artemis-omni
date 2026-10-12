@@ -82,6 +82,9 @@ for (const [name, sc] of Object.entries(fx.scenarios)) {
     const c = run.calibration;
     console.log(`        calibration: branches/zone=${c.branchesPerZone} horizontalScale=${c.horizontalScale} footprint=${c.footprintFt.x}x${c.footprintFt.y} ft`);
     if (c.horizontalScale < 0.5 || c.horizontalScale > 2) warn(`${tag} calibration ${c.horizontalScale} outside [0.5, 2]: layout rule does not fit this quantity`);
+    // clashReady gate (P3 guard): a model may only claim `clashReady` once its layout is constrained
+    // to the footprint. The flag does not exist yet (always undefined), so this cannot fire today.
+    if (model.clashReady && c.maxFootprintOverrunFt > 0) fail(`${tag} clashReady is set but segments overrun the footprint by up to ${c.maxFootprintOverrunFt} ft`);
     if (c.maxFootprintOverrunFt > 0) warn(`${tag} segments overrun the generated footprint by up to ${c.maxFootprintOverrunFt} ft (parametric layout is schematic)`);
   }
   const tags = result.spools.map(s => s.tag);

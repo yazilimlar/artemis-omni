@@ -41,3 +41,8 @@ Lab sha256 `d3f0caaf5f71b8f61285a4def88f8870e7e11e40cb2d66137d9d9db0d2e54047`.
 
 ## Next
 Owner: decide proposed drivers and supply standards tables. Then P3 (not started).
+
+## P2 micro-fix (2026-10-12)
+1. `check-spool.mjs`: clashReady guard added; fails if `model.clashReady` is set while any footprint overrun > 0. The flag does not exist yet, so behavior is unchanged.
+2. `SCHEMA.md`: note that pipe weight is model-derived (LF x representative lb/ft), never takeoff.
+Rerun after both edits: `PASSED: 0 failure(s), 6 warning(s)` (same 6 layout warnings).
