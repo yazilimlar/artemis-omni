@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-12T11:20:12.000Z",
+    "generated_at": "2026-10-12T13:06:13.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-12T11:20:12.000Z",
+  "generated_at": "2026-10-12T13:06:13.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -4113,6 +4113,20 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-190",
+      "type": "pr_merged",
+      "date": "2026-10-12T13:06:13.000Z",
+      "title": "HVAC-P3: deterministic clash rule engine",
+      "summary": "HVAC-P3: deterministic clash rule engine (8 files changed).",
+      "references": [
+        "PR#190",
+        "a9155a9"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
     }
   ],
   "stats": {
@@ -4127,7 +4141,7 @@
     },
     "scenes_total": 7,
     "milestones_shipped": 7,
-    "prs_merged": 94,
+    "prs_merged": 95,
     "verified_capabilities": 8
   }
 }
