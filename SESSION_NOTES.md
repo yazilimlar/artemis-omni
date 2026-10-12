@@ -95,3 +95,6 @@ Flags: NYC code names and §905.3.1 are owner-supplied, not verified by me. Cost
 
 ## MEP-SCOPING owner decisions (2026-10-12)
 Appended "Owner decisions" to `products/MEP_SCOPING.md` (five items: NYC_2022_REFERENCE primary, 3-trade release, standpipe in / pump conditional, contract v2 approved, no EoR yet). Docs only; nothing staged or committed. Next: E0, a separate PR.
+
+## MEP-SCOPING Grok clarifications
+Six edits to `products/MEP_SCOPING.md`: clash logicalId from object logicalIds + type; quantity promotion gate; plumbing/fire codes moved to 055x-059x/065x-068x with the suffix rule (lab `costCode()` appends the letter) and a deferred-activities list; E0 renamed with acceptance criterion; E0 hard prerequisite of P2.1; electrical reservations permanently clashReady=false. Removed the answered "Decisions needed" list. Docs only; nothing staged.
