@@ -1,0 +1,76 @@
+{
+  "_doc": "Clash rule registry (P3). Rules are kept in four separate categories: geometric, maintenance, fabrication, code. Geometric rules are engine definitions with no external standard. Every numeric parameter states its provenance. NOTHING here claims SMACNA, IMC, NFPA, NEC or any other code compliance: code-category rules are NOT IMPLEMENTED stubs, and every engine result carries complianceClaim 'NONE'.",
+  "label": "SYNTHETIC engineering validation rules - representative, illustrative values are assumptions, not sealed design",
+  "kinds": {
+    "duct": { "fixed": false }, "pipe": { "fixed": false }, "fitting": { "fixed": false },
+    "beam": { "fixed": true }, "column": { "fixed": true }, "equipment": { "fixed": true }
+  },
+  "severities": ["critical", "major", "minor", "review", "info"],
+  "rules": {
+    "R-GEO-001": {
+      "category": "geometric", "title": "Hard intersection of two solid objects (verified for box geometry only)",
+      "status": "active", "emits": "HARD_INTERSECTION",
+      "applicability": { "pairs": "any", "requires": "both objects EXACT_BOX; otherwise R-GEO-002 applies" },
+      "severity": { "type": "bands", "metric": "penetrationFt", "bands": [ { "minPenetrationFt": 0.5, "severity": "critical" }, { "minPenetrationFt": 0.1, "severity": "major" }, { "minPenetrationFt": 0, "severity": "minor" } ], "provenance": "assumption" },
+      "units": "ft", "source": { "kind": "engine-definition", "reference": "AABB overlap deeper than tolerance.overlapFt", "edition": null, "verified": true },
+      "complianceClaim": "NONE"
+    },
+    "R-GEO-002": {
+      "category": "geometric", "title": "Potential intersection from conservative AABB broad-phase (NOT a verified solid intersection)",
+      "status": "active", "emits": "POTENTIAL_INTERSECTION",
+      "applicability": { "pairs": "any", "requires": "at least one object CONSERVATIVE_AABB (round, non-box, or rotated off 90-degree multiples)" },
+      "severity": { "type": "flat", "severity": "review", "provenance": "assumption" },
+      "units": "ft", "source": { "kind": "engine-definition", "reference": "needs narrow-phase geometry (not implemented)", "edition": null, "verified": true },
+      "complianceClaim": "NONE"
+    },
+    "R-GEO-003": {
+      "category": "geometric", "title": "Near miss (gap within tolerance.nearMissFt, not touching)",
+      "status": "active", "emits": "NEAR_MISS", "observationOnly": true,
+      "applicability": { "pairs": "any" },
+      "severity": { "type": "flat", "severity": "info", "provenance": "assumption" },
+      "units": "ft", "source": { "kind": "engine-definition", "reference": "tolerance.nearMissFt from the input", "edition": null, "verified": true },
+      "complianceClaim": "NONE"
+    },
+    "R-GEO-004": {
+      "category": "geometric", "title": "Touching boundary / edge / corner contact within tolerance",
+      "status": "active", "emits": "TOUCHING", "observationOnly": true,
+      "applicability": { "pairs": "any" },
+      "severity": { "type": "flat", "severity": "info", "provenance": "assumption" },
+      "units": "ft", "source": { "kind": "engine-definition", "reference": "gap <= tolerance.touchFt or penetration <= tolerance.overlapFt", "edition": null, "verified": true },
+      "complianceClaim": "NONE"
+    },
+    "R-INS-001": {
+      "category": "fabrication", "title": "Insulation envelope interference (bare cores clear, insulated envelopes overlap)",
+      "status": "active", "emits": "INSULATION_INTERFERENCE",
+      "applicability": { "pairs": "any", "requires": "at least one object has insulationIn > 0; suppressed when the cores already intersect" },
+      "severity": { "type": "flat", "severity": "minor", "provenance": "assumption" },
+      "units": "ft (insulation thickness supplied in inches)", "source": { "kind": "engine-definition", "reference": "envelope = core AABB grown by insulationIn on every side", "edition": null, "verified": true },
+      "complianceClaim": "NONE"
+    },
+    "R-MNT-001": {
+      "category": "maintenance", "title": "Equipment service-clearance zone encroachment",
+      "status": "active", "emits": "CLEARANCE_VIOLATION",
+      "applicability": { "pairs": "equipment with serviceFaces vs any other object", "requires": "object declares serviceFaces" },
+      "parameters": { "serviceClearanceFt": { "value": 3.0, "unit": "ft", "provenance": "assumption", "note": "ILLUSTRATIVE. Real clearance comes from the manufacturer submittal and the authority having jurisdiction; no code clearance (e.g. NEC 110.26) is applied or implied." } },
+      "severity": { "type": "flat", "severity": "major", "provenance": "assumption" },
+      "units": "ft", "source": { "kind": "assumption", "reference": "illustrative service zone depth", "edition": null, "verified": false },
+      "complianceClaim": "NONE"
+    },
+    "R-CODE-001": {
+      "category": "code", "title": "Duct/pipe clearance and separation requirements from a model code (SMACNA / IMC / NFPA 90A)",
+      "status": "not-implemented", "emits": null,
+      "applicability": { "pairs": "none until an applicable edition and section are selected and verified" },
+      "severity": { "type": "none" },
+      "units": null, "source": { "kind": "standard-placeholder", "reference": "SMACNA HVAC Duct Construction Standards; IMC; NFPA 90A - sections NOT selected", "edition": null, "verified": false },
+      "complianceClaim": "NONE"
+    },
+    "R-CODE-002": {
+      "category": "code", "title": "Fire/smoke damper and rated-assembly penetration requirements (UL 555 / 555S listing, installation instructions)",
+      "status": "not-implemented", "emits": null,
+      "applicability": { "pairs": "none until the listing and the assembly are identified" },
+      "severity": { "type": "none" },
+      "units": null, "source": { "kind": "standard-placeholder", "reference": "UL 555 / UL 555S, manufacturer installation instructions - not applied", "edition": null, "verified": false },
+      "complianceClaim": "NONE"
+    }
+  }
+}
