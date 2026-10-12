@@ -46,3 +46,29 @@ Owner: decide proposed drivers and supply standards tables. Then P3 (not started
 1. `check-spool.mjs`: clashReady guard added; fails if `model.clashReady` is set while any footprint overrun > 0. The flag does not exist yet, so behavior is unchanged.
 2. `SCHEMA.md`: note that pipe weight is model-derived (LF x representative lb/ft), never takeoff.
 Rerun after both edits: `PASSED: 0 failure(s), 6 warning(s)` (same 6 layout warnings).
+
+# Phase 3 - HVAC-P3-CLASH (Option B: capability on synthetic fixtures)
+Branch labs/hvac-clash-phase3 @ 0425600 (base: merged P1+P2). `products/` only; `index.html` and all P1/P2 files untouched except an appended `SCHEMA.md` section. Nothing staged, committed or pushed.
+
+## Step zero - ALL checkers on the FINAL tree (only this notes file edited afterward)
+Lab sha256 `d3f0caaf5f71b8f61285a4def88f8870e7e11e40cb2d66137d9d9db0d2e54047`.
+- `check.mjs`: `PASSED: 0 failure(s), 2 warning(s)` (A07 682000 / 992000).
+- `check-spool.mjs`: `PASSED: 0 failure(s), 6 warning(s)`.
+- `check-clash.mjs`: `PASSED: 0 failure(s), 0 warning(s)`; 14 fixture cases.
+- Standalone `tsc --strict` over five TS files: clean. No validation tooling modified; `lab-bridge.mjs` unchanged.
+
+## Built (anchors)
+- `clash/clash-engine.mjs`: validateEnvelope :32, normalizeObject :62, core :108, service zones :222, `detectClashes` :274 (readiness gate), `labRouteReadiness` :281.
+- `clash/resolution.mjs`: `planRevision` :18, `reconcileRevision` :34. `clash/rules.json`, `clash/clash.schema.ts`, `clash/fixtures/matrix.json`, `tools/check-clash.mjs`.
+
+## Decisions
+- **Geometry resolution: L0 AABB.** EXACT_BOX overlap is verified for the supplied box geometry only; any conservative overlap is POTENTIAL, never promoted. No narrow-phase.
+- **Rule provenance:** geometric rules are engine definitions; R-MNT-001's 3 ft is an illustrative assumption; code rules are not-implemented stubs. `complianceClaim: NONE` everywhere.
+- Readiness is earned: each fixture's claim must equal its computed validation. Lab routes stay false.
+- Mutation-tested: 8 engine breaks (tolerance, exactness promotion, ordering, exemptions, units...) each fail the gate. One initial gap (tolerance-unit bug) found and closed with F9 boundary pairs.
+
+## Blockers / limits
+Fixture expectations are hand-derived but authored by the same builder: Grok should re-derive. Revision mechanism is defined, never run end to end. Hanger/clearance envelopes excluded from extents. P3b (representative model) not started.
+
+## Next
+P3b: constrained layout and representative model validation, then adapter from route model to clash input.

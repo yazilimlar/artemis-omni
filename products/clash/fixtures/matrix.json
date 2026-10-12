@@ -1,0 +1,2746 @@
+{
+ "_label": "SYNTHETIC engineering validation fixtures. Expected results are hand-derived (not produced by the engine). Not a building model; no case is a project finding.",
+ "caseCount": 14,
+ "cases": [
+  {
+   "id": "F1-duct-vs-beam",
+   "title": "duct vs structural beam (exact boxes)",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "D1",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        20,
+        2,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "B1",
+      "kind": "beam",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        8,
+        -5,
+        11.5
+       ],
+       "max": [
+        9,
+        10,
+        13
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "D2",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        30,
+        0,
+        8
+       ],
+       "max": [
+        50,
+        2,
+        10
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "B2",
+      "kind": "beam",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        38,
+        -5,
+        11
+       ],
+       "max": [
+        39,
+        10,
+        13
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "B1",
+       "D1"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 0.5,
+      "floors": [
+       "1"
+      ],
+      "zones": [
+       "Z1"
+      ],
+      "resolution": {
+       "moveObjectId": "D1",
+       "axis": "z",
+       "direction": -1,
+       "distanceFt": 0.507813
+      }
+     }
+    ],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "D2",
+      "B2"
+     ],
+     [
+      "D1",
+      "B2"
+     ],
+     [
+      "D1",
+      "D2"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F2-duct-vs-pipe",
+   "title": "duct (exact) vs round pipe (conservative): potential only, never hard",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "D",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        20,
+        2,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "P1",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        9.75,
+        -3,
+        10.75
+       ],
+       "max": [
+        10.25,
+        6,
+        11.25
+       ]
+      },
+      "exactBox": false
+     },
+     {
+      "id": "P2",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        9.75,
+        -3,
+        12.625
+       ],
+       "max": [
+        10.25,
+        6,
+        13
+       ]
+      },
+      "exactBox": false
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "POTENTIAL_INTERSECTION",
+      "ruleId": "R-GEO-002",
+      "objects": [
+       "D",
+       "P1"
+      ],
+      "severity": "review",
+      "verification": "UNVERIFIED_BROAD_PHASE",
+      "penetrationFt": 0.5,
+      "floors": [
+       "1"
+      ],
+      "resolutionAction": "NARROW_PHASE_REVIEW"
+     }
+    ],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "D",
+      "P2"
+     ]
+    ],
+    "forbiddenTypes": [
+     "HARD_INTERSECTION"
+    ]
+   }
+  },
+  {
+   "id": "F3-pipe-vs-pipe",
+   "title": "pipe vs pipe: crossing (potential), near miss, separated",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "Pa",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        4.75,
+        10
+       ],
+       "max": [
+        10,
+        5.25,
+        10.5
+       ]
+      },
+      "exactBox": false
+     },
+     {
+      "id": "Pb",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        4.75,
+        0,
+        10.25
+       ],
+       "max": [
+        5.25,
+        10,
+        10.75
+       ]
+      },
+      "exactBox": false
+     },
+     {
+      "id": "Pc",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        20,
+        10
+       ],
+       "max": [
+        10,
+        20.5,
+        10.5
+       ]
+      },
+      "exactBox": false
+     },
+     {
+      "id": "Pd",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        20.625,
+        10
+       ],
+       "max": [
+        10,
+        21.125,
+        10.5
+       ]
+      },
+      "exactBox": false
+     },
+     {
+      "id": "Pe",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        30,
+        10
+       ],
+       "max": [
+        10,
+        30.5,
+        10.5
+       ]
+      },
+      "exactBox": false
+     },
+     {
+      "id": "Pf",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        31,
+        10
+       ],
+       "max": [
+        10,
+        31.5,
+        10.5
+       ]
+      },
+      "exactBox": false
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "POTENTIAL_INTERSECTION",
+      "ruleId": "R-GEO-002",
+      "objects": [
+       "Pa",
+       "Pb"
+      ],
+      "severity": "review",
+      "verification": "UNVERIFIED_BROAD_PHASE",
+      "penetrationFt": 0.25,
+      "floors": [
+       "1"
+      ]
+     }
+    ],
+    "observations": [
+     {
+      "type": "NEAR_MISS",
+      "ruleId": "R-GEO-003",
+      "objects": [
+       "Pc",
+       "Pd"
+      ],
+      "gapFt": 0.125
+     }
+    ],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "Pe",
+      "Pf"
+     ]
+    ],
+    "forbiddenTypes": [
+     "HARD_INTERSECTION"
+    ]
+   }
+  },
+  {
+   "id": "F4-insulation-envelope",
+   "title": "insulation envelope interference, clear envelopes, hard dominates, conservative insulated pipe",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "Da",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        20,
+        2,
+        12
+       ]
+      },
+      "exactBox": true,
+      "insulationIn": 3
+     },
+     {
+      "id": "Db",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        2.25,
+        10
+       ],
+       "max": [
+        20,
+        4.25,
+        12
+       ]
+      },
+      "exactBox": true,
+      "insulationIn": 1.5
+     },
+     {
+      "id": "Dc",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        10,
+        10
+       ],
+       "max": [
+        20,
+        12,
+        12
+       ]
+      },
+      "exactBox": true,
+      "insulationIn": 3
+     },
+     {
+      "id": "Dd",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        12.75,
+        10
+       ],
+       "max": [
+        20,
+        14.75,
+        12
+       ]
+      },
+      "exactBox": true,
+      "insulationIn": 3
+     },
+     {
+      "id": "De",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        20,
+        10
+       ],
+       "max": [
+        20,
+        22,
+        12
+       ]
+      },
+      "exactBox": true,
+      "insulationIn": 3
+     },
+     {
+      "id": "Df",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        10,
+        21,
+        10.5
+       ],
+       "max": [
+        12,
+        25,
+        11.5
+       ]
+      },
+      "exactBox": true,
+      "insulationIn": 3
+     },
+     {
+      "id": "Dg",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        40,
+        10
+       ],
+       "max": [
+        20,
+        42,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Pq",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        42.125,
+        10.5
+       ],
+       "max": [
+        20,
+        42.625,
+        11
+       ]
+      },
+      "exactBox": false,
+      "insulationIn": 3
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "INSULATION_INTERFERENCE",
+      "ruleId": "R-INS-001",
+      "objects": [
+       "Da",
+       "Db"
+      ],
+      "severity": "minor",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 0.125,
+      "floors": [
+       "1"
+      ]
+     },
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "De",
+       "Df"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 1.0,
+      "floors": [
+       "1"
+      ]
+     },
+     {
+      "type": "INSULATION_INTERFERENCE",
+      "ruleId": "R-INS-001",
+      "objects": [
+       "Dg",
+       "Pq"
+      ],
+      "severity": "minor",
+      "verification": "UNVERIFIED_BROAD_PHASE",
+      "penetrationFt": 0.125,
+      "floors": [
+       "1"
+      ]
+     }
+    ],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "Dc",
+      "Dd"
+     ]
+    ],
+    "forbiddenPairTypes": [
+     {
+      "objects": [
+       "De",
+       "Df"
+      ],
+      "type": "INSULATION_INTERFERENCE"
+     }
+    ],
+    "noObservationsForPairs": [
+     [
+      "Da",
+      "Db"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F5-service-clearance",
+   "title": "equipment service zone (3 ft, ASSUMPTION): exact obstruction, round obstruction, outside zone",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "AHU",
+      "kind": "equipment",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        8,
+        4,
+        6
+       ]
+      },
+      "exactBox": true,
+      "serviceFaces": [
+       "+y"
+      ]
+     },
+     {
+      "id": "Dk",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        2,
+        5,
+        5
+       ],
+       "max": [
+        6,
+        6,
+        6.5
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Dm",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        2,
+        8,
+        5
+       ],
+       "max": [
+        6,
+        9,
+        6.5
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Pn",
+      "kind": "pipe",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        1,
+        5.5,
+        2
+       ],
+       "max": [
+        1.5,
+        6,
+        2.5
+       ]
+      },
+      "exactBox": false
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "CLEARANCE_VIOLATION",
+      "ruleId": "R-MNT-001",
+      "objects": [
+       "AHU",
+       "Dk"
+      ],
+      "severity": "major",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 1.0,
+      "floors": [
+       "1"
+      ],
+      "serviceFace": "+y",
+      "encroachmentDepthFt": 2.0,
+      "resolution": {
+       "moveObjectId": "Dk",
+       "axis": "y",
+       "direction": 1,
+       "distanceFt": 2.0
+      }
+     },
+     {
+      "type": "CLEARANCE_VIOLATION",
+      "ruleId": "R-MNT-001",
+      "objects": [
+       "AHU",
+       "Pn"
+      ],
+      "severity": "major",
+      "verification": "UNVERIFIED_BROAD_PHASE",
+      "penetrationFt": 0.5,
+      "floors": [
+       "1"
+      ],
+      "serviceFace": "+y",
+      "encroachmentDepthFt": 1.5
+     }
+    ],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "AHU",
+      "Dm"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F6-near-misses-and-clear",
+   "title": "non-intersecting elements; near-miss boundary at exactly nearMissFt; diagonal gap beyond it",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "B",
+      "kind": "beam",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        11
+       ],
+       "max": [
+        10,
+        1,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "N1",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        1.1875,
+        11
+       ],
+       "max": [
+        10,
+        3.1875,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "N2",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        -2.25,
+        11
+       ],
+       "max": [
+        10,
+        -0.25,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "N3",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        10.3125,
+        0,
+        11
+       ],
+       "max": [
+        20,
+        1,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "FAR",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        200,
+        200,
+        10
+       ],
+       "max": [
+        210,
+        202,
+        12
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [],
+    "observations": [
+     {
+      "type": "NEAR_MISS",
+      "ruleId": "R-GEO-003",
+      "objects": [
+       "B",
+       "N1"
+      ],
+      "gapFt": 0.1875
+     },
+     {
+      "type": "NEAR_MISS",
+      "ruleId": "R-GEO-003",
+      "objects": [
+       "B",
+       "N2"
+      ],
+      "gapFt": 0.25
+     }
+    ],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "B",
+      "N3"
+     ],
+     [
+      "N1",
+      "N3"
+     ],
+     [
+      "N2",
+      "N3"
+     ],
+     [
+      "B",
+      "FAR"
+     ]
+    ],
+    "expectNoClashes": true
+   }
+  },
+  {
+   "id": "F7-connections-and-penetrations",
+   "title": "joint overlap exempt; sleeved beam-web penetration exempt; unconnected duct still clashes; allowance exceeded; bad/non-contacting connections",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "Da",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        10,
+        2,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Fa",
+      "kind": "fitting",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        9.9375,
+        0,
+        10
+       ],
+       "max": [
+        12,
+        2,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Bp",
+      "kind": "beam",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        20,
+        -5,
+        11
+       ],
+       "max": [
+        20.5,
+        10,
+        13
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Dp",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        15,
+        0,
+        10.5
+       ],
+       "max": [
+        30,
+        2,
+        12.5
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Dq",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        15,
+        4,
+        10.5
+       ],
+       "max": [
+        30,
+        6,
+        12.5
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Dr",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        40,
+        0,
+        10.5
+       ],
+       "max": [
+        55,
+        2,
+        12.5
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Br",
+      "kind": "beam",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        48,
+        -5,
+        11
+       ],
+       "max": [
+        49.25,
+        10,
+        13
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Ds",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        60,
+        0,
+        10
+       ],
+       "max": [
+        70,
+        2,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "Dt",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        70.5,
+        0,
+        10
+       ],
+       "max": [
+        80,
+        2,
+        12
+       ]
+      },
+      "exactBox": true
+     }
+    ],
+    "connections": [
+     {
+      "a": "Da",
+      "b": "Fa",
+      "type": "joint",
+      "exemptRules": [
+       "R-GEO-001"
+      ],
+      "allowedOverlapFt": 0.125,
+      "reason": "flanged duct-to-fitting joint overlap (SYNTHETIC)"
+     },
+     {
+      "a": "Bp",
+      "b": "Dp",
+      "type": "penetration",
+      "exemptRules": [
+       "R-GEO-001"
+      ],
+      "allowedOverlapFt": 0.5,
+      "reason": "sleeved duct through beam web (SYNTHETIC; not a structural approval)",
+      "basis": "fixture assumption"
+     },
+     {
+      "a": "Br",
+      "b": "Dr",
+      "type": "penetration",
+      "exemptRules": [
+       "R-GEO-001"
+      ],
+      "allowedOverlapFt": 0.5,
+      "reason": "sleeved duct through beam web (SYNTHETIC)"
+     },
+     {
+      "a": "Dp",
+      "b": "NOPE",
+      "type": "joint",
+      "exemptRules": [
+       "R-GEO-001"
+      ],
+      "allowedOverlapFt": 0.1,
+      "reason": "references an unknown object"
+     },
+     {
+      "a": "Ds",
+      "b": "Dt",
+      "type": "joint",
+      "exemptRules": [
+       "R-GEO-001"
+      ],
+      "allowedOverlapFt": 0.125,
+      "reason": "declared joint with a 0.5 ft gap"
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "Bp",
+       "Dq"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 0.5,
+      "floors": [
+       "1"
+      ]
+     },
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "Br",
+       "Dr"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 1.25,
+      "floors": [
+       "1"
+      ],
+      "exemptionExceeded": true
+     }
+    ],
+    "observations": [],
+    "exempted": [
+     {
+      "objects": [
+       "Da",
+       "Fa"
+      ],
+      "ruleId": "R-GEO-001",
+      "penetrationFt": 0.0625
+     },
+     {
+      "objects": [
+       "Bp",
+       "Dp"
+      ],
+      "ruleId": "R-GEO-001",
+      "penetrationFt": 0.5
+     }
+    ],
+    "rejectedObjects": [],
+    "rejectedConnections": [
+     {
+      "a": "Dp",
+      "b": "NOPE",
+      "code": "UNKNOWN_OR_SELF_OBJECT",
+      "count": 1
+     }
+    ],
+    "warnings": [
+     {
+      "code": "CONNECTION_NOT_CONTACTING",
+      "objects": [
+       "Ds",
+       "Dt"
+      ],
+      "gapFt": 0.5
+     }
+    ],
+    "absentPairs": [
+     [
+      "Da",
+      "Fa"
+     ],
+     [
+      "Bp",
+      "Dp"
+     ],
+     [
+      "Dp",
+      "Dq"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F8a-floors-transforms-edges-malformed",
+   "title": "floors & elevation refs, spanning riser, 90-degree and 45-degree transforms, edge/corner contact, tolerance boundaries, malformed geometry",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "A",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        9
+       ],
+       "max": [
+        5,
+        5,
+        11
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "B",
+      "kind": "duct",
+      "floor": 2,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        14
+       ],
+       "max": [
+        5,
+        5,
+        16
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "C",
+      "kind": "duct",
+      "floor": 2,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        10,
+        0,
+        9
+       ],
+       "max": [
+        15,
+        5,
+        11
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "R",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        2,
+        2,
+        0
+       ],
+       "max": [
+        3,
+        3,
+        26
+       ]
+      },
+      "exactBox": true,
+      "spansFloors": true
+     },
+     {
+      "id": "T",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        4,
+        1,
+        1
+       ]
+      },
+      "exactBox": true,
+      "transform": {
+       "translate": [
+        10,
+        10,
+        10
+       ],
+       "rotateZDeg": 90
+      }
+     },
+     {
+      "id": "N",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        9.5,
+        12,
+        10.25
+       ],
+       "max": [
+        12,
+        13,
+        10.75
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "U",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        2,
+        2,
+        1
+       ]
+      },
+      "exactBox": true,
+      "transform": {
+       "translate": [
+        30,
+        10,
+        10
+       ],
+       "rotateZDeg": 45
+      }
+     },
+     {
+      "id": "V",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        29,
+        11.5,
+        10.25
+       ],
+       "max": [
+        31,
+        12,
+        10.75
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E1",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        50,
+        0,
+        10
+       ],
+       "max": [
+        55,
+        5,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E2",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        55,
+        0,
+        10
+       ],
+       "max": [
+        60,
+        5,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E3",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        55,
+        5,
+        10
+       ],
+       "max": [
+        60,
+        10,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E4",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        70,
+        0,
+        10
+       ],
+       "max": [
+        75,
+        5,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E5",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        74.984375,
+        0,
+        10
+       ],
+       "max": [
+        80,
+        5,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E6",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        90,
+        0,
+        10
+       ],
+       "max": [
+        95,
+        5,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E7",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        94.96875,
+        0,
+        10
+       ],
+       "max": [
+        100,
+        5,
+        12
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "M1",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        -1,
+        1,
+        1
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "M2",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        null,
+        0
+       ],
+       "max": [
+        1,
+        1,
+        1
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "M3",
+      "floor": 1,
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        1,
+        1,
+        1
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "M4",
+      "kind": "duct",
+      "floor": 1,
+      "exactBox": true
+     },
+     {
+      "id": "M5",
+      "kind": "duct",
+      "floor": 1,
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        1,
+        1,
+        1
+       ]
+      }
+     },
+     {
+      "id": "DUP",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        300,
+        0,
+        10
+       ],
+       "max": [
+        301,
+        1,
+        11
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "DUP",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        400,
+        0,
+        10
+       ],
+       "max": [
+        401,
+        1,
+        11
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "M7",
+      "kind": "duct",
+      "floor": 7,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        1,
+        1,
+        1
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "M8",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        500,
+        0,
+        10
+       ],
+       "max": [
+        501,
+        1,
+        10.0078125
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "kind": "duct",
+      "floor": 1,
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        1,
+        1,
+        1
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "M10",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        0
+       ],
+       "max": [
+        1,
+        0,
+        1
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "A",
+       "R"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 1.0,
+      "floors": [
+       "1"
+      ]
+     },
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "B",
+       "R"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 1.0,
+      "floors": [
+       "2"
+      ]
+     },
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "N",
+       "T"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 0.5,
+      "floors": [
+       "1"
+      ]
+     },
+     {
+      "type": "POTENTIAL_INTERSECTION",
+      "ruleId": "R-GEO-002",
+      "objects": [
+       "U",
+       "V"
+      ],
+      "severity": "review",
+      "verification": "UNVERIFIED_BROAD_PHASE",
+      "penetrationFt": 0.5,
+      "floors": [
+       "1"
+      ]
+     },
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "E6",
+       "E7"
+      ],
+      "severity": "minor",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 0.03125,
+      "floors": [
+       "1"
+      ]
+     }
+    ],
+    "observations": [
+     {
+      "type": "TOUCHING",
+      "ruleId": "R-GEO-004",
+      "objects": [
+       "E1",
+       "E2"
+      ],
+      "gapFt": 0
+     },
+     {
+      "type": "TOUCHING",
+      "ruleId": "R-GEO-004",
+      "objects": [
+       "E1",
+       "E3"
+      ],
+      "gapFt": 0
+     },
+     {
+      "type": "TOUCHING",
+      "ruleId": "R-GEO-004",
+      "objects": [
+       "E2",
+       "E3"
+      ],
+      "gapFt": 0
+     },
+     {
+      "type": "TOUCHING",
+      "ruleId": "R-GEO-004",
+      "objects": [
+       "E4",
+       "E5"
+      ],
+      "gapFt": 0
+     }
+    ],
+    "exempted": [],
+    "rejectedObjects": [
+     {
+      "id": "M1",
+      "code": "INVERTED_OR_DEGENERATE_BBOX",
+      "count": 1
+     },
+     {
+      "id": "M2",
+      "code": "INCOMPLETE_OR_NON_FINITE_BBOX",
+      "count": 1
+     },
+     {
+      "id": "M3",
+      "code": "UNKNOWN_KIND",
+      "count": 1
+     },
+     {
+      "id": "M4",
+      "code": "INCOMPLETE_OR_NON_FINITE_BBOX",
+      "count": 1
+     },
+     {
+      "id": "M5",
+      "code": "MISSING_EXACTNESS_FLAG",
+      "count": 1
+     },
+     {
+      "id": "DUP",
+      "code": "DUPLICATE_ID",
+      "count": 2
+     },
+     {
+      "id": "M7",
+      "code": "UNKNOWN_FLOOR",
+      "count": 1
+     },
+     {
+      "id": "M8",
+      "code": "EXTENT_BELOW_MINIMUM",
+      "count": 1
+     },
+     {
+      "id": null,
+      "code": "MISSING_ID",
+      "count": 1
+     },
+     {
+      "id": "M10",
+      "code": "INVERTED_OR_DEGENERATE_BBOX",
+      "count": 1
+     },
+     {
+      "id": "C",
+      "code": "ELEVATION_REF_MISMATCH",
+      "count": 1
+     }
+    ],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "A",
+      "B"
+     ],
+     [
+      "E4",
+      "E5",
+      "clash"
+     ],
+     [
+      "E1",
+      "E2",
+      "clash"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F9-units-inches",
+   "title": "F1 geometry plus tolerance-boundary pairs, supplied in inches: results must be in feet with feet-valued tolerances",
+   "claimsClashReady": true,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "in",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 156
+     },
+     "2": {
+      "zMin": 156,
+      "zMax": 312
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "D1",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        120
+       ],
+       "max": [
+        240,
+        24,
+        144
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "B1",
+      "kind": "beam",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        96,
+        -60,
+        138.0
+       ],
+       "max": [
+        108,
+        120,
+        156
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "D2",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        360,
+        0,
+        96
+       ],
+       "max": [
+        600,
+        24,
+        120
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "B2",
+      "kind": "beam",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        456,
+        -60,
+        132
+       ],
+       "max": [
+        468,
+        120,
+        156
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E4",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        840,
+        0,
+        120
+       ],
+       "max": [
+        900,
+        60,
+        144
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E5",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        899.8125,
+        0,
+        120
+       ],
+       "max": [
+        960,
+        60,
+        144
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E6",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        1080,
+        0,
+        120
+       ],
+       "max": [
+        1140,
+        60,
+        144
+       ]
+      },
+      "exactBox": true
+     },
+     {
+      "id": "E7",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        1139.625,
+        0,
+        120
+       ],
+       "max": [
+        1200,
+        60,
+        144
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "OK",
+    "clashes": [
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "B1",
+       "D1"
+      ],
+      "severity": "critical",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 0.5,
+      "floors": [
+       "1"
+      ],
+      "zones": [
+       "Z1"
+      ],
+      "resolution": {
+       "moveObjectId": "D1",
+       "axis": "z",
+       "direction": -1,
+       "distanceFt": 0.507813
+      }
+     },
+     {
+      "type": "HARD_INTERSECTION",
+      "ruleId": "R-GEO-001",
+      "objects": [
+       "E6",
+       "E7"
+      ],
+      "severity": "minor",
+      "verification": "VERIFIED_BOX_GEOMETRY",
+      "penetrationFt": 0.03125,
+      "floors": [
+       "1"
+      ]
+     }
+    ],
+    "observations": [
+     {
+      "type": "TOUCHING",
+      "ruleId": "R-GEO-004",
+      "objects": [
+       "E4",
+       "E5"
+      ],
+      "gapFt": 0
+     }
+    ],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": [
+     [
+      "D2",
+      "B2"
+     ],
+     [
+      "D1",
+      "B2"
+     ],
+     [
+      "D1",
+      "D2"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "F10a-bad-units",
+   "title": "unknown units rejected",
+   "claimsClashReady": false,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "furlongs",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "X",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        1,
+        1,
+        11
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "REJECTED_INPUT",
+    "envelopeErrorCodes": [
+     "UNKNOWN_UNITS"
+    ],
+    "clashes": [],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": []
+   }
+  },
+  {
+   "id": "F10b-left-handed",
+   "title": "left-handed coordinate system rejected",
+   "claimsClashReady": false,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "left",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "D"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "X",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        1,
+        1,
+        11
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "REJECTED_INPUT",
+    "envelopeErrorCodes": [
+     "BAD_COORDINATE_SYSTEM"
+    ],
+    "clashes": [],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": []
+   }
+  },
+  {
+   "id": "F10c-no-tolerance",
+   "title": "missing tolerance rejected, not defaulted",
+   "claimsClashReady": false,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "objects": [
+     {
+      "id": "X",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        1,
+        1,
+        11
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "REJECTED_INPUT",
+    "envelopeErrorCodes": [
+     "BAD_TOLERANCE"
+    ],
+    "clashes": [],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": []
+   }
+  },
+  {
+   "id": "F10d-tolerance-order",
+   "title": "touch > overlap rejected",
+   "claimsClashReady": false,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "floors": {
+     "1": {
+      "zMin": 0,
+      "zMax": 13
+     },
+     "2": {
+      "zMin": 13,
+      "zMax": 26
+     }
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.03125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "X",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        1,
+        1,
+        11
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "REJECTED_INPUT",
+    "envelopeErrorCodes": [
+     "TOLERANCE_ORDER"
+    ],
+    "clashes": [],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": []
+   }
+  },
+  {
+   "id": "F10e-no-floors",
+   "title": "missing floors rejected",
+   "claimsClashReady": false,
+   "input": {
+    "dataMode": "synthetic-fixture",
+    "units": "ft",
+    "coordinateSystem": {
+     "handedness": "right",
+     "axes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+     },
+     "datum": "SYNTHETIC-FIXTURE-DATUM"
+    },
+    "tolerance": {
+     "overlapFt": 0.015625,
+     "touchFt": 0.0078125,
+     "nearMissFt": 0.25,
+     "minExtentFt": 0.015625
+    },
+    "objects": [
+     {
+      "id": "X",
+      "kind": "duct",
+      "floor": 1,
+      "zone": "Z1",
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        1,
+        1,
+        11
+       ]
+      },
+      "exactBox": true
+     }
+    ]
+   },
+   "expected": {
+    "status": "REJECTED_INPUT",
+    "envelopeErrorCodes": [
+     "MISSING_FLOORS"
+    ],
+    "clashes": [],
+    "observations": [],
+    "exempted": [],
+    "rejectedObjects": [],
+    "rejectedConnections": [],
+    "warnings": [],
+    "absentPairs": []
+   }
+  }
+ ]
+}
