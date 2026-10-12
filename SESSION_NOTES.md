@@ -14,3 +14,30 @@
 5. ADR-021 Status: Accepted.
 
 Remaining: no `npm run typecheck/lint/build` (no node_modules); standalone tsc clean.
+
+# Phase 2 - HVAC-P2-ROUTING-SPOOL
+Branch labs/hvac-routing-spool-phase2 @ e5c777f (base: merged P1). Scope: `products/` only; `index.html` untouched. Nothing staged, committed or pushed.
+
+## Step zero - checkers on the FINAL tree (run after the last code edit; only this file changed after)
+Lab sha256 `d3f0caaf5f71b8f61285a4def88f8870e7e11e40cb2d66137d9d9db0d2e54047`.
+- `check.mjs` (P1, unchanged): `PASSED: 0 failure(s), 2 warning(s)`. Totals: labDefaults A07 11 x 62000 = 682000; scaledUp 16 x 62000 = 992000.
+- `check-spool.mjs` (new): `PASSED: 0 failure(s), 6 warning(s)`.
+  - labDefaults: 2568 spools, 17418.24 ft, 91643 lb, 1884 hangers, 282 fittings (DUCT_LBS 71442, PIPE_LF 4200).
+  - scaledUp: 4280 spools, 29030.4 ft, 152737 lb, 3140 hangers, 466 fittings (DUCT_LBS 119070, PIPE_LF 7000).
+- Standalone `tsc --strict` over the four TS files: clean.
+
+## Built (anchors)
+- `routing/route-generator.mjs:51` generateRoutes; calibration search :69. Pipe LF exact; duct lb within declared rounding.
+- `spool/spool-engine.mjs:27` buildSpools; :107 `attachSpoolsToEstimate` (display-only, proven non-mutating).
+- `spool/standards.json`, `routing/route.schema.ts`, `spool/spool.schema.ts`, `tools/check-spool.mjs`.
+- Tooling change: `lab-bridge.mjs:50` adds `estimateFull()` so the attach test sees the real estimate rows. `check.mjs` untouched; second checker added to keep the P1 gate stable.
+
+## Decisions / flags
+1. **Spool max lengths cite NO SMACNA table.** None found giving one; 5/10/20 ft are representative, unverified. SMACNA hanger, seismic spacing and ASME pipe weights were not retrievable: marked unverified; sheet weights are secondary; pipe hanger spacing is a Winnipeg spec, not MSS SP-69. Owner/Grok to supply tables.
+2. Duct has no LF driver: LF is derived from DUCT_LBS. Proposed (not edited in): DUCT_LF, FITTING_EA, HANGER_EA, SEISMIC_BRACE_EA. Fittings/hangers/braces are display-only, labelled `derived-not-in-estimate`. Owner decision needed.
+3. Conservation limits: spool weights equal the apportioned target by construction; the live proof is the qtyFor/estimate tie-out and non-mutation. Pipe weight is LF x lb/ft (no weight driver).
+4. Layout is schematic: calibrated lengths overrun the generated footprint up to ~35 ft (6 WARNs). Not usable for P3 clash until layout is constrained.
+5. Fixture shares remain SYNTHETIC; fittings exclude weight.
+
+## Next
+Owner: decide proposed drivers and supply standards tables. Then P3 (not started).

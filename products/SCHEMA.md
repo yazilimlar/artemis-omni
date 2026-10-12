@@ -18,3 +18,12 @@ Owner: infrastructure-construction / `hvac-mechanical-intelligence-bridge`. Life
 6. `spec.confidence` = `'unverified'` if any key field is; `spec.fieldConfidence` gives per-field `manufacturer | secondary | unverified`. Unverifiable values are omitted, not guessed.
 7. `DAMPER_FSD_EA` and `EXH_FAN_EA` are registered in `qtyFor()` (index.html:2113-2114), but `geometry()` does not supply `damperFsdEA`/`exhFanEA`, so their quantities are 0 and the rows are reported as WARN, not reconciled. `driverStatus:'proposed'` stays valid for future drivers not yet in `qtyFor()`.
 8. `costCode` = `${ACTS[activityId].code}-M`; `clashClass`/`spoolable` are new proposed vocabularies (the lab has neither concept).
+
+## Phase 2 - routing layer and spool engine
+- `routing/route.schema.ts`, `routing/route-generator.mjs` - parametric route model (risers per floor, trunk per floor/zone, branches off trunks). Generated from `geometry()` + `qtyFor()`, not parsed from the 3D scene. Runs reference a P1 row (`productId`, `ductType|pipeType`) and a `qtyFor` driver (`DUCT_LBS` -> lb target; `PIPE_LF` -> LF target); horizontal lengths are calibrated so the run hits that target (LF exact; lb within a declared per-segment rounding).
+- `spool/spool-engine.mjs`, `spool/spool.schema.ts`, `spool/standards.json` - `buildSpools()` and the named attach function `attachSpoolsToEstimate(E, result)` (display-only: adds `.spool` / `.spoolTable`, never touches qty or cost).
+- `tools/check-spool.mjs` - P2 gate (second check; `check.mjs` is unchanged). Run `check.mjs` then `check-spool.mjs`.
+- Spoolable P1 rows feed the engine; all other rows are returned in `exclusions` with a reason.
+- **Clash-ready fields (P3, no clash rules here):** `Segment.extents` (centerline + half section + insulation, feet), `clearanceClass`, `clashClass` (from the P1 row), `Fitting.hostSegmentId/stationCu`.
+- **Derived, not in estimate():** duct LF (lb target / representative lb per ft), fittings, hangers, seismic braces. Proposed drivers `DUCT_LF`, `FITTING_EA`, `HANGER_EA`, `SEISMIC_BRACE_EA` are listed in `qty-drivers.json`; any display must carry `derived-not-in-estimate`. Note A03 (hangers/bracing) is already priced on `DUCT_LBS` in the lab.
+- **Standards:** every value in `spool/standards.json` states its source and confidence. Only the galvanized sheet weights are sourced (secondary). No SMACNA table giving a maximum spool length was found, so max lengths are representative/unverified; hanger and seismic spacings and pipe weights are unverified or secondary as labelled.
