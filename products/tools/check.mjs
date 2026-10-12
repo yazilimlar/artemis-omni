@@ -27,6 +27,17 @@ const lab0 = loadLab();
 console.log(`  lab sha256 ${lab0.sha256.slice(0, 16)}…`);
 const acts = Object.fromEntries(lab0.acts.map(a => [a.id, a]));
 for (const [d, e] of Object.entries(drivers.HVAC.registered)) {
+  if (e.modelDerived) {
+    // P2.1: registered but produced by the spool engine, not by the lab. Assert that exact state.
+    const inQtyFor = new RegExp(`\\b${d}\\b`).test(lab0.qtyForSource), actUse = lab0.acts.filter(x => x.driver === d);
+    if (e.source !== "model-derived (spool/routing)") fail(`driver ${d}: modelDerived source must be 'model-derived (spool/routing)'`);
+    if (inQtyFor) fail(`driver ${d}: modelDerived but present in the lab's qtyFor() (second path)`);
+    if (actUse.length) fail(`driver ${d}: modelDerived but ACTS ${actUse.map(x => x.id).join(",")} consumes it`);
+    if (e.inQtyFor !== false || e.inEstimate !== false || e.status !== "derived-not-in-estimate") fail(`driver ${d}: modelDerived flags must be inQtyFor=false, inEstimate=false, status derived-not-in-estimate`);
+    if (!/No ACTS activity consumes/.test(e.note ?? "")) fail(`driver ${d}: modelDerived entry must carry the no-ACTS-consumer note`);
+    if (drivers.HVAC.proposed[d]) fail(`driver ${d}: both registered and proposed`);
+    continue;
+  }
   const a = acts[e.activityId];
   if (!a) { fail(`driver ${d}: unknown activity ${e.activityId}`); continue; }
   if (e.qtyForOnly) {

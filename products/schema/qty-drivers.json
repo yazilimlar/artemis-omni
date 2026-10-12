@@ -1,5 +1,5 @@
 {
-  "_doc": "Driver registry for the products module. 'registered' entries exist in the lab's qtyFor() at RC8.11 and are verified against the live lab file by tools/check.mjs (drift => failure). 'proposed' entries do not exist in the lab (P2: quantities produced by the spool engine that have no qtyFor() key yet; owner decision required before any index.html change). Entries flagged qtyForOnly are keys in qtyFor() that no ACTS row uses as its driver; entries flagged awaitingGeometry return 0 until geometry() supplies the g field.",
+  "_doc": "Driver registry for the products module. 'registered' entries exist in the lab's qtyFor() at RC8.11 and are verified against the live lab file by tools/check.mjs (drift => failure). 'proposed' entries do not exist in the lab (P2: quantities produced by the spool engine that have no qtyFor() key yet; owner decision required before any index.html change). Entries flagged qtyForOnly are keys in qtyFor() that no ACTS row uses as its driver; entries flagged awaitingGeometry return 0 until geometry() supplies the g field. Entries flagged modelDerived (P2.1) are registered quantities produced by the spool engine as E0 evidence records beside qtyFor(): not lab qtyFor() keys, no ACTS consumer; tools/check.mjs asserts exactly that state and tools/check-quantities.mjs proves each appears once.",
   "labSource": "public/standalone/hvac-mechanical-intelligence-bridge/index.html",
   "HVAC": {
     "registered": {
@@ -62,34 +62,57 @@
         "awaitingGeometry": true,
         "costAttachment": "none yet: A07 cost is equipEA x equipUnitCost and excludes exhaust fans; an estimate() allowance is a later phase",
         "note": "Registered in qtyFor() (index.html:2114). geometry() does not yet supply exhFanEA, so the quantity is 0 until a later phase provides it."
-      }
-    },
-    "proposed": {
+      },
       "DUCT_LF": {
         "activityId": "A04",
         "unit": "LF",
-        "source": "products/routing + products/spool",
-        "needs": "geometry() field + qtyFor key; today duct LF is DERIVED from DUCT_LBS via representative lb/ft and is display-only (status derived-not-in-estimate)"
+        "modelDerived": true,
+        "source": "model-derived (spool/routing)",
+        "qtySource": "products/quantities/model-quantities.mjs <- buildSpools().perRun",
+        "qtoLevel": "L2",
+        "inQtyFor": false,
+        "inEstimate": false,
+        "status": "derived-not-in-estimate",
+        "note": "No ACTS activity consumes this driver and it is not a lab qtyFor() key, so it never reaches estimate(); the quantity is an E0 evidence record derived from the spool engine (index.html untouched)."
       },
       "FITTING_EA": {
-        "activityId": "A04",
+        "activityId": "A04+A05",
         "unit": "EA",
-        "source": "products/spool",
-        "needs": "qtyFor key + estimate() allowance (A04 duct fittings / A05 pipe fittings); today a route-geometry count, display-only"
+        "modelDerived": true,
+        "source": "model-derived (spool/routing)",
+        "qtySource": "products/quantities/model-quantities.mjs <- buildSpools().perRun",
+        "qtoLevel": "L2",
+        "inQtyFor": false,
+        "inEstimate": false,
+        "status": "derived-not-in-estimate",
+        "note": "No ACTS activity consumes this driver and it is not a lab qtyFor() key, so it never reaches estimate(); the quantity is an E0 evidence record derived from the spool engine (index.html untouched)."
       },
       "HANGER_EA": {
         "activityId": "A03",
         "unit": "EA",
-        "source": "products/spool",
-        "needs": "A03 is priced on DUCT_LBS; a count driver would need an estimate() change; today a bottom-up cross-check, display-only"
+        "modelDerived": true,
+        "source": "model-derived (spool/routing)",
+        "qtySource": "products/quantities/model-quantities.mjs <- buildSpools().perRun",
+        "qtoLevel": "L2",
+        "inQtyFor": false,
+        "inEstimate": false,
+        "status": "derived-not-in-estimate",
+        "note": "No ACTS activity consumes this driver and it is not a lab qtyFor() key, so it never reaches estimate(); the quantity is an E0 evidence record derived from the spool engine (index.html untouched)."
       },
       "SEISMIC_BRACE_EA": {
         "activityId": "A03",
         "unit": "EA",
-        "source": "products/spool",
-        "needs": "same as HANGER_EA; hazard level not selected, display-only"
+        "modelDerived": true,
+        "source": "model-derived (spool/routing)",
+        "qtySource": "products/quantities/model-quantities.mjs <- buildSpools().perRun",
+        "qtoLevel": "L2",
+        "inQtyFor": false,
+        "inEstimate": false,
+        "status": "derived-not-in-estimate",
+        "note": "No ACTS activity consumes this driver and it is not a lab qtyFor() key, so it never reaches estimate(); the quantity is an E0 evidence record derived from the spool engine (index.html untouched)."
       }
     },
+    "proposed": {},
     "leftAlone": {
       "TAKEOFF_EA": "qtyFor() key not used as any ACTS driver; estimate() reads g.takeoffEA directly inside A04. Not used by this module."
     }

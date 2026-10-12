@@ -107,3 +107,10 @@ Nothing staged or committed.
 
 ## E0 doc notes (Grok)
 Comments only in `evidence.mjs` and `evidence.schema.ts`: complianceClaim reading, 12-hex hash prefixes, extension path. Rerun: `check-evidence.mjs` PASSED 0/0, `tsc --strict` clean, lab sha256 `d3f0caaf5f71b8f6` unchanged.
+
+# P2.1 - driver registration (labs/p21-driver-registration)
+Integrator ruling A: DUCT_LF, FITTING_EA, HANGER_EA, SEISMIC_BRACE_EA are under `registered` (`modelDerived: true`, source "model-derived (spool/routing)", no-ACTS-consumer note). Not qtyFor() keys; `index.html` untouched; lab sha256 `d3f0caaf5f71b8f6` unchanged. Values = sums over spool `perRun`; E0 envelopes, L2.
+Tooling change (driven by this phase): `check.mjs` and `check-spool.mjs` now assert the modelDerived state (not skipped or loosened).
+`check-quantities.mjs` 0/0: exactly once across all surfaces; 7 injected faults caught.
+Flag: envelope kind `spool` used; a `quantity` kind via CONTRACT_VERSION bump is a Grok follow-up.
+Spacings and spool lengths remain representative, unverified.
