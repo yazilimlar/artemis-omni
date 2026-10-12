@@ -77,3 +77,24 @@ P3b: constrained layout and representative model validation, then adapter from r
 1. Mutation-testing claim softened above to "boundary and contract tests cover the listed failure modes"; no mutation suite built.
 2. Hanger/brace envelope exclusion from clash extents now stated in the `clash-engine.mjs` header and the `SCHEMA.md` Phase-3 section. Doc/comment only; engine anchors shifted +2 lines (updated).
 Rerun: `check-clash.mjs` `PASSED: 0 failure(s), 0 warning(s)` (unchanged); lab sha256 d3f0caaf5f71b8f6 unchanged.
+
+# MEP-SCOPING (Prompt C) - plan only
+Branch labs/mep-scoping-prompt-c. Wrote `products/MEP_SCOPING.md` (under 800 words) and this note; no code, schema, checker or lab change. Nothing staged, committed or pushed. Checkers not rerun (nothing executable changed).
+
+Covers: shared evidence envelope (observed/declared/inferred/verified/blocked/stale/unknown, approval separate from state); plumbing and fire activities A16-A24 appended without renumbering; electrical recommended as deferred interface layer; schema extensions; new clash pairs under L0 limits; P3b design (constrain layout first, report variance vs qtyFor, per-model clashReady); standards record fields; phase order.
+
+Flags: activity codes, drivers and factors are unverified placeholders. No standard editions are asserted; the owner/EoR must pin them. Phase budgets are qualitative, not measured. Five owner decisions are listed at the end of the scoping file.
+
+## MEP-SCOPING revision (GPT review corrections)
+`products/MEP_SCOPING.md` revised, plan only; no code touched, nothing staged or committed.
+- Evidence contract v2: logical/revision/content identity, five status dimensions, reproducible verification, `complianceClaim: NONE` default.
+- Code profiles NYC_2022_REFERENCE / IPC_2024_MODEL / UNSPECIFIED; four-level quantity proxies; A16-A24 completed (separate fuel-gas basis).
+- Electrical: spatial reservations only. Fire rule families separated from AABB.
+- Sequence E0 → P2.1 → P4a → P3b → P4b → P5 → P6; E0 and P2.1 separate PRs.
+Flags: NYC code names and §905.3.1 are owner-supplied, not verified by me. Cost codes and drivers remain placeholders.
+
+## MEP-SCOPING owner decisions (2026-10-12)
+Appended "Owner decisions" to `products/MEP_SCOPING.md` (five items: NYC_2022_REFERENCE primary, 3-trade release, standpipe in / pump conditional, contract v2 approved, no EoR yet). Docs only; nothing staged or committed. Next: E0, a separate PR.
+
+## MEP-SCOPING Grok clarifications
+Six edits to `products/MEP_SCOPING.md`: clash logicalId from object logicalIds + type; quantity promotion gate; plumbing/fire codes moved to 055x-059x/065x-068x with the suffix rule (lab `costCode()` appends the letter) and a deferred-activities list; E0 renamed with acceptance criterion; E0 hard prerequisite of P2.1; electrical reservations permanently clashReady=false. Removed the answered "Decisions needed" list. Docs only; nothing staged.
