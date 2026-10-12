@@ -118,3 +118,11 @@ Spacings and spool lengths remain representative, unverified.
 ## P2.1 doc notes (Grok) - OPEN ITEM
 Before any non-spool consumer of the quantity records (P4a commissioning, P5 sizing, or an estimate attachment), bump CONTRACT_VERSION and add kind "quantity" to the E0 contract. Until then, every consumer must key on logicalId prefix QTY- rather than kind.
 Comments only: five-surface inventory in `check-quantities.mjs`, L2/L3 boundary in `model-quantities.mjs`. Suite rerun unchanged.
+
+# P4a - commissioning slice (labs/p4a-commissioning-slice)
+Layout: `products/commissioning/{commissioning.mjs, commissioning.schema.ts, fixtures/matrix.json}`, `tools/check-commissioning.mjs`. Scope: HVAC-EXFAN-001 only, no dampers.
+Ledger: append-only, hash-chained events (content-derived EVT- IDs, fixture timestamps, roles), since E0 hashes payload only.
+Fixtures: 22 evaluator cases (boundaries, INCOMPLETE, malformed), 3 bad definitions, 7 valid and 21 negative lifecycles; each negative yields exactly its code.
+Invariants covered: verify-before-accept, exact-revision pin, re-test keeps failure, stale invalidation, roles, legal transitions, ledger integrity.
+Results: check-commissioning 0f/0w; all prior checkers at baseline; tsc clean; lab `d3f0caaf5f71b8f6` unchanged.
+Criteria (90-110 % airflow, 10 min) are representative, unsourced.
