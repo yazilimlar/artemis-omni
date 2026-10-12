@@ -104,3 +104,6 @@ Layout: `products/evidence/{evidence.mjs, evidence.schema.ts, fixtures/envelopes
 - `check-evidence.mjs`: `PASSED: 0 failure(s), 0 warning(s)`; 5 valid, 13 invalid, 2 invalid chains. P1-P3 checkers PASS; `tsc --strict` clean.
 - My choices: `CLX-` prefix, `REV-` derivation, unknown fields rejected, any non-NONE complianceClaim rejected.
 Nothing staged or committed.
+
+## E0 doc notes (Grok)
+Comments only in `evidence.mjs` and `evidence.schema.ts`: complianceClaim reading, 12-hex hash prefixes, extension path. Rerun: `check-evidence.mjs` PASSED 0/0, `tsc --strict` clean, lab sha256 `d3f0caaf5f71b8f6` unchanged.

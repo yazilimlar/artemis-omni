@@ -45,7 +45,10 @@ export interface EvidenceEnvelope<P = Record<string, unknown>> {
   workflow: Workflow;
   approval: Approval;
   approvedRevisionId: string | null; // pinned to this revisionId iff approval === "accepted"
-  /** Lab default and only permitted value: verification or a signed rule never certifies a project. */
+  /**
+   * Lab default and only permitted value: verification or a signed rule never certifies a project.
+   * E0 admits only NONE. Future non-NONE claims require an EoR-backed basis field and a contract revision; verification or a signed rule alone remains insufficient.
+   */
   complianceClaim: "NONE";
   ruleBindings: RuleBinding[];
   /** kind === "clash": logicalId = CLX- + sha256(sorted object logicalIds, clashType), never geometry. */

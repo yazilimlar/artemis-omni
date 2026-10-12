@@ -2,6 +2,8 @@
 // Spec: products/MEP_SCOPING.md section 1-2. Self-contained: imports only node:crypto; no I/O, clock or RNG.
 // contentHash covers `payload` ONLY (never timestamps or status), so it is reproducible.
 // Nothing here is applied to P1-P3 outputs yet (P2.1 is the first consumer); no promotion-gate enforcement.
+// HASH PREFIXES: CLX-/REV- use 12-hex (48-bit) prefixes of SHA-256; collision-safe for lab-scale sets; full hash remains available via contentHash.
+// EXTENSION PATH: extension fields require a contract-version bump (CONTRACT_VERSION) and an explicit addition to REQUIRED_FIELDS / the TypeScript interface; unknown keys remain a hard fail.
 import crypto from "node:crypto";
 
 export const CONTRACT_VERSION = "evidence-v2-e0";
@@ -98,6 +100,7 @@ export function validateEnvelope(e) {
   else if (e.approvedRevisionId !== null) err("E_APPROVAL_PIN", "approvedRevisionId", "approvedRevisionId is only set when approval is 'accepted'");
 
   // compliance: lab default NONE regardless of verification or signed rules
+  // E0 admits only NONE. Future non-NONE claims require an EoR-backed basis field and a contract revision; verification or a signed rule alone remains insufficient.
   if (e.complianceClaim !== COMPLIANCE_DEFAULT) err("E_COMPLIANCE", "complianceClaim", "complianceClaim must be NONE: neither verification nor a signed rule certifies a project in this lab");
 
   // code profile binding
