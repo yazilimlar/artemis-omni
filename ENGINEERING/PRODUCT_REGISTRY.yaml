@@ -523,6 +523,25 @@ products:
       - external_iframe_content_and_hosting_require_adr
     next_gate: sala_rotonda_adr
 
+  - id: hvac-mechanical-intelligence-bridge
+    # owner: flagship HVAC lab per 2026-10-11 labs taxonomy; RC8.11 canonical
+    name: HVAC Mechanical Intelligence Bridge
+    division: infrastructure-construction
+    product_family: UNREVIEWED
+    lifecycle: active_lab
+    maturity: public_lab
+    visibility: public
+    data_mode: sample
+    canonical_route: /labs/hvac-mechanical-intelligence-bridge
+    canonical_branch: main
+    status_evidence: >-
+      RC8.11 standalone parametric HVAC estimating and project-controls cockpit
+      (891840 bytes): 15-activity estimate, QTO, NYC union labor engine, EVM,
+      claims, cashflow, Monte Carlo risk, P49 exploded System Lab. Representative
+      sample data; verify against submittals - not sealed design. PR #180
+      reverted the duplicate RC8.10 standalone route; RC8.11 stands alone.
+    next_gate: mep-expansion-p1-products
+
 registry_rules:
   - A branch status must never be used as the sole evidence for product retirement.
   - A public route must declare maturity, visibility, and data mode.
