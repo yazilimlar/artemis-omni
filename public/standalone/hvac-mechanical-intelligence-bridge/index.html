@@ -10750,7 +10750,8 @@ const PSY=(()=>{
 <script>
 /* P4a-V commissioning panel: READ-ONLY renderer. All values come from the generated snapshot in #cxpData
    (products/tools/gen-commissioning-panel.mjs, produced by running products/commissioning over its fixtures).
-   No evaluator or ledger logic lives here; it does not touch quantities, costs, EVM or claims; it writes only into #cxpRoot. */
+   No evaluator or ledger logic lives here; it does not touch quantities, costs, EVM or claims; it writes only into #cxpRoot.
+   This panel renders a pre-validated snapshot. Stale detection and anchor checks are performed by check-commissioning-panel.mjs / gen-commissioning-panel.mjs at generation time, not by the page. A stale snapshot fails the checker; the page itself does not re-validate. */
 (function(){
   'use strict';
   try{

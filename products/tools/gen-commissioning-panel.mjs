@@ -5,6 +5,7 @@
 // are fresh. With --write it regenerates both: the JSON file, and ONLY the text between the CXP:DATA markers in the
 // lab page (the only mechanism by which the page's data changes). The snapshot carries the source fixture content hash
 // so a stale snapshot is detectable. Deterministic: no clock, no RNG.
+// This panel renders a pre-validated snapshot. Stale detection and anchor checks are performed by check-commissioning-panel.mjs / gen-commissioning-panel.mjs at generation time, not by the page. A stale snapshot fails the checker; the page itself does not re-validate.
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { loadLab, LAB_PATH } from "./lab-bridge.mjs";
@@ -62,6 +63,8 @@ export function embeddedRegion(html) {
   if (a < 0 || b < a) return null;
   return { start: a + DATA_BEGIN.length, end: b };
 }
+/** The page with the four marked CXP regions removed (must equal the pre-panel lab byte for byte). */
+export const stripPanel = h => ["TAB", "PAGE", "DATA", "SCRIPT"].reduce((t, r) => t.replace(new RegExp(`^<!-- CXP:${r}:BEGIN -->\\n[\\s\\S]*?^<!-- CXP:${r}:END -->\\n`, "gm"), ""), h);
 export const dataBlock = snap => `\n<script type="application/json" id="cxpData">${embedText(snap)}</script>\n`;
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
