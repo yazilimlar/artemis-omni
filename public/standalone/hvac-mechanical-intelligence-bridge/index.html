@@ -1005,7 +1005,7 @@ html.dev-mode .publicOnly{display:none!important}
     <section class="narSection" id="narLaunch">
       <div class="narSectionHead"><div class="narEyebrow">Open the live systems</div><h2>Launch bay</h2><p>Move directly from the narrative into the operational proof point. The underlying RC8 actuals/claims, QTO, EVM, site context, and cashflow engines remain the source of every live number.</p></div>
       <div class="narLaunchBay">
-        <button class="narLaunch" data-narrative-launch="gis"><b>Midtown site context</b><span>OpenStreetMap, building anchor, zone assets, and schematic fallback.</span><em>Launch site context →</em></button>
+        <button class="narLaunch" data-narrative-launch="gis"><b>Midtown site context</b><span>Esri satellite and street basemaps, building anchor, zone assets, and schematic fallback.</span><em>Launch site context →</em></button>
         <button class="narLaunch" data-narrative-launch="schedule"><b>Schedule &amp; cashflow</b><span>Activity register, Gantt storytelling, zone fronts, billing, retainage, and funding need.</span><em>Launch sequence →</em></button>
         <button class="narLaunch" data-narrative-launch="actuals-controlled"><b>Actuals &amp; Claims story</b><span>Generate deterministic field reports, cost records, claims, approvals, and payments.</span><em>Load sample controls →</em></button>
         <button class="narLaunch" data-narrative-launch="standards"><b>ASHRAE / SMACNA / IMC Standards Lens</b><span>Representative mechanical standard families translated into model, QTO, sequence, and controls.</span><em>Launch standards →</em></button>
@@ -1035,7 +1035,7 @@ html.dev-mode .publicOnly{display:none!important}
     <option value="inverted">Inverted</option>
   </select>
   <button class="hbtn" id="btnRecalc">⟳ Recalculate</button>
-  <button class="hbtn" id="btnSat" title="Show Midtown Manhattan OpenStreetMap context overlay">🗺 Map</button>
+  <button class="hbtn" id="btnSat" title="Show Midtown Manhattan basemap context overlay">🗺 Map</button>
   <button class="hbtn" id="btnTutorial" title="Open guided tutorial">? Tutorial</button>
   <button class="hbtn" id="btnPresent" title="Presentation mode: clean model + guide">▣ Present</button>
   <button class="hbtn" id="btnNarrative" title="Open the dual story narrative page">Story / Cockpit</button>
@@ -1693,20 +1693,22 @@ html.dev-mode .publicOnly{display:none!important}
       <div class="geoHero">
         <div class="geoStory">
           <h3>Midtown Manhattan Demonstration Site</h3>
-          <p>Office tower site anchor at 40.7549, &minus;73.9840, near Bryant Park. OpenStreetMap provides recognizable, token-free street and landmark context while the Artemis Construction model remains the independent source for demonstration geometry, quantities, controls, schedule, and cashflow.</p>
+          <p>Office tower site anchor at 40.7549, &minus;73.9840, near Bryant Park. Esri World Imagery provides recognizable, token-free satellite context (Esri World Street Map is available as the streets layer) while the Artemis Construction model remains the independent source for demonstration geometry, quantities, controls, schedule, and cashflow.</p>
         </div>
         <div class="geoFacts" id="geoFacts">
           <div class="geoFact"><b>Midtown Manhattan</b><span>Site context</span></div>
           <div class="geoFact"><b>40.7549, −73.9840</b><span>Site anchor</span></div>
           <div class="geoFact"><b>120,000 SF</b><span>Conditioned area</span></div>
-          <div class="geoFact"><b>OpenStreetMap</b><span>Recommended basemap</span></div>
+          <div class="geoFact"><b>Esri World Imagery</b><span>Default basemap</span></div>
         </div>
       </div>
       <div class="satGrid">
         <div>
           <div class="toolrow">
             <select id="satProvider">
-              <option value="osm" selected>OpenStreetMap Streets — recommended</option>
+              <option value="esriSat" selected>Esri World Imagery (satellite) — default</option>
+              <option value="esriStreets">Esri World Street Map — streets</option>
+              <option value="osm">OpenStreetMap Streets — optional, may be blocked</option>
               <option value="openTopo">OpenTopoMap — alternate context</option>
               <option value="none">No external tiles / schematic fallback</option>
               <option value="mapboxSat">Mapbox Satellite Streets — token required</option>
@@ -1723,7 +1725,7 @@ html.dev-mode .publicOnly{display:none!important}
           <div class="geoStatus" id="geoSiteStatus"><b>Evaluating site context...</b></div>
           <div class="mapBox">
             <div id="satMap"></div>
-            <div id="satFallbackMessage">The map layer is optional. Use OpenStreetMap, enter a separate provider/token, or use the schematic site fallback.</div>
+            <div id="satFallbackMessage">The map layer is optional. Use the Esri layers, enter a separate provider/token, or use the schematic site fallback.</div>
             <div class="geoLegend"><span><i class="line"></i>Demo site context</span><span><i style="background:#178655"></i>Site anchor</span><span><i style="background:#0f4c81"></i>VAV zone</span><span><i style="background:#087f8c"></i>Rooftop equipment</span><span><i style="background:#b42318"></i>Riser shaft</span></div>
           </div>
         </div>
@@ -1732,7 +1734,7 @@ html.dev-mode .publicOnly{display:none!important}
           <div class="printNote"><b>Safe architecture:</b> the basemap is a geospatial presentation layer, not a model dependency. The 3D model, QTO, cost codes, field log, schedule, cashflow, and project controls continue to run if Leaflet, tiles, or internet access are unavailable.</div>
           <table class="data"><tr><th>Layer</th><th>Purpose</th><th>Regression guard</th></tr>
             <tr><td>3D model</td><td>Geometry/QTO/selection</td><td>Never depends on satellite tiles</td></tr>
-            <tr><td>OpenStreetMap</td><td>Midtown streets and landmarks</td><td>Default Leaflet layer with attribution</td></tr>
+            <tr><td>Esri World Imagery</td><td>Midtown satellite context</td><td>Default Leaflet layer with attribution; tile errors fall back to the schematic</td></tr>
             <tr><td>Site anchor</td><td>Building footprint and zone context</td><td>Fallback schematic if map fails</td></tr>
             <tr><td>GeoJSON export</td><td>Site point and demonstration asset points</td><td>Separate, labeled contextual export</td></tr>
           </table>
@@ -2521,6 +2523,7 @@ function setSimDay(d,skipRender){
   SIM.day=clamp(Math.round(d),1,PLAN.duration);
   const s=$('simDaySlider');if(s){s.max=PLAN.duration;s.value=SIM.day;}
   if(!skipRender){renderTransport();update3DState();renderInspector();if(typeof renderSOV==='function')renderSOV();if(typeof renderExecutive==='function')renderExecutive();if(typeof renderSequenceStory==='function')renderSequenceStory();if(typeof window.renderActualsStudio==='function')window.renderActualsStudio();if(typeof window.renderControlSystem==='function')window.renderControlSystem();}
+  refreshDayLines();
 }
 function simStep(dir){const n=SIM.day+(dir||SIM.dir);if(n<1||n>PLAN.duration){simPause();return;}setSimDay(n);}
 function simPlay(){simPause();SIM.timer=setInterval(()=>simStep(SIM.dir),Math.max(40,520/SIM.speed));$('trPlay').textContent="❚❚";}
@@ -3239,6 +3242,29 @@ function showChartFallback(cv,cfg,reason){
   }).join('');
   fb.innerHTML=`<b>Chart fallback</b><span>${reason||'Chart.js is unavailable. The underlying tables and calculations remain active.'}</span>${rows?`<table>${rows}</table>`:''}`;
 }
+/* Playback-day marker for the projection charts (render-only). Reads SIM.day, the same state the Gantt day line uses, at draw time and
+   never touches data or scales; setSimDay() calls refreshDayLines() so the line follows the timeline with no stale position. */
+function dayLinePlugin(days){
+  return {id:'simDayLine',afterDatasetsDraw(chart){
+    try{
+      if(!days||!days.length||typeof SIM==='undefined'||!SIM.day)return;
+      const x=chart.scales&&chart.scales.x,y=chart.scales&&chart.scales.y; if(!x||!y)return;
+      const d=Math.min(Math.max(SIM.day,days[0]),days[days.length-1]);
+      let i=0;while(i<days.length-2&&days[i+1]<d)i++;
+      const f=days.length>1?i+(d-days[i])/((days[i+1]-days[i])||1):0;
+      const px=x.getPixelForValue(f),ctx=chart.ctx,col=chartTheme().red;
+      ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(px,y.top);ctx.lineTo(px,y.bottom);ctx.stroke();
+      ctx.font='800 9px ui-monospace,monospace';ctx.textBaseline='top';
+      const lbl='Day '+SIM.day,w=ctx.measureText(lbl).width;
+      ctx.fillText(lbl,px+w+6>chart.chartArea.right?px-w-4:px+4,y.top+2);
+      ctx.restore();
+    }catch(e){}
+  }};
+}
+function refreshDayLines(){
+  ['chCash','chSCurve','chFronts'].forEach(id=>{const c=CHARTS[id];if(c)try{c.draw();}catch(e){}});
+}
 function makeChart(id,cfg){
   const cv=$(id);if(!cv)return;
   const parent=cv.parentElement,fb=parent&&Array.from(parent.children).find(x=>x.classList&&x.classList.contains('chartFallback'));
@@ -3455,6 +3481,7 @@ function renderSched(){
       {label:'Cash received',data:idx.map(i=>at(cash.cumIn,i)),borderColor:th.green,backgroundColor:'transparent',pointRadius:0,borderWidth:2},
       {label:'Retainage held',data:idx.map(i=>at(cash.retainedCum,i)),borderColor:'#7c3aed',borderDash:[3,3],backgroundColor:'transparent',pointRadius:0,borderWidth:1.6},
       {label:'Net cash',data:idx.map(i=>at(cash.net,i)),borderColor:th.blue,backgroundColor:th.blue+'22',fill:true,pointRadius:0,borderWidth:2.5}]},
+    plugins:[dayLinePlugin(idx)],
     options:{plugins:{title:{display:true,text:'Cashflow & cost curves ('+per+'ly · working-day axis)',color:th.muted,font:{size:11}}}}});
   // time-chainage fronts
   const D=PLAN.duration,fs=Math.max(1,Math.ceil(D/140)),fl=[];
@@ -3465,6 +3492,7 @@ function renderSched(){
   makeChart('chFronts',{type:'line',
     data:{labels:fl,datasets:PLAN.chain.map((id,j)=>({label:E.byId[id].name.split("/")[0].trim(),
       data:series[j],borderColor:palette[j%palette.length],backgroundColor:'transparent',pointRadius:0,borderWidth:2}))},
+    plugins:[dayLinePlugin(fl)],
     options:{plugins:{title:{display:true,text:'Time–zone: production fronts (conditioned SF vs day)',color:th.muted,font:{size:11}}},
       scales:{y:{min:0,max:Math.ceil(G.length/100)*100}}}});
   // S-curves: cost & revenue
@@ -3476,6 +3504,7 @@ function renderSched(){
       {label:'Cost (AC)',data:sIdx.map(i=>ev.AC[i-1]),borderColor:th.red,backgroundColor:'transparent',pointRadius:0,borderWidth:2.2},
       {label:'Planned revenue',data:sIdx.map(i=>PLAN.planRev[i-1]),borderColor:th.gold,borderDash:[2,3],backgroundColor:'transparent',pointRadius:0,borderWidth:1.8},
       {label:'Earned revenue',data:sIdx.map(i=>ev.EV[i-1]/Math.max(1,ev.BAC)*E.revenue),borderColor:th.blue,backgroundColor:'transparent',pointRadius:0,borderWidth:2.2}]},
+    plugins:[dayLinePlugin(sIdx)],
     options:{plugins:{title:{display:true,text:'S-curves — cost & revenue vs working day',color:th.muted,font:{size:11}}}}});
   // sequence table
   const rows=ACTS.map(a=>{
@@ -4223,9 +4252,11 @@ function siteAssetPoints(){
 }
 function mapboxTileUrl(token){return 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token='+encodeURIComponent(token||'');}
 function satTileConfig(){
-  const provider=($('satProvider')||{}).value||'osm';
+  const provider=($('satProvider')||{}).value||'esriSat';
   const token=($('satToken')||{}).value||'';
   const custom=($('satCustomUrl')||{}).value||'';
+  if(provider==='esriSat')return {provider,label:'Esri World Imagery',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',maxZoom:19,attr:'Imagery &copy; Esri'};
+  if(provider==='esriStreets')return {provider,label:'Esri World Street Map',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',maxZoom:19,attr:'Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, OpenStreetMap contributors'};
   if(provider==='osm')return {provider,label:'OpenStreetMap Streets',url:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',maxZoom:19,attr:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'};
   if(provider==='openTopo')return {provider,label:'OpenTopoMap',url:'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',maxZoom:17,attr:'Map data &copy; OpenStreetMap contributors, map style &copy; OpenTopoMap'};
   if(provider==='mapboxSat'&&token)return {provider,label:'Mapbox Satellite Streets',url:mapboxTileUrl(token),maxZoom:22,attr:'&copy; Mapbox &copy; OpenStreetMap'};
@@ -4233,7 +4264,7 @@ function satTileConfig(){
   return null;
 }
 function syncSatProviderFields(){
-  const provider=($('satProvider')||{}).value||'osm',token=$('satToken'),custom=$('satCustomUrl');
+  const provider=($('satProvider')||{}).value||'esriSat',token=$('satToken'),custom=$('satCustomUrl');
   if(token){token.disabled=provider!=='mapboxSat';token.style.display=provider==='mapboxSat'?'':'none';}
   if(custom){custom.disabled=provider!=='customRaster';custom.style.display=provider==='customRaster'?'':'none';}
 }
@@ -4247,10 +4278,10 @@ function renderGeoSiteStatus(){
     [`${fmt((G&&G.length)||120000,0)} SF`,'Conditioned area'],[cfg?cfg.label:'Offline','Active basemap']
   ].map(x=>`<div class="geoFact"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
 }
-function drawSatFallback(containerId){
+function drawSatFallback(containerId,note){
   const c=$(containerId); if(!c)return;
   const patternId='satGrid_'+containerId.replace(/[^a-z0-9]/gi,'');
-  c.innerHTML='<div class="satFallbackCard"><div><div style="font-size:15px;margin-bottom:4px">Midtown Manhattan schematic fallback</div><div style="font-size:11px;color:#bfdbfe;margin-bottom:8px">Office tower site anchor · 40.7549, −73.9840 · near Bryant Park</div><svg viewBox="0 0 420 260" style="width:100%;max-width:420px;height:220px;border:1px solid rgba(255,255,255,.25);border-radius:12px;background:linear-gradient(135deg,#17233a,#314b6e)"><defs><pattern id="'+patternId+'" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/></pattern></defs><rect width="420" height="260" fill="url(#'+patternId+')"/><rect x="120" y="60" width="180" height="130" rx="6" fill="rgba(47,143,224,.22)" stroke="rgba(124,192,245,.8)"/><line x1="210" y1="60" x2="210" y2="190" stroke="rgba(124,192,245,.5)" stroke-dasharray="5 4"/><line x1="120" y1="125" x2="300" y2="125" stroke="rgba(124,192,245,.5)" stroke-dasharray="5 4"/><text x="210" y="118" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-1</text><text x="258" y="118" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-2</text><text x="210" y="168" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-3</text><text x="258" y="168" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-4</text><rect x="150" y="34" width="120" height="18" rx="4" fill="rgba(224,182,90,.25)" stroke="rgba(224,182,90,.8)"/><text x="210" y="47" text-anchor="middle" fill="#e0b65a" font-size="11">ROOFTOP EQUIPMENT</text><circle cx="210" cy="150" r="7" fill="#22c55e"/><text x="210" y="238" fill="#dbeafe" font-size="12">Site anchor · context only</text></svg><div style="font-size:11px;margin-top:8px;color:#bfdbfe">External map tiles are unavailable or disabled. Core model and controls remain active.</div></div></div>';
+  c.innerHTML='<div class="satFallbackCard"><div><div style="font-size:15px;margin-bottom:4px">Midtown Manhattan schematic fallback</div>'+(note?'<div class="satBasemapNote" style="font-size:11px;color:#fde68a;margin-bottom:8px">'+note+'</div>':'')+'<div style="font-size:11px;color:#bfdbfe;margin-bottom:8px">Office tower site anchor · 40.7549, −73.9840 · near Bryant Park</div><svg viewBox="0 0 420 260" style="width:100%;max-width:420px;height:220px;border:1px solid rgba(255,255,255,.25);border-radius:12px;background:linear-gradient(135deg,#17233a,#314b6e)"><defs><pattern id="'+patternId+'" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/></pattern></defs><rect width="420" height="260" fill="url(#'+patternId+')"/><rect x="120" y="60" width="180" height="130" rx="6" fill="rgba(47,143,224,.22)" stroke="rgba(124,192,245,.8)"/><line x1="210" y1="60" x2="210" y2="190" stroke="rgba(124,192,245,.5)" stroke-dasharray="5 4"/><line x1="120" y1="125" x2="300" y2="125" stroke="rgba(124,192,245,.5)" stroke-dasharray="5 4"/><text x="210" y="118" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-1</text><text x="258" y="118" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-2</text><text x="210" y="168" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-3</text><text x="258" y="168" text-anchor="middle" fill="#a7f3d0" font-size="12">Z-4</text><rect x="150" y="34" width="120" height="18" rx="4" fill="rgba(224,182,90,.25)" stroke="rgba(224,182,90,.8)"/><text x="210" y="47" text-anchor="middle" fill="#e0b65a" font-size="11">ROOFTOP EQUIPMENT</text><circle cx="210" cy="150" r="7" fill="#22c55e"/><text x="210" y="238" fill="#dbeafe" font-size="12">Site anchor · context only</text></svg><div style="font-size:11px;margin-top:8px;color:#bfdbfe">External map tiles are unavailable or disabled. Core model and controls remain active.</div></div></div>';
 }
 function initLeafletMap(containerId, mini=false){
   const el=$(containerId); if(!el)return null;
@@ -4259,7 +4290,18 @@ function initLeafletMap(containerId, mini=false){
   el.innerHTML='';
   const a=siteAnchor(),assets=siteAssetPoints();
   const map=L.map(el,{zoomControl:!mini,attributionControl:!mini,scrollWheelZoom:!mini}).setView(a.center,16);
-  L.tileLayer(cfg.url,{maxZoom:cfg.maxZoom,attribution:cfg.attr}).addTo(map);
+  const tl=L.tileLayer(cfg.url,{maxZoom:cfg.maxZoom,attribution:cfg.attr}).addTo(map);
+  /* basemap is a presentation layer: tiles are never blocked; only when the layer is failing (several tileerror, no tileload) show the schematic with a note */
+  let tOk=0,tErr=0,degraded=false;
+  tl.on('tileload',()=>{tOk++;});
+  tl.on('tileerror',()=>{
+    tErr++;
+    if(degraded||tOk>0||tErr<3||(containerId==='satMap'?SATMAP:SATMINI)!==map)return;
+    degraded=true;
+    try{map.remove();}catch(e){}
+    if(containerId==='satMap')SATMAP=null;else if(containerId==='satMiniMap')SATMINI=null;
+    drawSatFallback(containerId,'Basemap unavailable ('+cfg.label+' tiles failed to load). Showing the schematic site context; the model, QTO and schedule are unaffected.');
+  });
   const dLat=.0009,dLon=.0011;
   const fp=[[a.lat-dLat,a.lon-dLon],[a.lat+dLat,a.lon-dLon],[a.lat+dLat,a.lon+dLon],[a.lat-dLat,a.lon+dLon]];
   L.polygon(fp,{color:'#7c3aed',weight:3,fillColor:'#7c3aed',fillOpacity:.14}).addTo(map)
@@ -4812,7 +4854,7 @@ window.addEventListener('load',()=>{
       ['Selection','Clickable element intelligence is available',!!$('selectionIntel')&&typeof window.focusRC7Activity==='function','Hover, hierarchy, activity, quantity, cost, and schedule links','FAIL'],
       ['Questions','Model question-mark workflow is available',!!$('btnQuestionMode')&&!!$('questionPanel')&&typeof window.renderModelQuestions==='function','Selected-element and picked-point annotations with local persistence','FAIL'],
       ['Controls','Project control assurance system is available',!!$('tControls')&&!!$('controlRegister')&&typeof window.renderControlSystem==='function','Live alerts, decision gate, acknowledgements, and reconciliation checks','FAIL'],
-      ['GIS','Midtown Manhattan OpenStreetMap workflow is available',!!$('geoSiteStatus')&&val('satProvider')==='osm'&&typeof exportGeoJSON==='function','Token-free streets, stationed assets, corridor reset, and GeoJSON export','FAIL'],
+      ['GIS','Midtown Manhattan basemap workflow is available',!!$('geoSiteStatus')&&['esriSat','esriStreets','osm'].includes(val('satProvider'))&&typeof exportGeoJSON==='function','Token-free streets, stationed assets, corridor reset, and GeoJSON export','FAIL'],
       ['Narrative','Main public narrative page is connected to the live application',!!$('narrativePage')&&!!$('btnNarrative')&&typeof window.openNarrativePage==='function','Section and Spine hero, value chain, capabilities, disciplines, and launch bay','FAIL'],
       ['Mode','Public and developer presentation boundaries are available',!!$('rc8ModePill')&&typeof window.setRC8DevMode==='function','Public default; ?dev=1 and Ctrl+Alt+D expose diagnostics','FAIL'],
       ['Actuals','Actuals & Claims Demo Studio is available',!!$('actualDataMode')&&!!$('fieldReportsTable')&&!!$('claimsTable'),'Field reports, actual cost, claims/payment, reconciliation, imports, and exports','FAIL'],

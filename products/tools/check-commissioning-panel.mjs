@@ -14,7 +14,9 @@ import { loadLab, LAB_PATH } from "./lab-bridge.mjs";
 import { readJson } from "./util.mjs";
 import { buildPanelSnapshot, SNAPSHOT_PATH, dataBlock, embeddedRegion } from "./gen-commissioning-panel.mjs";
 
-const PRE_PANEL_SHA = "d3f0caaf5f71b8f61285a4def88f8870e7e11e40cb2d66137d9d9db0d2e54047";
+// LAB-VIS-FIX re-baseline (owner-authorized edit of NON-CXP regions: GIS layer config + three chart day-line renderers).
+// Stripped-file baseline moved d3f0caaf5f71b8f6… (pre-panel, P1-P4a-V) -> a20de431ec3aefe9… (this branch). The CXP regions are unchanged.
+const PRE_PANEL_SHA = "a20de431ec3aefe965ad9e1641b78660a29eb7500ed88ccf0c9483cf84c5808e";
 const fx = readJson("../hvac/fixtures/allocation.fixture.json");
 let failures = 0;
 const fail = m => { failures++; console.log("  FAIL  " + m); };
@@ -33,7 +35,7 @@ for (const r of REGIONS) {
   stripped = stripped.replace(re, "");
 }
 check(markerOk, "exactly one line-aligned BEGIN/END marker pair for each of TAB, PAGE, DATA, SCRIPT");
-check(sha(stripped) === PRE_PANEL_SHA, `removing the four CXP regions restores the pre-panel lab byte for byte (sha256 ${PRE_PANEL_SHA.slice(0, 16)}…): the edit is purely additive`, `stripped page sha ${sha(stripped)} != pre-panel baseline: the edit changed existing lab text`);
+check(sha(stripped) === PRE_PANEL_SHA, `removing the four CXP regions restores the stripped-file baseline byte for byte (sha256 ${PRE_PANEL_SHA.slice(0, 16)}…): the edit is purely additive`, `stripped page sha ${sha(stripped)} != pre-panel baseline: the edit changed existing lab text`);
 check(html.length > stripped.length && sha(html) !== PRE_PANEL_SHA, `new lab sha256 ${sha(html)}`);
 
 console.log("== data freshness");
