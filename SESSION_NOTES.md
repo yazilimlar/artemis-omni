@@ -98,3 +98,9 @@ Appended "Owner decisions" to `products/MEP_SCOPING.md` (five items: NYC_2022_RE
 
 ## MEP-SCOPING Grok clarifications
 Six edits to `products/MEP_SCOPING.md`: clash logicalId from object logicalIds + type; quantity promotion gate; plumbing/fire codes moved to 055x-059x/065x-068x with the suffix rule (lab `costCode()` appends the letter) and a deferred-activities list; E0 renamed with acceptance criterion; E0 hard prerequisite of P2.1; electrical reservations permanently clashReady=false. Removed the answered "Decisions needed" list. Docs only; nothing staged.
+
+# E0 - evidence contract v2 (labs/e0-evidence-contract)
+Layout: `products/evidence/{evidence.mjs, evidence.schema.ts, fixtures/envelopes.json}`, `products/tools/check-evidence.mjs`. Lab sha256 `d3f0caaf5f71b8f6` (unchanged).
+- `check-evidence.mjs`: `PASSED: 0 failure(s), 0 warning(s)`; 5 valid, 13 invalid, 2 invalid chains. P1-P3 checkers PASS; `tsc --strict` clean.
+- My choices: `CLX-` prefix, `REV-` derivation, unknown fields rejected, any non-NONE complianceClaim rejected.
+Nothing staged or committed.

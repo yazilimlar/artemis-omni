@@ -1,0 +1,915 @@
+{
+ "label": "SYNTHETIC fixtures - schema demonstration only, not project evidence",
+ "valid": [
+  {
+   "name": "clash rev1",
+   "envelope": {
+    "kind": "clash",
+    "logicalId": "CLX-fc77a8daea8d",
+    "revisionId": "REV-176ac6c11c03",
+    "contentHash": "sha256:0bbb3b762887bfd4d4d451ae5aac62caf6cba9460f905b4db04c9fc37e3747d9",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "inferred",
+    "verification": "unverified",
+    "verificationScope": null,
+    "verificationMethod": null,
+    "verificationBasis": null,
+    "verifiedRevisionId": null,
+    "artifactRefs": [],
+    "verificationTimestamp": null,
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "pending",
+    "approvedRevisionId": null,
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": {
+     "objectLogicalIds": [
+      "OBJ-DUCT-001",
+      "OBJ-BEAM-001"
+     ],
+     "clashType": "HARD_INTERSECTION"
+    },
+    "payload": {
+     "geometry": {
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        10,
+        1,
+        11
+       ]
+      }
+     },
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "clash rev2 (geometry changed, same logicalId, objects in other order)",
+   "envelope": {
+    "kind": "clash",
+    "logicalId": "CLX-fc77a8daea8d",
+    "revisionId": "REV-5353a58fb862",
+    "contentHash": "sha256:0915382ea5f5ce025d823d23fdc952e7ec4571ef2bbc1e17078505830576e54a",
+    "revision": 2,
+    "supersedes": "REV-176ac6c11c03",
+    "basis": "inferred",
+    "verification": "unverified",
+    "verificationScope": null,
+    "verificationMethod": null,
+    "verificationBasis": null,
+    "verifiedRevisionId": null,
+    "artifactRefs": [],
+    "verificationTimestamp": null,
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "pending",
+    "approvedRevisionId": null,
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": {
+     "objectLogicalIds": [
+      "OBJ-BEAM-001",
+      "OBJ-DUCT-001"
+     ],
+     "clashType": "HARD_INTERSECTION"
+    },
+    "payload": {
+     "geometry": {
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10.5
+       ],
+       "max": [
+        10,
+        1,
+        11.5
+       ]
+      }
+     },
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "spool verified+approved, pinned",
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "commissioning test, NYC profile binding",
+   "envelope": {
+    "kind": "commissioning-test",
+    "logicalId": "CX-DEMO-001",
+    "revisionId": "REV-c96260fb41f6",
+    "contentHash": "sha256:cc27aafef11769eacc80ed3ea67ad4a77954cae01961f4f517f919b841a9a879",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "unverified",
+    "verificationScope": null,
+    "verificationMethod": null,
+    "verificationBasis": null,
+    "verifiedRevisionId": null,
+    "artifactRefs": [],
+    "verificationTimestamp": null,
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "pending",
+    "approvedRevisionId": null,
+    "complianceClaim": "NONE",
+    "ruleBindings": [
+     {
+      "ruleId": "R-DEMO-001",
+      "profile": "NYC_2022_REFERENCE",
+      "edition": "2022",
+      "jurisdiction": "New York City",
+      "verification": "unverified"
+     }
+    ],
+    "clash": null,
+    "payload": {
+     "test": "SYNTHETIC placeholder test"
+    }
+   }
+  },
+  {
+   "name": "spool, UNSPECIFIED profile",
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-002",
+    "revisionId": "REV-6f740f7e8f1d",
+    "contentHash": "sha256:32ec8fe293cd21772c4ee15af7f70020e47036a54c49505c851a829e1793ee4c",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "unknown",
+    "verification": "unverified",
+    "verificationScope": null,
+    "verificationMethod": null,
+    "verificationBasis": null,
+    "verifiedRevisionId": null,
+    "artifactRefs": [],
+    "verificationTimestamp": null,
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "pending",
+    "approvedRevisionId": null,
+    "complianceClaim": "NONE",
+    "ruleBindings": [
+     {
+      "ruleId": "R-DEMO-002",
+      "profile": "UNSPECIFIED",
+      "edition": null,
+      "jurisdiction": null,
+      "verification": "unverified"
+     }
+    ],
+    "clash": null,
+    "payload": {
+     "lengthFt": 5,
+     "note": "SYNTHETIC"
+    }
+   }
+  }
+ ],
+ "invalid": [
+  {
+   "name": "invalid basis enum",
+   "expectCodes": [
+    "E_ENUM"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "guessed",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "invalid verificationScope enum",
+   "expectCodes": [
+    "E_ENUM"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "visual",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "verified but verifiedRevisionId missing",
+   "expectCodes": [
+    "E_VERIFIED_REV"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": null,
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "verification pinned to an older revisionId (inherited)",
+   "expectCodes": [
+    "E_VERIFIED_REV"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-000000000000",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "clash logicalId derived from geometry",
+   "expectCodes": [
+    "E_CLASH_ID"
+   ],
+   "envelope": {
+    "kind": "clash",
+    "logicalId": "CLX-780d0c6fab5f",
+    "revisionId": "REV-065d227ada30",
+    "contentHash": "sha256:0bbb3b762887bfd4d4d451ae5aac62caf6cba9460f905b4db04c9fc37e3747d9",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "inferred",
+    "verification": "unverified",
+    "verificationScope": null,
+    "verificationMethod": null,
+    "verificationBasis": null,
+    "verifiedRevisionId": null,
+    "artifactRefs": [],
+    "verificationTimestamp": null,
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "pending",
+    "approvedRevisionId": null,
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": {
+     "objectLogicalIds": [
+      "OBJ-DUCT-001",
+      "OBJ-BEAM-001"
+     ],
+     "clashType": "HARD_INTERSECTION"
+    },
+    "payload": {
+     "geometry": {
+      "bbox": {
+       "min": [
+        0,
+        0,
+        10
+       ],
+       "max": [
+        10,
+        1,
+        11
+       ]
+      }
+     },
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "compliance claim without basis (verified + bound rule, claim COMPLIANT)",
+   "expectCodes": [
+    "E_COMPLIANCE"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "COMPLIANT",
+    "ruleBindings": [
+     {
+      "ruleId": "R-DEMO-001",
+      "profile": "NYC_2022_REFERENCE",
+      "edition": "2022",
+      "jurisdiction": "New York City",
+      "verification": "unverified"
+     }
+    ],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "approval inherited from previous revision",
+   "expectCodes": [
+    "E_APPROVAL_PIN"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-000000000000",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "rule binding missing jurisdiction",
+   "expectCodes": [
+    "E_PROFILE_BINDING"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [
+     {
+      "ruleId": "R-DEMO-001",
+      "profile": "NYC_2022_REFERENCE",
+      "edition": "2022",
+      "verification": "unverified"
+     }
+    ],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "rule binding edition does not match profile",
+   "expectCodes": [
+    "E_PROFILE_BINDING"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [
+     {
+      "ruleId": "R-DEMO-001",
+      "profile": "NYC_2022_REFERENCE",
+      "edition": "2019",
+      "jurisdiction": "New York City",
+      "verification": "unverified"
+     }
+    ],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "UNSPECIFIED binding marked verified",
+   "expectCodes": [
+    "E_PROFILE_BINDING"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-002",
+    "revisionId": "REV-6f740f7e8f1d",
+    "contentHash": "sha256:32ec8fe293cd21772c4ee15af7f70020e47036a54c49505c851a829e1793ee4c",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "unknown",
+    "verification": "unverified",
+    "verificationScope": null,
+    "verificationMethod": null,
+    "verificationBasis": null,
+    "verifiedRevisionId": null,
+    "artifactRefs": [],
+    "verificationTimestamp": null,
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "pending",
+    "approvedRevisionId": null,
+    "complianceClaim": "NONE",
+    "ruleBindings": [
+     {
+      "ruleId": "R-DEMO-002",
+      "profile": "UNSPECIFIED",
+      "edition": null,
+      "jurisdiction": null,
+      "verification": "verified"
+     }
+    ],
+    "clash": null,
+    "payload": {
+     "lengthFt": 5,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "payload tampered (contentHash mismatch)",
+   "expectCodes": [
+    "E_HASH"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 11,
+     "note": "SYNTHETIC"
+    }
+   }
+  },
+  {
+   "name": "unknown field",
+   "expectCodes": [
+    "E_UNKNOWN_FIELD"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "workflow": "draft",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    },
+    "priority": "high"
+   }
+  },
+  {
+   "name": "missing required field (workflow)",
+   "expectCodes": [
+    "E_REQUIRED"
+   ],
+   "envelope": {
+    "kind": "spool",
+    "logicalId": "D-SPOOL-001",
+    "revisionId": "REV-ef962ca9f34f",
+    "contentHash": "sha256:0d2a566af08c08603ee6073049c18e0cfda5f98fddc30cef592d2fd4d3b4ec93",
+    "revision": 1,
+    "supersedes": null,
+    "basis": "declared",
+    "verification": "verified",
+    "verificationScope": "mathematical",
+    "verificationMethod": "recompute-from-fixture",
+    "verificationBasis": "SYNTHETIC fixture inputs",
+    "verifiedRevisionId": "REV-ef962ca9f34f",
+    "artifactRefs": [
+     "fixture:D-SPOOL-001"
+    ],
+    "verificationTimestamp": "2026-10-12T12:00:00Z",
+    "validity": "current",
+    "approval": "accepted",
+    "approvedRevisionId": "REV-ef962ca9f34f",
+    "complianceClaim": "NONE",
+    "ruleBindings": [],
+    "clash": null,
+    "payload": {
+     "lengthFt": 10,
+     "note": "SYNTHETIC"
+    }
+   }
+  }
+ ],
+ "invalidChains": [
+  {
+   "name": "revision gap (1,3)",
+   "expectCodes": [
+    "E_CHAIN"
+   ],
+   "envelopes": [
+    {
+     "kind": "clash",
+     "logicalId": "CLX-fc77a8daea8d",
+     "revisionId": "REV-176ac6c11c03",
+     "contentHash": "sha256:0bbb3b762887bfd4d4d451ae5aac62caf6cba9460f905b4db04c9fc37e3747d9",
+     "revision": 1,
+     "supersedes": null,
+     "basis": "inferred",
+     "verification": "unverified",
+     "verificationScope": null,
+     "verificationMethod": null,
+     "verificationBasis": null,
+     "verifiedRevisionId": null,
+     "artifactRefs": [],
+     "verificationTimestamp": null,
+     "validity": "current",
+     "workflow": "draft",
+     "approval": "pending",
+     "approvedRevisionId": null,
+     "complianceClaim": "NONE",
+     "ruleBindings": [],
+     "clash": {
+      "objectLogicalIds": [
+       "OBJ-DUCT-001",
+       "OBJ-BEAM-001"
+      ],
+      "clashType": "HARD_INTERSECTION"
+     },
+     "payload": {
+      "geometry": {
+       "bbox": {
+        "min": [
+         0,
+         0,
+         10
+        ],
+        "max": [
+         10,
+         1,
+         11
+        ]
+       }
+      },
+      "note": "SYNTHETIC"
+     }
+    },
+    {
+     "kind": "clash",
+     "logicalId": "CLX-fc77a8daea8d",
+     "revisionId": "REV-4ae43cf14f0f",
+     "contentHash": "sha256:0915382ea5f5ce025d823d23fdc952e7ec4571ef2bbc1e17078505830576e54a",
+     "revision": 3,
+     "supersedes": "REV-176ac6c11c03",
+     "basis": "inferred",
+     "verification": "unverified",
+     "verificationScope": null,
+     "verificationMethod": null,
+     "verificationBasis": null,
+     "verifiedRevisionId": null,
+     "artifactRefs": [],
+     "verificationTimestamp": null,
+     "validity": "current",
+     "workflow": "draft",
+     "approval": "pending",
+     "approvedRevisionId": null,
+     "complianceClaim": "NONE",
+     "ruleBindings": [],
+     "clash": {
+      "objectLogicalIds": [
+       "OBJ-DUCT-001",
+       "OBJ-BEAM-001"
+      ],
+      "clashType": "HARD_INTERSECTION"
+     },
+     "payload": {
+      "geometry": {
+       "bbox": {
+        "min": [
+         0,
+         0,
+         10.5
+        ],
+        "max": [
+         10,
+         1,
+         11.5
+        ]
+       }
+      },
+      "note": "SYNTHETIC"
+     }
+    }
+   ]
+  },
+  {
+   "name": "supersedes does not name previous revisionId",
+   "expectCodes": [
+    "E_CHAIN"
+   ],
+   "envelopes": [
+    {
+     "kind": "clash",
+     "logicalId": "CLX-fc77a8daea8d",
+     "revisionId": "REV-176ac6c11c03",
+     "contentHash": "sha256:0bbb3b762887bfd4d4d451ae5aac62caf6cba9460f905b4db04c9fc37e3747d9",
+     "revision": 1,
+     "supersedes": null,
+     "basis": "inferred",
+     "verification": "unverified",
+     "verificationScope": null,
+     "verificationMethod": null,
+     "verificationBasis": null,
+     "verifiedRevisionId": null,
+     "artifactRefs": [],
+     "verificationTimestamp": null,
+     "validity": "current",
+     "workflow": "draft",
+     "approval": "pending",
+     "approvedRevisionId": null,
+     "complianceClaim": "NONE",
+     "ruleBindings": [],
+     "clash": {
+      "objectLogicalIds": [
+       "OBJ-DUCT-001",
+       "OBJ-BEAM-001"
+      ],
+      "clashType": "HARD_INTERSECTION"
+     },
+     "payload": {
+      "geometry": {
+       "bbox": {
+        "min": [
+         0,
+         0,
+         10
+        ],
+        "max": [
+         10,
+         1,
+         11
+        ]
+       }
+      },
+      "note": "SYNTHETIC"
+     }
+    },
+    {
+     "kind": "clash",
+     "logicalId": "CLX-fc77a8daea8d",
+     "revisionId": "REV-5353a58fb862",
+     "contentHash": "sha256:0915382ea5f5ce025d823d23fdc952e7ec4571ef2bbc1e17078505830576e54a",
+     "revision": 2,
+     "supersedes": "REV-000000000000",
+     "basis": "inferred",
+     "verification": "unverified",
+     "verificationScope": null,
+     "verificationMethod": null,
+     "verificationBasis": null,
+     "verifiedRevisionId": null,
+     "artifactRefs": [],
+     "verificationTimestamp": null,
+     "validity": "current",
+     "workflow": "draft",
+     "approval": "pending",
+     "approvedRevisionId": null,
+     "complianceClaim": "NONE",
+     "ruleBindings": [],
+     "clash": {
+      "objectLogicalIds": [
+       "OBJ-DUCT-001",
+       "OBJ-BEAM-001"
+      ],
+      "clashType": "HARD_INTERSECTION"
+     },
+     "payload": {
+      "geometry": {
+       "bbox": {
+        "min": [
+         0,
+         0,
+         10.5
+        ],
+        "max": [
+         10,
+         1,
+         11.5
+        ]
+       }
+      },
+      "note": "SYNTHETIC"
+     }
+    }
+   ]
+  }
+ ]
+}
