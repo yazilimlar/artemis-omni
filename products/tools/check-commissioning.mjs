@@ -16,7 +16,8 @@ const fx = readJson("../commissioning/fixtures/matrix.json");
 const products = readJson("../hvac/hvac-products.sample.json");
 // P4a-V: the lab page now carries the read-only panel (marked CXP regions). The pre-panel lab text is still pinned: the page
 // with those regions removed must hash to the original baseline (check-commissioning-panel.mjs proves the same, plus freshness).
-const LAB_SHA = "d3f0caaf5f71b8f61285a4def88f8870e7e11e40cb2d66137d9d9db0d2e54047";
+// LAB-VIS-FIX re-baseline: the stripped baseline moved d3f0caaf5f71b8f6… -> a20de431ec3aefe9… because the owner-authorized lab edit touched non-CXP regions (GIS layers, chart day lines); comment-only micro-fix (fire-once tileerror note) then moved it a20de431… -> 8828ebcf….
+const LAB_SHA = "8828ebcf7393c42185d992fa37bfc5f68c9a13339c0d5522a27f2a00616a2038";
 const stripPanel = h => ["TAB", "PAGE", "DATA", "SCRIPT"].reduce((t, r) => t.replace(new RegExp(`^<!-- CXP:${r}:BEGIN -->\\n[\\s\\S]*?^<!-- CXP:${r}:END -->\\n`, "gm"), ""), h);
 let failures = 0;
 const fail = m => { failures++; console.log("  FAIL  " + m); };
