@@ -140,4 +140,5 @@ Lab sha256 `d3f0caaf5f71b8f6` → `53a58411de4e1ed0` (final). `lab-bridge.mjs` g
 Owner-authorized lab edit, two fixes. Map: default Esri World Imagery, plus Esri World Street Map; OSM kept as non-default. Both Esri endpoints returned real JPEG tiles (z16 and z12, Midtown anchor). Repeated `tileerror` with no `tileload` swaps in the schematic plus a "Basemap unavailable" note; tiles are never blocked.
 Day line: `dayLinePlugin` on cashflow, S-curve and fronts charts reads `SIM.day`, the Gantt's state. `setSimDay()` calls `refreshDayLines()`. Draw only; data is unchanged (checked under real Chart.js).
 Gates: all eight checkers + tsc pass. Stripped-baseline re-baselined (non-CXP edit): `d3f0caaf` → `a20de431`. Stripped diff vs main: GIS config/text, plugin, three chart options, one glue line, one QA check; CXP lines: 0.
-Lab sha256 `53a58411de4e1ed0` → `a98aa517055cedc4`.
+Micro-fix: `tileerror` fallback is fire-once, no auto-retry (comment only). Stripped baseline `a20de431` → `8828ebcf`.
+Lab sha256 `53a58411de4e1ed0` → `a98aa517055cedc4` → `f3f9829bf97341e5` (final).

@@ -15,8 +15,8 @@ import { readJson } from "./util.mjs";
 import { buildPanelSnapshot, SNAPSHOT_PATH, dataBlock, embeddedRegion } from "./gen-commissioning-panel.mjs";
 
 // LAB-VIS-FIX re-baseline (owner-authorized edit of NON-CXP regions: GIS layer config + three chart day-line renderers).
-// Stripped-file baseline moved d3f0caaf5f71b8f6… (pre-panel, P1-P4a-V) -> a20de431ec3aefe9… (this branch). The CXP regions are unchanged.
-const PRE_PANEL_SHA = "a20de431ec3aefe965ad9e1641b78660a29eb7500ed88ccf0c9483cf84c5808e";
+// Stripped-file baseline moved d3f0caaf5f71b8f6… (pre-panel, P1-P4a-V) -> a20de431ec3aefe9… (this branch); comment-only micro-fix then moved it a20de431… -> 8828ebcf… (fire-once tileerror note). The CXP regions are unchanged.
+const PRE_PANEL_SHA = "8828ebcf7393c42185d992fa37bfc5f68c9a13339c0d5522a27f2a00616a2038";
 const fx = readJson("../hvac/fixtures/allocation.fixture.json");
 let failures = 0;
 const fail = m => { failures++; console.log("  FAIL  " + m); };

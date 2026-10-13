@@ -4291,7 +4291,8 @@ function initLeafletMap(containerId, mini=false){
   const a=siteAnchor(),assets=siteAssetPoints();
   const map=L.map(el,{zoomControl:!mini,attributionControl:!mini,scrollWheelZoom:!mini}).setView(a.center,16);
   const tl=L.tileLayer(cfg.url,{maxZoom:cfg.maxZoom,attribution:cfg.attr}).addTo(map);
-  /* basemap is a presentation layer: tiles are never blocked; only when the layer is failing (several tileerror, no tileload) show the schematic with a note */
+  /* basemap is a presentation layer: tiles are never blocked; only when the layer is failing (several tileerror, no tileload) show the schematic with a note
+     The fallback is fire-once and does NOT auto-retry: after a transient failure the schematic stays until the user refreshes the map or switches provider. */
   let tOk=0,tErr=0,degraded=false;
   tl.on('tileload',()=>{tOk++;});
   tl.on('tileerror',()=>{
