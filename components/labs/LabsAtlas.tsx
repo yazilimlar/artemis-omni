@@ -200,7 +200,7 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   gallery: {
     title: "The labs as a gallery",
     blurb:
-      "The Architect's wall — thirteen live screens in a dark room, the colossus Diana standing guard at the center. Hover to lean in; click a screen and she'll loose a golden arrow to open its lab.",
+      "The Architect's wall — thirteen live screens in a dark room, the colossus Diana standing guard at the center, crowning a scale Radcliffe Camera — Oxford's circular library of 1749. Hover to lean in; click a screen and she'll loose a golden arrow to open its lab.",
   },
 };
 
@@ -660,23 +660,144 @@ function useAtlasScene(
        * style. Registers her counter-rotation spin (against the room's
        * orbit) and her live size; the finish toggle re-casts every statue.
        */
-      function buildDianaCenterpiece(px: number, py: number, pz: number) {
+      function buildDianaCenterpiece(px: number, py: number, pz: number, radcliffe = false) {
         const dianaGroup = new THREE.Group();
         dianaGroup.position.set(px, py, pz);
         root.add(dianaGroup);
-        const pedestal = new THREE.Mesh(
-          new THREE.CylinderGeometry(4.2, 5.28, 3.6, 48),
-          new THREE.MeshBasicMaterial({ color: "#1b2233" }),
-        );
-        pedestal.position.y = 1.8;
-        dianaGroup.add(pedestal);
-        const pedTrim = new THREE.Mesh(
-          new THREE.TorusGeometry(4.24, 0.2, 10, 72),
-          new THREE.MeshBasicMaterial({ color: "#a8873f" }),
-        );
-        pedTrim.rotation.x = Math.PI / 2;
-        pedTrim.position.y = 3.62;
-        dianaGroup.add(pedTrim);
+        if (radcliffe) {
+          // Gallery only: Diana's dais becomes a scale Radcliffe Camera
+          // (Gibbs, Oxford, 1737–49) — plinth, rusticated ground floor,
+          // columned circular drum, entablature, octagonal drum, lead dome —
+          // with her feet where the lantern would be. Heights sum to 3.60
+          // (her dais height); radius never exceeds 5.28 (her footprint).
+          const plinth = new THREE.Mesh(
+            new THREE.CylinderGeometry(4.9, 5.28, 0.5, 48),
+            new THREE.MeshBasicMaterial({ color: "#232a3a" }),
+          );
+          plinth.position.y = 0.25;
+          dianaGroup.add(plinth);
+
+          const groundFloor = new THREE.Mesh(
+            new THREE.CylinderGeometry(4.55, 4.75, 0.8, 48),
+            new THREE.MeshBasicMaterial({ color: "#9a8563" }),
+          );
+          groundFloor.position.y = 0.9;
+          dianaGroup.add(groundFloor);
+          for (const ry of [0.68, 1.12]) {
+            const ring = new THREE.Mesh(
+              new THREE.TorusGeometry(4.64, 0.045, 10, 72),
+              new THREE.MeshBasicMaterial({ color: "#6f5f43" }),
+            );
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = ry;
+            dianaGroup.add(ring);
+          }
+
+          const cornice = new THREE.Mesh(
+            new THREE.CylinderGeometry(4.85, 4.85, 0.16, 48),
+            new THREE.MeshBasicMaterial({ color: "#c2ab7d" }),
+          );
+          cornice.position.y = 1.38;
+          dianaGroup.add(cornice);
+
+          const drumWall = new THREE.Mesh(
+            new THREE.CylinderGeometry(3.95, 3.95, 1.1, 48),
+            new THREE.MeshBasicMaterial({ color: "#7d6a4d" }),
+          );
+          drumWall.position.y = 2.01;
+          dianaGroup.add(drumWall);
+          for (let k = 0; k < 8; k++) {
+            const a = (k * Math.PI) / 4;
+            const win = new THREE.Mesh(
+              new THREE.PlaneGeometry(0.55, 0.75),
+              new THREE.MeshBasicMaterial({ color: "#141a26" }),
+            );
+            win.position.set(Math.sin(a) * 3.98, 2.01, Math.cos(a) * 3.98);
+            win.rotation.y = a;
+            dianaGroup.add(win);
+          }
+          // 16 Corinthian columns, offset half a bay so each window sits
+          // between two of them.
+          for (let j = 0; j < 16; j++) {
+            const a = ((j + 0.5) * Math.PI) / 8;
+            const x = Math.sin(a) * 4.18;
+            const z = Math.cos(a) * 4.18;
+            const shaft = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.13, 0.15, 1.1, 12),
+              new THREE.MeshBasicMaterial({ color: "#d6c08e" }),
+            );
+            shaft.position.set(x, 2.01, z);
+            dianaGroup.add(shaft);
+            const capital = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.19, 0.19, 0.09, 12),
+              new THREE.MeshBasicMaterial({ color: "#d6c08e" }),
+            );
+            capital.position.set(x, 2.51, z);
+            dianaGroup.add(capital);
+          }
+
+          const entablature = new THREE.Mesh(
+            new THREE.CylinderGeometry(4.35, 4.35, 0.18, 48),
+            new THREE.MeshBasicMaterial({ color: "#c2ab7d" }),
+          );
+          entablature.position.y = 2.65;
+          dianaGroup.add(entablature);
+          const entabRing = new THREE.Mesh(
+            new THREE.TorusGeometry(4.35, 0.06, 10, 72),
+            new THREE.MeshBasicMaterial({ color: "#a8873f" }),
+          );
+          entabRing.rotation.x = Math.PI / 2;
+          entabRing.position.y = 2.74;
+          dianaGroup.add(entabRing);
+
+          const octagonalDrum = new THREE.Mesh(
+            new THREE.CylinderGeometry(3.15, 3.35, 0.28, 8),
+            new THREE.MeshBasicMaterial({ color: "#9a8563" }),
+          );
+          octagonalDrum.position.y = 2.88;
+          dianaGroup.add(octagonalDrum);
+
+          const dome = new THREE.Mesh(
+            new THREE.SphereGeometry(3.1, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2),
+            new THREE.MeshBasicMaterial({ color: "#6b8a84" }),
+          );
+          dome.scale.y = 0.16;
+          dome.position.y = 3.02;
+          dianaGroup.add(dome);
+
+          // Terrace where the lantern would stand — Diana's feet land here.
+          const terrace = new THREE.Mesh(
+            new THREE.CylinderGeometry(1, 1, 0.09, 48),
+            new THREE.MeshBasicMaterial({ color: "#c2ab7d" }),
+          );
+          terrace.position.y = 3.555;
+          dianaGroup.add(terrace);
+          const terraceRing = new THREE.Mesh(
+            new THREE.TorusGeometry(1, 0.05, 10, 72),
+            new THREE.MeshBasicMaterial({ color: "#a8873f" }),
+          );
+          terraceRing.rotation.x = Math.PI / 2;
+          terraceRing.position.y = 3.58;
+          dianaGroup.add(terraceRing);
+
+          const radcliffePlate = makeLabel("Radcliffe Camera · Oxford 1749", "#e8d9b0", 1.5);
+          radcliffePlate.position.set(0, 4.8, -6.8);
+          dianaGroup.add(radcliffePlate);
+        } else {
+          const pedestal = new THREE.Mesh(
+            new THREE.CylinderGeometry(4.2, 5.28, 3.6, 48),
+            new THREE.MeshBasicMaterial({ color: "#1b2233" }),
+          );
+          pedestal.position.y = 1.8;
+          dianaGroup.add(pedestal);
+          const pedTrim = new THREE.Mesh(
+            new THREE.TorusGeometry(4.24, 0.2, 10, 72),
+            new THREE.MeshBasicMaterial({ color: "#a8873f" }),
+          );
+          pedTrim.rotation.x = Math.PI / 2;
+          pedTrim.position.y = 3.62;
+          dianaGroup.add(pedTrim);
+        }
         // Floating nameplate on the visitor side, high enough to clear the
         // dais from the default camera angle.
         const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 2.4);
@@ -1570,7 +1691,7 @@ function useAtlasScene(
         // A classical Diana towering over the room on a stone dais. Clicking
         // a screen makes her loose a golden arrow at it; the impact opens the
         // lab cinematically.
-        const dianaGroup = buildDianaCenterpiece(0, 0, 5);
+        const dianaGroup = buildDianaCenterpiece(0, 0, 5, true);
         // Arrow origin in root space, refreshed from her live orientation at
         // every shot — she counter-rotates, so her bow is never where it was.
         const bowOrigin = new THREE.Vector3(0, 26, 4);
