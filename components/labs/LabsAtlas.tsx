@@ -30,7 +30,8 @@ export type AtlasStyle =
   | "geodesic"
   | "octagon"
   | "rotonda"
-  | "gallery";
+  | "gallery"
+  | "radcliffe";
 
 export const ATLAS_STYLES: AtlasStyle[] = [
   "constellation",
@@ -46,6 +47,7 @@ export const ATLAS_STYLES: AtlasStyle[] = [
   "octagon",
   "rotonda",
   "gallery",
+  "radcliffe",
 ];
 
 /** Canvas viewport sizes — the visitor controls how much screen the view takes. */
@@ -82,34 +84,40 @@ const ATLAS_THUMBS: Record<string, string> = {
 /** Gallery ring layouts — the visitor reconfigures how the screens ring the Radcliffe drum. */
 export type GalleryLayoutId = "wall" | "3x5" | "4x4" | "4x12" | "6x8";
 
-/** Gallery view — Diana's orbit outside the building, or the reading room inside. */
 export type GalleryViewId = "outside" | "inside";
 
-type GalleryLayout = {
-  id: GalleryLayoutId;
-  label: string;
-  /** Slots per ring, lower ring first. */
-  rings: number[];
-  /** Ring centre height on the drum. */
-  ringYs: number[];
-  /** Screen scale applied to the 3.6 × 2.24 base (wall overrides via `sizes`). */
-  scale: number;
-  /** Explicit per-ring [w, h] — the classic two-ring wall. */
-  sizes?: Array<[number, number]>;
-  plateScale: number;
-  classic?: boolean;
-};
+type GalleryLayout = { id: GalleryLayoutId; label: string; rows: number; cols: number; classic?: boolean };
 
 const GALLERY_LAYOUTS: GalleryLayout[] = [
-  { id: "wall", label: "Wall", classic: true, rings: [7, 6], ringYs: [4.6, 9.3], scale: 1, sizes: [[3.6, 2.24], [3.1, 1.94]], plateScale: 0.8 },
-  { id: "3x5", label: "3×5", rings: [5, 4, 4], ringYs: [4.2, 6.9, 9.6], scale: 0.85, plateScale: 0.72 },
-  { id: "4x4", label: "4×4", rings: [4, 3, 3, 3], ringYs: [3.9, 6.0, 8.1, 10.2], scale: 0.68, plateScale: 0.62 },
-  { id: "4x12", label: "4×12", rings: [4, 4, 4, 4], ringYs: [3.9, 6.0, 8.1, 10.2], scale: 0.68, plateScale: 0.62 },
-  { id: "6x8", label: "6×8", rings: [5, 5, 5], ringYs: [4.2, 6.9, 9.6], scale: 0.85, plateScale: 0.72 },
+  { id: "wall", label: "Wall", rows: 2, cols: 7, classic: true },
+  { id: "3x5", label: "3×5", rows: 3, cols: 5 },
+  { id: "4x4", label: "4×4", rows: 4, cols: 4 },
+  { id: "4x12", label: "4×12", rows: 4, cols: 12 },
+  { id: "6x8", label: "6×8", rows: 6, cols: 8 },
 ];
 
 const GALLERY_LAYOUT_KEY = "labs-gallery-layout";
-const GALLERY_VIEW_KEY = "labs:gallery-view";
+const GALLERY_VIEW_KEY = "labs:radcliffe-view";
+
+/** The Radcliffe's one fixed screen arrangement — the classic two-ring layout. */
+type RadcliffeRingLayout = {
+  rings: number[];
+  ringYs: number[];
+  scale: number;
+  sizes: [number, number][];
+  plateScale: number;
+};
+
+const RADCLIFFE_RING_LAYOUT: RadcliffeRingLayout = {
+  rings: [7, 6],
+  ringYs: [4.6, 9.3],
+  scale: 1,
+  sizes: [
+    [3.6, 2.24],
+    [3.1, 1.94],
+  ],
+  plateScale: 0.8,
+};
 
 /** Room atmospheres for the gallery — the visitor tints the screening room. */
 type RoomEnv = { skyTop: string; skyBottom: string; fog: string; ground: string; star: string };
@@ -138,7 +146,7 @@ const DIANA_MATERIALS: { id: DianaMaterialId; label: string }[] = [
 const DIANA_MATERIAL_KEY = "labs-diana-material";
 const DIANA_SCALE_KEY = "labs-diana-scale";
 /** Display styles where Diana stands guard at the center. */
-const DIANA_STYLES: AtlasStyle[] = ["gallery", "pantheon", "agora", "geodesic", "octagon", "rotonda"];
+const DIANA_STYLES: AtlasStyle[] = ["gallery", "radcliffe", "pantheon", "agora", "geodesic", "octagon", "rotonda"];
 /** Diana's GLB: fetched once per page session, fitted once, cloned per style. */
 let dianaLoadPromise: Promise<any> | null = null;
 
@@ -216,6 +224,11 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   },
   gallery: {
     title: "The labs as a gallery",
+    blurb:
+      "The Architect's wall — thirteen live screens in a dark room, the colossus Diana standing guard at the center. Hover to lean in; click a screen and she'll loose a golden arrow to open its lab.",
+  },
+  radcliffe: {
+    title: "The labs as the Radcliffe Camera",
     blurb:
       "The Radcliffe Camera itself — thirteen live screens ring its drum while Diana patrols a slow orbit; step Inside into the round reading room, where she presides over the catalogue table. Drag to orbit, click a screen and she'll loose a golden arrow to open its lab.",
   },
@@ -298,6 +311,11 @@ const ATLAS_ENV: Record<AtlasStyle, AtlasEnv> = {
     ground: { color: "#6a7690", opacity: 0.5, radius: 16, y: -0.02 },
   },
   gallery: {
+    skyTop: "#05070c", skyBottom: "#0d1420", fog: "#05070c", fogNear: 30, fogFar: 100,
+    starColor: "#5a6a85", starOpacity: 0.3, starCount: 150,
+    ground: { color: "#0a0d14", opacity: 0.8, radius: 20, y: -0.1 },
+  },
+  radcliffe: {
     skyTop: "#05070c", skyBottom: "#0d1420", fog: "#05070c", fogNear: 30, fogFar: 100,
     starColor: "#5a6a85", starOpacity: 0.3, starCount: 150,
     ground: { color: "#0a0d14", opacity: 0.8, radius: 20, y: -0.1 },
@@ -411,6 +429,12 @@ function useAtlasScene(
       else if (style === "octagon") camera.position.set(0, 13, 25);
       else if (style === "rotonda") camera.position.set(0, 20, 15);
       else if (style === "gallery") {
+        const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        // Framed for Diana at her tuned size with the wall behind her.
+        // Grids pull slightly further.
+        if (gl.classic) camera.position.set(0, 8, 30);
+        else camera.position.set(0, 8.5, 32);
+      } else if (style === "radcliffe") {
         // The Radcliffe fills the frame: plaza ring, drum, dome and lantern,
         // with Diana's orbit path in the foreground.
         camera.position.set(0, 12, 44);
@@ -421,7 +445,7 @@ function useAtlasScene(
       controls.dampingFactor = 0.08;
       controls.enablePan = false;
       controls.minDistance = 10;
-      controls.maxDistance = style === "gallery" ? 60 : 48;
+      controls.maxDistance = style === "gallery" || style === "radcliffe" ? 60 : 48;
       controls.autoRotate = !reduced;
       controls.autoRotateSpeed = 0.5;
       // Aim the orbit pivot per style: mid-dome for pantheon, mid-tiers for colosseum.
@@ -429,7 +453,11 @@ function useAtlasScene(
       else if (style === "colosseum") controls.target.set(0, 4, 0);
       else if (style === "geodesic") controls.target.set(0, 4, 0);
       else if (style === "octagon") controls.target.set(0, 3, 0);
-      else if (style === "gallery") controls.target.set(0, 6.5, 5);
+      else if (style === "gallery") {
+        const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        controls.target.set(0, gl.classic ? 4.5 : 5, gl.classic ? 6 : 5);
+      }
+      else if (style === "radcliffe") controls.target.set(0, 6.5, 5);
 
       const root = new THREE.Group();
       scene.add(root);
@@ -438,7 +466,7 @@ function useAtlasScene(
       // two universes share the same black space.
       const baseEnv = ATLAS_ENV[style];
       // Gallery: the visitor's room tint overrides the style environment.
-      const room = style === "gallery" ? roomEnvRef.current : null;
+      const room = style === "gallery" || style === "radcliffe" ? roomEnvRef.current : null;
       const env: AtlasEnv = room
         ? {
             ...baseEnv,
@@ -1415,7 +1443,345 @@ function useAtlasScene(
         }
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
       } else if (style === "gallery") {
-        // Gallery v2: the Radcliffe Camera IS the gallery — thirteen live
+        // Gallery: the Architect's wall — thirteen live screens on a curved
+        // video wall in a dark screening room. Flagships get larger screens,
+        // center stage.
+        const fallbackTex = (title: string) => {
+          const c = document.createElement("canvas");
+          c.width = 640;
+          c.height = 400;
+          const ctx = c.getContext("2d")!;
+          ctx.fillStyle = "#10141c";
+          ctx.fillRect(0, 0, 640, 400);
+          ctx.strokeStyle = "#8a6f3c";
+          ctx.lineWidth = 6;
+          ctx.strokeRect(12, 12, 616, 376);
+          ctx.fillStyle = "#e0b65a";
+          ctx.font = "500 34px ui-monospace, monospace";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const words = title.split(" ");
+          const lines: string[] = [];
+          let line = "";
+          for (const w of words) {
+            if ((line + " " + w).trim().length > 22) {
+              lines.push(line.trim());
+              line = w;
+            } else {
+              line += " " + w;
+            }
+          }
+          lines.push(line.trim());
+          lines.slice(0, 3).forEach((l, i) => ctx.fillText(l, 320, 168 + i * 44));
+          ctx.fillStyle = "#5a6a85";
+          ctx.font = "500 22px ui-monospace, monospace";
+          ctx.fillText("ARTEMIS", 320, 320);
+          const tex = new THREE.CanvasTexture(c);
+          tex.colorSpace = THREE.SRGBColorSpace;
+          return tex;
+        };
+        const loader = new THREE.TextureLoader();
+        const loadTex = (node: AtlasNode) =>
+          new Promise<THREE.Texture>((resolve) => {
+            const url = ATLAS_THUMBS[node.href];
+            if (!url) return resolve(fallbackTex(node.title));
+            loader.load(
+              url,
+              (t) => {
+                t.colorSpace = THREE.SRGBColorSpace;
+                resolve(t);
+              },
+              undefined,
+              () => resolve(fallbackTex(node.title)),
+            );
+          });
+        const textures = await Promise.all(nodes.map(loadTex));
+
+        const R = 15;
+        const ordered = [...nodes].sort((a, b) => Number(b.flagship) - Number(a.flagship));
+        // Center-out slot order so flagships take center stage.
+        const centerOut = (n: number) => {
+          const order: number[] = [];
+          const mid = Math.floor(n / 2);
+          order.push(mid);
+          for (let d = 1; order.length < n; d++) {
+            if (mid - d >= 0) order.push(mid - d);
+            if (mid + d < n) order.push(mid + d);
+          }
+          return order;
+        };
+        const init = new Map<LabCategory, THREE.Object3D[]>();
+        for (const c of ORDER) init.set(c, []);
+        /** One screen (or dormant frame) on the wall, facing the visitor. */
+        const addScreen = (
+          node: AtlasNode | null,
+          tex: THREE.Texture | null,
+          w: number,
+          h: number,
+          px: number,
+          py: number,
+          pz: number,
+          plateScale: number,
+          showPlate: boolean,
+        ) => {
+          const group = new THREE.Group();
+          const frame = new THREE.Mesh(
+            new THREE.PlaneGeometry(w + 0.16, h + 0.16),
+            new THREE.MeshBasicMaterial({
+              color: !node ? "#232a38" : node.flagship ? "#a8873f" : "#4a5468",
+              transparent: true,
+              opacity: node ? 0.95 : 0.2,
+            }),
+          );
+          group.add(frame);
+          if (node && tex) {
+            const screen = new THREE.Mesh(
+              new THREE.PlaneGeometry(w, h),
+              new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 1 }),
+            );
+            screen.position.z = 0.012;
+            screen.userData.node = node;
+            screen.userData.baseScale = 1;
+            screen.userData.visual = screen;
+            group.add(screen);
+            meshes.push(screen);
+            hitMeshes.push(screen);
+            if (showPlate) {
+              const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", plateScale);
+              plate.position.y = -h / 2 - 0.5;
+              group.add(plate);
+              init.get(node.category)!.push(plate);
+            }
+            init.get(node.category)!.push(frame, screen);
+          }
+          group.position.set(px, py, pz);
+          // Convex wall: screens face outward, toward the visitor.
+          group.lookAt(px * 2, py, pz * 2);
+          root.add(group);
+        };
+        const texOf = (node: AtlasNode) => textures[nodes.indexOf(node)];
+        const layout = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        if (layout.classic) {
+          // The classic wall: two staggered rows, flagships larger.
+          const rows = [
+            { count: 7, y: 2.7, w: 3.3, h: 2.0625, spread: 126 },
+            { count: 6, y: 5.6, w: 2.9, h: 1.8125, spread: 105 },
+          ];
+          let placed = 0;
+          for (const row of rows) {
+            const slots = centerOut(row.count);
+            for (let s = 0; s < row.count && placed < ordered.length; s++) {
+              const node = ordered[placed++];
+              const slot = slots[s];
+              const a = ((slot / (row.count - 1) - 0.5) * row.spread * Math.PI) / 180;
+              const boost = node.flagship ? 1.22 : 1;
+              const w = row.w * boost;
+              const h = row.h * boost;
+              addScreen(node, texOf(node), w, h, Math.sin(a) * R, row.y, Math.cos(a) * R, 0.8, true);
+            }
+          }
+        } else {
+          // Reconfigurable grid: uniform cells; empty slots stay as dormant
+          // frames so the wall reads intentional at any size.
+          const { rows, cols } = layout;
+          const yTop = 8.4;
+          const yBottom = 1.9;
+          const cellH = ((yTop - yBottom) / rows) * 0.78;
+          const cellW = cellH * 1.6;
+          const spreadDeg = Math.min(280, ((cols * cellW * 1.18) / R) * 57.2958);
+          const showPlate = cellW >= 2.2;
+          // Round-robin across rows so the thirteen screens spread over the
+          // whole wall instead of clustering in the top row.
+          const rowNodes: (AtlasNode | null)[][] = Array.from({ length: rows }, () => []);
+          ordered.forEach((node, i) => rowNodes[i % rows].push(node));
+          for (let r = 0; r < rows; r++) {
+            const y = yTop - ((r + 0.5) / rows) * (yTop - yBottom);
+            const slots = centerOut(cols);
+            const list = rowNodes[r];
+            for (let s = 0; s < cols; s++) {
+              const slot = slots[s];
+              const a = cols === 1 ? 0 : ((slot / (cols - 1) - 0.5) * spreadDeg * Math.PI) / 180;
+              const node = s < list.length ? list[s] : null;
+              addScreen(
+                node,
+                node ? texOf(node) : null,
+                cellW,
+                cellH,
+                Math.sin(a) * R,
+                y,
+                Math.cos(a) * R,
+                Math.min(0.75, cellW / 5),
+                showPlate,
+              );
+            }
+          }
+        }
+        for (const c of ORDER) byCategory.set(c, init.get(c)!);
+
+        // --- Diana centerpiece: the colossus at the heart of the gallery. ---
+        // A classical Diana towering over the room on a stone dais. Clicking
+        // a screen makes her loose a golden arrow at it; the impact opens the
+        // lab cinematically.
+        const dianaGroup = buildDianaCenterpiece(0, 0, 5);
+        // Arrow origin in root space, refreshed from her live orientation at
+        // every shot — she counter-rotates, so her bow is never where it was.
+        const bowOrigin = new THREE.Vector3(0, 26, 4);
+        const BOW_LOCAL = new THREE.Vector3(0, 26, -1);
+
+        // Charge glow at the bow.
+        const dianaGlowTex = glowTexture("#ffd98a");
+        const chargeGlow = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: dianaGlowTex,
+            transparent: true,
+            opacity: 0,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          }),
+        );
+        chargeGlow.position.copy(bowOrigin);
+        chargeGlow.scale.set(0.6, 0.6, 1);
+        root.add(chargeGlow);
+        // The arrow: gold shaft + bright head + halo, with a fading trail.
+        const arrowGroup = new THREE.Group();
+        const shaft = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.09, 0.09, 2.6, 8),
+          new THREE.MeshBasicMaterial({ color: "#f0d49a" }),
+        );
+        const arrowHead = new THREE.Mesh(
+          new THREE.ConeGeometry(0.18, 0.55, 10),
+          new THREE.MeshBasicMaterial({ color: "#ffe9b8" }),
+        );
+        arrowHead.position.y = 1.55;
+        const arrowHalo = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: dianaGlowTex,
+            transparent: true,
+            opacity: 0.85,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          }),
+        );
+        arrowHalo.scale.set(3.4, 3.4, 1);
+        arrowGroup.add(shaft, arrowHead, arrowHalo);
+        arrowGroup.visible = false;
+        root.add(arrowGroup);
+        const TRAIL_N = 26;
+        const trailGeo = new THREE.BufferGeometry();
+        const trailArr = new Float32Array(TRAIL_N * 3);
+        trailGeo.setAttribute("position", new THREE.BufferAttribute(trailArr, 3));
+        const trail = new THREE.Line(
+          trailGeo,
+          new THREE.LineBasicMaterial({ color: "#f0d49a", transparent: true, opacity: 0.75 }),
+        );
+        trail.visible = false;
+        trail.frustumCulled = false;
+        root.add(trail);
+        // Impact flash on the struck screen.
+        const flash = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: dianaGlowTex,
+            transparent: true,
+            opacity: 0,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          }),
+        );
+        flash.visible = false;
+        root.add(flash);
+
+        // Live size control: keep the arrow glued to her at every size.
+        // (Her own group scale is registered by the centerpiece builder.)
+        dianaScaleFns.push((f) => arrowGroup.scale.setScalar(Math.max(f, 0.15)));
+
+        // Shot state machine: charge → flight → impact → cinematic open.
+        let shotPhase: "idle" | "charging" | "flying" | "impact" = "idle";
+        let shotT = 0;
+        let shotNode: AtlasNode | null = null;
+        const shotFrom = new THREE.Vector3();
+        const shotCtrl = new THREE.Vector3();
+        const shotTo = new THREE.Vector3();
+        let shotCurve: THREE.QuadraticBezierCurve3 | null = null;
+        const setGlow = (sp: THREE.Sprite, opacity: number, s: number) => {
+          (sp.material as THREE.SpriteMaterial).opacity = opacity;
+          sp.scale.set(s, s, 1);
+        };
+        fireShot = (node: AtlasNode, screen: THREE.Mesh) => {
+          if (shotPhase !== "idle") return;
+          screen.getWorldPosition(shotTo);
+          root.worldToLocal(shotTo);
+          // Her bow has moved with the counter-rotation — recompute it.
+          dianaGroup.updateWorldMatrix(true, false);
+          bowOrigin.copy(BOW_LOCAL).applyMatrix4(dianaGroup.matrixWorld);
+          root.worldToLocal(bowOrigin);
+          chargeGlow.position.copy(bowOrigin);
+          shotNode = node;
+          if (reduced) {
+            dianaShotCb(node);
+            return;
+          }
+          shotPhase = "charging";
+          shotT = 0;
+        };
+        shotTick = (dt: number) => {
+          if (shotPhase === "idle") return;
+          shotT += dt;
+          if (shotPhase === "charging") {
+            const k = Math.min(shotT / 0.45, 1);
+            setGlow(chargeGlow, k * 0.9, (2 + k * 5) * dianaScaleF);
+            if (k >= 1) {
+              shotPhase = "flying";
+              shotT = 0;
+              shotFrom.copy(bowOrigin);
+              shotCtrl.copy(shotFrom).lerp(shotTo, 0.5);
+              shotCtrl.y += 1.4 + 1.6 * dianaScaleF;
+              shotCurve = new THREE.QuadraticBezierCurve3(
+                shotFrom.clone(),
+                shotCtrl.clone(),
+                shotTo.clone(),
+              );
+              arrowGroup.visible = true;
+              trail.visible = true;
+              setGlow(chargeGlow, 0, 0.6);
+            }
+          } else if (shotPhase === "flying" && shotCurve) {
+            // A colossus looses across a long room — give the flight room to breathe.
+            const k = Math.min(shotT / (0.5 + 0.5 * dianaScaleF), 1);
+            const p = shotCurve.getPoint(k);
+            const tan = shotCurve.getTangent(k);
+            arrowGroup.position.copy(p);
+            arrowGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tan);
+            for (let i = 0; i < TRAIL_N; i++) {
+              const tp = shotCurve.getPoint(Math.max(0, k - i * 0.022));
+              trailArr[i * 3] = tp.x;
+              trailArr[i * 3 + 1] = tp.y;
+              trailArr[i * 3 + 2] = tp.z;
+            }
+            (trailGeo.getAttribute("position") as THREE.BufferAttribute).needsUpdate = true;
+            if (k >= 1) {
+              shotPhase = "impact";
+              shotT = 0;
+              arrowGroup.visible = false;
+              trail.visible = false;
+              flash.position.copy(shotTo);
+              flash.visible = true;
+              setGlow(flash, 0.95, 1);
+            }
+          } else if (shotPhase === "impact") {
+            const k = Math.min(shotT / 0.5, 1);
+            setGlow(flash, 0.95 * (1 - k), (3 + k * 20) * dianaScaleF);
+            if (k >= 1) {
+              flash.visible = false;
+              shotPhase = "idle";
+              const n = shotNode;
+              shotNode = null;
+              if (n) dianaShotCb(n);
+            }
+          }
+        };
+      }
+      else if (style === "radcliffe") {
+        // Radcliffe: the Radcliffe Camera as its own Diana style — thirteen live
         // screens ring its drum, Diana orbits the building on the plaza, and
         // the Inside view opens the round reading room. The building is
         // world-still; Diana's orbit is the exterior motion.
@@ -1609,7 +1975,7 @@ function useAtlasScene(
         const init = new Map<LabCategory, THREE.Object3D[]>();
         for (const c of ORDER) init.set(c, []);
         const texOf = (node: AtlasNode) => textures[nodes.indexOf(node)];
-        const layout = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        const layout = RADCLIFFE_RING_LAYOUT;
         /** Book-spine panel for a dormant ring slot — dark plane, three gold ticks. */
         const addSpine = (group: THREE.Group, w: number, h: number, z: number) => {
           const spine = new THREE.Mesh(
@@ -2128,7 +2494,7 @@ function useAtlasScene(
         const node = mesh ? ((mesh.userData.node as AtlasNode) ?? null) : null;
         // Gallery: Diana looses an arrow at the chosen screen; the impact
         // opens the lab cinematically — no inspector in between.
-        if (style === "gallery" && node && mesh && fireShot) {
+        if ((style === "gallery" || style === "radcliffe") && node && mesh && fireShot) {
           fireShot(node, mesh);
           return;
         }
@@ -2150,9 +2516,9 @@ function useAtlasScene(
         const dt = Math.min(clock.getDelta(), 0.05);
         const t = clock.elapsedTime;
         // Pause the drift while the visitor's pointer is over the canvas —
-        // moving targets are miserable to click. The Gallery building stays
+        // moving targets are miserable to click. The Radcliffe building stays
         // world-still by design; there, Diana's orbit is the motion.
-        if (style !== "gallery" && !reduced && !hovering) root.rotation.y += dt * 0.03;
+        if (style !== "radcliffe" && !reduced && !hovering) root.rotation.y += dt * 0.03;
         controls.autoRotate = !reduced && !hovering;
         // Diana counter-rotates against the room's orbit — pauses with the
         // room when the visitor leans in, and for reduced motion.
@@ -2211,9 +2577,9 @@ function useAtlasScene(
         onDianaShot: (cb) => {
           dianaShotCb = cb;
         },
-        /** Gallery: swap outside orbit ↔ reading room live — no rebuild. */
+        /** Radcliffe: swap outside orbit ↔ reading room live — no rebuild. */
         setGalleryView: (v) => {
-          if (style !== "gallery") return;
+          if (style !== "radcliffe") return;
           setGalleryViewFn?.(v);
         },
         /** Diana styles: re-cast her finish live — no scene rebuild. */
@@ -2227,7 +2593,7 @@ function useAtlasScene(
           for (const fn of dianaScaleFns) fn(f);
         },
         setRoom: (re) => {
-          if (style !== "gallery") return;
+          if (style !== "gallery" && style !== "radcliffe") return;
           if (skyGeoRef) paintSky(skyGeoRef, re.skyTop, re.skyBottom);
           (scene.fog as THREE.Fog | null)?.color.set(re.fog);
           if (groundMeshRef) (groundMeshRef.material as THREE.MeshBasicMaterial).color.set(re.ground);
@@ -2309,7 +2675,7 @@ export function LabsAtlas({
   // (Room tint applies live via setRoom — no rebuild.)
   const [sceneKey, setSceneKey] = useState(0);
   const roomEnv: RoomEnv | null = useMemo(() => {
-    if (style !== "gallery") return null;
+    if (style !== "gallery" && style !== "radcliffe") return null;
     if (roomId === "custom") {
       return {
         skyTop: shade(customHex, 0.22),
@@ -2332,7 +2698,7 @@ export function LabsAtlas({
       if (gl && (GALLERY_LAYOUTS as { id: string }[]).some((l) => l.id === gl)) {
         setGalleryLayout(gl as GalleryLayoutId);
       }
-      const gv = window.localStorage.getItem(GALLERY_VIEW_KEY);
+      const gv = window.localStorage.getItem(GALLERY_VIEW_KEY) ?? window.localStorage.getItem("labs:gallery-view");
       if (gv === "outside" || gv === "inside") setGalleryView(gv);
       const rm = window.localStorage.getItem(GALLERY_ROOM_KEY);
       if (rm && (rm === "custom" || GALLERY_ROOMS.some((r) => r.id === rm))) setRoomId(rm);
@@ -2492,7 +2858,7 @@ export function LabsAtlas({
     handle.setDianaScale(dianaScale);
   }, [handle, dianaScale]);
 
-  const galleryThumb = style === "gallery" && selected ? ATLAS_THUMBS[selected.href] : undefined;
+  const galleryThumb = (style === "gallery" || style === "radcliffe") && selected ? ATLAS_THUMBS[selected.href] : undefined;
 
   return (
     <div>
@@ -2582,8 +2948,8 @@ export function LabsAtlas({
             ))}
           </div>
         ) : null}
-        {style === "gallery" ? (
-          <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Gallery view">
+        {style === "radcliffe" ? (
+          <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Radcliffe view">
             {(["outside", "inside"] as const).map((v) => (
               <button
                 key={v}
@@ -2599,7 +2965,7 @@ export function LabsAtlas({
             ))}
           </div>
         ) : null}
-        {style === "gallery" ? (
+        {(style === "gallery" || style === "radcliffe") ? (
           <div className="flex flex-wrap items-center gap-2 rounded-full border border-border/60 px-3 py-1.5" role="group" aria-label="Room color">
             <span className="font-papermono text-xs text-muted-foreground">Room</span>
             {GALLERY_ROOMS.map((r) => (
@@ -2730,8 +3096,8 @@ export function LabsAtlas({
         ) : null}
       </div>
 
-      {/* Gallery view swap: a soft veil over the room change (gallery only). */}
-      {style === "gallery" ? (
+      {/* Radcliffe view swap: a soft veil over the room change (radcliffe only). */}
+      {style === "radcliffe" ? (
         <div
           className={`pointer-events-none fixed inset-0 z-[85] bg-lunar/70 transition-opacity duration-300 ${
             viewVeil ? "opacity-100" : "opacity-0"
