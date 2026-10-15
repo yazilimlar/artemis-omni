@@ -79,20 +79,37 @@ const ATLAS_THUMBS: Record<string, string> = {
   "/labs/civicbid-intelligence-bridge": "/labs/thumbs/civicbid.jpg",
 };
 
-/** Gallery wall layouts — the visitor reconfigures the Architect's wall. */
+/** Gallery ring layouts — the visitor reconfigures how the screens ring the Radcliffe drum. */
 export type GalleryLayoutId = "wall" | "3x5" | "4x4" | "4x12" | "6x8";
 
-type GalleryLayout = { id: GalleryLayoutId; label: string; rows: number; cols: number; classic?: boolean };
+/** Gallery view — Diana's orbit outside the building, or the reading room inside. */
+export type GalleryViewId = "outside" | "inside";
+
+type GalleryLayout = {
+  id: GalleryLayoutId;
+  label: string;
+  /** Slots per ring, lower ring first. */
+  rings: number[];
+  /** Ring centre height on the drum. */
+  ringYs: number[];
+  /** Screen scale applied to the 3.6 × 2.24 base (wall overrides via `sizes`). */
+  scale: number;
+  /** Explicit per-ring [w, h] — the classic two-ring wall. */
+  sizes?: Array<[number, number]>;
+  plateScale: number;
+  classic?: boolean;
+};
 
 const GALLERY_LAYOUTS: GalleryLayout[] = [
-  { id: "wall", label: "Wall", rows: 2, cols: 7, classic: true },
-  { id: "3x5", label: "3×5", rows: 3, cols: 5 },
-  { id: "4x4", label: "4×4", rows: 4, cols: 4 },
-  { id: "4x12", label: "4×12", rows: 4, cols: 12 },
-  { id: "6x8", label: "6×8", rows: 6, cols: 8 },
+  { id: "wall", label: "Wall", classic: true, rings: [7, 6], ringYs: [4.6, 9.3], scale: 1, sizes: [[3.6, 2.24], [3.1, 1.94]], plateScale: 0.8 },
+  { id: "3x5", label: "3×5", rings: [5, 4, 4], ringYs: [4.2, 6.9, 9.6], scale: 0.85, plateScale: 0.72 },
+  { id: "4x4", label: "4×4", rings: [4, 3, 3, 3], ringYs: [3.9, 6.0, 8.1, 10.2], scale: 0.68, plateScale: 0.62 },
+  { id: "4x12", label: "4×12", rings: [4, 4, 4, 4], ringYs: [3.9, 6.0, 8.1, 10.2], scale: 0.68, plateScale: 0.62 },
+  { id: "6x8", label: "6×8", rings: [5, 5, 5], ringYs: [4.2, 6.9, 9.6], scale: 0.85, plateScale: 0.72 },
 ];
 
 const GALLERY_LAYOUT_KEY = "labs-gallery-layout";
+const GALLERY_VIEW_KEY = "labs:gallery-view";
 
 /** Room atmospheres for the gallery — the visitor tints the screening room. */
 type RoomEnv = { skyTop: string; skyBottom: string; fog: string; ground: string; star: string };
@@ -200,7 +217,7 @@ export const ATLAS_STYLE_META: Record<AtlasStyle, { title: string; blurb: string
   gallery: {
     title: "The labs as a gallery",
     blurb:
-      "The Architect's wall — thirteen live screens in a dark room, the colossus Diana standing guard at the center. Hover to lean in; click a screen and she'll loose a golden arrow to open its lab.",
+      "The Radcliffe Camera itself — thirteen live screens ring its drum while Diana patrols a slow orbit; step Inside into the round reading room, where she presides over the catalogue table. Drag to orbit, click a screen and she'll loose a golden arrow to open its lab.",
   },
 };
 
@@ -314,6 +331,8 @@ type SceneHandle = {
   setRoom: (re: RoomEnv) => void;
   /** Gallery: Diana's arrow struck a screen — open its lab cinematically. */
   onDianaShot: (cb: (node: AtlasNode) => void) => void;
+  /** Gallery: switch outside orbit ↔ reading room live — no scene rebuild. */
+  setGalleryView: (v: GalleryViewId) => void;
   /** Diana styles: re-cast her finish live — no scene rebuild. */
   /** Diana styles: re-cast her finish live — no scene rebuild. */
   setDianaMaterial: (m: DianaMaterialId) => void;
@@ -328,12 +347,17 @@ function useAtlasScene(
   viewport: AtlasViewport,
   galleryLayout: GalleryLayoutId,
   roomEnv: RoomEnv | null,
+  galleryView: GalleryViewId,
 ): SceneHandle | null {
   const [handle, setHandle] = useState<SceneHandle | null>(null);
   // Room tint is applied live (setRoom) without rebuilding the scene, so the
   // effect reads it through a ref instead of a dep.
   const roomEnvRef = useRef(roomEnv);
   roomEnvRef.current = roomEnv;
+  // The gallery view is applied live (setGalleryView) without rebuilding the
+  // scene, so the effect reads it through a ref instead of a dep.
+  const galleryViewRef = useRef(galleryView);
+  galleryViewRef.current = galleryView;
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -346,6 +370,9 @@ function useAtlasScene(
     // Gallery-only: assigned inside the gallery branch.
     let fireShot: ((node: AtlasNode, screen: THREE.Mesh) => void) | null = null;
     let shotTick: (dt: number) => void = () => {};
+    // Gallery-only: the live view switch + per-view pick filter.
+    let setGalleryViewFn: ((v: GalleryViewId) => void) | null = null;
+    let galleryViewFilter: ((m: THREE.Mesh) => boolean) | null = null;
     // Diana's statues + finish. The finish can be set before the lazy GLB
     // arrives; the loader applies whatever is current, to every statue.
     const dianaStatues: THREE.Group[] = [];
@@ -384,11 +411,9 @@ function useAtlasScene(
       else if (style === "octagon") camera.position.set(0, 13, 25);
       else if (style === "rotonda") camera.position.set(0, 20, 15);
       else if (style === "gallery") {
-        const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        // Framed for Diana at her tuned size with the wall behind her.
-        // Grids pull slightly further.
-        if (gl.classic) camera.position.set(0, 8, 30);
-        else camera.position.set(0, 8.5, 32);
+        // The Radcliffe fills the frame: plaza ring, drum, dome and lantern,
+        // with Diana's orbit path in the foreground.
+        camera.position.set(0, 12, 44);
       } else camera.position.set(0, 7, 24);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -404,10 +429,7 @@ function useAtlasScene(
       else if (style === "colosseum") controls.target.set(0, 4, 0);
       else if (style === "geodesic") controls.target.set(0, 4, 0);
       else if (style === "octagon") controls.target.set(0, 3, 0);
-      else if (style === "gallery") {
-        const gl = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        controls.target.set(0, gl.classic ? 4.5 : 5, gl.classic ? 6 : 5);
-      }
+      else if (style === "gallery") controls.target.set(0, 6.5, 5);
 
       const root = new THREE.Group();
       scene.add(root);
@@ -431,6 +453,8 @@ function useAtlasScene(
       let skyGeoRef: THREE.BufferGeometry | null = null;
       let groundMeshRef: THREE.Mesh | null = null;
       let starPtsRef: THREE.Points | null = null;
+      // Gallery interior surfaces washed by the room tint (reading room).
+      const galleryTintMats: THREE.MeshBasicMaterial[] = [];
       function paintSky(geo: THREE.BufferGeometry, top: string, bottom: string) {
         const topC = new THREE.Color(top);
         const botC = new THREE.Color(bottom);
@@ -1391,9 +1415,10 @@ function useAtlasScene(
         }
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
       } else if (style === "gallery") {
-        // Gallery: the Architect's wall — thirteen live screens on a curved
-        // video wall in a dark screening room. Flagships get larger screens,
-        // center stage.
+        // Gallery v2: the Radcliffe Camera IS the gallery — thirteen live
+        // screens ring its drum, Diana orbits the building on the plaza, and
+        // the Inside view opens the round reading room. The building is
+        // world-still; Diana's orbit is the exterior motion.
         const fallbackTex = (title: string) => {
           const c = document.createElement("canvas");
           c.width = 640;
@@ -1445,134 +1470,397 @@ function useAtlasScene(
           });
         const textures = await Promise.all(nodes.map(loadTex));
 
-        const R = 15;
-        const ordered = [...nodes].sort((a, b) => Number(b.flagship) - Number(a.flagship));
-        // Center-out slot order so flagships take center stage.
-        const centerOut = (n: number) => {
-          const order: number[] = [];
-          const mid = Math.floor(n / 2);
-          order.push(mid);
-          for (let d = 1; order.length < n; d++) {
-            if (mid - d >= 0) order.push(mid - d);
-            if (mid + d < n) order.push(mid + d);
+        const GX = 0;             // building centre, root space
+        const GZ = 5;
+        // Screens ring the drum just proud of the column shafts (outer r
+        // 8.19), so both rings read in front of the colonnade.
+        const RING_R = 8.35;
+        const RING_R_IN = 7.05;   // the reading room's inner ring
+        const DRUM_BOT = 2.92;
+        const FLOOR_Y = 2.93;     // reading-room floor — the drum's base
+        const TABLE_TOP = 3.43;   // catalogue table top — Diana's podium
+        const ORBIT_R = 11.5;     // Diana's orbit path radius
+        const ORBIT_W = 0.11;     // rad/s — one circuit ≈ 57 s
+        const meshMat = (
+          color: string,
+          extra: { transparent?: boolean; opacity?: number; side?: THREE.Side; map?: THREE.Texture } = {},
+        ) => new THREE.MeshBasicMaterial({ color, ...extra });
+
+        // --- The building: the Radcliffe at centre stage, world-still -------
+        const building = new THREE.Group();
+        const exteriorGroup = new THREE.Group();
+        const interiorGroup = new THREE.Group();
+        interiorGroup.visible = false;
+        root.add(building, exteriorGroup, interiorGroup);
+        {
+          const add = (mesh: THREE.Mesh, y: number) => {
+            mesh.position.set(GX, y, GZ);
+            building.add(mesh);
+            return mesh;
+          };
+          // Plaza + the gold ring of Diana's route.
+          const plaza = new THREE.Mesh(
+            new THREE.CircleGeometry(11.5, 64),
+            meshMat("#1b2233", { transparent: true, opacity: 0.92 }),
+          );
+          plaza.rotation.x = -Math.PI / 2;
+          plaza.position.set(GX, 0.01, GZ);
+          exteriorGroup.add(plaza);
+          const orbitPath = new THREE.Mesh(
+            new THREE.TorusGeometry(ORBIT_R, 0.06, 8, 128),
+            meshMat("#a8873f", { transparent: true, opacity: 0.5 }),
+          );
+          orbitPath.rotation.x = Math.PI / 2;
+          orbitPath.position.set(GX, 0.06, GZ);
+          exteriorGroup.add(orbitPath);
+
+          add(new THREE.Mesh(new THREE.CylinderGeometry(9.6, 10.2, 0.7, 64), meshMat("#232a3a")), 0.35);
+          add(new THREE.Mesh(new THREE.CylinderGeometry(8.55, 8.95, 1.9, 64), meshMat("#9a8563")), 1.65);
+          // Rustication rings — each sits proud of the tapered wall by
+          // construction (v1's buried-ring note resolved).
+          for (const ry of [1.15, 2.15]) {
+            const wallR = 8.55 + (8.95 - 8.55) * ((2.6 - ry) / 1.9);
+            const rustRing = new THREE.Mesh(
+              new THREE.TorusGeometry(wallR + 0.055, 0.08, 10, 96),
+              meshMat("#6f5f43"),
+            );
+            rustRing.rotation.x = Math.PI / 2;
+            add(rustRing, ry);
           }
-          return order;
+          add(new THREE.Mesh(new THREE.CylinderGeometry(9.0, 9.0, 0.32, 64), meshMat("#c2ab7d")), 2.76);
+          // The drum: open-ended and DoubleSide so the Inside view reads its
+          // interior wall.
+          add(
+            new THREE.Mesh(
+              new THREE.CylinderGeometry(7.4, 7.4, 8.6, 64, 1, true),
+              meshMat("#c2ab7d", { side: THREE.DoubleSide }),
+            ),
+            DRUM_BOT + 4.3,
+          );
+          // 16 columns, offset half a bay from the lower ring of screens.
+          for (let j = 0; j < 16; j++) {
+            const a = ((j + 0.5) * Math.PI) / 8;
+            const x = GX + Math.sin(a) * 7.85;
+            const z = GZ + Math.cos(a) * 7.85;
+            const shaft = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.3, 0.34, 7.9, 12),
+              meshMat("#d6c08e"),
+            );
+            shaft.position.set(x, 7.2, z);
+            building.add(shaft);
+            const capital = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.5, 0.5, 0.26, 12),
+              meshMat("#d6c08e"),
+            );
+            capital.position.set(x, 11.3, z);
+            building.add(capital);
+          }
+          // Entablature (open-ended, DoubleSide, with a soffit ring so the
+          // inside sees through to the dome) + gold bead on top.
+          add(
+            new THREE.Mesh(
+              new THREE.CylinderGeometry(8.3, 8.3, 0.4, 64, 1, true),
+              meshMat("#c2ab7d", { side: THREE.DoubleSide }),
+            ),
+            11.72,
+          );
+          const soffit = new THREE.Mesh(new THREE.RingGeometry(7.4, 8.3, 64), meshMat("#c2ab7d"));
+          soffit.rotation.x = Math.PI / 2;
+          add(soffit, 11.52);
+          const bead = new THREE.Mesh(new THREE.TorusGeometry(8.3, 0.09, 10, 96), meshMat("#a8873f"));
+          bead.rotation.x = Math.PI / 2;
+          add(bead, 11.9);
+          // Octagonal drum, lead dome, lantern.
+          add(
+            new THREE.Mesh(
+              new THREE.CylinderGeometry(5.9, 6.4, 0.8, 8, 1, true),
+              meshMat("#9a8563", { side: THREE.DoubleSide }),
+            ),
+            12.32,
+          );
+          const dome = new THREE.Mesh(
+            new THREE.SphereGeometry(5.95, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2),
+            meshMat("#7ea39b", { side: THREE.DoubleSide }),
+          );
+          dome.scale.y = 0.46;
+          add(dome, 12.72);
+          add(new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.6, 1.3, 16), meshMat("#c2ab7d")), 16.11);
+          add(new THREE.Mesh(new THREE.ConeGeometry(0.85, 0.8, 16), meshMat("#7ea39b")), 17.16);
+        }
+        const buildingPlate = makeLabel("Radcliffe Camera · Oxford 1749", "#e8d9b0", 1.5);
+        buildingPlate.position.set(GX, 7.2, GZ + 9.6);
+        exteriorGroup.add(buildingPlate);
+
+        // --- Screens: rings on the drum, outside and inside ------------------
+        const ordered = [...nodes].sort((a, b) => Number(b.flagship) - Number(a.flagship));
+        // Slot offsets fan out from the front (+z, the visitor's side), so the
+        // flagship-first order lands nearest the default view.
+        const ringOffsets = (c: number) => {
+          const offs: number[] = [];
+          for (let d = 0; offs.length < c; d++) {
+            if (d === 0) offs.push(0);
+            else {
+              offs.push(d);
+              if (offs.length < c) offs.push(-d);
+            }
+          }
+          return offs;
         };
         const init = new Map<LabCategory, THREE.Object3D[]>();
         for (const c of ORDER) init.set(c, []);
-        /** One screen (or dormant frame) on the wall, facing the visitor. */
-        const addScreen = (
+        const texOf = (node: AtlasNode) => textures[nodes.indexOf(node)];
+        const layout = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
+        /** Book-spine panel for a dormant ring slot — dark plane, three gold ticks. */
+        const addSpine = (group: THREE.Group, w: number, h: number, z: number) => {
+          const spine = new THREE.Mesh(
+            new THREE.PlaneGeometry(w, h),
+            meshMat("#1a1f2b", { transparent: true, opacity: 0.95 }),
+          );
+          spine.position.z = z;
+          group.add(spine);
+          for (const dx of [-0.18, 0, 0.18]) {
+            const tick = new THREE.Mesh(
+              new THREE.PlaneGeometry(w * 0.02, h * 0.72),
+              meshMat("#a8873f", { transparent: true, opacity: 0.75 }),
+            );
+            tick.position.set(w * dx, 0, z + 0.01);
+            group.add(tick);
+          }
+        };
+        /** One slot on a drum ring; `inward` builds the reading-room copy. */
+        const addRingSlot = (
           node: AtlasNode | null,
           tex: THREE.Texture | null,
           w: number,
           h: number,
-          px: number,
-          py: number,
-          pz: number,
-          plateScale: number,
-          showPlate: boolean,
+          a: number,
+          y: number,
+          inward: boolean,
         ) => {
           const group = new THREE.Group();
-          const frame = new THREE.Mesh(
-            new THREE.PlaneGeometry(w + 0.16, h + 0.16),
-            new THREE.MeshBasicMaterial({
-              color: !node ? "#232a38" : node.flagship ? "#a8873f" : "#4a5468",
-              transparent: true,
-              opacity: node ? 0.95 : 0.2,
-            }),
-          );
-          group.add(frame);
-          if (node && tex) {
-            const screen = new THREE.Mesh(
-              new THREE.PlaneGeometry(w, h),
-              new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 1 }),
+          const rr = inward ? RING_R_IN : RING_R;
+          const px = GX + Math.sin(a) * rr;
+          const pz = GZ + Math.cos(a) * rr;
+          group.position.set(px, y, pz);
+          if (!node) {
+            // Dormant slot — the building always reads complete.
+            addSpine(group, w + 0.16, h + 0.16, 0);
+          } else {
+            const frame = new THREE.Mesh(
+              new THREE.PlaneGeometry(w + 0.16, h + 0.16),
+              meshMat(node.flagship ? "#a8873f" : "#4a5468", { transparent: true, opacity: 0.95 }),
             );
-            screen.position.z = 0.012;
-            screen.userData.node = node;
-            screen.userData.baseScale = 1;
-            screen.userData.visual = screen;
-            group.add(screen);
-            meshes.push(screen);
-            hitMeshes.push(screen);
-            if (showPlate) {
-              const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", plateScale);
-              plate.position.y = -h / 2 - 0.5;
-              group.add(plate);
-              init.get(node.category)!.push(plate);
-            }
-            init.get(node.category)!.push(frame, screen);
-          }
-          group.position.set(px, py, pz);
-          // Convex wall: screens face outward, toward the visitor.
-          group.lookAt(px * 2, py, pz * 2);
-          root.add(group);
-        };
-        const texOf = (node: AtlasNode) => textures[nodes.indexOf(node)];
-        const layout = GALLERY_LAYOUTS.find((l) => l.id === galleryLayout) ?? GALLERY_LAYOUTS[0];
-        if (layout.classic) {
-          // The classic wall: two staggered rows, flagships larger.
-          const rows = [
-            { count: 7, y: 2.7, w: 3.3, h: 2.0625, spread: 126 },
-            { count: 6, y: 5.6, w: 2.9, h: 1.8125, spread: 105 },
-          ];
-          let placed = 0;
-          for (const row of rows) {
-            const slots = centerOut(row.count);
-            for (let s = 0; s < row.count && placed < ordered.length; s++) {
-              const node = ordered[placed++];
-              const slot = slots[s];
-              const a = ((slot / (row.count - 1) - 0.5) * row.spread * Math.PI) / 180;
-              const boost = node.flagship ? 1.22 : 1;
-              const w = row.w * boost;
-              const h = row.h * boost;
-              addScreen(node, texOf(node), w, h, Math.sin(a) * R, row.y, Math.cos(a) * R, 0.8, true);
-            }
-          }
-        } else {
-          // Reconfigurable grid: uniform cells; empty slots stay as dormant
-          // frames so the wall reads intentional at any size.
-          const { rows, cols } = layout;
-          const yTop = 8.4;
-          const yBottom = 1.9;
-          const cellH = ((yTop - yBottom) / rows) * 0.78;
-          const cellW = cellH * 1.6;
-          const spreadDeg = Math.min(280, ((cols * cellW * 1.18) / R) * 57.2958);
-          const showPlate = cellW >= 2.2;
-          // Round-robin across rows so the thirteen screens spread over the
-          // whole wall instead of clustering in the top row.
-          const rowNodes: (AtlasNode | null)[][] = Array.from({ length: rows }, () => []);
-          ordered.forEach((node, i) => rowNodes[i % rows].push(node));
-          for (let r = 0; r < rows; r++) {
-            const y = yTop - ((r + 0.5) / rows) * (yTop - yBottom);
-            const slots = centerOut(cols);
-            const list = rowNodes[r];
-            for (let s = 0; s < cols; s++) {
-              const slot = slots[s];
-              const a = cols === 1 ? 0 : ((slot / (cols - 1) - 0.5) * spreadDeg * Math.PI) / 180;
-              const node = s < list.length ? list[s] : null;
-              addScreen(
-                node,
-                node ? texOf(node) : null,
-                cellW,
-                cellH,
-                Math.sin(a) * R,
-                y,
-                Math.cos(a) * R,
-                Math.min(0.75, cellW / 5),
-                showPlate,
+            group.add(frame);
+            if (tex) {
+              const screen = new THREE.Mesh(
+                new THREE.PlaneGeometry(w, h),
+                meshMat("#ffffff", { map: tex, transparent: true, opacity: 1 }),
               );
+              screen.position.z = 0.012;
+              screen.userData.node = node;
+              screen.userData.baseScale = 1;
+              screen.userData.visual = screen;
+              screen.userData.view = inward ? "inside" : "outside";
+              group.add(screen);
+              meshes.push(screen);
+              hitMeshes.push(screen);
+              if (!inward) {
+                // A dormant spine behind each live slot: hidden by the frame,
+                // revealed when category filtering hides the screen.
+                addSpine(group, w + 0.16, h + 0.16, -0.02);
+                const plate = makeLabel(node.title, node.flagship ? "#f0d49a" : "#c7cdd8", layout.plateScale);
+                plate.position.y = -h / 2 - 0.5;
+                group.add(plate);
+                init.get(node.category)!.push(plate);
+              }
+              init.get(node.category)!.push(frame, screen);
+            } else {
+              init.get(node.category)!.push(frame);
+            }
+          }
+          if (inward) group.lookAt(px - Math.sin(a), y, pz - Math.cos(a));
+          else group.lookAt(px + Math.sin(a), y, pz + Math.cos(a));
+          (inward ? interiorGroup : exteriorGroup).add(group);
+        };
+        {
+          let placed = 0;
+          for (let ri = 0; ri < layout.rings.length; ri++) {
+            const count = layout.rings[ri];
+            const y = layout.ringYs[ri] ?? layout.ringYs[layout.ringYs.length - 1];
+            const [bw, bh] = layout.sizes?.[ri] ?? [3.6 * layout.scale, 2.24 * layout.scale];
+            const offsets = ringOffsets(count);
+            for (let s = 0; s < count; s++) {
+              const a = (offsets[s] / count) * Math.PI * 2;
+              const node = placed < ordered.length ? ordered[placed] : null;
+              if (node) placed++;
+              const boost = node?.flagship ? 1.22 : 1;
+              const w = bw * boost;
+              const h = bh * boost;
+              addRingSlot(node, node ? texOf(node) : null, w, h, a, y, false);
+              if (node) addRingSlot(node, texOf(node), w, h, a, y, true);
             }
           }
         }
+
+        // --- Inside the Radcliffe: the reading room --------------------------
+        {
+          const floor = new THREE.Mesh(new THREE.CircleGeometry(7.35, 64), meshMat("#241c14"));
+          floor.rotation.x = -Math.PI / 2;
+          floor.position.set(GX, FLOOR_Y, GZ);
+          interiorGroup.add(floor);
+          // Room tint washing the drum's interior wall (setRoom repaints it).
+          const tintMat = meshMat(room ? shade(room.ground, 1.25) : "#0a0d14", {
+            transparent: true,
+            opacity: 0.22,
+            side: THREE.DoubleSide,
+          });
+          galleryTintMats.push(tintMat);
+          const wash = new THREE.Mesh(
+            new THREE.CylinderGeometry(7.36, 7.36, 8.55, 48, 1, true),
+            tintMat,
+          );
+          wash.position.set(GX, DRUM_BOT + 8.55 / 2, GZ);
+          interiorGroup.add(wash);
+          // Eight reading desks, each with a warm lamp.
+          for (let j = 0; j < 8; j++) {
+            const a = (j / 8) * Math.PI * 2;
+            const x = GX + Math.sin(a) * 4.3;
+            const z = GZ + Math.cos(a) * 4.3;
+            const desk = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.72, 0.9), meshMat("#2a2016"));
+            desk.position.set(x, FLOOR_Y + 0.36, z);
+            desk.rotation.y = a;
+            interiorGroup.add(desk);
+            const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 10), meshMat("#ffd98a"));
+            lamp.position.set(x, FLOOR_Y + 0.95, z);
+            interiorGroup.add(lamp);
+            const lampGlow = new THREE.Sprite(
+              new THREE.SpriteMaterial({
+                map: glowTexture("#ffd98a"),
+                transparent: true,
+                opacity: 0.5,
+                depthWrite: false,
+              }),
+            );
+            lampGlow.scale.set(0.9, 0.9, 1);
+            lampGlow.position.set(x, FLOOR_Y + 0.95, z);
+            interiorGroup.add(lampGlow);
+          }
+          // The central catalogue table — Diana's podium.
+          const table = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.5, 48), meshMat("#1c1510"));
+          table.position.set(GX, FLOOR_Y + 0.25, GZ);
+          interiorGroup.add(table);
+          // Balcony ring at upper-screen height, with a thin rail.
+          const balcony = new THREE.Mesh(new THREE.TorusGeometry(7.15, 0.12, 10, 96), meshMat("#c2ab7d"));
+          balcony.rotation.x = Math.PI / 2;
+          balcony.position.set(GX, 9.0, GZ);
+          interiorGroup.add(balcony);
+          const rail = new THREE.Mesh(new THREE.TorusGeometry(7.15, 0.035, 8, 96), meshMat("#a8873f"));
+          rail.rotation.x = Math.PI / 2;
+          rail.position.set(GX, 9.72, GZ);
+          interiorGroup.add(rail);
+          // Two coffer rings under the dome.
+          for (const [cy, cr] of [[12.95, 5.75], [13.55, 5.35]] as Array<[number, number]>) {
+            const coffer = new THREE.Mesh(new THREE.TorusGeometry(cr, 0.1, 8, 96), meshMat("#6b8a84"));
+            coffer.rotation.x = Math.PI / 2;
+            coffer.position.set(GX, cy, GZ);
+            interiorGroup.add(coffer);
+          }
+        }
+
+        // --- The view switch: outside orbit ↔ reading room -------------------
+        let viewId: GalleryViewId = galleryViewRef.current;
+        const applyView = (v: GalleryViewId) => {
+          viewId = v;
+          exteriorGroup.visible = v === "outside";
+          interiorGroup.visible = v === "inside";
+          if (v === "inside") {
+            camera.position.set(GX, 4.6, GZ + 5.2);
+            controls.target.set(GX, 4.8, GZ);
+            controls.minDistance = 2;
+            // Kept inside the screen ring (7.05) — the visitor can't leave.
+            controls.maxDistance = 6.6;
+            // Polar clamp: never below the floor line, never straight overhead.
+            controls.minPolarAngle = 0.35;
+            controls.maxPolarAngle = 1.85;
+          } else {
+            camera.position.set(0, 12, 44);
+            controls.target.set(0, 6.5, GZ);
+            controls.minDistance = 10;
+            controls.maxDistance = 60;
+            controls.minPolarAngle = 0;
+            controls.maxPolarAngle = Math.PI;
+          }
+          controls.update();
+        };
+        galleryViewFilter = (m) => (m.userData.view ?? "outside") === viewId;
+        setGalleryViewFn = applyView;
+        applyView(viewId);
+
         for (const c of ORDER) byCategory.set(c, init.get(c)!);
 
-        // --- Diana centerpiece: the colossus at the heart of the gallery. ---
-        // A classical Diana towering over the room on a stone dais. Clicking
-        // a screen makes her loose a golden arrow at it; the impact opens the
-        // lab cinematically.
-        const dianaGroup = buildDianaCenterpiece(0, 0, 5);
-        // Arrow origin in root space, refreshed from her live orientation at
-        // every shot — she counter-rotates, so her bow is never where it was.
+        // --- Diana: circling the building outside, presiding inside ----------
+        // Outside she travels the plaza ring, bow toward the drum; inside she
+        // stands on the catalogue table. Clicking a screen makes her loose a
+        // golden arrow at it; the impact opens the lab cinematically.
+        const dianaOrbit = new THREE.Group();
+        exteriorGroup.add(dianaOrbit);
+        let orbitA = -0.6; // parked front-left (first load, reduced motion)
+        const placeOrbit = () => {
+          dianaOrbit.position.set(
+            GX + Math.sin(orbitA) * ORBIT_R,
+            -3.6 * dianaScaleF,
+            GZ + Math.cos(orbitA) * ORBIT_R,
+          );
+          dianaOrbit.rotation.y = orbitA + Math.PI; // bow toward the drum
+        };
+        dianaScaleFns.push((f) => {
+          dianaOrbit.scale.setScalar(f);
+          dianaOrbit.position.y = -3.6 * f;
+        });
+        placeOrbit();
+        const dianaPlate = makeLabel("Diana · Artemis", "#f0d49a", 2.4);
+        dianaPlate.position.set(0, 6.5, -8);
+        dianaOrbit.add(dianaPlate);
+        const dianaMoon = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: glowTexture("#cdd9f5"),
+            transparent: true,
+            opacity: 0.42,
+            depthWrite: false,
+          }),
+        );
+        dianaMoon.scale.set(22, 22, 1);
+        dianaMoon.position.set(0, 33, 2);
+        dianaOrbit.add(dianaMoon);
+        getDianaStatue().then((statue) => {
+          if (!statue || cancelled) return;
+          dianaOrbit.add(statue);
+          dianaStatues.push(statue);
+          applyDianaMaterial();
+        });
+
+        const dianaInside = new THREE.Group();
+        interiorGroup.add(dianaInside);
+        dianaInside.rotation.y = 0; // facing the entrance side
+        // Inside she keeps her podium poise at 0.55× of the orbit scale,
+        // clamped so the reading room always contains her.
+        const setInsideScale = (f: number) => {
+          const s = Math.min(f * 0.55, 0.21);
+          dianaInside.scale.setScalar(s);
+          dianaInside.position.set(GX, TABLE_TOP - 3.6 * s, GZ);
+        };
+        dianaScaleFns.push(setInsideScale);
+        setInsideScale(dianaScaleF);
+        getDianaStatue().then((statue) => {
+          if (!statue || cancelled) return;
+          dianaInside.add(statue);
+          dianaStatues.push(statue);
+          applyDianaMaterial();
+        });
+
+        // Arrow origin in root space, refreshed from the active Diana's live
+        // orientation at every shot — she orbits, so her bow is never where
+        // it was.
         const bowOrigin = new THREE.Vector3(0, 26, 4);
         const BOW_LOCAL = new THREE.Vector3(0, 26, -1);
 
@@ -1658,9 +1946,11 @@ function useAtlasScene(
           if (shotPhase !== "idle") return;
           screen.getWorldPosition(shotTo);
           root.worldToLocal(shotTo);
-          // Her bow has moved with the counter-rotation — recompute it.
-          dianaGroup.updateWorldMatrix(true, false);
-          bowOrigin.copy(BOW_LOCAL).applyMatrix4(dianaGroup.matrixWorld);
+          // Her bow has moved with the orbit — recompute it from the Diana
+          // who is on stage for the active view.
+          const shooter = viewId === "inside" ? dianaInside : dianaOrbit;
+          shooter.updateWorldMatrix(true, false);
+          bowOrigin.copy(BOW_LOCAL).applyMatrix4(shooter.matrixWorld);
           root.worldToLocal(bowOrigin);
           chargeGlow.position.copy(bowOrigin);
           shotNode = node;
@@ -1727,6 +2017,16 @@ function useAtlasScene(
             }
           }
         };
+
+        // Diana's orbit — the Gallery's motion. The global spinner gate
+        // pauses it on hover and for reduced motion; a shot in flight pauses
+        // it too, so the arrow always leaves from a steady bow. (The reading
+        // room is her resting place — no motion inside.)
+        dianaSpinners.push((dt) => {
+          if (viewId !== "outside" || shotPhase !== "idle") return;
+          orbitA -= dt * ORBIT_W;
+          placeOrbit();
+        });
       } else {
         // Radial: Artemis at the root, one branch per category, every lab a
         // leaf along its branch. The hierarchy read.
@@ -1786,7 +2086,9 @@ function useAtlasScene(
         ptr.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
         ptr.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
         ray.setFromCamera(ptr, camera);
-        const hits = ray.intersectObjects(hitMeshes.filter((m) => m.visible));
+        const hits = ray.intersectObjects(
+          hitMeshes.filter((m) => m.visible && (!galleryViewFilter || galleryViewFilter(m))),
+        );
         const hit = (hits[0]?.object as THREE.Mesh | undefined) ?? null;
         return hit ? ((hit.userData.visual as THREE.Mesh) ?? null) : null;
       }
@@ -1848,8 +2150,9 @@ function useAtlasScene(
         const dt = Math.min(clock.getDelta(), 0.05);
         const t = clock.elapsedTime;
         // Pause the drift while the visitor's pointer is over the canvas —
-        // moving targets are miserable to click.
-        if (!reduced && !hovering) root.rotation.y += dt * 0.03;
+        // moving targets are miserable to click. The Gallery building stays
+        // world-still by design; there, Diana's orbit is the motion.
+        if (style !== "gallery" && !reduced && !hovering) root.rotation.y += dt * 0.03;
         controls.autoRotate = !reduced && !hovering;
         // Diana counter-rotates against the room's orbit — pauses with the
         // room when the visitor leans in, and for reduced motion.
@@ -1908,6 +2211,11 @@ function useAtlasScene(
         onDianaShot: (cb) => {
           dianaShotCb = cb;
         },
+        /** Gallery: swap outside orbit ↔ reading room live — no rebuild. */
+        setGalleryView: (v) => {
+          if (style !== "gallery") return;
+          setGalleryViewFn?.(v);
+        },
         /** Diana styles: re-cast her finish live — no scene rebuild. */
         setDianaMaterial: (m) => {
           dianaMaterialId = m;
@@ -1924,6 +2232,8 @@ function useAtlasScene(
           (scene.fog as THREE.Fog | null)?.color.set(re.fog);
           if (groundMeshRef) (groundMeshRef.material as THREE.MeshBasicMaterial).color.set(re.ground);
           if (starPtsRef) (starPtsRef.material as THREE.PointsMaterial).color.set(re.star);
+          // Wash the reading room's interior wall in the active room tone.
+          for (const m of galleryTintMats) m.color.set(shade(re.ground, 1.25));
         },
       });
 
@@ -1985,6 +2295,8 @@ export function LabsAtlas({
   const [ready, setReady] = useState(false);
   const [viewport, setViewport] = useState<AtlasViewport>("standard");
   const [galleryLayout, setGalleryLayout] = useState<GalleryLayoutId>("wall");
+  const [galleryView, setGalleryView] = useState<GalleryViewId>("outside");
+  const [viewVeil, setViewVeil] = useState(false);
   const [roomId, setRoomId] = useState<string>("abyss");
   const [customHex, setCustomHex] = useState("#1a2340");
   const [dianaMaterial, setDianaMaterial] = useState<DianaMaterialId>("wireframe");
@@ -2010,7 +2322,7 @@ export function LabsAtlas({
     const r = GALLERY_ROOMS.find((x) => x.id === roomId) ?? GALLERY_ROOMS[0];
     return { skyTop: r.skyTop, skyBottom: r.skyBottom, fog: r.fog, ground: r.ground, star: r.star };
   }, [style, roomId, customHex]);
-  const handle = useAtlasScene(mountRef, nodes, style, viewport, galleryLayout, roomEnv);
+  const handle = useAtlasScene(mountRef, nodes, style, viewport, galleryLayout, roomEnv, galleryView);
 
   useEffect(() => {
     try {
@@ -2020,6 +2332,8 @@ export function LabsAtlas({
       if (gl && (GALLERY_LAYOUTS as { id: string }[]).some((l) => l.id === gl)) {
         setGalleryLayout(gl as GalleryLayoutId);
       }
+      const gv = window.localStorage.getItem(GALLERY_VIEW_KEY);
+      if (gv === "outside" || gv === "inside") setGalleryView(gv);
       const rm = window.localStorage.getItem(GALLERY_ROOM_KEY);
       if (rm && (rm === "custom" || GALLERY_ROOMS.some((r) => r.id === rm))) setRoomId(rm);
       const ch = window.localStorage.getItem(GALLERY_ROOM_CUSTOM_KEY);
@@ -2109,6 +2423,20 @@ export function LabsAtlas({
     setSelected(null);
     setHoveredNode(null);
     setSceneKey((k) => k + 1);
+  }
+
+  function switchGalleryView(v: GalleryViewId) {
+    if (v === galleryView) return;
+    setGalleryView(v);
+    try {
+      window.localStorage.setItem(GALLERY_VIEW_KEY, v);
+    } catch {
+      /* ignore */
+    }
+    // Fade through the veil while the room swaps — no camera flight.
+    setViewVeil(true);
+    window.setTimeout(() => handle?.setGalleryView(v), 160);
+    window.setTimeout(() => setViewVeil(false), 420);
   }
 
   function switchRoom(id: string, hex?: string) {
@@ -2255,6 +2583,23 @@ export function LabsAtlas({
           </div>
         ) : null}
         {style === "gallery" ? (
+          <div className="flex flex-wrap items-center gap-1 rounded-full border border-border/60 p-1" role="group" aria-label="Gallery view">
+            {(["outside", "inside"] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                aria-pressed={galleryView === v}
+                onClick={() => switchGalleryView(v)}
+                className={`rounded-full px-3 py-1 font-papermono text-xs capitalize transition-colors ${
+                  galleryView === v ? "bg-gold/15 text-gold-soft" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {style === "gallery" ? (
           <div className="flex flex-wrap items-center gap-2 rounded-full border border-border/60 px-3 py-1.5" role="group" aria-label="Room color">
             <span className="font-papermono text-xs text-muted-foreground">Room</span>
             {GALLERY_ROOMS.map((r) => (
@@ -2384,6 +2729,16 @@ export function LabsAtlas({
           </div>
         ) : null}
       </div>
+
+      {/* Gallery view swap: a soft veil over the room change (gallery only). */}
+      {style === "gallery" ? (
+        <div
+          className={`pointer-events-none fixed inset-0 z-[85] bg-lunar/70 transition-opacity duration-300 ${
+            viewVeil ? "opacity-100" : "opacity-0"
+          }`}
+          aria-hidden
+        />
+      ) : null}
 
       {/* Diana's shot: the cinematic lab opening (gallery only). */}
       {cinematic ? (
