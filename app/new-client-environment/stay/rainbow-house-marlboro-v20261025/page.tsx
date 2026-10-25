@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
  title: "Rainbow House Marlboro | Artemis Client Environment",
@@ -9,7 +10,7 @@ export default function RainbowHouseClientEnvironment() {
  return <main style={{minHeight:"100vh",background:"radial-gradient(circle at 85% 10%,#22565b,transparent 40%),#081923",color:"#ecf5f0",fontFamily:"system-ui,sans-serif",padding:"clamp(24px,5vw,72px)"}}>
   <div style={{maxWidth:1060,margin:"auto"}}>
    <nav style={{display:"flex",justifyContent:"space-between",gap:16,flexWrap:"wrap",fontSize:14}}>
-    <a href="/" style={{color:"#b8e6d6"}}>← Artemis</a>
+    <Link href="/" style={{color:"#b8e6d6"}}>← Artemis</Link>
     <span style={{letterSpacing:2,color:"#b5d0cf"}}>NEW LIVE PRODUCTS FOR CLIENTS / STAY</span>
    </nav>
    <p style={{marginTop:90,color:"#a7d7c5",letterSpacing:3,fontSize:13}}>CLIENT ENVIRONMENT · VERSION 20261025</p>
