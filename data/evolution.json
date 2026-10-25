@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-12T13:06:13.000Z",
+    "generated_at": "2026-10-25T12:56:46.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-12T13:06:13.000Z",
+  "generated_at": "2026-10-25T12:56:46.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -4127,6 +4127,147 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-192",
+      "type": "pr_merged",
+      "date": "2026-10-12T14:02:10.000Z",
+      "title": "Prompt C: MEP architecture scoping v2",
+      "summary": "Prompt C: MEP architecture scoping v2 (2 files changed).",
+      "references": [
+        "PR#192",
+        "41ec2d5"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-194",
+      "type": "pr_merged",
+      "date": "2026-10-12T19:23:49.000Z",
+      "title": "E0: evidence contract v2 types + checker",
+      "summary": "E0: evidence contract v2 types + checker (5 files changed).",
+      "references": [
+        "PR#194",
+        "f0a3b67"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-196",
+      "type": "pr_merged",
+      "date": "2026-10-12T20:10:51.000Z",
+      "title": "P2.1: register four model-derived drivers + non-duplication checker",
+      "summary": "P2.1: register four model-derived drivers + non-duplication checker (8 files changed).",
+      "references": [
+        "PR#196",
+        "adc8197"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-198",
+      "type": "pr_merged",
+      "date": "2026-10-12T20:51:20.000Z",
+      "title": "P4a: exhaust-fan commissioning vertical slice",
+      "summary": "P4a: exhaust-fan commissioning vertical slice (5 files changed).",
+      "references": [
+        "PR#198",
+        "4f94925"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-200",
+      "type": "pr_merged",
+      "date": "2026-10-12T22:39:28.000Z",
+      "title": "P4a-V: read-only commissioning visibility panel",
+      "summary": "P4a-V: read-only commissioning visibility panel (8 files changed).",
+      "references": [
+        "PR#200",
+        "ad09bd4"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-202",
+      "type": "pr_merged",
+      "date": "2026-10-13T00:09:49.000Z",
+      "title": "Labs/lab vis fix",
+      "summary": "Labs/lab vis fix (4 files changed).",
+      "references": [
+        "PR#202",
+        "c603b39"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-204",
+      "type": "pr_merged",
+      "date": "2026-10-15T19:22:46.000Z",
+      "title": "feat(labs): the Radcliffe Camera as the Gallery — Diana in orbit + reading room (v2 re-scope)",
+      "summary": "feat(labs): the Radcliffe Camera as the Gallery — Diana in orbit + reading room (v2 re-scope) (2 files changed).",
+      "references": [
+        "PR#204",
+        "7d72e16"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-206",
+      "type": "pr_merged",
+      "date": "2026-10-15T23:00:35.000Z",
+      "title": "feat(labs): Radcliffe becomes its own Diana style; classic Gallery grids restored",
+      "summary": "feat(labs): Radcliffe becomes its own Diana style; classic Gallery grids restored (2 files changed).",
+      "references": [
+        "PR#206",
+        "d1dc9ed"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-208",
+      "type": "pr_merged",
+      "date": "2026-10-25T12:56:46.000Z",
+      "title": "feat(nlpc): publish Rainbow House Marlboro client gateway",
+      "summary": "feat(nlpc): publish Rainbow House Marlboro client gateway (1 files changed).",
+      "references": [
+        "PR#208",
+        "fce9ba0"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-fce9ba0-new-client-environment-stay-rainbow-house-marlboro-v20261025",
+      "type": "route_added",
+      "date": "2026-10-25T12:56:46.000Z",
+      "title": "Route added: /new-client-environment/stay/rainbow-house-marlboro-v20261025",
+      "summary": "app/new-client-environment/stay/rainbow-house-marlboro-v20261025/page.tsx added in fce9ba0.",
+      "references": [
+        "fce9ba0",
+        "app/new-client-environment/stay/rainbow-house-marlboro-v20261025/page.tsx",
+        "PR#208"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
     }
   ],
   "stats": {
@@ -4141,7 +4282,7 @@
     },
     "scenes_total": 7,
     "milestones_shipped": 7,
-    "prs_merged": 95,
+    "prs_merged": 104,
     "verified_capabilities": 8
   }
 }
