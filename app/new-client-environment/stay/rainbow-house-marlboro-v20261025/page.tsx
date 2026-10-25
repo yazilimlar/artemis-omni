@@ -17,7 +17,7 @@ export default function RainbowHouseClientEnvironment() {
    <h1 style={{fontSize:"clamp(42px,7vw,86px)",lineHeight:1.05,letterSpacing:"-.06em",maxWidth:780,margin:"18px 0"}}>Rainbow House<br/>Marlboro</h1>
    <p style={{fontSize:20,lineHeight:1.7,maxWidth:660,color:"#b6cdd0"}}>Hudson Valley hospitality meets a consent-first booking and property intelligence platform. A dedicated client-product workspace, developed independently and reviewed before production integration.</p>
    <div style={{display:"flex",flexWrap:"wrap",gap:14,marginTop:32}}>
-    <a href={preview} style={{background:"#ccead8",color:"#08252b",borderRadius:10,padding:"15px 20px",fontWeight:700,textDecoration:"none"}}>Open Rainbow House preview ↗</a>
+    <Link href="/new-client-environment/stay/rainbow-house-marlboro-v20261025/experience" style={{background:"#ccead8",color:"#08252b",borderRadius:10,padding:"15px 20px",fontWeight:700,textDecoration:"none"}}>Explore guest experience →</Link>
     <a href={preview+"/development-lab"} style={{border:"1px solid #648e8a",color:"#d9efea",borderRadius:10,padding:"15px 20px",textDecoration:"none"}}>Explore development lab ↗</a>
    </div>
    <p style={{color:"#9eb8bc",fontSize:13,marginTop:14}}>External preview currently uses Vercel Authentication; this page does not bypass access protection.</p>
