@@ -2,29 +2,56 @@ import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { settle, type AllocationEdge, type EvidenceNode, type NodeKind } from "./canonical";
 
-// Synthetic fixtures only. Digests are format-valid 64-char lowercase hex;
-// the kernel validates format + key/revision/digest identity (schema §6/C5),
-// it does not recompute payload digests (no payload exists in the kernel).
-let seq = 0;
-const digest = () => (++seq).toString(16).padStart(64, "0");
+// Synthetic fixtures only. M2.7.1/H1 + amendment A1: every fixture digest is
+// COMPUTED — SHA-256 over the canonical sorted-key JSON of exactly
+// {amountCents,currency,kind,occurredOn,providerEventKey,revision,source,
+// tenantId} — and the kernel recomputes and verifies it for every node
+// before dedupe/settlement; mismatch throws DIGEST_MISMATCH. Mutation
+// helpers (n via its patch argument, mut) always regenerate digests;
+// only explicitly labelled tampering tests retain a stale digest.
+type DigestFields = {
+  amountCents: number; currency: string; kind: string; occurredOn: string;
+  providerEventKey: string; revision: number; source: string; tenantId: string;
+};
+const computeDigest = (f: DigestFields): string =>
+  createHash("sha256")
+    .update(JSON.stringify({
+      amountCents: f.amountCents, currency: f.currency, kind: f.kind,
+      occurredOn: f.occurredOn, providerEventKey: f.providerEventKey,
+      revision: f.revision, source: f.source, tenantId: f.tenantId,
+    }), "utf8")
+    .digest("hex");
 
 const T = "tenant-a";
 type P = Partial<EvidenceNode> & { kind: NodeKind; amountCents: number };
-const n = (id: string, p: P): EvidenceNode => ({
-  id,
-  tenantId: T,
-  legalEntityId: null,
-  source: "synthetic",
-  providerEventKey: `evt-${id}`,
-  revision: 1,
-  digestSha256: digest(),
-  occurredOn: "2026-01-15",
-  currency: "USD",
-  ...p,
+const n = (id: string, p: P): EvidenceNode => {
+  const { digestSha256, ...rest } = p;
+  const base = {
+    id,
+    tenantId: T,
+    legalEntityId: null as string | null,
+    source: "synthetic",
+    providerEventKey: `evt-${id}`,
+    revision: 1,
+    occurredOn: "2026-01-15",
+    currency: "USD" as const,
+    ...rest,
+  };
+  return { ...base, digestSha256: digestSha256 ?? computeDigest(base) };
+};
+/** Fixture mutation helper: applies a patch and REGENERATES the digest. */
+const mut = (nd: EvidenceNode, patch: Partial<EvidenceNode>): EvidenceNode => {
+  const merged = { ...nd, ...patch };
+  return { ...merged, digestSha256: patch.digestSha256 ?? computeDigest(merged) };
+};
+const e = (id: string, fromId: string, toId: string, relation: AllocationEdge["relation"], amountCents: number, evidenceRef?: string): AllocationEdge => ({
+  id, tenantId: T, fromId, toId, relation, amountCents, evidenceRef: evidenceRef ?? `stmt:${id}`,
 });
-const e = (id: string, fromId: string, toId: string, relation: AllocationEdge["relation"], amountCents: number): AllocationEdge => ({
-  id, tenantId: T, fromId, toId, relation, amountCents, evidenceRef: `stmt:${id}`,
-});
+/** Amendment A2 grounded payout_to_bank reference, from endpoint nodes. */
+const gref = (payout: EvidenceNode, bank: EvidenceNode): string =>
+  `bank-match:${payout.providerEventKey}:${bank.providerEventKey}`;
+/** Grounded reference for fixtures whose nodes use the default evt-<id> keys. */
+const bref = (payoutId: string, bankId: string): string => `bank-match:evt-${payoutId}:evt-${bankId}`;
 const codes = (r: ReturnType<typeof settle>) => r.exceptions.map((x) => x.code);
 
 /** T06 base fixture: merch 10000 + tax 700 - fee 300, payout 10400, no bank. */
@@ -77,8 +104,8 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
     const edges = [
       e("e-a", "merch", "payout-a", "charge_to_payout", 4000),
       e("e-b", "merch", "payout-b", "charge_to_payout", 6000),
-      e("e-ba", "payout-a", "bank-a", "payout_to_bank", 4000),
-      e("e-bb", "payout-b", "bank-b", "payout_to_bank", 6000),
+      e("e-ba", "payout-a", "bank-a", "payout_to_bank", 4000, bref("payout-a", "bank-a")),
+      e("e-bb", "payout-b", "bank-b", "payout_to_bank", 6000, bref("payout-b", "bank-b")),
     ];
     const r = settle(T, nodes, edges);
     expect(r.status).toBe("matched");
@@ -124,7 +151,7 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
     const f = t06();
     f.nodes.push(n("withheld", { kind: "tax_withheld", amountCents: 700 }));
     f.edges.push(e("e-w", "withheld", "payout", "withheld_to_payout", 700));
-    f.nodes = f.nodes.map((x) => (x.id === "payout" ? { ...x, amountCents: 9700 } : x));
+    f.nodes = f.nodes.map((x) => (x.id === "payout" ? mut(x, { amountCents: 9700 }) : x));
     const r = settle(T, f.nodes, f.edges);
     expect(r.expectedPayoutCents).toBe(9700);
     expect(r.observedPayoutCents).toBe(9700);
@@ -196,9 +223,11 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
     expect(doubled.status).toBe(single.status);
   });
 
-  it("T12 same provider key + revision with a different digest throws DIGEST_CONFLICT", () => {
+  it("T12 same provider key + revision with a different valid payload throws DIGEST_CONFLICT", () => {
     const a = n("node-a", { kind: "charge_merchandise", amountCents: 100 });
-    const b = { ...n("node-b", { kind: "charge_merchandise", amountCents: 100 }), providerEventKey: a.providerEventKey, source: a.source };
+    // Same key+revision as a, different amount (different internally
+    // consistent payload, digest regenerated by mut) -> conflict, not mismatch.
+    const b = mut(n("node-b", { kind: "charge_merchandise", amountCents: 200 }), { providerEventKey: a.providerEventKey, source: a.source });
     expect(b.digestSha256).not.toBe(a.digestSha256);
     expect(() => settle(T, [a, b], [])).toThrow(/DIGEST_CONFLICT/);
   });
@@ -247,7 +276,7 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
     // present here carry 1 cent; the zero-only rule is asserted on node scope.
     const edges = [
       e("e-z1", "merch", "payout", "charge_to_payout", 1),
-      e("e-z2", "payout", "bank", "payout_to_bank", 1),
+      e("e-z2", "payout", "bank", "payout_to_bank", 1, bref("payout", "bank")),
     ];
     const r = settle(T, nodes, edges);
     expect(r.status).not.toBe("matched");
@@ -282,7 +311,7 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
     const f2 = t06();
     f2.nodes = f2.nodes.filter((x) => x.id !== "fee");
     f2.edges = f2.edges.filter((x) => x.id !== "e-f");
-    f2.nodes = f2.nodes.map((x) => (x.id === "payout" ? { ...x, amountCents: 10700 } : x));
+    f2.nodes = f2.nodes.map((x) => (x.id === "payout" ? mut(x, { amountCents: 10700 }) : x));
     const r2 = settle(T, f2.nodes, f2.edges);
     expect(r2.taxArithmetic.positionCents).toBe(700);
     const keys: string[] = [];
@@ -309,7 +338,7 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
       e("e-m", "merch", "payout", "charge_to_payout", 10000),
       e("e-t", "tax", "payout", "charge_to_payout", 700),
       e("e-f", "fee", "payout", "fee_to_payout", 300),
-      e("e-b", "payout", "bank", "payout_to_bank", 10400),
+      e("e-b", "payout", "bank", "payout_to_bank", 10400, bref("payout", "bank")),
     ];
     const r = settle(T, nodes, edges);
     expect(r.status).toBe("matched");
@@ -339,7 +368,7 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
       e("e-f", "fee", "payout", "fee_to_payout", 300),
       e("e-w", "withheld", "payout", "withheld_to_payout", 700),
       e("e-wr", "withheld", "remitted", "withheld_to_remittance", 700),
-      e("e-b", "payout", "bank", "payout_to_bank", 9700),
+      e("e-b", "payout", "bank", "payout_to_bank", 9700, bref("payout", "bank")),
     ];
     const r = settle(T, nodes, edges);
     expect(r.expectedPayoutCents).toBe(9700);
@@ -383,7 +412,9 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
       e("e-mb", "merch-b", "payout", "charge_to_payout", 10000),
       e("e-tb", "tax-b", "payout", "charge_to_payout", 700),
       e("e-fb", "fee-b", "payout", "fee_to_payout", 300),
-      e("e-b", "payout", "bank", "payout_to_bank", 10400),
+      // Bank edge is grounded (A2) so the only failure here is the C4
+      // misattribution itself, not deposit attribution.
+      e("e-b", "payout", "bank", "payout_to_bank", 10400, bref("payout", "bank")),
     ];
     const r = settle(T, nodes, edges);
     expect(r.status).not.toBe("matched");
@@ -393,13 +424,13 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
 
   it("T25a C5 two revisions without supersedesRevision throws CONFLICTING_REVISION", () => {
     const rev1 = n("rev-node", { kind: "charge_merchandise", amountCents: 5000 });
-    const rev2 = { ...n("rev-node-2", { kind: "charge_merchandise", amountCents: 10000 }), providerEventKey: rev1.providerEventKey, source: rev1.source, revision: 2 };
+    const rev2 = mut(n("rev-node-2", { kind: "charge_merchandise", amountCents: 10000 }), { providerEventKey: rev1.providerEventKey, source: rev1.source, revision: 2 });
     expect(() => settle(T, [rev1, rev2], [])).toThrow(/CONFLICTING_REVISION/);
   });
 
   it("T25b C5 explicit supersession: only revision 2 settles", () => {
     const rev1 = n("rev-node", { kind: "charge_merchandise", amountCents: 5000 });
-    const rev2 = { ...n("rev-node-2", { kind: "charge_merchandise", amountCents: 10000 }), providerEventKey: rev1.providerEventKey, source: rev1.source, revision: 2, supersedesRevision: 1 };
+    const rev2 = mut(n("rev-node-2", { kind: "charge_merchandise", amountCents: 10000 }), { providerEventKey: rev1.providerEventKey, source: rev1.source, revision: 2, supersedesRevision: 1 });
     const payout = n("payout", { kind: "payout", amountCents: 10000 });
     const edges = [e("e-r2", "rev-node-2", "payout", "charge_to_payout", 10000)];
     const both = settle(T, [rev1, rev2, payout], edges);
@@ -409,10 +440,12 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
     expect(both.expectedPayoutCents).toBe(10000);
   });
 
-  it("T25c C5 distinct provider keys are never merged, even with identical amounts and digest fields", () => {
-    const shared = digest();
-    const a = { ...n("evt-a", { kind: "charge_merchandise", amountCents: 4000 }), digestSha256: shared };
-    const b = { ...n("evt-b", { kind: "charge_merchandise", amountCents: 4000 }), digestSha256: shared };
+  it("T25c C5 distinct provider keys are never merged, even with identical amounts", () => {
+    // Distinct providerEventKeys -> distinct computed digests; identity is
+    // keyed on (source, providerEventKey, revision), never on digest alone,
+    // so two equal-amount events under different keys both settle.
+    const a = n("evt-a", { kind: "charge_merchandise", amountCents: 4000 });
+    const b = n("evt-b", { kind: "charge_merchandise", amountCents: 4000 });
     const payout = n("payout", { kind: "payout", amountCents: 8000 });
     const edges = [
       e("e-a", "evt-a", "payout", "charge_to_payout", 4000),
@@ -423,24 +456,169 @@ describe("M2.7 canonical kernel — acceptance T01-T26 (schema R2)", () => {
     expect(r.observedPayoutCents).toBe(8000);
   });
 
-  it("T26 C5 digest contract: canonical-JSON SHA-256 fixture accepted; malformed digest throws", () => {
-    const base = {
-      tenantId: T, source: "synthetic", providerEventKey: "evt-canonical",
-      revision: 1, kind: "charge_merchandise" as NodeKind, amountCents: 2500,
-      currency: "USD", occurredOn: "2026-01-15",
-    };
-    const canonicalJson = JSON.stringify({
-      amountCents: base.amountCents, currency: base.currency, kind: base.kind,
-      occurredOn: base.occurredOn, providerEventKey: base.providerEventKey,
-      revision: base.revision, source: base.source, tenantId: base.tenantId,
-    });
-    const hex = createHash("sha256").update(canonicalJson, "utf8").digest("hex");
-    expect(hex).toMatch(/^[0-9a-f]{64}$/);
-    const good = n("canon", { kind: "charge_merchandise", amountCents: 2500, providerEventKey: "evt-canonical", digestSha256: hex });
+  it("T26 C5/H1 digest verification: kernel recomputes canonical SHA-256; tampering with retained digest throws DIGEST_MISMATCH", () => {
+    const good = n("canon", { kind: "charge_merchandise", amountCents: 2500, providerEventKey: "evt-canonical" });
+    expect(good.digestSha256).toMatch(/^[0-9a-f]{64}$/);
+    // The fixture digest is exactly the canonical sorted-key SHA-256.
+    expect(good.digestSha256).toBe(computeDigest(good));
     expect(() => settle(T, [good], [])).not.toThrow();
-    const badDigest = { ...good, id: "canon-bad", providerEventKey: "evt-bad", digestSha256: "XYZ-not-hex" };
-    expect(() => settle(T, [badDigest], [])).toThrow();
-    const upperDigest = { ...good, id: "canon-upper", providerEventKey: "evt-upper", digestSha256: hex.toUpperCase() };
-    expect(() => settle(T, [upperDigest], [])).toThrow();
+    // Intentional tampering (labelled): payload field mutated, original
+    // digest RETAINED (no regeneration). Each must throw DIGEST_MISMATCH,
+    // distinct from DIGEST_CONFLICT.
+    const tampers: EvidenceNode[] = [
+      { ...good, amountCents: 9999 },
+      { ...good, occurredOn: "2026-01-16" },
+      { ...good, providerEventKey: "evt-forged" },
+      { ...good, kind: "fee" },
+      { ...good, tenantId: "tenant-b" },
+    ];
+    for (const nd of tampers) expect(() => settle(T, [nd], [])).toThrow(/DIGEST_MISMATCH/);
+    // Malformed digest format remains a throw (format validated first).
+    expect(() => settle(T, [{ ...good, digestSha256: "XYZ-not-hex" }], [])).toThrow();
+    expect(() => settle(T, [{ ...good, digestSha256: good.digestSha256.toUpperCase() }], [])).toThrow();
+  });
+});
+
+describe("M2.7.1 hardening — H2 deposit attribution, H3 entity isolation, H4 runtime relations", () => {
+  // Shared crossed-payouts fixture for H2: merch 10000 split over two 5000
+  // payouts and two 5000 deposits, with custom provider keys.
+  const h2nodes = () => [
+    n("merch", { kind: "charge_merchandise", amountCents: 10000 }),
+    n("payout-1", { kind: "payout", amountCents: 5000, providerEventKey: "pay-001" }),
+    n("payout-2", { kind: "payout", amountCents: 5000, providerEventKey: "pay-002" }),
+    n("bank-1", { kind: "bank_deposit", amountCents: 5000, providerEventKey: "bank-001" }),
+    n("bank-2", { kind: "bank_deposit", amountCents: 5000, providerEventKey: "bank-002" }),
+  ];
+  const h2edges = (nodes: EvidenceNode[], refFor: (p: EvidenceNode, b: EvidenceNode) => string) => {
+    const byId = new Map(nodes.map((x) => [x.id, x]));
+    const P = (id: string) => byId.get(id)!;
+    return [
+      e("e-m1", "merch", "payout-1", "charge_to_payout", 5000),
+      e("e-m2", "merch", "payout-2", "charge_to_payout", 5000),
+      // Crossed mapping: payout-1 -> bank-2, payout-2 -> bank-1.
+      e("e-x1", "payout-1", "bank-2", "payout_to_bank", 5000, refFor(P("payout-1"), P("bank-2"))),
+      e("e-x2", "payout-2", "bank-1", "payout_to_bank", 5000, refFor(P("payout-2"), P("bank-1"))),
+    ];
+  };
+
+  it("H2a crossed payouts/deposits with grounded refs are matched (crossing alone is not a defect)", () => {
+    const nodes = h2nodes();
+    const r = settle(T, nodes, h2edges(nodes, (p, b) => gref(p, b)));
+    expect(codes(r)).not.toContain("DEPOSIT_ATTRIBUTION_UNVERIFIED");
+    expect(r.status).toBe("matched");
+    expect(r.observedPayoutCents).toBe(10000);
+    expect(r.observedDepositCents).toBe(10000);
+  });
+
+  it("H2b crossed payouts/deposits with wrong refs are not matched (DEPOSIT_ATTRIBUTION_UNVERIFIED)", () => {
+    const nodes = h2nodes();
+    // Wrong references: each crossed edge carries the ref of the STRAIGHT
+    // pairing, not of its actual endpoints.
+    const r = settle(T, nodes, h2edges(nodes, (p, b) => `bank-match:${p.providerEventKey}:${p.providerEventKey.replace("pay", "bank")}`));
+    expect(r.status).not.toBe("matched");
+    const ex = r.exceptions.filter((x) => x.code === "DEPOSIT_ATTRIBUTION_UNVERIFIED");
+    expect(ex.flatMap((x) => x.edgeIds)).toEqual(expect.arrayContaining(["e-x1", "e-x2"]));
+  });
+
+  it("H2c a duplicated reference cannot ground a second payout/deposit pair", () => {
+    const nodes = [
+      n("merch", { kind: "charge_merchandise", amountCents: 10000 }),
+      n("payout-1", { kind: "payout", amountCents: 5000, providerEventKey: "pay-001" }),
+      n("payout-2", { kind: "payout", amountCents: 5000, providerEventKey: "pay-002" }),
+      n("bank-1", { kind: "bank_deposit", amountCents: 5000, providerEventKey: "bank-001" }),
+      n("bank-2", { kind: "bank_deposit", amountCents: 5000, providerEventKey: "bank-002" }),
+    ];
+    const byId = new Map(nodes.map((x) => [x.id, x]));
+    const dup = gref(byId.get("payout-1")!, byId.get("bank-1")!);
+    const edges = [
+      e("e-m1", "merch", "payout-1", "charge_to_payout", 5000),
+      e("e-m2", "merch", "payout-2", "charge_to_payout", 5000),
+      e("e-d1", "payout-1", "bank-1", "payout_to_bank", 5000, dup),
+      // Same reference string duplicated onto a different endpoint pair.
+      e("e-d2", "payout-2", "bank-2", "payout_to_bank", 5000, dup),
+    ];
+    const r = settle(T, nodes, edges);
+    expect(r.status).not.toBe("matched");
+    const ex = r.exceptions.filter((x) => x.code === "DEPOSIT_ATTRIBUTION_UNVERIFIED");
+    expect(ex.flatMap((x) => x.edgeIds)).toContain("e-d2");
+    expect(ex.flatMap((x) => x.edgeIds)).not.toContain("e-d1");
+  });
+
+  it("H2d partial allocation with aggregate equality but one ungrounded edge is not matched", () => {
+    const nodes = [
+      n("merch", { kind: "charge_merchandise", amountCents: 10000 }),
+      n("payout", { kind: "payout", amountCents: 10000, providerEventKey: "pay-100" }),
+      n("bank-1", { kind: "bank_deposit", amountCents: 6000, providerEventKey: "bank-601" }),
+      n("bank-2", { kind: "bank_deposit", amountCents: 4000, providerEventKey: "bank-401" }),
+    ];
+    const byId = new Map(nodes.map((x) => [x.id, x]));
+    const edges = [
+      e("e-m", "merch", "payout", "charge_to_payout", 10000),
+      e("e-g1", "payout", "bank-1", "payout_to_bank", 6000, gref(byId.get("payout")!, byId.get("bank-1")!)),
+      e("e-u2", "payout", "bank-2", "payout_to_bank", 4000, "stmt:ungrounded"),
+    ];
+    const r = settle(T, nodes, edges);
+    // Aggregate arithmetic is perfect (deposits total == payout)...
+    expect(r.observedDepositCents).toBe(r.observedPayoutCents);
+    // ...but arithmetic cannot certify attribution.
+    expect(r.status).not.toBe("matched");
+    const ex = r.exceptions.filter((x) => x.code === "DEPOSIT_ATTRIBUTION_UNVERIFIED");
+    expect(ex.flatMap((x) => x.edgeIds)).toContain("e-u2");
+    expect(ex.flatMap((x) => x.edgeIds)).not.toContain("e-g1");
+  });
+
+  it("H3a known/known differing legalEntityId endpoints: CROSS_ENTITY_ALLOCATION, edge excluded", () => {
+    const nodes = [
+      n("merch", { kind: "charge_merchandise", amountCents: 10000, legalEntityId: "entity-1" }),
+      n("payout", { kind: "payout", amountCents: 10000, legalEntityId: "entity-2" }),
+    ];
+    const edges = [e("e-xent", "merch", "payout", "charge_to_payout", 10000)];
+    const r = settle(T, nodes, edges);
+    expect(r.status).toBe("exception");
+    const ex = r.exceptions.find((x) => x.code === "CROSS_ENTITY_ALLOCATION");
+    expect(ex).toBeDefined();
+    expect(ex?.edgeIds).toContain("e-xent");
+    expect(ex?.nodeIds).toEqual(expect.arrayContaining(["merch", "payout"]));
+    // Excluded from every computation: identity sees no components,
+    // the charge's full amount remains unallocated.
+    expect(r.expectedPayoutCents).toBe(0);
+    expect(r.remainderByNodeId["merch"]).toBe(10000);
+  });
+
+  it("H3b UNKNOWN legal entity in scope: entityScope CONTAINS_UNKNOWN, matched stays arithmetic-only", () => {
+    const f = t06(); // helper default: legalEntityId null (UNKNOWN) everywhere
+    const r = settle(T, f.nodes, f.edges);
+    expect(r.entityScope).toBe("CONTAINS_UNKNOWN");
+  });
+
+  it("H3c single known entity throughout: entityScope VERIFIED_SINGLE_ENTITY and a clean match", () => {
+    const nodes = [
+      n("merch", { kind: "charge_merchandise", amountCents: 10000, legalEntityId: "entity-1" }),
+      n("tax", { kind: "charge_tax_collected", amountCents: 700, legalEntityId: "entity-1" }),
+      n("fee", { kind: "fee", amountCents: 300, legalEntityId: "entity-1" }),
+      n("payout", { kind: "payout", amountCents: 10400, legalEntityId: "entity-1" }),
+      n("bank", { kind: "bank_deposit", amountCents: 10400, legalEntityId: "entity-1" }),
+    ];
+    const edges = [
+      e("e-m", "merch", "payout", "charge_to_payout", 10000),
+      e("e-t", "tax", "payout", "charge_to_payout", 700),
+      e("e-f", "fee", "payout", "fee_to_payout", 300),
+      e("e-b", "payout", "bank", "payout_to_bank", 10400, bref("payout", "bank")),
+    ];
+    const r = settle(T, nodes, edges);
+    expect(r.entityScope).toBe("VERIFIED_SINGLE_ENTITY");
+    expect(r.status).toBe("matched");
+  });
+
+  it("H4 unknown relation string at runtime: coded ILLEGAL_EDGE, excluded, no throw / no TypeError", () => {
+    const f = t06();
+    const bogus = { ...e("e-bogus", "merch", "payout", "charge_to_payout", 1), relation: "bogus_relation" as unknown as AllocationEdge["relation"] };
+    let r: ReturnType<typeof settle> | undefined;
+    expect(() => { r = settle(T, f.nodes, [...f.edges, bogus]); }).not.toThrow();
+    expect(r!.status).toBe("exception");
+    const ill = r!.exceptions.find((x) => x.code === "ILLEGAL_EDGE");
+    expect(ill?.edgeIds).toContain("e-bogus");
+    // Excluded from identity/conservation: T06 numbers are untouched.
+    expect(r!.expectedPayoutCents).toBe(10400);
   });
 });
