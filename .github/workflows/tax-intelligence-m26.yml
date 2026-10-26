@@ -1,0 +1,28 @@
+name: Tax Intelligence M2.6 Validation
+on:
+  push:
+    branches:
+      - feature/tax-intelligence-client-app-r1
+    paths:
+      - "lib/tax-intelligence/**"
+      - "app/apps/tax-intelligence/**"
+      - "docs/tax-intelligence/**"
+      - ".github/workflows/tax-intelligence-m26.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Tax intelligence unit tests
+        run: npx vitest run lib/tax-intelligence
+      - name: TypeScript validation
+        run: npm run typecheck
