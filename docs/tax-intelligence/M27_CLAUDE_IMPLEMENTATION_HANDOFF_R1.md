@@ -53,7 +53,7 @@ git diff --stat <base>..HEAD                             # scope proof: only the
 git log --oneline <base>..HEAD
 ```
 
-CI: after push, quote the Actions run ID, job ID, and the **Vitest summary line from the log** (test files + test count). A green checkmark alone is not evidence — this closes open item U5 in the schema doc. (At base, run `40292963302` / job `121472132362` already shows both steps success via API; the log line is what is missing.)
+CI: note the workflow's push trigger is scoped to `feature/tax-intelligence-client-app-r1` only — a push to the kernel branch will NOT trigger it. Trigger via opening a (draft, never-merged) PR against the base branch, or `workflow_dispatch`. Then quote the Actions run ID, job ID, and the **Vitest summary line from the log** (test files + test count). A green checkmark alone is not evidence — this closes open item U5 in the schema doc. (At base, run `40292963302` / job `121472132362` already shows both steps success via API; the log line is what is missing.)
 
 ## Report back (to Muse integrator, for GPT-6)
 
