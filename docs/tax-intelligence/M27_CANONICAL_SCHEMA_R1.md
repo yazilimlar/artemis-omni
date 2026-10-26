@@ -1,8 +1,9 @@
-# ARTEMIS Tax Intelligence — M2.7 Canonical Schema R1
+# ARTEMIS Tax Intelligence — M2.7 Canonical Schema R2
 
-**Status: PROPOSED — awaiting GPT-6 architecture acceptance. NOT production, NOT merged.**
+**Status: CONDITIONALLY ACCEPTED by GPT-6 (ADR `M27_GPT6_ARCHITECTURE_DECISION_R1.md`, commit `4519bd6d05ab`) with binding clarifications C1–C5 incorporated in this R2. Synthetic kernel implementation authorized under that decision. NOT production, NOT merged.**
 **Integrator:** Muse (OctopusG) · **Base commit reviewed:** `e348e1f6b156b5f15924abd90b74154237b65a2b` on `feature/tax-intelligence-client-app-r1`
-**Data:** synthetic only. **Mode:** schema arbitration; no replacement kernel is authorized by this document alone.
+**Data:** synthetic only. **Mode:** schema arbitration; the kernel is authorized only as specified in the implementation handoff R2.
+**R2 changes (GPT-6 C1–C5):** §2 relation classes split evidence vs cash-consumption (C1); §5 tax arithmetic corrected to exclude remittance-of-withheld from direct remittance, with pathway-unknown rule (C2); §6 throw-vs-exception split made exact (C3); §3 wrong-charge attribution strengthened (C4); §2/§6 digest canonicalization contract + explicit supersession (C5).
 **Supersedes for design purposes:** the M2.7 draft contract (`M27_CANONICAL_ALLOCATION_TAX_CONTRACT_DRAFT.md`). M2.5 R1 (`reconciliation.ts`) and M2.6 (`settlement-batches.ts`) remain comparison baselines, **not oracles**.
 
 Evidence states used here: **Verified** = I read the source / API result at the base commit myself. **Declared** = reported by another model, not recomputed. **Unknown** = no evidence in repo.
@@ -41,8 +42,9 @@ type EvidenceNode = {
   legalEntityId: string | null;  // null = UNKNOWN, never guessed
   source: string;                // provider/system identifier
   providerEventKey: string;      // immutable provider event identity
-  revision: number;              // >= 1, integer; supersession per §6
-  digestSha256: string;          // /^[0-9a-f]{64}$/ over canonical payload
+  revision: number;              // >= 1, integer; supersession per §6/C5
+  supersedesRevision?: number;   // C5: explicit supersession only; absence = no supersession
+  digestSha256: string;          // /^[0-9a-f]{64}$/ over the canonical payload, §6/C5
   occurredOn: string;            // strict YYYY-MM-DD, §6
   currency: "USD";
   kind: NodeKind;
@@ -71,20 +73,27 @@ type AllocationEdge = {
 };
 
 type Relation =
-  | "order_to_charge"        // order        -> charge_merchandise (+ charge_tax_collected)
-  | "charge_to_payout"       // charge_*     -> payout
-  | "fee_to_payout"          // fee          -> payout (reduces it, via identity §5)
-  | "refund_to_charge"       // refund_*     -> charge_* it reverses
-  | "refund_to_payout"       // refund_*     -> payout (reduces it, via identity §5)
+  // — Evidence class (C1): identity/provenance assertions. They NEVER consume
+  //   payout allocation capacity and never enter the cash identity directly.
+  | "order_to_charge"        // order        -> charge_merchandise (merchandise only)
+  | "order_to_charge_tax"    // order        -> charge_tax_collected (tax provenance; does not consume order merchandise value)
+  | "erp_to_order"           // erp_invoice  -> order (identity + amount tie, §4)
+  | "refund_to_charge"       // refund_*     -> charge_* it reverses (identity)
+  | "withheld_to_remittance" // tax_withheld -> tax_remitted (C2: evidence of remittance OF the withheld amount)
+  // — Cash-consumption class: these consume the source node's amount capacity
+  //   and are the only edges that enter the §5 identity.
+  | "charge_to_payout"       // charge_merchandise | charge_tax_collected -> payout
+  | "fee_to_payout"          // fee          -> payout (reduces it)
+  | "refund_to_payout"       // refund_*     -> payout (reduces it)
   | "credit_to_payout"       // seller_credit-> payout (increases it)
   | "debit_to_payout"        // seller_debit -> payout (reduces it)
   | "withheld_to_payout"     // tax_withheld -> payout (reduces it)
-  | "withheld_to_remittance" // tax_withheld -> tax_remitted
-  | "payout_to_bank"         // payout       -> bank_deposit
-  | "erp_to_order";          // erp_invoice  -> order
+  | "payout_to_bank";        // payout       -> bank_deposit
 ```
 
-The relation table is **closed**: any (from.kind, relation, to.kind) triple not listed above is an illegal edge → reject. Edges must satisfy: same `tenantId` on edge and both endpoints; same currency (always USD); endpoint kinds match the relation; no cycles in the allocation graph; `amountCents > 0`.
+The relation table is **closed**: any (from.kind, relation, to.kind) triple not listed above is an illegal edge → coded exception (C3). Edges must satisfy: same `tenantId` on edge and both endpoints; same currency (always USD); endpoint kinds match the relation; no cycles among cash-consumption edges; `amountCents > 0` (a zero/negative/unsafe edge amount is malformed input → throw, C3).
+
+**Conservation is per class and per role (C1), never one global sum:** only cash-consumption edges draw on a node's capacity (§3). Evidence edges carry their own checks instead: `order_to_charge` amounts into a `charge_merchandise` node must total ≤ the order's merchandise amount and, for the order to be considered tied, exactly the charge's merchandise amount; `order_to_charge_tax` must equal the `charge_tax_collected` amount it supports and draws nothing from the order's merchandise value; `erp_to_order` is validated by identity + amount equality independent of payout allocations (§4); `refund_to_charge` asserts which charge a refund reverses and consumes nothing; `withheld_to_remittance` may coexist with `withheld_to_payout` at the **full** withheld amount — the two edges together do not over-consume the withheld node (C2).
 
 ```ts
 type SettlementResult = {
@@ -94,14 +103,15 @@ type SettlementResult = {
   observedPayoutCents: number;
   observedDepositCents: number;
   remainderByNodeId: Record<string, number>; // unallocated available amount per node
-  taxArithmetic: { collectedCents: number; withheldCents: number; remittedCents: number; positionCents: number };
+  taxArithmetic: { collectedCents: number; refundedTaxCents: number; withheldCents: number; directlyRemittedCents: number; positionCents: number | null; pathwayUnknown: boolean };
   exceptions: { code: string; nodeIds: string[]; edgeIds: string[] }[];
 };
 ```
 
 ## 3. Conservation and status semantics
 
-- For every node, `sum(allocations out) ≤ node.amountCents` and `sum(allocations in, where the relation consumes) ≤ node.amountCents`. Over-allocation → **exception** (`OVER_ALLOCATION`), never silent clamping.
+- For every node, the sum of its **cash-consumption** edges out ≤ `node.amountCents`, and cash-consumption edges into a payout/bank node are bounded by that node's amount. Evidence-class edges do not count toward these sums (C1). Sole exception: `withheld_to_remittance` + `withheld_to_payout` on the same withheld node may each reach the full amount (C2). Over-allocation → **exception** (`OVER_ALLOCATION`), never silent clamping.
+- **Attribution (C4):** aggregate cash equality is never sufficient. Merchandise, tax, fee, refund, credit/debit and withheld components must each be allocated to the *correct* payout through their typed cash edges. A payout whose edges point at the wrong charge leaves the true source components unexplained → not matched (exception, or pending if the correct payout is simply not yet observed — never matched).
 - Unallocated available amount is the node's **pending remainder**. A remainder on a charge/payout is **pending**, not an error (rolling reserves, timing).
 - `matched` requires ALL of: every payout fully explained by the §5 identity over *allocated* components; every bank deposit allocated from a payout with equal total; zero remainder on payout and bank nodes in scope; no exceptions; no unexplained node in scope (a node with amount > 0 and no edges must be explicitly remainder-reported, and if it is a refund/fee/credit/debit/withheld node with no payout edge, status cannot be `matched`). `matched` certifies **settlement arithmetic only** — never income-tax treatment, sales-tax liability, legal ownership, or production readiness.
 - `pending`: no exceptions, but remainder > 0 or an expected payout/deposit not yet observed.
@@ -132,22 +142,25 @@ expectedPayout = merchandise + taxCollected
 A bank deposit is linked to a payout by `payout_to_bank` allocation with its own amount; deposit ≠ payout total → variance reported; deposits are never fabricated for pending payouts.
 
 ```
-taxPosition = taxCollected − taxWithheld − taxRemitted   (refundTax corrects taxCollected via allocation, explicitly)
+taxPosition = taxCollected − refundedTax − taxWithheld − directlyRemitted        (C2)
 ```
+
+where `directlyRemitted` counts only `tax_remitted` amounts that are **not** the remittance of an already-counted `tax_withheld` amount: a remittance evidenced by a `withheld_to_remittance` edge is the same money leaving through the withholding pathway and is **never subtracted twice**. The withheld amount itself enters the identity once, at `withheld_to_payout` (cash) / as `taxWithheld` here. **Pathway rule:** if a `tax_remitted` node's pathway cannot be distinguished (e.g. it has no `withheld_to_remittance` evidence while a withheld amount it could represent is in scope, and no explicit direct-remittance provenance), the kernel must not guess: status gets exception `TAX_PATHWAY_UNKNOWN`, `taxArithmetic.pathwayUnknown = true`, and `positionCents = null` — no tax position is certified.
 
 `taxPosition` is **arithmetic tracking only**. It is not legal tax liability, not deductible expense, not taxable income, not filing advice. **Neither payout figure (10400 / 9700) is taxable income.** Legal classification of every amount remains **UNKNOWN** (§7).
 
 ## 6. Validation order (fail-closed)
 
-Structural violations **throw** (input is not a settleable set) — consistent with existing tests:
+**Throw vs exception — exact split (C3).** Malformed input **throws** (it is not a settleable set):
 1. Empty tenant / empty node set.
 2. Cross-tenant node or edge; tenant mismatch edge↔endpoint.
-3. Non-USD currency; non-safe-integer or negative `amountCents`; unsafe result after **any** sum/subtraction during evaluation.
+3. Non-USD currency; non-safe-integer or negative node `amountCents`; **edge `amountCents` zero, negative, or unsafe**; unsafe result after **any** sum/subtraction during evaluation.
 4. Strict date: `occurredOn` must match `^\d{4}-\d{2}-\d{2}$` **and** round-trip (`new Date(y, m-1, d)` components equal input) — `2026-02-31` throws.
-5. Duplicate internal `id`; duplicate edge `id`.
-6. Idempotency: key = `(source, providerEventKey, revision)`. Same key + same digest → replay is a **no-op dedupe** (counted once). Same key + **different digest** → throw (`DIGEST_CONFLICT`). A higher revision supersedes a lower one only with a distinct digest and an explicit supersession record; two different `providerEventKey`s are two events even if amounts coincide — and two nodes claiming the same provider event under different keys is the caller's data error, surfaced via digest/identity checks, not silently merged. (Kills G10's double-count-by-new-sourceId case when the provider key is stable, which is the contract providers must meet.)
+5. Duplicate or conflicting internal `id`; duplicate edge `id`; digest conflict (item 6); undeclared conflicting revisions (item 6).
 
-Accounting mismatches (identity variance, ERP mismatch, illegal/over-allocating edges, unexplained nodes, zero-only) do **not** throw — they produce `status: "exception"` with coded exceptions naming node/edge IDs.
+Structurally well-formed but accounting-invalid input does **not** throw — it produces `status: "exception"` with coded exceptions naming node/edge IDs: illegal relation/kind pair, cycle among cash-consumption edges, over-allocation, ERP amount mismatch, identity variance, unexplained nodes, zero-only match, tax pathway unknown (C2).
+
+6. Idempotency and provider identity (C5): key = `(source, providerEventKey, revision)`. Same key + same digest → replay is a **no-op dedupe** (counted once). Same key + **different digest** → throw (`DIGEST_CONFLICT`). **Digest canonicalization contract:** `digestSha256` is SHA-256 (hex, lowercase) of the UTF-8 canonical JSON of exactly the fields `[tenantId, source, providerEventKey, revision, kind, amountCents, currency, occurredOn]`, keys sorted lexicographically, no whitespace, numbers as plain integers. A digest proves payload identity **only under the same key** — it never proves two differently-keyed events are duplicates, and differently-keyed events are never merged. **Supersession is explicit (C5):** two revisions of one key may coexist in an input only if the higher carries `supersedesRevision` equal to the lower; then only the higher settles. Without that marker → throw (`CONFLICTING_REVISION`). No automatic replacement of revisions, ever.
 
 ## 7. Unresolved decisions — explicit blockers, not defaults
 
@@ -165,12 +178,8 @@ No code may encode a guess for U1–U3. `legalEntityId: null` and `taxPosition` 
 
 No live import, no real documents, no production claim until ALL exist as **executed evidence**: in-repo migrations with RLS enabled (forced where appropriate); two-role + two-tenant denial tests (read/write/list/download); storage download denial test; verified client identity path; UI ownership claims reconciled to documents (U2). R3/R4 SQL in `docs/` is design text until it lands as migrations with tests.
 
-## 9. What GPT-6 is asked to accept
+## 9. Acceptance record
 
-1. §2 types + closed relation table, incl. Amendment A1 (split charge components).
-2. §3 status semantics incl. wash rule and zero-only rule.
-3. §5 identity and the 10400 / 9700 oracles; 9000 rejected.
-4. §6 throw-vs-exception split and idempotency key.
-5. §7 blockers stay open; nothing in code guesses them.
+GPT-6 decision (commit `4519bd6d05ab`): **CONDITIONAL ACCEPTANCE** — §2 types + closed relation table incl. Amendment A1, §3 status semantics incl. wash and zero-only rules, §5 identity and the 10400 / 9700 oracles (9000 rejected), §6 idempotency — all accepted; C1–C5 binding and incorporated in this R2 (§2, §3, §5, §6). §7 blockers stay open; nothing in code guesses them.
 
-On acceptance, Claude implements per `M27_CLAUDE_IMPLEMENTATION_HANDOFF_R1.md`. No merge, deploy, live data, or filing is authorized by acceptance of this schema.
+On this acceptance, Claude implements per `M27_CLAUDE_IMPLEMENTATION_HANDOFF_R1.md` (R2). No merge, deploy, live data, or filing is authorized by acceptance of this schema.
