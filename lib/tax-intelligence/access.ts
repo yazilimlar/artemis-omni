@@ -5,13 +5,13 @@ export const CLIENT_IDS = ["personal", "great-order", "artemis", "agoraxai", "ap
 export type TaxClientId = (typeof CLIENT_IDS)[number];
 
 export function parseMemberships(raw: string | undefined): Record<TaxClientId, readonly string[]> {
-  const result = {
+  const result: Record<TaxClientId, string[]> = {
     personal: [],
     'great-order': [],
     artemis: [],
     agoraxai: [],
     apolloa: [],
-  } satisfies Record<TaxClientId, string[]>;
+  };
   if (!raw) return result;
   try {
     const data: unknown = JSON.parse(raw);
