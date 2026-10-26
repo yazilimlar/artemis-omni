@@ -6,12 +6,14 @@ on:
       - "lib/tax-intelligence/**"
       - "app/apps/tax-intelligence/**"
       - "docs/tax-intelligence/**"
+      - "vitest.config.ts"
       - ".github/workflows/tax-intelligence-m26.yml"
   pull_request:
     paths:
       - "lib/tax-intelligence/**"
       - "app/apps/tax-intelligence/**"
       - "docs/tax-intelligence/**"
+      - "vitest.config.ts"
       - ".github/workflows/tax-intelligence-m26.yml"
   workflow_dispatch:
 permissions:
