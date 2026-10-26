@@ -1,5 +1,6 @@
 import { requireAuth } from "@/lib/auth/require-auth";
-import { clientsForUser } from "@/lib/tax-intelligence/access";
+import { createClient } from "@/lib/supabase/server";
+import { CLIENT_IDS, type TaxClientId } from "@/lib/tax-intelligence/access";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ const clients = [
 ] as const;
 
 export default async function TaxIntelligencePage() {
-  const { profile, userId } = await requireAuth();
+  const { profile } = await requireAuth();
   if (!profile) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-20">
@@ -28,7 +29,12 @@ export default async function TaxIntelligencePage() {
       </main>
     );
   }
-  const permitted = clientsForUser(userId);
+  const supabase = await createClient();
+  const { data: memberships, error } = await supabase.rpc("tax_my_client_ids");
+  // RPC failure is never interpreted as access. The server renders no client data.
+  const permitted: TaxClientId[] = error ? [] : (memberships ?? [])
+    .map((row: { client_id: string }) => row.client_id)
+    .filter((id: string): id is TaxClientId => CLIENT_IDS.some(known => known === id));
   if (permitted.length === 0) {
     return <main className="mx-auto max-w-3xl px-6 py-20"><h1 className="text-3xl font-semibold">Tax Intelligence</h1><p className="mt-4">No client workspace has been assigned to this account. Contact the owner for access.</p></main>;
   }
@@ -48,7 +54,7 @@ export default async function TaxIntelligencePage() {
       </section>
       <section className="mt-10 rounded-xl border border-amber-500/30 p-6">
         <h2 className="text-xl font-semibold">Security and audit gates</h2>
-        <p className="mt-3 text-sm text-slate-300">Server-side login and existing ARTEMIS allowlist are required. Client-level authorization, encrypted evidence storage, transaction reconciliation, and validated tax calculations remain blocked pending implementation and testing.</p>
+        <p className="mt-3 text-sm text-slate-300">Server-side login and existing ARTEMIS allowlist are required. Database-backed client authorization is enabled. Evidence storage, transaction reconciliation, and validated tax calculations remain blocked pending implementation and testing.</p>
       </section>
     </main>
   );
