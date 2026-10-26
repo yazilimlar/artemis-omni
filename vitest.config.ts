@@ -10,7 +10,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
+    include: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "lib/tax-intelligence/**/*.test.ts", "lib/tax-intelligence/**/*.test.tsx"],
     environment: "node",
   },
 });
