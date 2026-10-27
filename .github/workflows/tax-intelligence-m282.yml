@@ -1,0 +1,55 @@
+name: Tax Intelligence M2.8.2 Ecosystem Console Validation
+on:
+  push:
+    branches: [feature/tax-intelligence-m282-ecosystem-console-r1]
+    paths:
+      - "lib/tax-intelligence/**"
+      - "app/apps/ecosystem-console/**"
+      - "components/ecosystem/**"
+      - "docs/tax-intelligence/**"
+      - "vitest.config.ts"
+      - ".github/workflows/tax-intelligence-m282.yml"
+  pull_request:
+    paths:
+      - "lib/tax-intelligence/**"
+      - "app/apps/ecosystem-console/**"
+      - "components/ecosystem/**"
+      - "docs/tax-intelligence/**"
+      - "vitest.config.ts"
+      - ".github/workflows/tax-intelligence-m282.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-tests-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Environment diagnostics (no secrets)
+        run: |
+          node --version
+          npm --version
+          test -f package-lock.json
+          git rev-parse --short HEAD
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Tax intelligence unit tests (synthetic fixtures only)
+        run: npx vitest run lib/tax-intelligence --reporter=verbose
+      - name: TypeScript validation
+        run: npm run typecheck
+      - name: Production build (verification only — no deployment from CI)
+        # Placeholder PUBLIC config only: several pre-existing pages require
+        # Supabase env to be present at prerender time. These are dummy values,
+        # not secrets; the build performs no live calls with them.
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://dummy-project.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy-service-key"
+        run: npm run build
