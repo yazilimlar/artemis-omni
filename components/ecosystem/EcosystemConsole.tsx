@@ -37,6 +37,7 @@ export function EcosystemConsole({ view }: { view: ConsoleView }) {
           </p>
         </div>
       </Card>
+      <p className="mt-4"><a href="/apps/finance-console">Finance &amp; Compliance Console</a></p>
 
       <section aria-labelledby="ec-relationship-map">
         <h2 id="ec-relationship-map" className="text-2xl font-semibold">
