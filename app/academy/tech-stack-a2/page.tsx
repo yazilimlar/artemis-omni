@@ -3,10 +3,10 @@ import Link from "next/link";
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createMetadata({
-  title: "ARTEMIS Tech Stack — About · A2",
-  path: "/about/tech-stack.a2",
+  title: "ARTEMIS Tech Stack — Academy · A2",
+  path: "/academy/tech-stack-a2",
   description:
-    "Version A2 of the ARTEMIS technology stack, in motion: an interactive six-layer Live 5D model, the OctopusG constellation of engines and systems, the collaboration stage, verified base-case figures and the five operating bases.",
+    "Version A2 of the ARTEMIS technology stack, in motion: an interactive six-layer Live 5D model, the OctopusG constellation of engines and systems, the collaboration stage, verified base-case figures and the five operating bases — in six view modes, including two executive views.",
 });
 
 const contextItems = [
@@ -31,25 +31,25 @@ export default function TechStackA2Page() {
         <div className="mx-auto max-w-[1500px] px-4 py-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              href="/about"
+              href="/academy"
               className="inline-flex items-center gap-2 border border-[#8fa3c8] px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-wide text-[#e9edf3] transition-colors hover:bg-[#e9edf3] hover:text-[#0b1526] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a45c] focus-visible:ring-offset-2"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
-              About Artemis
+              Academy
             </Link>
 
             <div className="min-w-[220px] flex-1">
               <p className="flex items-center gap-2 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-[#93a5c9]">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                Artemis · About · Tech Stack
+                Artemis · Academy · Tech Stack
               </p>
               <p className="mt-1 text-sm font-semibold leading-tight text-[#e9edf3]">
-                ARTEMIS Tech Stack — About · Version A2
+                ARTEMIS Tech Stack — Academy · Version A2
               </p>
             </div>
 
             <a
-              href="/about/tech-stack-a2.html"
+              href="/academy/tech-stack-a2.html"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 border border-[#c9a45c] px-3 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-wide text-[#c9a45c] transition-colors hover:bg-[#c9a45c] hover:text-[#0b1526] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a45c] focus-visible:ring-offset-2"
@@ -69,8 +69,10 @@ export default function TechStackA2Page() {
             Document TS-A2 restates TS-A1 as a working instrument: turn the
             six-layer Live 5D stack, explore the OctopusG constellation of
             engines and systems, scrub the collaboration stage through the
-            phases of a job, and watch the five bases on one live clock — with
-            the verified base case reproduced exactly from the HVAC Powerhouse.
+            phases of a job, and watch the five bases on one live clock — in
+            six views: Day, Dark, Executive, Matrix, Executive Light Blue and
+            TTY — with the verified base case reproduced exactly from the HVAC
+            Powerhouse.
           </p>
           <dl className="mt-8 grid gap-3 sm:grid-cols-3">
             {contextItems.map((item) => (
@@ -99,7 +101,7 @@ export default function TechStackA2Page() {
                 id="tech-stack-a2-title"
                 className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em]"
               >
-                ARTEMIS Tech Stack — About · Version A2
+                ARTEMIS Tech Stack — Academy · Version A2
               </h2>
             </div>
             <span className="font-mono text-[0.58rem] uppercase tracking-[0.12em] text-[#b9c4d9]">
@@ -107,8 +109,8 @@ export default function TechStackA2Page() {
             </span>
           </div>
           <iframe
-            src="/about/tech-stack-a2.html"
-            title="ARTEMIS Tech Stack — About, Version A2 (document TS-A2)"
+            src="/academy/tech-stack-a2.html"
+            title="ARTEMIS Tech Stack — Academy, Version A2 (document TS-A2)"
             className="block h-[calc(100dvh-11rem)] min-h-[720px] w-full border-0 bg-[#0b1526]"
             loading="eager"
             allow="clipboard-write"
