@@ -75,6 +75,9 @@ const primeErpRewrites = primeErpBackendUrl
   ? PRIME_ERP_API_PATHS.map((source) => ({ source, destination: `${primeErpBackendUrl}${source}` }))
   : [];
 
+// Production deployment of the ArtLoop workspace (yazilimlar/artloop-ws). Not a secret.
+const ARTLOOP_ORIGIN = "https://artloop-ws.vercel.app";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Allow MDX pages/content alongside ts/tsx.
@@ -110,6 +113,7 @@ const nextConfig = {
       "/labs/rainbow-house-botanical-field-v9.html",
       "/prime-erp/:path*",
       "/workbench/runtime/:path*",
+      "/demo/pending-contracts/a1-estimates-01.01/:path*",
     ].map((source) => ({ source, headers: noindex }));
 
     // Batch 5 (ADR-014 follow-up): every raw standalone lab, whether framed or
@@ -153,6 +157,13 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // ArtLoop 2WTC estimating workspace (GD-12): the entry URL opens the workspace page,
+      // so its relative asset URLs resolve under the same prefix.
+      {
+        source: "/demo/pending-contracts/a1-estimates-01.01",
+        destination: "/demo/pending-contracts/a1-estimates-01.01/app",
+        permanent: false,
+      },
       {
         source: "/labs/geometric-workbench/v5-8",
         destination: "/workbench/app",
@@ -173,6 +184,17 @@ const nextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
+        // ArtLoop workspace, served by the separate artloop-ws project behind its own access
+        // gate (George + @wdfinc.net + @tutorperini.com, emailed one-time code). Artemis holds
+        // none of its data; these rules only forward the path.
+        {
+          source: "/demo/pending-contracts/a1-estimates-01.01/app",
+          destination: `${ARTLOOP_ORIGIN}/`,
+        },
+        {
+          source: "/demo/pending-contracts/a1-estimates-01.01/:path+",
+          destination: `${ARTLOOP_ORIGIN}/:path+`,
+        },
         {
           source: "/labs/utility-intelligence-bridge/3d-model",
           destination: "/standalone/utility-intelligence-bridge/3d-model/index.html",
