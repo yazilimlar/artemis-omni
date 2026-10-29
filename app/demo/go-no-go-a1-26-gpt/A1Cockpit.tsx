@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import A2Operations from "./A2Operations";
 import {
   ArrowLeft, ArrowRight, Check, ChevronDown,
   CircleAlert, Clock3, Download, FileCheck2, Fingerprint,
@@ -18,7 +19,7 @@ type Entry = {
   seq: number; atUtc: string; kind: string; projectId: string;
   message: string; previousHash: string; hash: string;
 };
-type Tab = "overview" | "assessment" | "activity" | "protocol";
+type Tab = "overview" | "operations" | "assessment" | "activity" | "protocol";
 
 const gateNames = [
   "Invitation & identity verified",
@@ -161,9 +162,10 @@ export default function A1Cockpit() {
               <div><p className="text-xs uppercase tracking-[.18em] text-[#97aec8]">Selected opportunity · {project.id}</p><h2 className="mt-1 text-2xl font-semibold">{project.name}</h2><p className="mt-1 text-sm text-[#a9bad0]">{project.package}</p></div>
               <div className="text-right"><span className="rounded-full border border-[#bd8b3c] px-3 py-1 text-xs font-semibold text-[#efc77c]">{status(project.completed)}</span><p className="mt-2 text-xs text-[#90a7bf]">Decision authority: none in demo</p></div>
             </div>
-            <nav aria-label="A1 sections" className="flex gap-1 overflow-x-auto border-b border-[#2b405b] px-3 pt-2">{(["overview","assessment","activity","protocol"] as const).map(t=><button key={t} onClick={()=>setTab(t)} className={`whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold capitalize ${tab===t?"border-[#e5b861] text-[#e5b861]":"border-transparent text-[#93aac4] hover:text-white"}`}>{t}</button>)}</nav>
+            <nav aria-label="A1 sections" className="flex gap-1 overflow-x-auto border-b border-[#2b405b] px-3 pt-2">{(["overview","operations","assessment","activity","protocol"] as const).map(t=><button key={t} onClick={()=>setTab(t)} className={`whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold capitalize ${tab===t?"border-[#e5b861] text-[#e5b861]":"border-transparent text-[#93aac4] hover:text-white"}`}>{t==="operations"?"Operations A2":t}</button>)}</nav>
             {message&&<div role="status" className="mx-5 mt-4 rounded-lg border border-[#d2a55a] bg-[#624620]/25 px-4 py-3 text-sm text-[#f0cf91]">{message}</div>}
             <div className="p-5 sm:p-6">
+              <div className={tab==="operations"?"":"hidden"}><A2Operations projectId={selected} onEvent={append}/></div>
               {tab==="overview"&&<div className="grid gap-6 lg:grid-cols-[1fr_260px]">
                 <div><SectionTitle title="Decision dependency matrix" subtitle="A later gate cannot be marked complete before its predecessors. This is a UI simulation, not a recorded WDF sign-off."/>
                   <div className="space-y-2">{gateNames.map((name,i)=>{
