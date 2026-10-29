@@ -190,19 +190,35 @@
       .stack3d-head{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;justify-content:space-between}
       .stack3d-head h3{margin:0;font-size:16px;font-weight:800}
       .stack3d-head .hint{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--ink-3)}
-      .stage3d{perspective:1100px;height:450px;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:pan-y;cursor:grab}
-      .stage3d:active{cursor:grabbing}
-      .stack3d{position:relative;width:300px;height:200px;transform-style:preserve-3d}
-      .slab{position:absolute;left:0;width:300px;height:104px;border:1.5px solid var(--brass);background:color-mix(in srgb,var(--navy) 88%,transparent);color:var(--navy-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;padding:6px;transition:box-shadow .2s ease,background .2s ease}
-      .slab b{font-size:13.5px;letter-spacing:.05em}
-      .slab span{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.12em;color:var(--navy-ink-2)}
-      .slab.sel{background:var(--brass-deep);box-shadow:0 0 0 2px var(--brass),0 18px 40px rgba(0,0,0,.4)}
-      .slab .sv{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;color:#fff}
-      @media (max-width:520px){ .stack3d{width:250px} .slab{width:250px} .stage3d{height:410px} }
+      .stage3d{position:relative;height:540px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+      .stage3d.dragging{cursor:grabbing}
+      @media (max-width:940px){ .stage3d{height:430px;margin-top:6px} }
+      @media (max-width:520px){ .stage3d{height:360px} }
+      .scene3d{position:absolute;inset:0;perspective:1500px;perspective-origin:50% 40%}
+      .hstack{position:absolute;left:50%;top:41%;width:0;height:0;transform-style:preserve-3d;--s:1;will-change:transform}
+      @media (max-width:940px){ .hstack{--s:.86} }
+      @media (max-width:520px){ .hstack{--s:.68} }
+      .hslab{position:absolute;width:270px;height:270px;left:-135px;top:-135px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.2,1),box-shadow .3s;background:linear-gradient(135deg,color-mix(in srgb,var(--steel) 22%,transparent),color-mix(in srgb,var(--surface) 55%,transparent) 55%,color-mix(in srgb,var(--brass) 12%,transparent));border:1px solid color-mix(in srgb,var(--steel) 38%,transparent);border-radius:6px;box-shadow:inset 0 0 40px color-mix(in srgb,var(--steel) 12%,transparent);cursor:pointer}
+      .hslab::before{content:"";position:absolute;inset:0;border-radius:6px;background:linear-gradient(color-mix(in srgb,var(--ink) 7%,transparent) 1px,transparent 1px) 0 0/25px 25px,linear-gradient(90deg,color-mix(in srgb,var(--ink) 7%,transparent) 1px,transparent 1px) 0 0/25px 25px;pointer-events:none}
+      .hslab .sl-n{position:absolute;left:16px;top:12px;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:30px;color:var(--brass);letter-spacing:.02em}
+      .hslab .sl-t{position:absolute;left:16px;right:16px;bottom:14px;font-weight:800;font-size:19px;line-height:1.15;color:var(--ink);opacity:0;transition:opacity .3s}
+      .hslab.on .sl-t{opacity:1}
+      .hslab .sl-t small{display:block;font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:10.5px;letter-spacing:.12em;color:var(--ink-2);margin-top:5px}
+      .hslab .edge{position:absolute;left:0;bottom:0;width:100%;height:12px;transform-origin:bottom;transform:rotateX(-90deg);background:linear-gradient(90deg,color-mix(in srgb,var(--steel) 55%,transparent),color-mix(in srgb,var(--brass) 45%,transparent));border-radius:0 0 3px 3px;opacity:.75}
+      .hslab .edge.r{width:12px;height:100%;left:auto;right:0;bottom:auto;top:0;transform-origin:right;transform:rotateY(90deg);background:linear-gradient(color-mix(in srgb,var(--steel) 45%,transparent),color-mix(in srgb,var(--brass) 35%,transparent))}
+      .hslab.on{border-color:var(--brass);background:linear-gradient(135deg,color-mix(in srgb,var(--brass) 42%,transparent),color-mix(in srgb,var(--surface) 60%,transparent) 60%,color-mix(in srgb,var(--steel) 20%,transparent));box-shadow:inset 0 0 50px color-mix(in srgb,var(--brass) 25%,transparent),0 0 60px color-mix(in srgb,var(--brass) 25%,transparent)}
+      .hslab.on .sl-n{color:var(--ink)}
+      .hint3d{position:absolute;top:6px;right:0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;color:var(--ink-3);z-index:2}
+      .readout{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:520px;background:color-mix(in srgb,var(--bg) 88%,transparent);border:1px solid var(--line-strong);border-left:3px solid var(--brass);padding:12px 15px 13px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2}
+      .readout .ro-k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;color:var(--brass);font-weight:600;display:flex;justify-content:space-between;gap:10px}
+      .readout .ro-k span:last-child{color:var(--ink-3)}
+      .readout h3{margin:4px 0;font-size:16px;font-weight:800}
+      .readout p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+      .readout p b{color:var(--ink);font-weight:600}
+      .readout .ro-evb{margin-top:9px}
+      @media (max-width:520px){ .readout p{font-size:12.5px} .hslab .sl-t{font-size:17px} }
       .panel .sub{overflow-wrap:break-word}
       @media (max-width:640px){ .evb{white-space:normal} }
-      .stack3d-readout{display:flex;flex-wrap:wrap;gap:8px 22px;border-top:1px solid var(--line);padding-top:14px;font-size:14px;color:var(--ink-2)}
-      .stack3d-readout b{color:var(--ink)}
 
       /* equations + base case + calculator */
       .proof{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
@@ -360,11 +376,15 @@
       .overlap{margin:2px 0 20px}
       .overlap .ov-k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;color:var(--ink-3);margin-bottom:8px}
       .ov-row{display:flex;align-items:center;gap:12px;margin-bottom:5px}
-      .ov-row .ov-name{flex:0 0 168px;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-align:right}
+      .ov-row .ov-name{flex:0 0 168px;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-align:right;transition:color .2s}
+      .ov-row.live .ov-name{color:var(--brass)}
       @media (max-width:640px){ .ov-row .ov-name{flex-basis:104px;font-size:10.5px} }
       .ov-track{flex:1;position:relative;height:15px;background:var(--surface-2);border:1px solid var(--line);border-radius:2px}
-      .ov-bar{position:absolute;top:2px;bottom:2px;border-radius:2px;background:var(--steel)}
+      .ov-bar{position:absolute;top:2px;bottom:2px;border-radius:2px;background:var(--steel);transition:filter .25s}
+      .ov-row.live .ov-bar{filter:brightness(1.35)}
       .ov-bar.b2{background:#2e7d9c}.ov-bar.b3{background:var(--teal)}.ov-bar.b4{background:var(--brass-deep)}
+      .ov-cursor{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--brass);pointer-events:none;z-index:2}
+      .ov-cursor::before{content:"";position:absolute;top:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--brass)}
       .ov-note{font-size:12px;color:var(--ink-2);margin-top:8px}
       .matrix{display:grid;grid-template-columns:160px repeat(4,minmax(0,1fr));gap:10px;position:relative}
       .sync-line{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed color-mix(in srgb,var(--brass) 45%,transparent);z-index:0;pointer-events:none;transition:left .15s ease}
@@ -422,6 +442,8 @@
       .scrubber .sc-scale{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;color:var(--ink-3)}
       .scrubber .sc-active{font-size:13.5px;color:var(--ink-2);margin-top:8px}
       .scrubber .sc-active b{color:var(--ink)}
+      .sc-play{background:none;border:1px solid var(--line-strong);color:var(--ink-2);font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.12em;padding:6px 10px;border-radius:3px;cursor:pointer;flex:none}
+      .sc-play:hover{color:var(--ink);border-color:var(--brass)}
 
       /* constellation */
       .const-wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px}
@@ -700,10 +722,16 @@
               <h3>The six layers, live — drag to turn, tap a layer to inspect</h3>
               <span class="hint">◉ LIVE MODEL — THE TRANSFORMATION, GEOMETRY → MONEY</span>
             </div>
-            <div class="stage3d" id="stage3d">
-              <div class="stack3d" id="stack3d" aria-label="Interactive 3D stack of the six Live 5D layers"></div>
+            <div class="stage3d" id="stage3d" aria-label="Interactive 3D stack of the six Live 5D layers. Drag to turn it; select a layer to read it.">
+              <span class="hint3d" aria-hidden="true">DRAG TO TURN · TAP A LAYER</span>
+              <div class="scene3d"><div class="hstack" id="stack3d"></div></div>
+              <div class="readout" id="stackReadout" aria-live="polite">
+                <div class="ro-k"><span id="roNo">L1 / 6</span><span>THE LIVE 5D MODEL</span></div>
+                <h3 id="roTitle">Geometry &amp; 3D Model</h3>
+                <p id="roText">Parametric building geometry — duct, pipe and equipment as <b>objects with properties</b>, not lines on a sheet.</p>
+                <div class="ro-evb"><span class="evb">VERIFIED — HVAC RC8.11</span></div>
+              </div>
             </div>
-            <div class="stack3d-readout" id="stackReadout" aria-live="polite"></div>
           </div>
 
           <div class="layers" style="margin-top:22px" id="layerList">
@@ -1138,7 +1166,7 @@
           </p>
 
           <div class="scrubber work">
-            <div class="sc-head"><b>Lifecycle scrubber — drag through the job</b><span class="sc-now" id="scNow">T = 50% · CONSTRUCTION AT PEAK, ALL PHASES LIVE</span></div>
+            <div class="sc-head"><b>Lifecycle — auto-plays in view; drag to scrub the job</b><span class="sc-now" id="scNow">T = 50% · CONSTRUCTION AT PEAK, ALL PHASES LIVE</span><button type="button" class="sc-play" id="scPlay" aria-pressed="false" aria-label="Toggle lifecycle auto-play">AUTO-PLAY</button></div>
             <input type="range" id="scRange" min="0" max="100" step="1" value="50" aria-label="Lifecycle position, percent of job duration" />
             <div class="sc-scale"><span>INTAKE</span><span>KICKOFF</span><span>PRODUCTION</span><span>HANDOVER</span></div>
             <p class="sc-active" id="scActive"></p>
@@ -1573,66 +1601,103 @@
         bP80.addEventListener('click', function () { setRisk(1.16, 'P80', bP80, bBase); });
         renderCalc();
 
-        /* ---------- interactive 3D layer stack ---------- */
+        /* ---------- 3D Live-5D layer stack — TS-A2 motion, restored ---------- */
         var LAYERS = [
-          { n: 'L1', t: 'GEOMETRY & 3D MODEL', v: '120,000 SF', d: 'Parametric geometry — every element an object with properties, system, zone and spec reference.' },
-          { n: 'L2', t: 'ENGINEERING CALCULATIONS', v: '850 TONS', d: 'Sizing, loads and tonnage computed from the geometry itself, typeset as auditable mathematics.' },
-          { n: 'L3', t: 'QUANTITIES & COST', v: '186,000 LB', d: 'QTO off the model; cost built as Σ L + M + C + S + E in the CMiC structure.' },
-          { n: 'L4', t: 'SCHEDULE & LABOR', v: '67 WD', d: 'Hours = Quantity ÷ Productivity. Crew and rates drive duration and labor loading live.' },
-          { n: 'L5', t: 'SPECS · RFIs · CORRESPONDENCE', v: 'ON THE OBJECT', d: 'Documents attached to the model objects they concern — an open RFI sits on the element it blocks.' },
-          { n: 'L6', t: 'SOV · EVM · CASHFLOW', v: '$16,123,818 SOV', d: 'The commercial picture is the engineering picture, priced — SOV = Direct × 1.14.' }
+          ['L1', 'Geometry & 3D Model', 'PARAMETRIC · THREE.JS', 'Parametric building geometry — duct, pipe and equipment as <b>objects with properties</b>, not lines on a sheet.'],
+          ['L2', 'Engineering Calculations', 'SIZING · LOADS · KATEX / LATEX', 'Sizing, airflow, pressure drop, loads and tonnage <b>computed from the geometry itself</b> — every result traceable to its formula.'],
+          ['L3', 'Quantities & Cost Structure', 'QTO · L / M / C / S / E', 'Quantities taken off the model; cost built in the <b>CMiC structure — Labor, Material, Construction, Subcontract, Equipment</b>.'],
+          ['L4', 'Schedule & Labor Productivity', '4D · CREW LOADING', 'Hours are derived, not guessed: <b>Hours = Quantity ÷ Productivity</b>.'],
+          ['L5', 'Specifications, RFIs & Correspondence', 'DOCUMENTS ON THE OBJECT', 'Specs, submittals, RFIs and correspondence <b>attached to the model objects they concern</b>.'],
+          ['L6', 'Commercial: SOV, EVM & Cashflow', '5D · PAYMENT · FORECAST', 'Schedule of values, earned value and cashflow are <b>projections of the same model</b>.']
         ];
         var stackEl = document.getElementById('stack3d');
         var stageEl = document.getElementById('stage3d');
-        var readout = document.getElementById('stackReadout');
-        var slabs = [];
-        var selLayer = 0;
-        LAYERS.forEach(function (L, i) {
+        var roNo = document.getElementById('roNo');
+        var roTitle = document.getElementById('roTitle');
+        var roText = document.getElementById('roText');
+        var slabs = LAYERS.map(function (L, i) {
           var s = document.createElement('div');
-          s.className = 'slab' + (i === 0 ? ' sel' : '');
+          s.className = 'hslab';
           s.setAttribute('role', 'button');
           s.setAttribute('tabindex', '0');
-          s.setAttribute('aria-label', L.n + ' ' + L.t);
-          s.innerHTML = '<span>' + L.n + '</span><b>' + L.t + '</b><span class="sv">' + L.v + '</span>';
-          s.addEventListener('click', function () { selectLayer(i); });
-          s.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectLayer(i); } });
+          s.setAttribute('aria-label', L[0] + ' — ' + L[1]);
+          s.innerHTML = '<span class="sl-n">' + L[0] + '</span><span class="sl-t">' + L[1].replace(/&/g, '&amp;') + '<small>' + L[2] + '</small></span><span class="edge"></span><span class="edge r"></span>';
           stackEl.appendChild(s);
-          slabs.push(s);
+          return s;
         });
-        function selectLayer(i) {
-          selLayer = i;
-          slabs.forEach(function (s, j) { s.classList.toggle('sel', j === i); });
-          document.querySelectorAll('#layerList .layer').forEach(function (row, j) { row.classList.toggle('sel', j === i); });
-          var L = LAYERS[i];
-          readout.innerHTML = '<span><b>' + L.n + ' — ' + L.t + ':</b> ' + L.d + '</span><span class="evb">VERIFIED — HVAC RC8.11</span>';
+        var layerRows = Array.prototype.slice.call(document.querySelectorAll('#layerList .layer'));
+        var sel = 0, rotZ = -38, tilt = 58, explode = 1, dragging = false, moved = false, lastX = 0, lastY = 0, idleSpin = true, spinT = null;
+        var stackScale = 1;
+        function readScale() {
+          var v = parseFloat(getComputedStyle(stackEl).getPropertyValue('--s'));
+          stackScale = isNaN(v) ? 1 : v;
         }
-        document.querySelectorAll('#layerList .layer').forEach(function (row) {
-          var i = parseInt(row.getAttribute('data-layer'), 10);
-          row.addEventListener('click', function () { selectLayer(i); });
-          row.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectLayer(i); } });
-        });
-        selectLayer(0);
-        var rotY = -24, rotX = 58, dragging = false, lastX = 0, lastY = 0, autoSpin = true;
-        function paintStack() {
-          stackEl.style.transform = 'rotateX(' + rotX + 'deg) rotateZ(' + rotY + 'deg)';
+        function layoutStack() {
+          var gapBase = window.innerWidth < 520 ? 40 : 52;
+          var gap = gapBase * explode;
           slabs.forEach(function (s, i) {
-            s.style.transform = 'translateZ(' + ((LAYERS.length - 1 - i) * 29) + 'px)';
+            var z = (i - 2.5) * gap + (i === sel ? 22 : 0);
+            s.style.transform = 'translateZ(' + z + 'px)';
+            s.classList.toggle('on', i === sel);
           });
+          stackEl.style.transform = 'scale(' + stackScale + ') rotateX(' + tilt + 'deg) rotateZ(' + rotZ + 'deg)';
         }
-        paintStack();
-        stageEl.addEventListener('pointerdown', function (ev) { dragging = true; autoSpin = false; lastX = ev.clientX; lastY = ev.clientY; });
+        function selectLayer(i, fromUser) {
+          sel = i;
+          var L = LAYERS[i];
+          roNo.textContent = L[0] + ' / 6';
+          roTitle.textContent = L[1];
+          roText.innerHTML = L[3];
+          layerRows.forEach(function (r, j) { r.classList.toggle('sel', j === i); });
+          layoutStack();
+          if (fromUser) { idleSpin = false; clearTimeout(spinT); spinT = setTimeout(function () { idleSpin = true; }, 6000); }
+        }
+        slabs.forEach(function (s, i) {
+          s.addEventListener('click', function () { if (!moved) selectLayer(i, true); });
+          s.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectLayer(i, true); } });
+        });
+        layerRows.forEach(function (row) {
+          var i = parseInt(row.getAttribute('data-layer'), 10);
+          row.addEventListener('click', function () { selectLayer(i, true); });
+          row.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectLayer(i, true); } });
+          row.addEventListener('mouseenter', function () { selectLayer(i, true); });
+        });
+        stageEl.addEventListener('pointerdown', function (ev) {
+          dragging = true; moved = false; lastX = ev.clientX; lastY = ev.clientY; idleSpin = false;
+          stageEl.classList.add('dragging');
+        });
         window.addEventListener('pointermove', function (ev) {
           if (!dragging) return;
-          rotY += (ev.clientX - lastX) * 0.4;
-          rotX = Math.max(30, Math.min(75, rotX - (ev.clientY - lastY) * 0.25));
+          var dx = ev.clientX - lastX, dy = ev.clientY - lastY;
+          if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+          rotZ += dx * 0.45; tilt = Math.max(25, Math.min(75, tilt - dy * 0.25));
           lastX = ev.clientX; lastY = ev.clientY;
-          paintStack();
+          layoutStack();
         });
-        window.addEventListener('pointerup', function () { dragging = false; });
-        (function spin() {
-          if (motionOn && !reduced.matches && autoSpin && !dragging) { rotY += 0.15; paintStack(); }
-          requestAnimationFrame(spin);
-        })();
+        window.addEventListener('pointerup', function () {
+          if (!dragging) return;
+          dragging = false; stageEl.classList.remove('dragging');
+          clearTimeout(spinT); spinT = setTimeout(function () { idleSpin = true; }, 5000);
+          setTimeout(function () { moved = false; }, 0);
+        });
+        stageEl.addEventListener('mouseenter', function () { explode = 1.45; layoutStack(); });
+        stageEl.addEventListener('mouseleave', function () { explode = 1; layoutStack(); });
+        var heroVisible = true;
+        if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { heroVisible = es[0].isIntersecting; }).observe(stageEl);
+        var lastCycle = 0;
+        function heroTick(ts) {
+          if (motionOn && !reduced.matches && heroVisible && !document.hidden && idleSpin && !dragging) {
+            rotZ += 0.08;
+            if (!lastCycle) lastCycle = ts;
+            if (ts - lastCycle > 3600) { lastCycle = ts; selectLayer((sel + 1) % 6, false); }
+            layoutStack();
+          } else { lastCycle = ts; }
+          requestAnimationFrame(heroTick);
+        }
+        window.addEventListener('resize', function () { readScale(); layoutStack(); });
+        readScale();
+        selectLayer(0, false);
+        requestAnimationFrame(heroTick);
 
         /* ---------- lifecycle scrubber ---------- */
         var PHASES = [
@@ -1646,8 +1711,19 @@
         var scActive = document.getElementById('scActive');
         var syncLine = document.getElementById('syncLine');
         var matrix = document.getElementById('collabMatrix');
+        var scCells = Array.prototype.slice.call(document.querySelectorAll('#collabMatrix [data-phase]'));
+        var ovRows = Array.prototype.slice.call(document.querySelectorAll('.overlap .ov-row'));
+        var ovCursors = ovRows.map(function (r) {
+          var c = document.createElement('span');
+          c.className = 'ov-cursor';
+          r.querySelector('.ov-track').appendChild(c);
+          return c;
+        });
+        var scLastT = -1;
         function renderScrub() {
           var t = parseInt(scRange.value, 10);
+          if (t === scLastT) return;
+          scLastT = t;
           var active = PHASES.filter(function (p) { return t >= p.from && t <= p.to; });
           var names = active.map(function (p) { return p.name; });
           scNow.textContent = 'T = ' + t + '%' + (names.length ? ' · LIVE NOW: ' + names.join(' + ') : ' · BETWEEN PHASE WINDOWS');
@@ -1658,15 +1734,59 @@
             var labelW = 170, rest = matrix.clientWidth - labelW - 30;
             syncLine.style.left = (labelW + (rest * (t / 100))) + 'px';
           }
-          document.querySelectorAll('#collabMatrix [data-phase]').forEach(function (cell) {
+          scCells.forEach(function (cell) {
             var p = PHASES[parseInt(cell.getAttribute('data-phase'), 10)];
             var on = t >= p.from && t <= p.to;
             cell.classList.toggle('dim', !on);
             cell.classList.toggle('lit', on && cell.classList.contains('ph-head'));
           });
+          ovRows.forEach(function (r, i) { r.classList.toggle('live', t >= PHASES[i].from && t <= PHASES[i].to); });
+          ovCursors.forEach(function (c) { c.style.left = 'calc(' + t + '% - 1px)'; });
         }
         scRange.addEventListener('input', renderScrub);
         renderScrub();
+
+        /* ---------- lifecycle auto-play — TS-A2 behaviour, restored ---------- */
+        var scPlayBtn = document.getElementById('scPlay');
+        var scSection = document.getElementById('lifecycle');
+        var scPlaying = false, scDir = 1, scLast = 0, scVis = false, scLatched = false, scHover = false, scScrubHold = false, scResumeT = null;
+        var scT = parseFloat(scRange.value);
+        function setScPlay(p) {
+          scPlaying = p;
+          scPlayBtn.textContent = p ? 'PAUSE' : 'AUTO-PLAY';
+          scPlayBtn.setAttribute('aria-pressed', p ? 'true' : 'false');
+        }
+        scPlayBtn.addEventListener('click', function () { scLatched = true; setScPlay(!scPlaying); });
+        scRange.addEventListener('input', function () {
+          scT = parseFloat(scRange.value);
+          if (!scPlaying) return;
+          scScrubHold = true;
+          clearTimeout(scResumeT);
+          scResumeT = setTimeout(function () { scScrubHold = false; }, 4000);
+        });
+        [document.querySelector('.scrubber'), document.querySelector('.overlap'), matrix].forEach(function (el) {
+          if (!el) return;
+          el.addEventListener('pointerenter', function () { scHover = true; });
+          el.addEventListener('pointerleave', function () { scHover = false; });
+          el.addEventListener('focusin', function () { scHover = true; });
+          el.addEventListener('focusout', function () { scHover = false; });
+        });
+        if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+          scVis = es[0].isIntersecting;
+          if (scVis && motionOn && !reduced.matches && !scLatched && !scPlaying) setScPlay(true);
+        }, { threshold: 0.05 }).observe(scSection);
+        motionBtn.addEventListener('click', function () { if (!motionOn) setScPlay(false); });
+        function scTick(ts) {
+          var dt = scLast ? (ts - scLast) / 1000 : 0; scLast = ts;
+          if (scPlaying && scVis && motionOn && !reduced.matches && !document.hidden && !scHover && !scScrubHold) {
+            scT += scDir * dt * 9;
+            if (scT >= 100) { scT = 100; scDir = -1; } else if (scT <= 0) { scT = 0; scDir = 1; }
+            scRange.value = scT;
+            renderScrub();
+          }
+          requestAnimationFrame(scTick);
+        }
+        requestAnimationFrame(scTick);
 
         /* ---------- constellation orbit nodes ---------- */
         var orbitSpin = document.getElementById('orbitSpin');
