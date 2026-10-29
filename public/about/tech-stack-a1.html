@@ -544,6 +544,88 @@
         font-size:11px;letter-spacing:.06em;color:var(--navy-ink-2);
       }
       .docfoot b{color:var(--navy-ink);font-weight:600}
+
+      /* ---------- 3D Logos toggle ---------- */
+      .logos3d-bar{
+        display:flex;align-items:center;gap:14px 18px;flex-wrap:wrap;
+        background:var(--navy);color:var(--navy-ink);
+        border:1px solid var(--brass);padding:13px 16px;margin:0 0 26px;
+      }
+      .l3d-txt{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;flex:1 1 320px;min-width:0}
+      .l3d-title{font-weight:800;font-size:15px;letter-spacing:.04em;color:#fff}
+      .l3d-note{font-size:13px;color:var(--navy-ink-2)}
+      .l3d-state{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--brass-bright);font-weight:600}
+      .l3d-reduced{flex:1 1 100%;margin:0;font-size:12px;color:var(--navy-ink-2);font-family:"IBM Plex Mono",monospace;letter-spacing:.03em}
+      .l3d-switch{
+        display:inline-flex;align-items:center;gap:11px;flex:none;
+        background:transparent;border:0;cursor:pointer;font:inherit;
+        color:var(--navy-ink);padding:6px 4px;
+      }
+      .l3d-switch-track{
+        width:56px;height:30px;border-radius:999px;flex:none;position:relative;display:inline-block;
+        background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.45);
+        transition:background .2s ease,border-color .2s ease;
+      }
+      .l3d-switch-thumb{
+        position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+        background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35);
+        transition:transform .22s ease,background .22s ease;
+      }
+      .l3d-switch[aria-checked="true"] .l3d-switch-track{background:var(--brass);border-color:var(--brass-bright)}
+      .l3d-switch[aria-checked="true"] .l3d-switch-thumb{transform:translateX(26px)}
+      .l3d-switch-label{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.1em;min-width:28px;text-align:left}
+      .l3d-switch:focus-visible{outline:2px solid var(--brass-bright);outline-offset:3px}
+      .l3d-switch:disabled{opacity:.55;cursor:not-allowed}
+      .l3d-switch:disabled .l3d-switch-track{background:rgba(255,255,255,.10)}
+
+      /* 3D turntable — transform/opacity only, wraps the plate; the image fit inside never changes */
+      .logo3d-target{transform-style:preserve-3d}
+      body.logos-3d-on .tile,
+      body.logos-3d-on .partner,
+      body.logos-3d-on .dsv-grid figure,
+      body.logos-3d-on .brick{perspective:900px}
+      body.logos-3d-on .logo3d-target{
+        animation:logo3dTurn var(--l3d-dur,7.5s) ease-in-out var(--l3d-delay,0s) infinite;
+        box-shadow:0 12px 24px rgba(12,31,49,.18);
+        will-change:transform;
+      }
+      body.logos-3d-on .logo3d-sheen{position:relative;overflow:hidden}
+      body.logos-3d-on .logo3d-sheen::after{
+        content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+        background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.42) 49%,transparent 64%);
+        transform:translateX(-130%) skewX(-12deg);opacity:0;
+        animation:logo3dSheen var(--l3d-dur,7.5s) ease-in-out var(--l3d-delay,0s) infinite;
+      }
+      body.logos-3d-on .logo3d-target:hover,
+      body.logos-3d-on .logo3d-target:focus-within,
+      body.logos-3d-on .tile:hover .logo3d-target,
+      body.logos-3d-on .tile:focus-within .logo3d-target,
+      body.logos-3d-on .partner:hover .logo3d-target,
+      body.logos-3d-on .partner:focus-within .logo3d-target{
+        animation-play-state:paused;
+      }
+      body.logos-3d-on .logo3d-target:hover::after,
+      body.logos-3d-on .logo3d-target:focus-within::after{
+        animation-play-state:paused;
+      }
+      body.logos-3d-on .logo3d-target.l3d-offscreen,
+      body.logos-3d-on .logo3d-target.l3d-offscreen::after{
+        animation-play-state:paused !important;
+      }
+      @keyframes logo3dTurn{
+        0%{transform:perspective(850px) rotateY(-17deg) rotateX(3.5deg)}
+        50%{transform:perspective(850px) rotateY(17deg) rotateX(-2deg) translateZ(5px)}
+        100%{transform:perspective(850px) rotateY(-17deg) rotateX(3.5deg)}
+      }
+      @keyframes logo3dSheen{
+        0%,18%{transform:translateX(-130%) skewX(-12deg);opacity:0}
+        42%{opacity:.75}
+        58%,100%{transform:translateX(130%) skewX(-12deg);opacity:0}
+      }
+      @media (prefers-reduced-motion: reduce){
+        body.logos-3d-on .logo3d-target,
+        body.logos-3d-on .logo3d-target::after{animation:none !important}
+      }
     </style>
   </head>
   <body>
@@ -620,6 +702,18 @@
     <!-- ======================= LOGO EMPHASIS BAND ======================= -->
     <div class="logoband" id="engines">
       <div class="wrap">
+        <div class="logos3d-bar">
+          <div class="l3d-txt">
+            <span class="l3d-title">3D Logos</span>
+            <span class="l3d-note">Auto-rotate — turn the logos into animated 3D images</span>
+            <span class="l3d-state" id="l3dState" aria-live="polite">OFF — STATIC MARKS</span>
+          </div>
+          <button id="logo3dToggle" class="l3d-switch" type="button" role="switch" aria-checked="false" aria-describedby="l3dState">
+            <span class="l3d-switch-track" aria-hidden="true"><span class="l3d-switch-thumb"></span></span>
+            <span class="l3d-switch-label" id="l3dSwitchLabel">OFF</span>
+          </button>
+          <p class="l3d-reduced" id="l3dReduced" hidden>REDUCED MOTION IS ON IN YOUR SYSTEM — 3D ROTATION STAYS OFF.</p>
+        </div>
         <div class="lb-kicker">THE STACK, BY ITS MARKS · IN RUNNING ORDER</div>
         <h2>Strong engines first. Then the system that feeds them.</h2>
         <p class="lb-intro">The known logos, tiered the way the work flows: the <strong>AI engine models</strong> lead — the known marks sit highest — with <strong>OctopusG</strong>, the orchestrator that directs the panel, placed directly beneath them. Then the <strong>repositories &amp; drives</strong> that hold the source, the <strong>skills &amp; agents</strong>, the <strong>servers &amp; deployment</strong> that ship it, the <strong>router</strong> that connects the panel, and the <strong>programming languages &amp; libraries</strong> it is all built in.</p>
@@ -1371,6 +1465,70 @@
         bBase.addEventListener('click', function () { setRisk(1, 'BASE', bBase, bP80); });
         bP80.addEventListener('click', function () { setRisk(1.16, 'P80', bP80, bBase); });
         render();
+      })();
+    </script>
+    <script>
+      (function () {
+        var toggle = document.getElementById('logo3dToggle');
+        if (!toggle) return;
+        var stateEl = document.getElementById('l3dState');
+        var labelEl = document.getElementById('l3dSwitchLabel');
+        var reducedEl = document.getElementById('l3dReduced');
+        var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        var on = false;
+        var observer = null;
+
+        var selector = '.tile .plate, .dsv-plate, .partner .logo-box, .brick .bp, .bp-logo, .orch-logo';
+        var targets = Array.prototype.slice.call(document.querySelectorAll(selector));
+        targets.forEach(function (el, i) {
+          el.classList.add('logo3d-target');
+          if (!el.classList.contains('orch-logo')) el.classList.add('logo3d-sheen');
+          el.style.setProperty('--l3d-delay', (-(i % 9) * 0.85).toFixed(2) + 's');
+          el.style.setProperty('--l3d-dur', (6.8 + (i % 4) * 0.6).toFixed(1) + 's');
+        });
+
+        function ensureObserver() {
+          if (observer || !('IntersectionObserver' in window)) return;
+          observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              e.target.classList.toggle('l3d-offscreen', !e.isIntersecting);
+            });
+          }, { rootMargin: '120px 0px 120px 0px' });
+          targets.forEach(function (el) { observer.observe(el); });
+        }
+        function setOn(next) {
+          if (next && mq.matches) next = false;
+          on = !!next;
+          toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+          if (labelEl) labelEl.textContent = on ? 'ON' : 'OFF';
+          if (stateEl) stateEl.textContent = on ? 'ON — 3D AUTO-ROTATE' : 'OFF — STATIC MARKS';
+          document.body.classList.toggle('logos-3d-on', on);
+          if (on) {
+            ensureObserver();
+          } else {
+            targets.forEach(function (el) { el.classList.remove('l3d-offscreen'); });
+          }
+        }
+        function applyReduced() {
+          if (mq.matches) {
+            toggle.disabled = true;
+            toggle.setAttribute('aria-disabled', 'true');
+            if (reducedEl) reducedEl.hidden = false;
+            setOn(false);
+          } else {
+            toggle.disabled = false;
+            toggle.removeAttribute('aria-disabled');
+            if (reducedEl) reducedEl.hidden = true;
+          }
+        }
+        toggle.addEventListener('click', function () {
+          if (mq.matches) { setOn(false); return; }
+          setOn(!on);
+        });
+        if (typeof mq.addEventListener === 'function') mq.addEventListener('change', applyReduced);
+        else if (typeof mq.addListener === 'function') mq.addListener(applyReduced);
+        applyReduced();
+        setOn(false);
       })();
     </script>
   </body>
