@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex"/>
+<title>Go / No-Go Desk — A3</title>
+<style>
+:root{--paper:#f3f0e8;--sheet:#fbfaf6;--ink:#1c1915;--muted:#5e584e;--line:#e4dccf;--navy:#12263a;--ink2:#f6f1e7;--brass:#5c4314;--soft:#f4ead4;--rule:#c4a15a}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{display:flex;flex-direction:column;background:var(--paper);color:var(--ink);font:16px/1.45 "IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}
+header{background:var(--navy);color:var(--ink2);border-bottom:4px solid var(--rule);padding:8px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+header h1{font-size:1.25rem;margin:0}header p{margin:0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+#clocks{display:flex;gap:8px}#clocks div{border:1px solid var(--rule);border-radius:8px;padding:4px 8px;font-size:12px}#clocks b{display:block;font-size:10px;letter-spacing:.12em}
+#timerbar{display:flex;justify-content:space-between;gap:8px;align-items:center;background:var(--navy);color:var(--ink2);padding:8px 16px;border-top:1px solid var(--rule)}
+nav{display:flex;gap:8px;overflow:auto;padding:8px 16px;background:var(--paper);border-bottom:1px solid var(--line)}
+button{min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font-weight:650;padding:0 14px;cursor:pointer}
+button.on,#timerbar button{background:var(--navy);color:var(--ink2);border-color:var(--navy)}
+button:disabled{opacity:.5;cursor:not-allowed}
+main{flex:1;overflow:auto;padding:16px}
+#app{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h2{margin:0 0 6px;font-size:1.1rem}.lead{margin:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stats div{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:10px}.stats b{font-size:1.5rem;display:block}
+.mono{font-family:ui-monospace,monospace;font-size:12px;word-break:break-all;color:var(--muted)}
+.unk{font-family:ui-monospace,monospace;font-weight:700;color:var(--brass)}
+.row{display:flex;flex-wrap:wrap;gap:8px}.gates{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.gate{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:8px}.gate.here{background:var(--navy);color:var(--ink2)}.gate.veto{background:var(--soft)}
+.checks{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}.checks li{border-radius:10px;padding:10px;border:1px solid var(--line)}
+.hard-stop{background:var(--navy);color:var(--ink2)}.blocker{background:var(--soft);border-color:var(--brass)}.pass{background:var(--paper)}
+.kicker{font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin:0}
+textarea,pre{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px;font:13px/1.4 ui-monospace,monospace}
+.checkline{display:flex;gap:10px;align-items:flex-start}.muted{color:var(--muted)}.receipt{background:var(--soft);border-color:var(--brass)}
+footer{max-width:1100px;margin:8px auto 24px;border-left:4px solid var(--navy);background:var(--sheet);padding:12px 14px;font-size:14px}
+@media(max-width:700px){.stats,.gates{grid-template-columns:1fr 1fr}.gates{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div><p>WDF · Mount Vernon · Test — not for bid</p><h1>Go / No-Go Desk · A3</h1></div>
+  <div id="clocks"></div>
+</header>
+<div id="timerbar" hidden></div>
+<nav id="nav" aria-label="Desk"></nav>
+<main><div id="app"></div>
+<footer><strong>Gate 0 — data boundary. Test — not for bid.</strong><p>Only the A1 TEST 001 facts, plus a session pad in this browser. No drawings, pricing, payroll, financial, or bonding data. The master is still the only place an entry is made.</p></footer>
+</main>
+<script>window.DESK_DATA = {"registry":{"id":"WDF-EST-REG-A1","version":"A1 TEST 001","createdEt":"2026-10-29 07:07:56 EDT","createdUtc":"2026-10-29T11:07:56Z","owner":"George Oktem, Senior Estimator","org":"WDF Inc., Mount Vernon, NY","reportsTo":"Mark Makary, SVP","status":"TEST — NOT FOR BID — NO DECISIONS RECORDED","servedRoute":"https://artemis-omni.vercel.app/demo/go-no-go-a1-26-muse","prNumber":231,"prMergedUtc":"2026-10-29T12:00:31Z","squashReported":"6a1738e5","snapshotBytes":27255,"snapshotSha256":"55865da33ac866ea99f6b21e43accddcf89ad874e924a4378b31479d69437896","prBodyBytesClaim":27748,"headLog0007":"0a8166659ae8b132595ceb47716fc925a1175adb7a11b3455ab44d681a8f899c","headLog0008Prefix":"f397e42a"},"pursuits":[{"id":"OPP-001","name":"Botanical Garden","packageName":"Mechanical estimate","stage":"Intake / scope verification","nextAction":"Confirm invitation scope, drawings/addenda, bid date/time, estimate basis, estimator coverage.","source":"George statement + GPT/Artemis draft, 2026-10-29","lane":null},{"id":"OPP-002","name":"350 Park","packageName":"Mechanical estimate","stage":"Intake / scope verification","nextAction":"Confirm design stage, package boundaries, equipment schedules, exclusions, pricing basis.","source":"George statement + GPT/Artemis draft, 2026-10-29","lane":null},{"id":"OPP-003","name":"2 WTC","packageName":"Mechanical estimate / independent estimate","stage":"Intake / scope verification","nextAction":"Reconcile only against current WDF-controlled documents, inside WDF systems. Do not import personal ARTLOOP figures as a WDF bid.","source":"George statement + GPT/Artemis draft, 2026-10-29 · ARTLOOP kept in separate lane","lane":"ARTLOOP stays in a separate lane. It is not a WDF bid and it is not imported here."}],"dataRequests":[{"id":"DR-001","group":"Active projects + WIP","extract":"Job ID, name, client, PM, scope, contract value, percent complete, cost to complete, forecast margin, expected finish","owner":"Operations / Project Controls","status":"NOT REQUESTED"},{"id":"DR-002","group":"Completed projects (5 yrs)","extract":"Planned vs actual completion, final cost, final margin, estimate-to-actual","owner":"Operations / Finance","status":"NOT REQUESTED"},{"id":"DR-003","group":"Labor hours","extract":"Weekly hours by employee ID (not name), trade, project, cost code, regular/OT","owner":"Payroll / Operations","status":"NOT REQUESTED"},{"id":"DR-004","group":"Labor cost structure","extract":"Wage, fringe, payroll burden, CBA/PLA status and expiry, rate effective dates","owner":"Payroll / HR / Estimating","status":"NOT REQUESTED"},{"id":"DR-005","group":"Backlog + pipeline","extract":"Awarded backlog, remaining cost, projected revenue, start/finish windows, probable awards","owner":"Finance / BD","status":"NOT REQUESTED"},{"id":"DR-006","group":"Financial summaries","extract":"Management-approved summaries only, cash-flow outlook, working capital, AR/AP aging — no full statements in week 1","owner":"CFO / Controller","status":"NOT REQUESTED"},{"id":"DR-007","group":"Insurance + bonding","extract":"Owner of the answer, threshold matrix, rates/limits category, surety procedure — ask the owner and the thresholds first","owner":"Risk / Finance (Tutor Perini)","status":"NOT REQUESTED"},{"id":"DR-008","group":"Estimating standards + history","extract":"Historical estimates, bid tabs, takeoff standards, cost codes, vendor quotes, win/loss log 24 months, shop capacity, estimator-hours","owner":"Estimating","status":"NOT REQUESTED"}],"publishedLog":[{"id":"LOG-0001","et":"2026-10-29 07:01:48 EDT","utc":"2026-10-29T11:01:48Z","event":"SOURCE_RECEIVED — GPT-DRAFT-001","detail":"GPT/Artemis draft received. First version of the WDF Estimating + Go/No-Go protocol uploaded for review.","actor":"George Oktem","evidence":"Declared","source":"User upload 2026-10-29","hash":"c4cd81c2ed708abc36e97ac75f589a33a01c6cdff268912f6683cc3ea3cb2571","hashLabel":"Recorded full digest from the snapshot. Preimage is in the master.","served":true},{"id":"LOG-0002","et":"2026-10-29 07:01:48 EDT","utc":"2026-10-29T11:01:48Z","event":"REVIEW_COMPLETED — REVIEW-001","detail":"Muse review completed. Contribution: Gate 0 boundary, Mark-first email, 5-gate model, back-test plan, triage sheet.","actor":"Muse (OctopusG)","evidence":"Verified","source":"Muse contribution file 2026-10-29","hash":"ee3cd1de25f9d8607e7436925a2a35f7b6f44183f686a2f6be4e33846ecec5b9","hashLabel":"Recorded full digest from the snapshot. Preimage is in the master.","served":true},{"id":"LOG-0003","et":"2026-10-29 07:07:25 EDT","utc":"2026-10-29T11:07:25Z","event":"DIRECTIVE — REG-A1","detail":"George directive to build the A1 registry. Live A1 test version, prefilled with known data; atomic time and log accuracy required.","actor":"George Oktem","evidence":"Declared","source":"User message 2026-10-29 07:07:25 EDT","hash":"86d820324a20489959693f543daa31ab3c107c4bb13e9501564506d59aa17305","hashLabel":"Recorded full digest from the snapshot. Preimage is in the master.","served":true},{"id":"LOG-0004","et":"2026-10-29 07:07:56 EDT","utc":"2026-10-29T11:07:56Z","event":"REGISTRY_CREATED — REG-A1","detail":"Registry created — A1 TEST 001 seeded: 3 opportunities, 8 data requests, 0 decisions, gates 0–4. Unverified fields marked UNKNOWN.","actor":"Muse (OctopusG)","evidence":"Verified","source":"System clock at creation (ET and UTC together)","hash":"bd115ef85409709f51eefcd26d12f7119032fdc251dcb35f803ee0b12376df03","hashLabel":"Recorded full digest from the snapshot. Preimage is in the master.","served":true},{"id":"LOG-0005","et":"2026-10-29 07:09:45 EDT","utc":"2026-10-29T11:09:45Z","event":"DECISION — BUILD BOTH","detail":"George Oktem: build both — private master and public team view.","actor":"George Oktem","evidence":"Declared","source":"George Oktem decision, 2026-10-29","hash":"641b4053e7f888a98715961f7687baa86f0301afffa9ce9992d2f112f71e998b","hashLabel":"Recorded full digest from the snapshot. Preimage is in the master.","served":true},{"id":"LOG-0006","et":"2026-10-29 07:20:00 EDT","utc":"2026-10-29T11:20:00Z","event":"TEAM_VIEW_PUBLISHED","detail":"Team view built, audit PASS, shared.","actor":"Muse (OctopusG)","evidence":"Verified","source":"Team view build and audit, 2026-10-29","hash":"ce5a6c35376ac7883a51620072b45f7947fa4ce443cc1a145061229cef261a68","hashLabel":"Recorded full digest from the snapshot. Preimage is in the master.","served":true},{"id":"LOG-0007","et":"2026-10-29 07:20:08 EDT","utc":"2026-10-29T11:20:08Z","event":"MASTER_APP_LIVE","detail":"Private master built and verified. Snapshot head. Chain reported VALID over 7 entries.","actor":"Muse (OctopusG)","evidence":"Verified","source":"Master app verification, 2026-10-29","hash":"0a8166659ae8b132595ceb47716fc925a1175adb7a11b3455ab44d681a8f899c","hashLabel":"Head of the served snapshot. Recorded, not recomputed here.","served":true},{"id":"LOG-0008","et":"UNKNOWN","utc":"UNKNOWN","event":"DEMO_PUBLISHED","detail":"Publish receipt, not part of the served HTML. GitHub PR #231 merged 2026-10-29T12:00:31Z. Muse reported squash 6a1738e5, route HTTP 200, and chain VALID over 8 entries with head prefix f397e42a. The atomic stamp of this entry was not in that report, so it stays UNKNOWN.","actor":"Muse (OctopusG)","evidence":"Declared","source":"Muse publish report, 2026-10-29. Served page still describes 7 entries.","hash":null,"hashLabel":"Prefix only: f397e42a. The rest was not published. Not invented here.","served":false}],"timeRecords":[{"id":"TIME-0001","seconds":337,"label":"Interval, not work","detail":"Message-timestamp interval from upload (07:01:48 EDT) to the registry directive (07:07:25 EDT). Not a claim of continuous work."},{"id":"TIME-0002","seconds":null,"label":"Timer not started","detail":"On the master, no start/stop timer has been opened. Work time after the snapshot is seconds from a timer only — never back-filled."}],"gates":[{"n":0,"name":"Boundary","note":"Handling authorized?"},{"n":1,"name":"Intake","note":"48 hrs · all 3 sit here"},{"n":2,"name":"Capacity","note":"WIP · labor · shop"},{"n":3,"name":"Commercial","note":"Margin · risk · terms"},{"n":4,"name":"Submission","note":"Tutor Perini threshold"}],"checks":{"OPP-001":[{"id":"G0-AUTH","gate":0,"title":"Handling authorized in writing","status":"hard-stop","detail":"NOT RECORDED. No named WDF / Tutor Perini approver has authorized an extract. This veto stays open at every gate."},{"id":"G0-BOUNDARY","gate":0,"title":"Record stays inside the stated facts","status":"pass","detail":"Pass. No drawings, pricing, payroll, financial, or bonding data is in the snapshot."},{"id":"G0-EXPORT","gate":0,"title":"No extract has moved","status":"pass","detail":"Pass. The team view is a snapshot. The master is private. This desk adds nothing to either."},{"id":"G1-DUE","gate":1,"title":"Bid date and time","status":"hard-stop","detail":"UNKNOWN. A missing bid date vetoes. A score is not allowed to talk over it."},{"id":"G1-PARTY","gate":1,"title":"Owner / GC / CM","status":"hard-stop","detail":"UNKNOWN. The contracting party is not named. That is a veto, not a blank to fill with a plausible guess."},{"id":"G1-RFI","gate":1,"title":"RFI deadline","status":"blocker","detail":"UNKNOWN. Holds intake. Not treated as a permanent veto once a date exists."},{"id":"G1-ESTIMATOR","gate":1,"title":"Estimator named","status":"pass","detail":"George Oktem, Senior Estimator. Evidence class: Declared. The name is not a verified assignment letter."},{"id":"G1-EVIDENCE","gate":1,"title":"Evidence is still only Declared","status":"blocker","detail":"Source is a statement plus a draft on 2026-10-29. Declared does not graduate to Verified by repetition."},{"id":"G1-DRAWINGS","gate":1,"title":"Drawings and addenda confirmed","status":"blocker","detail":"UNKNOWN. Named in the next action. Naming a gap is not the same as closing it."},{"id":"G1-BASIS","gate":1,"title":"Estimate basis named","status":"blocker","detail":"UNKNOWN. No pricing basis is in the record, and this desk will not type one."},{"id":"G2-WIP","gate":2,"title":"WIP extract in hand","status":"hard-stop","detail":"DR-001 is NOT REQUESTED. Capacity without WIP would be a guess. Later gate — already visible."},{"id":"G2-LABOR","gate":2,"title":"Labor hours by employee ID","status":"blocker","detail":"DR-003 is NOT REQUESTED. Hours, if they ever come, are by ID, not by name."},{"id":"G2-SHOP","gate":2,"title":"Shop capacity and estimator-hours","status":"blocker","detail":"DR-008 is NOT REQUESTED. Coverage is a name, not a calendar."},{"id":"G3-MARGIN","gate":3,"title":"Margin basis","status":"hard-stop","detail":"UNKNOWN. No margin figure exists. Typing one here would be the error the law forbids."},{"id":"G3-TERMS","gate":3,"title":"Commercial terms","status":"blocker","detail":"UNKNOWN. Risk and terms are unstated."},{"id":"G3-FINANCE","gate":3,"title":"Financial summary authorized","status":"blocker","detail":"DR-006 is NOT REQUESTED. Week-1 rule: no full statements even after a conversation starts."},{"id":"G4-THRESHOLD","gate":4,"title":"Tutor Perini threshold","status":"hard-stop","detail":"UNKNOWN. DR-007 is NOT REQUESTED. Ask the owner of the answer and the threshold before any rate."},{"id":"G4-AUTH","gate":4,"title":"Submission authorization","status":"hard-stop","detail":"NOT RECORDED. The decision book is empty. Submission cannot be authorized against DEC-0001, which is only a placeholder."}],"OPP-002":[{"id":"G0-AUTH","gate":0,"title":"Handling authorized in writing","status":"hard-stop","detail":"NOT RECORDED. No named WDF / Tutor Perini approver has authorized an extract. This veto stays open at every gate."},{"id":"G0-BOUNDARY","gate":0,"title":"Record stays inside the stated facts","status":"pass","detail":"Pass. No drawings, pricing, payroll, financial, or bonding data is in the snapshot."},{"id":"G0-EXPORT","gate":0,"title":"No extract has moved","status":"pass","detail":"Pass. The team view is a snapshot. The master is private. This desk adds nothing to either."},{"id":"G1-DUE","gate":1,"title":"Bid date and time","status":"hard-stop","detail":"UNKNOWN. A missing bid date vetoes. A score is not allowed to talk over it."},{"id":"G1-PARTY","gate":1,"title":"Owner / GC / CM","status":"hard-stop","detail":"UNKNOWN. The contracting party is not named. That is a veto, not a blank to fill with a plausible guess."},{"id":"G1-RFI","gate":1,"title":"RFI deadline","status":"blocker","detail":"UNKNOWN. Holds intake. Not treated as a permanent veto once a date exists."},{"id":"G1-ESTIMATOR","gate":1,"title":"Estimator named","status":"pass","detail":"George Oktem, Senior Estimator. Evidence class: Declared. The name is not a verified assignment letter."},{"id":"G1-EVIDENCE","gate":1,"title":"Evidence is still only Declared","status":"blocker","detail":"Source is a statement plus a draft on 2026-10-29. Declared does not graduate to Verified by repetition."},{"id":"G1-STAGE","gate":1,"title":"Design stage confirmed","status":"blocker","detail":"UNKNOWN. Next action asks for it. The record does not have it."},{"id":"G1-PACKAGE","gate":1,"title":"Package boundaries confirmed","status":"blocker","detail":"UNKNOWN. Equipment schedules and exclusions are likewise unstated."},{"id":"G2-WIP","gate":2,"title":"WIP extract in hand","status":"hard-stop","detail":"DR-001 is NOT REQUESTED. Capacity without WIP would be a guess. Later gate — already visible."},{"id":"G2-LABOR","gate":2,"title":"Labor hours by employee ID","status":"blocker","detail":"DR-003 is NOT REQUESTED. Hours, if they ever come, are by ID, not by name."},{"id":"G2-SHOP","gate":2,"title":"Shop capacity and estimator-hours","status":"blocker","detail":"DR-008 is NOT REQUESTED. Coverage is a name, not a calendar."},{"id":"G3-MARGIN","gate":3,"title":"Margin basis","status":"hard-stop","detail":"UNKNOWN. No margin figure exists. Typing one here would be the error the law forbids."},{"id":"G3-TERMS","gate":3,"title":"Commercial terms","status":"blocker","detail":"UNKNOWN. Risk and terms are unstated."},{"id":"G3-FINANCE","gate":3,"title":"Financial summary authorized","status":"blocker","detail":"DR-006 is NOT REQUESTED. Week-1 rule: no full statements even after a conversation starts."},{"id":"G4-THRESHOLD","gate":4,"title":"Tutor Perini threshold","status":"hard-stop","detail":"UNKNOWN. DR-007 is NOT REQUESTED. Ask the owner of the answer and the threshold before any rate."},{"id":"G4-AUTH","gate":4,"title":"Submission authorization","status":"hard-stop","detail":"NOT RECORDED. The decision book is empty. Submission cannot be authorized against DEC-0001, which is only a placeholder."}],"OPP-003":[{"id":"G0-AUTH","gate":0,"title":"Handling authorized in writing","status":"hard-stop","detail":"NOT RECORDED. No named WDF / Tutor Perini approver has authorized an extract. This veto stays open at every gate."},{"id":"G0-BOUNDARY","gate":0,"title":"Record stays inside the stated facts","status":"pass","detail":"Pass. No drawings, pricing, payroll, financial, or bonding data is in the snapshot."},{"id":"G0-EXPORT","gate":0,"title":"No extract has moved","status":"pass","detail":"Pass. The team view is a snapshot. The master is private. This desk adds nothing to either."},{"id":"G1-DUE","gate":1,"title":"Bid date and time","status":"hard-stop","detail":"UNKNOWN. A missing bid date vetoes. A score is not allowed to talk over it."},{"id":"G1-PARTY","gate":1,"title":"Owner / GC / CM","status":"hard-stop","detail":"UNKNOWN. The contracting party is not named. That is a veto, not a blank to fill with a plausible guess."},{"id":"G1-RFI","gate":1,"title":"RFI deadline","status":"blocker","detail":"UNKNOWN. Holds intake. Not treated as a permanent veto once a date exists."},{"id":"G1-ESTIMATOR","gate":1,"title":"Estimator named","status":"pass","detail":"George Oktem, Senior Estimator. Evidence class: Declared. The name is not a verified assignment letter."},{"id":"G1-EVIDENCE","gate":1,"title":"Evidence is still only Declared","status":"blocker","detail":"Source is a statement plus a draft on 2026-10-29. Declared does not graduate to Verified by repetition."},{"id":"G1-CONTROLLED","gate":1,"title":"WDF-controlled document set identified","status":"blocker","detail":"UNKNOWN. Reconciliation is allowed only against that set, inside WDF systems."},{"id":"G1-ARTLOOP","gate":1,"title":"ARTLOOP kept out of the bid","status":"pass","detail":"Declared, and honored here: personal ARTLOOP figures are not imported as a WDF bid."},{"id":"G2-WIP","gate":2,"title":"WIP extract in hand","status":"hard-stop","detail":"DR-001 is NOT REQUESTED. Capacity without WIP would be a guess. Later gate — already visible."},{"id":"G2-LABOR","gate":2,"title":"Labor hours by employee ID","status":"blocker","detail":"DR-003 is NOT REQUESTED. Hours, if they ever come, are by ID, not by name."},{"id":"G2-SHOP","gate":2,"title":"Shop capacity and estimator-hours","status":"blocker","detail":"DR-008 is NOT REQUESTED. Coverage is a name, not a calendar."},{"id":"G3-MARGIN","gate":3,"title":"Margin basis","status":"hard-stop","detail":"UNKNOWN. No margin figure exists. Typing one here would be the error the law forbids."},{"id":"G3-TERMS","gate":3,"title":"Commercial terms","status":"blocker","detail":"UNKNOWN. Risk and terms are unstated."},{"id":"G3-FINANCE","gate":3,"title":"Financial summary authorized","status":"blocker","detail":"DR-006 is NOT REQUESTED. Week-1 rule: no full statements even after a conversation starts."},{"id":"G4-THRESHOLD","gate":4,"title":"Tutor Perini threshold","status":"hard-stop","detail":"UNKNOWN. DR-007 is NOT REQUESTED. Ask the owner of the answer and the threshold before any rate."},{"id":"G4-AUTH","gate":4,"title":"Submission authorization","status":"hard-stop","detail":"NOT RECORDED. The decision book is empty. Submission cannot be authorized against DEC-0001, which is only a placeholder."}]}};</script>
+<script>
+(function () {
+  const DATA = window.DESK_DATA;
+  const GENESIS = "SESSION-GENESIS";
+  const KEY = "wdf-a3-desk-session-v1";
+  const app = document.getElementById("app");
+  const clocks = document.getElementById("clocks");
+  const timerBar = document.getElementById("timerbar");
+  let state = load();
+  let now = new Date();
+
+  function load() {
+    const base = { entries: [], timer: null };
+    try {
+      const raw = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (raw && Array.isArray(raw.entries)) return { entries: raw.entries, timer: raw.timer || null };
+    } catch (e) {}
+    return base;
+  }
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(state));
+  }
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, "&" + "amp;")
+      .replace(/</g, "&" + "lt;")
+      .replace(/>/g, "&" + "gt;")
+      .replace(/"/g, "&" + "quot;");
+  }
+  function stamp(d) {
+    const utc = d.toISOString().replace(/\.\d{3}Z$/, "Z");
+    const parts = Object.fromEntries(
+      new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/New_York",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+        timeZoneName: "short",
+      })
+        .formatToParts(d)
+        .map((p) => [p.type, p.value]),
+    );
+    return {
+      et: parts.year + "-" + parts.month + "-" + parts.day + " " + parts.hour + ":" + parts.minute + ":" + parts.second + " " + (parts.timeZoneName || "ET"),
+      utc: utc,
+    };
+  }
+  async function sha(message) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(message));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+  function canonical(e) {
+    return JSON.stringify({
+      seq: e.seq,
+      et: e.et,
+      utc: e.utc,
+      kind: e.kind,
+      pursuitId: e.pursuitId,
+      text: e.text,
+      seconds: e.seconds,
+      prev: e.prevHash,
+    });
+  }
+  async function append(input) {
+    const stamped = stamp(new Date());
+    const prevHash = state.entries.length ? state.entries[state.entries.length - 1].hash : GENESIS;
+    const partial = {
+      seq: state.entries.length + 1,
+      et: stamped.et,
+      utc: stamped.utc,
+      kind: input.kind,
+      pursuitId: input.pursuitId,
+      text: input.text,
+      seconds: input.seconds,
+      prevHash: prevHash,
+    };
+    partial.hash = await sha(canonical(partial));
+    state.entries.push(partial);
+    if (input.kind === "TIMER_START") {
+      state.timer = { startedUtc: stamped.utc, pursuitId: input.pursuitId, note: input.text };
+    }
+    if (input.kind === "TIMER_STOP") state.timer = null;
+    save();
+    const bad = await verify(state.entries);
+    ui.chain = bad.length ? "BREAK at " + bad.join(", ") : "VALID over " + state.entries.length;
+    render();
+  }
+  async function verify(entries) {
+    let prev = GENESIS;
+    const bad = [];
+    for (let i = 0; i < entries.length; i++) {
+      const e = entries[i];
+      const expect = await sha(canonical(e));
+      if (e.seq !== i + 1 || e.prevHash !== prev || e.hash !== expect) bad.push(e.seq);
+      prev = expect;
+    }
+    return bad;
+  }
+  function pursuit() {
+    return DATA.pursuits.find((p) => p.id === ui.pursuitId);
+  }
+  function holding(id) {
+    return DATA.checks[id].filter((c) => c.gate <= 1 && c.status !== "pass");
+  }
+  function later(id) {
+    return DATA.checks[id].filter((c) => c.gate > 1 && c.status !== "pass");
+  }
+  const ui = {
+    view: "board",
+    pursuitId: "OPP-001",
+    note: "",
+    stance: "HOLD",
+    rationale: "",
+    picked: [],
+    discardArmed: false,
+    drill: "",
+    chain: "",
+  };
+
+  function renderClocks() {
+    const s = stamp(now);
+    clocks.textContent = "";
+    clocks.insertAdjacentHTML(
+      "beforeend",
+      '<div><b>ET</b><span>' + esc(s.et) + "</span></div><div><b>UTC</b><span>" + esc(s.utc) + "</span></div>",
+    );
+    if (state.timer) {
+      const seconds = Math.max(0, Math.floor((now.getTime() - Date.parse(state.timer.startedUtc)) / 1000));
+      timerBar.hidden = false;
+      timerBar.innerHTML =
+        "<span>Timer " +
+        esc(state.timer.pursuitId) +
+        " · <b>" +
+        seconds +
+        '</b> seconds</span><button type="button" data-act="stop">Stop and stamp</button>';
+    } else timerBar.hidden = true;
+  }
+
+  function nav() {
+    return ["board", "pursuit", "requests", "ledger", "law", "reading"]
+      .map((id) => {
+        const label = id[0].toUpperCase() + id.slice(1) + (id === "ledger" && state.entries.length ? " · " + state.entries.length : "");
+        return '<button type="button" data-act="nav" data-view="' + id + '"' + (ui.view === id ? ' class="on"' : "") + ">" + label + "</button>";
+      })
+      .join("");
+  }
+
+  function board() {
+    const cards = DATA.pursuits
+      .map((p) => {
+        return (
+          '<article class="card"><p class="mono">' +
+          p.id +
+          "</p><h2>" +
+          esc(p.name) +
+          '</h2><p>' +
+          esc(p.packageName) +
+          '</p><p class="unk">Bid due UNKNOWN · Party UNKNOWN</p><p>' +
+          holding(p.id).length +
+          " open on Gates 0–1 · " +
+          later(p.id).length +
+          ' already open later</p><button type="button" data-act="open" data-id="' +
+          p.id +
+          '">Open ' +
+          esc(p.name) +
+          "</button></article>"
+        );
+      })
+      .join("");
+    return (
+      '<p class="lead">A3 runs the A1 rules in this browser. It does not write the master. Scroll for every pursuit, request, and log entry.</p>' +
+      '<div class="stats"><div><b>3</b><span>At Gate 1</span></div><div><b>0</b><span>Decisions</span></div><div><b>8</b><span>Unfiled</span></div><div><b>' +
+      state.entries.length +
+      "</b><span>Session</span></div></div>" +
+      cards +
+      '<section class="card"><h2>Decisions</h2><p>None on the master. DEC-0001 is a placeholder. A session draft is not DEC-0002.</p></section>'
+    );
+  }
+
+  function pursuitView() {
+    const p = pursuit();
+    const checks = DATA.checks[p.id]
+      .map((c) => {
+        return (
+          '<li class="' +
+          c.status +
+          '"><p class="kicker">Gate ' +
+          c.gate +
+          " · " +
+          c.status +
+          " · " +
+          c.id +
+          "</p><strong>" +
+          esc(c.title) +
+          "</strong><p>" +
+          esc(c.detail) +
+          "</p></li>"
+        );
+      })
+      .join("");
+    const gates = DATA.gates
+      .map((g) => '<div class="gate' + (g.n === 1 ? " here" : g.n === 0 ? " veto" : "") + '"><b>' + g.n + "</b><span>" + esc(g.name) + "</span></div>")
+      .join("");
+    return (
+      '<div class="row">' +
+      DATA.pursuits
+        .map(
+          (item) =>
+            '<button type="button" data-act="pick" data-id="' +
+            item.id +
+            '"' +
+            (item.id === p.id ? ' class="on"' : "") +
+            ">" +
+            esc(item.name) +
+            "</button>",
+        )
+        .join("") +
+      "</div><article class=\"card\"><p class=\"mono\">" +
+      p.id +
+      "</p><h2>" +
+      esc(p.name) +
+      "</h2><p>" +
+      esc(p.packageName) +
+      "</p><p>" +
+      esc(p.nextAction) +
+      "</p>" +
+      (p.lane ? "<p>" + esc(p.lane) + "</p>" : "") +
+      '<p class="unk">Bid due UNKNOWN · RFI UNKNOWN · Owner / GC / CM UNKNOWN</p></article><div class="gates">' +
+      gates +
+      '</div><section class="card"><h2>Why it cannot leave Gate 1</h2><ul class="checks">' +
+      checks +
+      '</ul><button type="button" data-act="block">Record blocked advance</button></section>' +
+      '<section class="card"><h2>Session timer</h2><p>Seconds only. TIME-0001 stays a 337-second interval.</p><button type="button" data-act="start"' +
+      (state.timer ? " disabled" : "") +
+      '>Start timer</button></section><section class="card"><h2>Preparer note</h2><p>A note does not change UNKNOWN.</p><textarea id="note" rows="3" placeholder="Not a fact about the job."></textarea><button type="button" data-act="note">Stamp note</button></section>' +
+      '<section class="card"><h2>Session stance — not a decision</h2><div class="row">' +
+      ["GO", "NO-GO", "HOLD"]
+        .map((s) => '<button type="button" data-act="stance" data-stance="' + s + '"' + (ui.stance === s ? ' class="on"' : "") + ">" + s + "</button>")
+        .join("") +
+      '</div><textarea id="why" rows="3" placeholder="Why, in terms of the open stops."></textarea><button type="button" data-act="file">File as session draft</button></section>'
+    );
+  }
+
+  function letter() {
+    const selected = DATA.dataRequests.filter((d) => ui.picked.indexOf(d.id) >= 0);
+    const lines = selected.length
+      ? selected.map((d) => "- " + d.id + " " + d.group + ". If authorized: " + d.extract + ".").join("\n")
+      : "- (none selected)";
+    return [
+      "To: Mark Makary, SVP",
+      "From: George Oktem, Senior Estimator",
+      "Re: Gate 0 — permission to handle, before any extract",
+      "",
+      "This is a question, not a data pull.",
+      "No extract should move until handling is authorized in writing.",
+      "",
+      "If you authorize handling, the minimum extracts to discuss are:",
+      lines,
+      "",
+      "Pursuits still at Gate 1. Every bid due reads UNKNOWN. No Go/No-Go is recorded.",
+      "Stamping this draft does not change DR status. Every row remains NOT REQUESTED.",
+    ].join("\n");
+  }
+
+  function requests() {
+    const rows = DATA.dataRequests
+      .map((d) => {
+        const on = ui.picked.indexOf(d.id) >= 0;
+        return (
+          '<label class="card checkline"><input type="checkbox" data-act="dr" data-id="' +
+          d.id +
+          '"' +
+          (on ? " checked" : "") +
+          "><span><b>" +
+          d.id +
+          " · NOT REQUESTED</b><br>" +
+          esc(d.group) +
+          "<br><span class=\"muted\">" +
+          esc(d.extract) +
+          "</span></span></label>"
+        );
+      })
+      .join("");
+    return (
+      '<section class="card"><h2>Ask Mark before any extract</h2><p>Packing a question does not file the request.</p></section>' +
+      rows +
+      '<section class="card"><h2>Letter preview</h2><pre>' +
+      esc(letter()) +
+      '</pre><button type="button" data-act="packet"' +
+      (ui.picked.length ? "" : " disabled") +
+      ">Stamp draft into the session ledger</button></section>"
+    );
+  }
+
+  function ledger() {
+    const published = DATA.publishedLog
+      .map((e) => {
+        return (
+          '<article class="card' +
+          (e.served ? "" : " receipt") +
+          '"><p class="mono">' +
+          e.id +
+          " · " +
+          (e.served ? "In the served snapshot" : "Receipt — not in the served HTML") +
+          "</p><strong>" +
+          esc(e.event) +
+          "</strong><p>" +
+          esc(e.detail) +
+          '</p><p class="mono">' +
+          esc(e.hash || e.hashLabel) +
+          "</p></article>"
+        );
+      })
+      .join("");
+    const sessionRows = state.entries
+      .map((e) => {
+        return (
+          '<li><p class="mono">SESS-' +
+          String(e.seq).padStart(4, "0") +
+          " · " +
+          e.kind +
+          "</p><p>" +
+          esc(e.text) +
+          '</p><p class="mono">' +
+          esc(e.hash) +
+          "</p></li>"
+        );
+      })
+      .join("");
+    return (
+      '<section class="card"><h2>Two ledgers</h2><p>Published hashes are recorded, not recomputed. Snapshot SHA-256 ' +
+      esc(DATA.registry.snapshotSha256) +
+      " (" +
+      DATA.registry.snapshotBytes +
+      " bytes). PR #" +
+      DATA.registry.prNumber +
+      " said " +
+      DATA.registry.prBodyBytesClaim +
+      ' bytes. Prefix matches. Size does not.</p><p class="mono">' +
+      esc(ui.chain || "Session chain checks when this tab opens.") +
+      '</p><button type="button" data-act="export"' +
+      (state.entries.length ? "" : " disabled") +
+      '>Export packet</button> <button type="button" data-act="discard">Discard local session</button></section>' +
+      published +
+      '<section class="card"><h2>Session chain</h2><ul>' +
+      (sessionRows || "<li>Empty. The first stamp starts it.</li>") +
+      '</ul></section><section class="card"><h2>Tamper drill</h2><button type="button" data-act="drill">Run tamper drill</button><p>' +
+      esc(ui.drill) +
+      "</p></section>"
+    );
+  }
+
+  function law() {
+    const rules = [
+      ["01 Append-only", "Session stamps append. Discard throws away this browser pad. It is not a registry correction."],
+      ["02 Dual timestamps", "Eastern and UTC at the click. LOG-0008’s stamp was not in the report, so it stays UNKNOWN."],
+      ["03 Hash chain", "Session entries are sealed here. Published digests stay recorded."],
+      ["04 Timer only", "Work time is stop minus start, in seconds. The 337 seconds stay an interval."],
+      ["05 Evidence", "Snapshot facts stay Declared or Verified as recorded. Notes say they are not evidence."],
+      ["06 UNKNOWN", "No field turns a guess into a bid date, a party, a margin, or a score."],
+    ];
+    return rules
+      .map((r) => '<article class="card"><h2>' + r[0] + "</h2><p>" + r[1] + "</p></article>")
+      .join("");
+  }
+
+  function reading() {
+    return (
+      '<article class="card"><h2>What works</h2><p>The three pursuits, the vetoes, the unfiled requests, the empty decision book, the published log through LOG-0007, and the LOG-0008 receipt as a prefix only. A blocked advance, a timer, a Mark-first draft, and a session chain you can verify.</p></article>' +
+      '<article class="card"><h2>What this is not</h2><p>Not the private master. Not a bid. Not a place an UNKNOWN becomes a fact. The public A1 page is still the seven-entry snapshot. This route is the instrument beside it.</p></article>'
+    );
+  }
+
+  function render() {
+    document.getElementById("nav").innerHTML = nav();
+    const body = ui.view === "board" ? board() : ui.view === "pursuit" ? pursuitView() : ui.view === "requests" ? requests() : ui.view === "ledger" ? ledger() : ui.view === "law" ? law() : reading();
+    app.innerHTML = body;
+    const note = document.getElementById("note");
+    const why = document.getElementById("why");
+    if (note) note.value = ui.note;
+    if (why) why.value = ui.rationale;
+    renderClocks();
+  }
+
+  document.body.addEventListener("click", function (event) {
+    const el = event.target.closest("[data-act]");
+    if (!el) return;
+    const act = el.getAttribute("data-act");
+    if (act === "nav") ui.view = el.getAttribute("data-view");
+    if (act === "open") {
+      ui.pursuitId = el.getAttribute("data-id");
+      ui.view = "pursuit";
+    }
+    if (act === "pick") ui.pursuitId = el.getAttribute("data-id");
+    if (act === "stance") ui.stance = el.getAttribute("data-stance");
+    if (act === "block") {
+      const p = pursuit();
+      const ids = holding(p.id).map((c) => c.id).join(", ");
+      void append({
+        kind: "ADVANCE_BLOCKED",
+        pursuitId: p.id,
+        seconds: null,
+        text: p.id + " " + p.name + " stays at Gate 1. Not a decision. Open on Gates 0–1: " + ids + ".",
+      });
+      return;
+    }
+    if (act === "start") {
+      if (state.timer) return;
+      const p = pursuit();
+      void append({
+        kind: "TIMER_START",
+        pursuitId: p.id,
+        seconds: null,
+        text: "Timer started on " + p.id + ". Work time will be the stop minus the start, in seconds.",
+      });
+      return;
+    }
+    if (act === "stop" && state.timer) {
+      const seconds = Math.max(0, Math.floor((Date.now() - Date.parse(state.timer.startedUtc)) / 1000));
+      void append({
+        kind: "TIMER_STOP",
+        pursuitId: state.timer.pursuitId,
+        seconds: seconds,
+        text: "Timer stopped after " + seconds + " seconds. Counted by the clock, not from memory.",
+      });
+      return;
+    }
+    if (act === "note") {
+      const value = (document.getElementById("note").value || "").trim();
+      if (value.length < 8) return;
+      ui.note = "";
+      void append({
+        kind: "PREPARER_NOTE",
+        pursuitId: pursuit().id,
+        seconds: null,
+        text: pursuit().id + " preparer note — not evidence, does not change UNKNOWN. " + value,
+      });
+      return;
+    }
+    if (act === "file") {
+      const value = (document.getElementById("why").value || "").trim();
+      if (value.length < 20) return;
+      ui.rationale = "";
+      void append({
+        kind: "STANCE_DRAFTED",
+        pursuitId: pursuit().id,
+        seconds: null,
+        text: pursuit().id + " session draft " + ui.stance + ". Not DEC-0002. Master decisions remain 0. Rationale: " + value,
+      });
+      return;
+    }
+    if (act === "packet") {
+      if (!ui.picked.length) return;
+      void append({ kind: "PACKET_DRAFTED", pursuitId: null, seconds: null, text: letter() });
+      return;
+    }
+    if (act === "export") {
+      const blob = new Blob(
+        [
+          JSON.stringify(
+            {
+              desk: "A3",
+              warning: "SESSION PACKET — NOT A MASTER ENTRY. Do not file this as LOG or DEC.",
+              registry: DATA.registry.id,
+              entries: state.entries,
+            },
+            null,
+            2,
+          ),
+        ],
+        { type: "application/json" },
+      );
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "a3-session-not-a-master-entry.json";
+      a.click();
+    }
+    if (act === "discard") {
+      if (!ui.discardArmed) {
+        ui.discardArmed = true;
+        ui.chain = "Press discard again to erase this browser pad. The master is not touched.";
+      } else {
+        state = { entries: [], timer: null };
+        ui.discardArmed = false;
+        save();
+      }
+    }
+    if (act === "dr") return;
+    if (act === "drill") {
+      void (async function () {
+        const samples = ["Drill row. Boundary held.", "Drill row. Bid due still UNKNOWN.", "Drill row. No decision taken."];
+        const rows = [];
+        let prev = GENESIS;
+        for (let i = 0; i < samples.length; i++) {
+          const partial = {
+            seq: i + 1,
+            et: "2026-10-29 12:00:00 EDT",
+            utc: "2026-10-29T16:00:00Z",
+            kind: "PREPARER_NOTE",
+            pursuitId: null,
+            text: samples[i],
+            seconds: null,
+            prevHash: prev,
+          };
+          partial.hash = await sha(canonical(partial));
+          rows.push(partial);
+          prev = partial.hash;
+        }
+        const intact = await verify(rows);
+        const broken = rows.map((row, index) => (index === 1 ? Object.assign({}, row, { text: row.text + " [altered]" }) : row));
+        const bad = await verify(broken);
+        ui.drill = "Intact: " + (intact.length ? "BREAK" : "VALID") + ". Altered middle row: BREAK at " + bad.join(" and ") + ".";
+        render();
+      })();
+      return;
+    }
+    render();
+  });
+
+  document.body.addEventListener("input", function (event) {
+    if (event.target.id === "note") ui.note = event.target.value;
+    if (event.target.id === "why") ui.rationale = event.target.value;
+  });
+  document.body.addEventListener("change", function (event) {
+    if (event.target.getAttribute("data-act") !== "dr") return;
+    const id = event.target.getAttribute("data-id");
+    if (event.target.checked) ui.picked.push(id);
+    else ui.picked = ui.picked.filter((item) => item !== id);
+    render();
+  });
+
+  verify(state.entries).then(function (bad) {
+    ui.chain = state.entries.length ? (bad.length ? "BREAK at " + bad.join(", ") : "VALID over " + state.entries.length) : "Empty session chain.";
+    if (ui.view === "ledger") render();
+  });
+  render();
+  setInterval(function () {
+    now = new Date();
+    renderClocks();
+  }, 1000);
+})();
+
+</script>
+</body>
+</html>
