@@ -77,6 +77,8 @@ const primeErpRewrites = primeErpBackendUrl
 
 // Production deployment of the ArtLoop workspace (yazilimlar/artloop-ws). Not a secret.
 const ARTLOOP_ORIGIN = "https://artloop-ws.vercel.app";
+// b1 link (350 Park), a separate artloop-b1 deployment of the same gated workspace code.
+const ARTLOOP_B1_ORIGIN = "https://artloop-b1.vercel.app";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -114,6 +116,7 @@ const nextConfig = {
       "/prime-erp/:path*",
       "/workbench/runtime/:path*",
       "/demo/pending-contracts/a1-estimates-01.01/:path*",
+      "/demo/pending-contracts/b1-estimates-02.01/:path*",
     ].map((source) => ({ source, headers: noindex }));
 
     // Batch 5 (ADR-014 follow-up): every raw standalone lab, whether framed or
@@ -164,6 +167,12 @@ const nextConfig = {
         destination: "/demo/pending-contracts/a1-estimates-01.01/app",
         permanent: false,
       },
+      // ArtLoop 350 Park estimating workspace (b1 link), same pattern.
+      {
+        source: "/demo/pending-contracts/b1-estimates-02.01",
+        destination: "/demo/pending-contracts/b1-estimates-02.01/app",
+        permanent: false,
+      },
       {
         source: "/labs/geometric-workbench/v5-8",
         destination: "/workbench/app",
@@ -194,6 +203,15 @@ const nextConfig = {
         {
           source: "/demo/pending-contracts/a1-estimates-01.01/:path+",
           destination: `${ARTLOOP_ORIGIN}/:path+`,
+        },
+        // b1 link (350 Park): forwarded to the artloop-b1 project, behind the same gate and sign-in.
+        {
+          source: "/demo/pending-contracts/b1-estimates-02.01/app",
+          destination: `${ARTLOOP_B1_ORIGIN}/`,
+        },
+        {
+          source: "/demo/pending-contracts/b1-estimates-02.01/:path+",
+          destination: `${ARTLOOP_B1_ORIGIN}/:path+`,
         },
         {
           source: "/labs/utility-intelligence-bridge/3d-model",
