@@ -2,6 +2,16 @@
 
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
+
+## 2026-10-29 update — /demo/pending-contracts/a1-estimates-01.01 forwards to the gated ArtLoop workspace
+
+- Branch `feature/demo-pending-contracts-a1-estimates`. Division: Artemis Construction (estimating). Product: ArtLoop 2WTC HVAC estimating workspace (owned and built in `yazilimlar/artloop-ws`, release R0.7-rc1).
+- Visibility class: **authenticated**. Data mode: **private approved** (WDF-authorized controlled bid material). Artemis holds none of it.
+- Change: `next.config.mjs` only. A redirect sends the entry URL to `…/app`; two `beforeFiles` rewrites forward `…/app` and `…/<path>` to `https://artloop-ws.vercel.app`; a noindex header rule. The ArtLoop gate (George + @wdfinc.net + @tutorperini.com, emailed one-time code) runs in that project and decides every request.
+- Owner instruction: George, 2026-10-29, publish at this URL, gated (ArtLoop GD-12).
+- Risks: the ArtLoop session cookie is set on artemis.agoraxai.com (`__Host-`, Path=/, HttpOnly, SameSite=Strict), so the browser also sends it to other Artemis paths; Artemis cookies are forwarded to artloop-ws on these paths. Mail delivery (Resend) must be configured in artloop-ws before @wdfinc.net / @tutorperini.com users can sign in.
+- Verification: rules evaluated from the config (redirect, both rewrites, noindex). Live check after merge: signed-out request to the entry URL ends at the ArtLoop access page.
+
 ## 2026-10-15 update — Radcliffe split: its own Diana style; the classic Gallery restored
 
 - Branch/PR: `labs/radcliffe-separate-style` from `main` @ `7d72e16`, new draft PR (this PR). Owner design correction 2026-10-15 after #204 merged: the Radcliffe should not have taken over the Gallery style — the five grid layouts (Wall, 3×5, 4×4, 4×12, 6×8) became ring configurations and the classic Gallery was lost.
