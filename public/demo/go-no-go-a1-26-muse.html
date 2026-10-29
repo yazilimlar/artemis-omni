@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>WDF Estimating Registry A1 — Team View</title>
+<style>
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --surface2:#eef2f5; --line:#d8e0e7; --line2:#c2ced9;
+  --text:#0f1e2e; --muted:#5a6d82; --faint:#7d92a8;
+  --navy:#0e2a44; --navy2:#143656; --accent:#0e6b7a; --accent-soft:#e0f0f2;
+  --warn-bg:#fff4d6; --warn:#7a5a00; --warn-border:#e8c96a;
+  --ok:#0f7a4d; --ok-bg:#e6f4ec; --pending:#7a4a00; --pending-bg:#fef3c7;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0b1420; --surface:#12202f; --surface2:#182b3f; --line:#24384d; --line2:#2f4a66; --text:#e8eef3; --muted:#9db0c2; --faint:#7a8ea3; --accent-soft:#12333a; --warn-bg:#2e270f; --warn:#f5d67a; --warn-border:#6b5a1e; --ok-bg:#0f2e21; --pending-bg:#2e220c; }
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5}
+a{color:var(--accent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px 48px}
+.topbar{background:var(--navy);color:#fff;padding:18px 0 16px;border-bottom:4px solid #c9a86a}
+.topbar .wrap{padding-bottom:0}
+.toprow{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#c9d6e3;font-weight:700}
+h1{margin:4px 0 4px;font-size:28px;line-height:1.15;letter-spacing:-.02em;font-weight:800}
+.sub{color:#cbd8e6;font-size:14px;max-width:640px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.badge{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08)}
+.badge.warn{background:#f5c542;color:#1a1400;border-color:#f5c542}
+.badge.readonly{background:#fff;color:#0e2a44;border-color:#fff}
+.clocks{display:flex;gap:10px;flex-wrap:wrap}
+.clock{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 12px;min-width:168px}
+.clock label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#a9bdd1;font-weight:700}
+.clock div{font-family:var(--mono);font-size:13px;margin-top:2px;white-space:nowrap}
+.readonly-banner{margin:18px 0 0;background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--warn);border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;font-size:14px}
+.readonly-banner strong{color:inherit}
+.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-top:16px}
+@media(max-width:860px){.grid{grid-template-columns:1fr} h1{font-size:24px}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h2{margin:0 0 6px;font-size:15px;letter-spacing:.02em}
+.card h3{margin:16px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:14px;margin-top:10px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600}
+.mono{font-family:var(--mono);font-size:12.5px;word-break:break-all}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)} .kv{grid-template-columns:1fr} .kv dt{margin-top:6px}}
+.stat{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px}
+.stat b{font-size:26px;display:block;line-height:1} .stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.hashbox{background:var(--navy);color:#dbe7f2;border-radius:10px;padding:12px;margin-top:12px}
+.hashbox label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9fb6cc;font-weight:700}
+.btn{appearance:none;border:1px solid var(--line2);background:var(--surface);color:var(--text);padding:7px 12px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.gates{display:flex;gap:0;overflow:hidden;border:1px solid var(--line);border-radius:10px;margin-top:10px}
+.gate{flex:1;padding:12px 10px;background:var(--surface);border-right:1px solid var(--line);text-align:center}
+.gate:last-child{border-right:0} .gate.active{background:var(--accent-soft);box-shadow:inset 0 -3px 0 var(--accent)}
+.gate b{font-size:18px;display:block} .gate span{font-size:12px;font-weight:700;display:block;line-height:1.3} .gate small{color:var(--muted);font-size:11px}
+@media(max-width:700px){.gates{flex-direction:column} .gate{border-right:0;border-bottom:1px solid var(--line);text-align:left;display:flex;gap:12px;align-items:center} .gate:last-child{border-bottom:0}}
+section{margin-top:18px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec-head h2{font-size:18px;margin:0} .sec-head p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.opp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+@media(max-width:900px){.opp-grid{grid-template-columns:1fr}}
+.opp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column}
+.opp-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pill{font-size:11px;font-weight:800;letter-spacing:.05em;padding:4px 8px;border-radius:999px;background:var(--pending-bg);color:var(--pending);border:1px solid #e8c96a;white-space:nowrap}
+.id{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:700}
+.opp h3{margin:8px 0 2px;font-size:18px;text-transform:none;letter-spacing:0;color:var(--text)}
+.opp .pkg{font-weight:700;font-size:13.5px} .opp dl{display:grid;grid-template-columns:92px 1fr;gap:4px 10px;font-size:13.5px;margin:12px 0}
+.opp dt{color:var(--muted)} .opp dd{margin:0;font-weight:600}
+.unknown{font-family:var(--mono);font-weight:800;letter-spacing:.02em}
+.next{margin-top:auto;background:var(--surface2);border-radius:8px;padding:10px;font-size:13px}
+.next b{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface2);padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+@media(max-width:720px){ .hide-m{display:none} td,th{padding:9px 10px} }
+.status{font-size:11px;font-weight:800;letter-spacing:.04em;padding:3px 7px;border-radius:999px;background:var(--surface2);border:1px solid var(--line2);white-space:nowrap}
+.log td{font-size:13px} .log .mono{font-size:11.5px;color:var(--muted)}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+@media(max-width:900px){.rules{grid-template-columns:1fr 1fr}} @media(max-width:560px){.rules{grid-template-columns:1fr}}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.rule b{font-size:20px;color:var(--accent)} .rule h4{margin:4px 0 4px;font-size:14px} .rule p{margin:0;color:var(--muted);font-size:13.5px}
+.empty{border:1.5px dashed var(--line2);border-radius:12px;padding:22px;text-align:center;background:var(--surface)}
+.empty b{font-size:16px} .empty p{color:var(--muted);margin:4px 0 0;font-size:13.5px}
+.foot{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:10px;padding:14px 16px;font-size:13.5px}
+.foot p{margin:0} .foot p+p{margin-top:8px;color:var(--muted)}
+.small{font-size:12.5px;color:var(--muted)}
+.flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <div class="toprow">
+    <div>
+      <div class="eyebrow">WDF Inc. · Mount Vernon, NY · Estimating</div>
+      <h1>WDF Estimating Registry — Team View</h1>
+      <p class="sub">Read-only snapshot of the master registry. The team can see status here. All entries, timers, and decisions are made in the private master — nothing entered on this page is saved.</p>
+      <div class="badges"><span class="badge readonly">◉ Read-Only Snapshot</span><span class="badge warn">DEMO · Go-No-Go A1-26 · by Muse (OctopusG)</span><span class="badge warn">TEST — NOT FOR BID</span><span class="badge">A1 TEST 001</span><span class="badge">WDF-EST-REG-A1</span></div>
+    </div>
+    <div class="clocks" aria-label="Atomic clocks">
+      <div class="clock"><label>Now — Eastern (ET)</label><div id="clock-et">—</div></div>
+      <div class="clock"><label>Now — UTC</label><div id="clock-utc">—</div></div>
+    </div>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <div class="readonly-banner" style="background:var(--navy);color:#fff;border-color:var(--navy)"><span aria-hidden="true">◉</span><div><strong>DEMO · Go-No-Go A1-26 · by Muse (OctopusG)</strong><br>This demo is the read-only public snapshot of the A1 TEST 001 registry. Entries are made only in the private master, which is not public.</div></div>
+  <div class="readonly-banner"><span aria-hidden="true">🔒</span><div><strong>This is a view, not the registry.</strong> Snapshot as created <strong>2026-10-29 07:07:56 EDT / 2026-10-29T11:07:56Z</strong>. If a figure here looks wrong, do not edit a copy — flag it to the owner. The master corrects by appending a new entry, never by rewriting history.</div></div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Registry control</h2>
+      <dl class="kv">
+        <dt>Registry ID</dt><dd class="mono">WDF-EST-REG-A1</dd>
+        <dt>Version</dt><dd>A1 TEST 001</dd>
+        <dt>Created</dt><dd>2026-10-29 07:07:56 EDT<br><span class="mono" style="font-weight:400">2026-10-29T11:07:56Z</span></dd>
+        <dt>Owner</dt><dd>George Oktem, Senior Estimator<br><span style="font-weight:400;color:var(--muted)">WDF Inc., Mount Vernon, NY</span></dd>
+        <dt>Reports to</dt><dd>Mark Makary, SVP</dd>
+        <dt>Status</dt><dd>TEST — NOT FOR BID — NO DECISIONS RECORDED</dd>
+      </dl>
+      <div class="hashbox">
+        <label>Head hash — LOG-0007 · SHA-256</label>
+        <div class="mono" id="headHash" style="margin:6px 0 10px;line-height:1.6;word-break:normal">0a8166659ae8b132595ceb47716fc925a1175<br>adb7a11b3455ab44d681a8f899c</div>
+        <div class="flex"><button class="btn" id="copyHash" type="button">Copy head hash</button><span id="copyMsg" class="small" style="color:#cbd8e6" role="status"></span><span style="margin-left:auto;font-size:12px;font-weight:700;color:#8ee6b0">✓ CHAIN VALID — 7 entries</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>At a glance</h2>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat"><b>3</b><span>Opportunities</span></div>
+        <div class="stat"><b>0</b><span>Decisions</span></div>
+        <div class="stat"><b>8</b><span>Data requests</span></div>
+        <div class="stat"><b>7</b><span>Log entries</span></div>
+      </div>
+      <h3>Time spent — timer only</h3>
+      <p style="margin:0;font-size:13.5px"><strong>TIME-0001:</strong> 337 seconds — message-timestamp interval from upload (07:01:48 EDT) to registry directive (07:07:25 EDT). <em>Labelled as an interval, not a claim of continuous work time.</em></p>
+      <p class="small">TIME-0002: Timer not started. From now on, time is recorded only by start/stop timer entries in seconds — never back-filled from memory.</p>
+      <h3>Where entries happen</h3>
+      <p style="margin:0;font-size:13.5px">Private master registry (owner only). This team view is refreshed from the master when the owner shares a new snapshot.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head"><div><h2>The 5 gates</h2><p>Every pursuit moves left to right. A hard stop vetoes at any gate — a high score can never average it away.</p></div></div>
+    <div class="gates" role="list">
+      <div class="gate" role="listitem"><b>0</b><div><span>Boundary</span><small>Handling authorized?</small></div></div>
+      <div class="gate active" role="listitem"><b>1</b><div><span>Intake Screen</span><small>48 hrs · all 3 pursuits here</small></div></div>
+      <div class="gate" role="listitem"><b>2</b><div><span>Capacity &amp; Fit</span><small>WIP · labor · shop</small></div></div>
+      <div class="gate" role="listitem"><b>3</b><div><span>Commercial Review</span><small>Margin · risk · terms</small></div></div>
+      <div class="gate" role="listitem"><b>4</b><div><span>Submission Authorization</span><small>Tutor Perini threshold check</small></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div><h2>Opportunities — Gate 1, PENDING</h2><p>All three at Intake / Scope verification. No bid date has been verified — so every bid due reads UNKNOWN.</p></div><span class="pill">3 × PENDING</span></div>
+    <div class="opp-grid">
+      <article class="opp"><div class="opp-top"><span class="id">OPP-001</span><span class="pill">Gate 1 · PENDING</span></div><h3>Botanical Garden</h3><div class="pkg">Mechanical estimate</div>
+        <dl><dt>Stage</dt><dd>Intake / scope verification</dd><dt>Bid due</dt><dd class="unknown">UNKNOWN</dd><dt>RFI deadline</dt><dd class="unknown">UNKNOWN</dd><dt>Owner / GC / CM</dt><dd class="unknown">UNKNOWN</dd><dt>Estimator</dt><dd>George Oktem (Senior Estimator)</dd><dt>Evidence</dt><dd>Declared</dd></dl>
+        <div class="next"><b>Next action</b><br>Confirm invitation scope, drawings/addenda, bid date/time, estimate basis, estimator coverage.</div>
+        <p class="small">Source: George statement + GPT/Artemis draft, 2026-10-29</p></article>
+      <article class="opp"><div class="opp-top"><span class="id">OPP-002</span><span class="pill">Gate 1 · PENDING</span></div><h3>350 Park</h3><div class="pkg">Mechanical estimate</div>
+        <dl><dt>Stage</dt><dd>Intake / scope verification</dd><dt>Bid due</dt><dd class="unknown">UNKNOWN</dd><dt>RFI deadline</dt><dd class="unknown">UNKNOWN</dd><dt>Owner / GC / CM</dt><dd class="unknown">UNKNOWN</dd><dt>Estimator</dt><dd>George Oktem (Senior Estimator)</dd><dt>Evidence</dt><dd>Declared</dd></dl>
+        <div class="next"><b>Next action</b><br>Confirm design stage, package boundaries, equipment schedules, exclusions, pricing basis.</div>
+        <p class="small">Source: George statement + GPT/Artemis draft, 2026-10-29</p></article>
+      <article class="opp"><div class="opp-top"><span class="id">OPP-003</span><span class="pill">Gate 1 · PENDING</span></div><h3>2 WTC</h3><div class="pkg">Mechanical estimate / independent estimate</div>
+        <dl><dt>Stage</dt><dd>Intake / scope verification</dd><dt>Bid due</dt><dd class="unknown">UNKNOWN</dd><dt>RFI deadline</dt><dd class="unknown">UNKNOWN</dd><dt>Owner / GC / CM</dt><dd class="unknown">UNKNOWN</dd><dt>Estimator</dt><dd>George Oktem (Senior Estimator)</dd><dt>Evidence</dt><dd>Declared</dd></dl>
+        <div class="next"><b>Next action</b><br>Reconcile only against current WDF-controlled documents, inside WDF systems. Do not import personal ARTLOOP figures as a WDF bid.</div>
+        <p class="small">Source: George statement + GPT/Artemis draft, 2026-10-29 · ARTLOOP kept in separate lane</p></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div><h2>Data requests — DR-001 to DR-008</h2><p>Nothing has been requested yet. Gate 0 applies to every row: no extract moves until handling is authorized.</p></div><span class="status">ALL: NOT REQUESTED</span></div>
+    <div class="tablewrap"><table><thead><tr><th>ID</th><th>Data group</th><th>Minimum extract</th><th class="hide-m">Likely owner</th><th>Status</th></tr></thead><tbody>
+      <tr><td class="mono">DR-001</td><td><strong>Active projects + WIP</strong></td><td>Job ID, name, client, PM, scope, contract value, % complete, cost to complete, forecast margin, expected finish</td><td class="hide-m">Operations / Project Controls</td><td><span class="status">NOT REQUESTED</span></td></tr>
+      <tr><td class="mono">DR-002</td><td><strong>Completed projects (5 yrs)</strong></td><td>Planned vs actual completion, final cost, final margin, estimate-to-actual</td><td class="hide-m">Operations / Finance</td><td><span class="status">NOT REQUESTED</span></td></tr>
+      <tr><td class="mono">DR-003</td><td><strong>Labor hours</strong><br><span class="small">By employee ID, not name</span></td><td>Weekly hours by employee ID (not name), trade, project, cost code, reg/OT</td><td class="hide-m">Payroll / Operations</td><td><span class="status">NOT REQUESTED</span></td></tr>
+      <tr><td class="mono">DR-004</td><td><strong>Labor cost structure</strong></td><td>Wage, fringe, payroll burden, CBA/PLA status + expiry, rate effective dates</td><td class="hide-m">Payroll / HR / Estimating</td><td><span class="status">NOT REQUESTED</span></td></tr>
+      <tr><td class="mono">DR-005</td><td><strong>Backlog + pipeline</strong></td><td>Awarded backlog, remaining cost, projected revenue, start/finish windows, probable awards</td><td class="hide-m">Finance / BD</td><td><span class="status">NOT REQUESTED</span></td></tr>
+      <tr><td class="mono">DR-006</td><td><strong>Financial summaries</strong></td><td>Management-approved summaries only, cash-flow outlook, WC, AR/AP aging — no full statements in week 1</td><td class="hide-m">CFO / Controller</td><td><span class="status">NOT REQUESTED</span></td></tr>
+      <tr><td class="mono">DR-007</td><td><strong>Insurance + bonding</strong></td><td>Owner of answer, threshold matrix, rates/limits category, surety procedure — ask owner + thresholds first</td><td class="hide-m">Risk / Finance (Tutor Perini)</td><td><span class="status">NOT REQUESTED</span></td></tr>
+      <tr><td class="mono">DR-008</td><td><strong>Estimating standards + history</strong></td><td>Historical estimates, bid tabs, takeoff standards, cost codes, vendor quotes, win/loss log 24 mo, shop capacity, estimator-hours</td><td class="hide-m">Estimating</td><td><span class="status">NOT REQUESTED</span></td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div><h2>Decisions</h2><p>DEC-0001 is the placeholder row. The first real decision becomes DEC-0002 in the master.</p></div></div>
+    <div class="empty" style="margin-top:12px"><b>NO DECISIONS RECORDED YET</b><p>No Go / No-Go has been taken on Botanical Garden, 350 Park, or 2 WTC. Anyone who says otherwise is not reading this registry.</p></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div><h2>Atomic log — the ledger</h2><p>Append-only · sequence-numbered · dual ET + UTC stamps · SHA-256 hash-chained. Altering any past entry breaks every hash after it.</p></div><span class="status">HEAD: 0a816665…</span></div>
+    <div class="tablewrap"><table class="log"><thead><tr><th>Seq</th><th>Time (ET / UTC)</th><th>Event</th><th class="hide-m">Evidence · Source</th><th class="hide-m">Entry hash</th></tr></thead><tbody>
+      <tr><td class="mono"><strong>LOG-0001</strong></td><td class="mono">2026-10-29 07:01:48 EDT<br>2026-10-29T11:01:48Z</td><td><strong>SOURCE_RECEIVED — GPT-DRAFT-001</strong><br>GPT/Artemis draft received. GPT/Artemis first version of WDF Estimating + Go/No-Go protocol uploaded for review. <span class="small">Actor: George Oktem · Prev: GENESIS</span></td><td class="hide-m">Declared<br><span class="small">User upload 2026-10-29</span></td><td class="mono hide-m">c4cd81c2ed708abc36e97…</td></tr>
+      <tr><td class="mono"><strong>LOG-0002</strong></td><td class="mono">2026-10-29 07:01:48 EDT<br>2026-10-29T11:01:48Z</td><td><strong>REVIEW_COMPLETED — REVIEW-001</strong><br>Muse review completed. Contribution issued: Gate 0 boundary, Mark-first email, 5-gate model, back-test plan, triage sheet. <span class="small">Actor: Muse (OctopusG)</span></td><td class="hide-m">Verified<br><span class="small">Muse contribution file 2026-10-29</span></td><td class="mono hide-m">ee3cd1de25f9d8607e74…</td></tr>
+      <tr><td class="mono"><strong>LOG-0003</strong></td><td class="mono">2026-10-29 07:07:25 EDT<br>2026-10-29T11:07:25Z</td><td><strong>DIRECTIVE — REG-A1</strong><br>George directive to build A1 registry. Create live A1 test version, prefilled with known data; atomic electronic time + log accuracy required. <span class="small">Actor: George Oktem</span></td><td class="hide-m">Declared<br><span class="small">User message 2026-10-29 07:07:25 EDT</span></td><td class="mono hide-m">86d820324a2048995969…</td></tr>
+      <tr><td class="mono"><strong>LOG-0004</strong></td><td class="mono">2026-10-29 07:07:56 EDT<br>2026-10-29T11:07:56Z</td><td><strong>REGISTRY_CREATED — REG-A1</strong><br>Registry created — A1 TEST 001 seeded: 3 opportunities, 8 data requests, 0 decisions, 5 gates (0–4). All unverified fields marked UNKNOWN, none invented. <span class="small">Actor: Muse (OctopusG)</span></td><td class="hide-m">Verified<br><span class="small">System clock at creation (ET + UTC together)</span></td><td class="mono hide-m">bd115ef85409709f51ee…</td></tr>
+      <tr><td class="mono"><strong>LOG-0005</strong></td><td class="mono">2026-10-29 07:09:45 EDT<br>2026-10-29T11:09:45Z</td><td><strong>DECISION — BUILD BOTH</strong><br>George Oktem decision: build both — private master + public team view. <span class="small">Actor: George Oktem</span></td><td class="hide-m">Declared<br><span class="small">George Oktem decision, 2026-10-29</span></td><td class="mono hide-m">641b4053e7f888a98715…</td></tr>
+      <tr><td class="mono"><strong>LOG-0006</strong></td><td class="mono">2026-10-29 07:20:00 EDT<br>2026-10-29T11:20:00Z</td><td><strong>TEAM_VIEW_PUBLISHED</strong><br>Team view built, audit PASS, shared. <span class="small">Actor: Muse (OctopusG)</span></td><td class="hide-m">Verified<br><span class="small">Team view build + audit, 2026-10-29</span></td><td class="mono hide-m">ce5a6c35376ac7883a51…</td></tr>
+      <tr><td class="mono"><strong>LOG-0007</strong></td><td class="mono">2026-10-29 07:20:08 EDT<br>2026-10-29T11:20:08Z</td><td><strong>MASTER_APP_LIVE</strong><br>Private master built + verified, chain VALID over 7 entries. <span class="small">Actor: Muse (OctopusG)</span></td><td class="hide-m">Verified<br><span class="small">Master app verification, 2026-10-29</span></td><td class="mono hide-m">0a8166659ae8b132595c…</td></tr>
+    </tbody></table></div>
+    <p class="small" style="margin-top:8px">Full hashes in the master: LOG-0001 <span class="mono">c4cd81c2ed708abc36e97ac75f589a33a01c6cdff268912f6683cc3ea3cb2571</span> · LOG-0002 <span class="mono">ee3cd1de25f9d8607e7436925a2a35f7b6f44183f686a2f6be4e33846ecec5b9</span> · LOG-0003 <span class="mono">86d820324a20489959693f543daa31ab3c107c4bb13e9501564506d59aa17305</span> · LOG-0004 <span class="mono">bd115ef85409709f51eefcd26d12f7119032fdc251dcb35f803ee0b12376df03</span> · LOG-0005 <span class="mono">641b4053e7f888a98715961f7687baa86f0301afffa9ce9992d2f112f71e998b</span> · LOG-0006 <span class="mono">ce5a6c35376ac7883a51620072b45f7947fa4ce443cc1a145061229cef261a68</span> · LOG-0007 (head) <span class="mono">0a8166659ae8b132595ceb47716fc925a1175adb7a11b3455ab44d681a8f899c</span></p>
+  </section>
+
+  <section>
+    <div class="sec-head"><div><h2>The accuracy law</h2><p>How this log stays the most accurate thing in the room — six rules, no exceptions.</p></div></div>
+    <div class="rules">
+      <div class="rule"><b>01</b><h4>Append-only</h4><p>Entries are never edited or deleted. A correction is a new entry that names the entry it supersedes.</p></div>
+      <div class="rule"><b>02</b><h4>Atomic dual timestamps</h4><p>Every entry is stamped at the moment it happens in ET and UTC at once, plus a monotonic sequence number. No back-dating.</p></div>
+      <div class="rule"><b>03</b><h4>SHA-256 hash chain</h4><p>Each hash covers the entry plus the previous hash. Tampering with history is detectable by anyone, in seconds.</p></div>
+      <div class="rule"><b>04</b><h4>Time by timer only</h4><p>Work time comes only from start/stop timer entries, in seconds. Message intervals are labelled as intervals — never as work time.</p></div>
+      <div class="rule"><b>05</b><h4>Evidence + source on everything</h4><p>Every fact carries Observed / Declared / Inferred / Verified / Blocked / Stale / Unknown — and names where it came from.</p></div>
+      <div class="rule"><b>06</b><h4>UNKNOWN is never guessed</h4><p>An unverified field literally reads UNKNOWN. A plausible guess is treated as an error, not a shortcut.</p></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>Gate 0 — data boundary.</strong> This test view contains only data stated by George Oktem on 2026-10-29. No WDF drawings, pricing, payroll, financial, or bonding data is included — and none enters any external system until a named WDF / Tutor Perini approver authorizes it in writing.</p>
+    <p>Master registry: private, owner-held · Team view: this page (read-only snapshot, A1 TEST 001) · Next refresh happens only when the owner publishes a new snapshot from the master. Questions or corrections: George Oktem, Senior Estimator — via Mark Makary, SVP.</p>
+  </div>
+</main>
+<script>
+(function(){
+  function pad(n){return String(n).padStart(2,'0')}
+  function tick(){
+    var now=new Date();
+    try{
+      var et=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZoneName:'short'}).format(now);
+      document.getElementById('clock-et').textContent=et;
+    }catch(e){ document.getElementById('clock-et').textContent=now.toLocaleString(); }
+    document.getElementById('clock-utc').textContent=now.getUTCFullYear()+'-'+pad(now.getUTCMonth()+1)+'-'+pad(now.getUTCDate())+'T'+pad(now.getUTCHours())+':'+pad(now.getUTCMinutes())+':'+pad(now.getUTCSeconds())+'Z';
+  }
+  tick(); setInterval(tick,1000);
+  var btn=document.getElementById('copyHash');
+  btn.addEventListener('click',function(){
+    var txt=document.getElementById('headHash').textContent.replace(/\s+/g,'').trim();
+    var msg=document.getElementById('copyMsg');
+    function done(){ msg.textContent='Copied ✓'; setTimeout(function(){msg.textContent=''},2200); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done).catch(function(){ fallback(); }); } else { fallback(); }
+    function fallback(){ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); done();}catch(e){ msg.textContent='Copy failed — select the hash manually'; } document.body.removeChild(ta); }
+  });
+})();
+</script>
+</body>
+</html>
