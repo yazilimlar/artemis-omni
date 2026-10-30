@@ -234,6 +234,20 @@
       .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink-3)}
       .legend button{background:none;border:1px solid var(--line-2);color:var(--ink-2);padding:5px 9px;border-radius:3px;cursor:pointer;font:inherit;letter-spacing:inherit}
       .legend button[aria-pressed="true"]{border-color:var(--brass);color:var(--ink);background:var(--brass-dim)}
+      .diana-panel{margin-top:14px;border:1px solid var(--line-2);background:linear-gradient(180deg,var(--surface),var(--bg-2));padding:14px 16px;font-family:var(--mono)}
+      .diana-panel .dp-head{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;letter-spacing:.14em;color:var(--brass-2);font-weight:600}
+      .diana-panel-toggle{display:none;background:none;border:1px solid var(--line-2);color:var(--ink-2);border-radius:3px;cursor:pointer;font:inherit;padding:2px 8px}
+      .diana-panel .dp-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
+      .diana-panel .dp-lab{font-size:10px;letter-spacing:.12em;color:var(--ink-3);flex:0 0 58px}
+      .diana-panel .dp-btn{background:none;border:1px solid var(--line-2);color:var(--ink-2);padding:5px 9px;border-radius:3px;cursor:pointer;font:inherit;font-size:10.5px;letter-spacing:.08em}
+      .diana-panel .dp-btn[aria-pressed="true"],.diana-panel .dp-btn[aria-checked="true"]{border-color:var(--brass);color:var(--ink);background:var(--brass-dim)}
+      .diana-panel .dp-btn:disabled{opacity:.45;cursor:default}
+      .diana-panel input[type="range"]{accent-color:var(--brass);width:110px}
+      .diana-panel .dp-val{font-size:10.5px;color:var(--ink-2)}
+      .diana-panel select{background:var(--surface);border:1px solid var(--line-2);color:var(--ink-2);font:inherit;font-size:10.5px;padding:5px;border-radius:3px}
+      .diana-chip{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.12em;color:var(--brass-2);border:1px solid var(--brass);background:var(--brass-dim);padding:6px 9px}
+      .diana-chip[hidden]{display:none}
+      @media (max-width:720px){ .diana-panel-toggle{display:inline-block} .diana-panel.collapsed .dp-body{display:none} }
       .ring-note{margin-top:22px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-3);max-width:110ch}
       @media (max-width:560px){ .orbit .oc-lab{display:none} }
       /* OctopusG module stage (constellation center) */
@@ -818,6 +832,19 @@
                 <button type="button" data-ring="2" aria-pressed="false">REPOS · AGENTS · SHIP</button>
                 <button type="button" data-ring="3" aria-pressed="false">LANGUAGES</button>
               </div>
+              <div class="diana-panel" id="dianaPanel" aria-label="Diana view settings">
+                <div class="dp-head"><span>DIANA · VIEW</span><button type="button" class="diana-panel-toggle" id="dianaPanelToggle" aria-expanded="true" aria-controls="dianaPanelBody">▾</button></div>
+                <div class="dp-body" id="dianaPanelBody">
+                  <div class="dp-row"><span class="dp-lab">CAMERA</span><button type="button" class="dp-btn" data-cam="overview" aria-pressed="true">OVERVIEW</button><button type="button" class="dp-btn" data-cam="hero" aria-pressed="false">HERO</button><button type="button" class="dp-btn" data-cam="closeup" aria-pressed="false">CLOSEUP</button><button type="button" class="dp-btn" data-cam="topdown" aria-pressed="false">TOPDOWN</button><button type="button" class="dp-btn" data-cam="orbit" aria-pressed="false">ORBIT</button></div>
+                  <div class="dp-row"><span class="dp-lab">ORBITAL</span><button type="button" class="dp-btn" data-style="planetary" aria-pressed="true">PLANETARY</button><button type="button" class="dp-btn" data-style="electron" aria-pressed="false">ELECTRON</button></div>
+                  <div class="dp-row"><span class="dp-lab">FINISH</span><button type="button" class="dp-btn" data-finish="real" aria-pressed="true">REAL</button><button type="button" class="dp-btn" data-finish="gold" aria-pressed="false">GOLD</button><button type="button" class="dp-btn" data-finish="bronze" aria-pressed="false">BRONZE</button><button type="button" class="dp-btn" data-finish="silver" aria-pressed="false">SILVER</button><button type="button" class="dp-btn" data-finish="wireframe" aria-pressed="false">WIREFRAME</button></div>
+                  <div class="dp-row"><span class="dp-lab">STAGE</span><button type="button" class="dp-btn" role="switch" data-stage="moon" aria-checked="true">MOON</button><button type="button" class="dp-btn" role="switch" data-stage="plate" aria-checked="true">NAMEPLATE</button><button type="button" class="dp-btn" role="switch" data-stage="thread" aria-checked="true">AIM THREAD</button></div>
+                  <div class="dp-row"><span class="dp-lab">SPIN</span><input type="range" id="dianaSpin" min="0" max="200" value="100" aria-label="Spin speed" /><span class="dp-val" id="dianaSpinVal">100%</span><button type="button" class="dp-btn" role="switch" data-stage="trail" aria-checked="true">TRAIL</button></div>
+                  <div class="dp-row"><span class="dp-lab">ATTRACT</span><select id="dianaAttract" aria-label="Attract mode"><option value="off">OFF</option><option value="attract" selected>ATTRACT</option><option value="first-hunt">FIRST HUNT</option><option value="pirouette">PIROUETTE</option><option value="grand-tour">GRAND TOUR</option></select></div>
+                  <div class="dp-row"><span class="dp-lab">HUNT</span><button type="button" class="dp-btn" data-scenario="first-hunt">FIRST HUNT</button><button type="button" class="dp-btn" data-scenario="pirouette">PIROUETTE</button><button type="button" class="dp-btn" data-scenario="grand-tour">GRAND TOUR</button></div>
+                  <div class="diana-chip" id="scenarioChip" hidden><span>NOW PLAYING · <span id="scenarioName"></span></span><button type="button" class="dp-btn" id="scenarioStop">STOP</button></div>
+                </div>
+              </div>
             </div>
           </div>
           <p class="ring-note x-detail">RINGS, INSIDE OUT: OCTOPUSG — CLOSEST ORBIT · 9ROUTER · AI ENGINE MODELS · REPOSITORIES, DRIVES, AGENTS, SERVERS &amp; DEPLOYMENT · PROGRAMMING LANGUAGES &amp; LIBRARIES. CLAUDE AND ANTHROPIC ALSO SERVE AS THE AGENT &amp; SKILL RUNTIME — SEE THE INDEX.</p>
@@ -1362,6 +1389,14 @@
             aud.shots.push(now);
             return true;
           }
+          var shotTimes = [];
+          function shotOk() {
+            var now = performance.now();
+            shotTimes = shotTimes.filter(function (t) { return now - t < 1000; });
+            if (shotTimes.length >= 4) return false;
+            shotTimes.push(now);
+            return true;
+          }
           function live() { return !!(aud.ctx && aud.on && aud.ctx.state === 'running'); }
           function ramp(param, v, t) { if (param) param.setTargetAtTime(v, aud.ctx.currentTime, t); }
           function build() {
@@ -1689,6 +1724,8 @@
             },
             constHover: function (onH) { if (aud.ctx) ramp(aud.constGain.gain, onH ? 0.013 : 0, onH ? 0.3 : 0.45); },
             showTone: function () { if (live() && budget()) { note(174.61, 0.026, 1.3, 0); note(261.63, 0.02, 1.3, 0); } },
+            shot: function () { if (live() && budget() && shotOk()) { note(392.00, 0.028, 0.9, 0); } },
+            impact: function () { if (live() && budget() && shotOk()) { note(146.83, 0.03, 1.1, 0); note(220.00, 0.018, 0.9, 0.02); } },
             navSpy: function (cur) {
               if (!aud.navSeen) { aud.navSeen = true; aud.nav = cur; return; }
               if (cur === aud.nav) return;
@@ -1740,6 +1777,8 @@
             }
           };
         })();
+        document.addEventListener('diana:shot', function () { if (AU.shot) AU.shot(); });
+        document.addEventListener('diana:impact', function () { if (AU.impact) AU.impact(); });
         onMotion(function (m) { AU.motionChanged(m); });
         var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
 
@@ -2832,9 +2871,8 @@
       #orbit.scene-on #core{z-index:5}
       html[data-view="tty"] #orbit .scene-canvas{display:none}
     </style>
-    <script>
-/* ============================================================
-   DIANA MODULE v1.0.0 — Diana (Artemis) as one component.
+    <script>/* ============================================================
+   DIANA MODULE v1.1.0 — Diana (Artemis) as one component.
 
    Built 2026-10-30 for the TS-A2 constellation re-engineering;
    figure = real /labs/diana.glb, Gallery presentation recipe
@@ -2842,11 +2880,32 @@
    glowTexture / makeLabel in artemis-omni's LabsAtlas): stone
    dais, gold torus trim, moon-glow disc, "Diana · Artemis"
    nameplate, height-fit after the facing rotation, recentered
-   onto the pedestal top, counter-rotation -0.06 rad/s pausing
-   on hover and under reduced motion, and the dais holding her
-   place when the GLB fails. The GLB is loaded at runtime from
-   /labs/diana.glb and is never embedded; the statue's real
-   textured materials are untouched.
+   onto the pedestal top, and the dais holding her place when
+   the GLB fails. The GLB is loaded at runtime from
+   /labs/diana.glb and is never embedded.
+
+   v1.1.0 — "Diana Comes Alive" (2026-10-30). The statue now rides
+   a toePivot group at the pedestal top: ONLY the statue rotates;
+   pedestal, trim, moon and nameplate stay world-still (in v1.0.0
+   the whole figure group, dais included, rotated). Modes via
+   figure.setMode('patrol' | 'aim' | 'spin'): patrol is the
+   Gallery counter-rotation -0.06 rad/s; spin ramps smoothly to a
+   signed target rate via figure.setSpin({rate}) with a brass
+   dais-top glow ring (DianaSpinGlow, parented to the dais, never
+   rotating) whose opacity tracks |spinRate| / 2.4; aim eases the
+   pivot along the shortest arc so the BOW faces a parent-space
+   azimuth via figure.setAim(azimuthRad) — azimuth is the desired
+   bow direction in the figure group's parent space, atan2(x, z)
+   convention; the bow faces local -z at angle 0, so the pivot
+   yaw achieving bow azimuth psi is angle = psi - PI.
+   figure.bowWorld(out) returns the bow point (BOW_LOCAL in
+   toePivot space, DianaModule.BOW_LOCAL, eyeball-tunable) in
+   world space; figure.pulseBow(k) shows a charge glow there.
+   figure.setFinish('real' | 'gold' | 'bronze' | 'silver' |
+   'wireframe') swaps statue materials (the Gallery's material
+   channel); 'real' restores the exact original materials and
+   setPalette never touches the statue. mount() passes all of
+   these through on its api.
 
    Three.js r128 is embedded below and scoped through a CommonJS
    shim (extracted verbatim from octopusg-module.js): it never
@@ -2855,13 +2914,13 @@
    inside a bindGLTFLoader(THREE) factory so the loader binds to
    whichever Three copy a figure is built with.
 
-   INTEGRITY: sha256(body) = 80f0bdf836effd143eeb68b095d0ddd1a74264577538cc446b87256571fd2e20
+   INTEGRITY: sha256(body) = 37e5a0ebe64e1716db6eaf043bc31b16f53615666f62056fe5bb6c2063ba9971
    "body" = every byte of this file after this header comment.
    Verify:  awk 'f{print} /\*\//{f=1}' diana-module.js | sha256sum
    ============================================================ */
 
 (function (global) {
-  var VERSION = '1.0.0';
+  var VERSION = '1.1.0';
 
   var THREE = (function () {
     var exports = {};
@@ -6549,6 +6608,23 @@
   var STATUE_HEIGHT = 7.5;
   var COUNTER_ROTATION = -0.06; /* rad/s, the Gallery spinner rate */
 
+  /* Bow point in toePivot space, scaled from the Gallery proportions
+     (bow local (0, 26, -1) for a 36-unit statue): 26/36 of the statue
+     height up, -1/36 of it in local -z (the way the bow faces at
+     angle 0). Eyeball-tunable at preview — see modules README. */
+  var BOW_LOCAL = new THREE.Vector3(0, STATUE_HEIGHT * 0.72, -STATUE_HEIGHT * 0.028);
+
+  var FINISH_NAMES = ['real', 'gold', 'bronze', 'silver', 'wireframe'];
+  var SPIN_GLOW_FULL = 2.4; /* |spinRate| at which the dais ring peaks */
+
+  function wrapPi(a) {
+    var r = a % (Math.PI * 2);
+    if (r > Math.PI) r -= Math.PI * 2;
+    if (r < -Math.PI) r += Math.PI * 2;
+    return r;
+  }
+  function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
   /* Palettes keyed by the A2 host view names (day / dark / exec /
      exec-blue / matrix / tty). A host may also pass a palette object
      overriding any of these fields. `pedestal` is the stone colour
@@ -6763,10 +6839,36 @@
         group.add(plate);
       }
 
+      /* Toe pivot: the statue alone rotates, around the point where
+         her feet meet the pedestal top. Pedestal, trim, moon and
+         nameplate are direct children of `group` and never rotate. */
+      var toePivot = new T.Group();
+      toePivot.name = 'DianaToePivot';
+      toePivot.position.set(0, pedestalHeight, 0);
+      group.add(toePivot);
+
+      /* Dais-top spin glow ring: a flat brass ring on the pedestal top
+         around the statue base. It belongs to the dais (parented to
+         `group`, never to the pivot), so it does not rotate with the
+         statue; its opacity tracks |spinRate| (see update/setSpin). */
+      var spinGlowMat = new T.MeshBasicMaterial({ color: 0xe0b65a, transparent: true, opacity: 0, side: (T.DoubleSide !== undefined ? T.DoubleSide : undefined), blending: (T.AdditiveBlending !== undefined ? T.AdditiveBlending : undefined), depthWrite: false });
+      var spinGlow = new T.Mesh(new T.RingGeometry(1.15, 2.3, 48), spinGlowMat);
+      spinGlow.name = 'DianaSpinGlow';
+      spinGlow.rotation.x = -Math.PI / 2;
+      spinGlow.position.y = pedestalHeight + 0.03;
+      group.add(spinGlow);
+
       var state = {
         loaded: false,
         failed: false,
         angle: 0,
+        yaw: 0,
+        mode: 'patrol',
+        spinRate: 0,
+        spinTarget: 0,
+        spinAngle: 0,
+        aimYaw: null,
+        finish: 'real',
         disposed: false,
         palette: (typeof options.palette === 'string') ? options.palette : null,
         pedestalHeight: pedestalHeight,
@@ -6776,21 +6878,157 @@
       };
 
       var statueRef = null;
+      var statueOriginals = []; /* [{mesh, material}] captured on load */
+      var finishMats = null;     /* shared finish materials, lazy */
+      var yawRate = COUNTER_ROTATION;
+      var spinRateCurrent = 0;
+      var bowGlow = null, bowGlowMat = null;
+      var bowLocalFig = new T.Vector3(0, statueHeight * 0.72, -statueHeight * 0.028);
+
+      function syncPivot() {
+        state.yaw = state.angle;
+        state.spinRate = spinRateCurrent;
+        toePivot.rotation.y = state.angle;
+        group.rotation.y = 0;
+      }
+      function syncSpinGlow() {
+        var o = (state.mode === 'spin' || Math.abs(spinRateCurrent) > 1e-4)
+          ? clampNum(Math.abs(spinRateCurrent) / SPIN_GLOW_FULL, 0, 0.85) : 0;
+        try { spinGlowMat.opacity = o; } catch (e) {}
+        return o;
+      }
+      function getFinishMats() {
+        if (!finishMats) {
+          finishMats = {
+            gold: new T.MeshBasicMaterial({ color: 0xe0b65a }),
+            bronze: new T.MeshBasicMaterial({ color: 0x8a6134 }),
+            silver: new T.MeshBasicMaterial({ color: 0xcfd9e8 }),
+            wireframe: new T.MeshBasicMaterial({ color: 0x6fb7ff, wireframe: true })
+          };
+        }
+        return finishMats;
+      }
+      function applyFinish() {
+        if (!statueRef || !statueOriginals.length) return;
+        var fm = getFinishMats();
+        for (var i = 0; i < statueOriginals.length; i++) {
+          var rec = statueOriginals[i];
+          try { rec.mesh.material = (state.finish === 'real') ? rec.material : fm[state.finish]; } catch (e) {}
+        }
+      }
+      function ensureBowGlow() {
+        if (bowGlow) return bowGlow;
+        var tex = glowTexture(T, '#ffd98a');
+        var params = { color: 0xffd98a, transparent: true, opacity: 0, depthWrite: false };
+        if (tex) params.map = tex;
+        if (T.AdditiveBlending !== undefined) params.blending = T.AdditiveBlending;
+        bowGlowMat = new T.SpriteMaterial(params);
+        bowGlow = new T.Sprite(bowGlowMat);
+        bowGlow.name = 'DianaBowGlow';
+        bowGlow.position.copy(bowLocalFig);
+        bowGlow.scale.set(0.6, 0.6, 1);
+        bowGlow.visible = false;
+        toePivot.add(bowGlow);
+        return bowGlow;
+      }
 
       var figure = {
         group: group,
+        toePivot: toePivot,
         state: state,
         ready: null,
         update: function (dt, st) {
           st = st || {};
+          if (st.mode !== undefined && st.mode !== null) figure.setMode(st.mode);
           var motion = (st.motion !== undefined) ? !!st.motion : true;
           var hover = !!(st.hover || st.hovered);
           var step = (typeof dt === 'number' && isFinite(dt)) ? dt : 0;
-          if (motion && !hover && step !== 0 && !state.disposed) {
-            state.angle += COUNTER_ROTATION * step;
-            group.rotation.y = state.angle;
+          if (motion && !hover && step > 0 && !state.disposed) {
+            if (state.mode === 'spin') {
+              /* Smooth (exponential, tau 0.35 s) ramp of the spin rate
+                 toward its target: ~95% in ~1.05 s, no rate steps. */
+              var aSpin = 1 - Math.exp(-step / 0.35);
+              spinRateCurrent += (state.spinTarget - spinRateCurrent) * aSpin;
+              var dSpin = spinRateCurrent * step;
+              state.angle += dSpin;
+              state.spinAngle += dSpin;
+              yawRate = spinRateCurrent;
+            } else if (state.mode === 'aim') {
+              spinRateCurrent += (0 - spinRateCurrent) * (1 - Math.exp(-step / 0.35));
+              if (state.aimYaw !== null && state.aimYaw !== undefined) {
+                /* CONVENTION: aimYaw is the desired BOW azimuth in the
+                   figure group's parent space, atan2(x, z). The bow
+                   faces local -z at angle 0, so the pivot yaw that
+                   achieves parent-space bow azimuth psi is
+                   angle = psi - PI (shortest arc, wrap-aware). */
+                var desired = state.aimYaw - Math.PI;
+                var err = wrapPi(desired - state.angle);
+                var aAim = 1 - Math.exp(-step / 0.35);
+                state.angle += err * aAim;
+              }
+              /* aimYaw null: hold the current yaw. */
+            } else { /* patrol */
+              spinRateCurrent += (0 - spinRateCurrent) * (1 - Math.exp(-step / 0.35));
+              yawRate += (COUNTER_ROTATION - yawRate) * (1 - Math.exp(-step / 0.5));
+              state.angle += yawRate * step;
+            }
           }
+          syncPivot();
+          syncSpinGlow();
           return state.angle;
+        },
+        setMode: function (m) {
+          if (m !== 'patrol' && m !== 'aim' && m !== 'spin') return state.mode;
+          state.mode = m;
+          if (m === 'patrol') { state.spinTarget = 0; }
+          syncSpinGlow();
+          return state.mode;
+        },
+        setSpin: function (arg) {
+          var rate = (typeof arg === 'number') ? arg
+            : (arg && typeof arg.rate === 'number') ? arg.rate : 0;
+          state.spinTarget = rate;
+          if (rate !== 0) state.mode = 'spin';
+          syncSpinGlow();
+          return state.spinTarget;
+        },
+        setAim: function (azimuthRad) {
+          if (azimuthRad === null || azimuthRad === undefined) {
+            state.aimYaw = null; /* hold current yaw */
+          } else if (typeof azimuthRad === 'number' && isFinite(azimuthRad)) {
+            state.aimYaw = azimuthRad;
+            state.mode = 'aim';
+          }
+          return state.aimYaw;
+        },
+        setFinish: function (name) {
+          if (FINISH_NAMES.indexOf(name) < 0) return state.finish;
+          state.finish = name;
+          applyFinish();
+          return state.finish;
+        },
+        bowWorld: function (out) {
+          try { if (typeof group.updateMatrixWorld === 'function') group.updateMatrixWorld(true); } catch (e) {}
+          var v = new T.Vector3(bowLocalFig.x, bowLocalFig.y, bowLocalFig.z);
+          var w = toePivot.localToWorld(v);
+          if (out && typeof out.copy === 'function') { out.copy(w); return out; }
+          if (out && typeof out.set === 'function') { out.set(w.x, w.y, w.z); return out; }
+          return w;
+        },
+        pulseBow: function (k) {
+          var kk = clampNum((typeof k === 'number' && isFinite(k)) ? k : 0, 0, 1);
+          var sp = ensureBowGlow();
+          if (!sp) return kk;
+          if (kk <= 0) {
+            try { bowGlowMat.opacity = 0; } catch (e) {}
+            sp.visible = false;
+          } else {
+            sp.visible = true;
+            try { bowGlowMat.opacity = 0.9 * kk; } catch (e) {}
+            var sc = 0.6 + 3.2 * kk;
+            sp.scale.set(sc, sc, 1);
+          }
+          return kk;
         },
         setPalette: function (nameOrObj) {
           pal = resolvePalette(nameOrObj);
@@ -6824,7 +7062,18 @@
           fitStatue(T, statue, statueHeight, pedestalHeight, options.facing);
           if (!statue.name) statue.name = 'DianaStatue';
           statueRef = statue;
-          group.add(statue);
+          /* Ride the toe pivot: fitted against pedestalTop, then shift
+             down by pedestalTop so the fitted bbox bottom-centre sits
+             at the pivot origin (x/z recentering unchanged). */
+          statue.position.y -= pedestalHeight;
+          statueOriginals = [];
+          if (typeof statue.traverse === 'function') {
+            statue.traverse(function (o) {
+              if (o && o.isMesh) statueOriginals.push({ mesh: o, material: o.material });
+            });
+          }
+          toePivot.add(statue);
+          applyFinish();
           state.loaded = true;
           return figure;
         })
@@ -6986,6 +7235,12 @@
       start: function () { motionOn = true; sync(); },
       stop: function () { running = false; if (raf) win.cancelAnimationFrame(raf); },
       setMotion: function (on) { motionOn = !!on; sync(); if (!motionOn) renderStatic(); },
+      setMode: function (m) { return figure ? figure.setMode(m) : undefined; },
+      setAim: function (a) { return figure ? figure.setAim(a) : undefined; },
+      setSpin: function (a) { return figure ? figure.setSpin(a) : undefined; },
+      setFinish: function (n) { return figure ? figure.setFinish(n) : undefined; },
+      bowWorld: function (out) { return figure ? figure.bowWorld(out) : null; },
+      pulseBow: function (k) { return figure ? figure.pulseBow(k) : undefined; },
       setPalette: function (p) {
         pal = resolvePalette(p);
         S.palette = (typeof p === 'string') ? p : null;
@@ -7018,9 +7273,9 @@
     return api;
   }
 
-  global.DianaModule = { version: VERSION, THREE: THREE, createFigure: createFigure, mount: mount, palettes: PALETTES };
+  global.DianaModule = { version: VERSION, THREE: THREE, createFigure: createFigure, mount: mount, palettes: PALETTES, BOW_LOCAL: BOW_LOCAL };
 })(typeof window !== 'undefined' ? window : this);
-    </script>
+</script>
     <script>
       /* Mascot builders for the constellation scene: Tux + Octocat
          (Gemini lane, contract-verified) and the DeepSeek whale
@@ -7516,10 +7771,323 @@ function buildDeepSeekWhale(THREE) {
  ]
 };
 
+
+  /* ---------- Diana Comes Alive: testable lab (pure, deps injected) ---------- */
+  var CAMERA_PRESETS = {
+    overview: { pos: [0, 40, 46], tgt: [0, 1, 0] },
+    hero: { pos: [0, 7.5, 21], tgt: [0, 6.5, 0] },
+    closeup: { pos: [6.5, 9.5, 12], tgt: [0, 8.6, 0] },
+    topdown: { pos: [0, 60, 10], tgt: [0, 0, 0] },
+    orbit: { orbit: true, radius: 46, height: 40, tgt: [0, 1, 0], periodSec: 90 }
+  };
+  function isClick(distPx, ms) { return distPx <= 6 && ms <= 400; }
+  function aimArgFor(dx, dz) { return Math.atan2(dx, dz) - Math.PI; }
+  function camStep(cam, dt) {
+    if (!cam) return cam;
+    if (cam.orbit) {
+      cam.azimuth = (cam.azimuth || 0) + dt * (Math.PI * 2 / 90);
+      var r = cam.radius || 46, h = cam.height || 40;
+      cam.pos = [Math.sin(cam.azimuth) * r, h, Math.cos(cam.azimuth) * r];
+      cam.tgt = [0, 1, 0];
+      return cam;
+    }
+    if (cam.anim) {
+      var a = cam.anim; a.t += dt;
+      var k = a.dur > 0 ? Math.min(1, a.t / a.dur) : 1;
+      var s = k * k * (3 - 2 * k);
+      cam.pos = a.fromPos.map(function (v, i) { return v + (a.toPos[i] - v) * s; });
+      cam.tgt = a.fromTgt.map(function (v, i) { return v + (a.toTgt[i] - v) * s; });
+      if (k >= 1) { cam.pos = a.toPos.slice(); cam.tgt = a.toTgt.slice(); cam.anim = null; }
+    }
+    return cam;
+  }
+  function createShotMachine(deps) {
+    deps = deps || {};
+    var DUR = { charge: 0.18, impact: 0.5, glint: 0.25 };
+    var m = { phase: 'idle', t: 0, ctx: null, flightDurVal: 0.5, glintEmitted: false };
+    m.start = function (opts) {
+      if (m.phase !== 'idle') return false;
+      opts = opts || {};
+      m.ctx = { from: opts.from || null, to: opts.to || null, entry: opts.entry || null, kind: opts.kind || null, dist: opts.dist || 0, reduced: !!opts.reduced };
+      m.flightDurVal = (typeof deps.flightDur === 'function') ? deps.flightDur(m.ctx.dist)
+        : Math.max(0.5, Math.min(0.9, 0.45 + m.ctx.dist * 0.012));
+      m.t = 0; m.glintEmitted = false;
+      m.phase = m.ctx.reduced ? 'glint' : 'charge';
+      return true;
+    };
+    m.step = function (dt) {
+      var evs = [];
+      if (m.phase === 'idle') return evs;
+      m.t += dt;
+      if (m.phase === 'charge') {
+        var k = Math.min(1, m.t / DUR.charge);
+        evs.push({ type: 'charge', k: k });
+        if (k >= 1) { evs.push({ type: 'release' }); m.phase = 'flight'; m.t = 0; }
+      } else if (m.phase === 'flight') {
+        var k2 = Math.min(1, m.t / m.flightDurVal);
+        evs.push({ type: 'fly', k: k2 });
+        if (k2 >= 1) {
+          evs.push({ type: 'impact', k: 0 });
+          if (m.ctx.entry) evs.push({ type: 'select', entry: m.ctx.entry, kind: m.ctx.kind });
+          m.phase = 'impact'; m.t = 0;
+        }
+      } else if (m.phase === 'impact') {
+        var k3 = Math.min(1, m.t / DUR.impact);
+        evs.push({ type: 'impact', k: k3 });
+        if (k3 >= 1) { evs.push({ type: 'done' }); m.phase = 'idle'; m.ctx = null; }
+      } else if (m.phase === 'glint') {
+        if (!m.glintEmitted) {
+          m.glintEmitted = true;
+          evs.push({ type: 'glint', k: 0 });
+          if (m.ctx && m.ctx.entry) evs.push({ type: 'select', entry: m.ctx.entry, kind: m.ctx.kind });
+        }
+        if (m.t >= DUR.glint) { evs.push({ type: 'done' }); m.phase = 'idle'; m.ctx = null; }
+      }
+      return evs;
+    };
+    return m;
+  }
+  var RING1_IDS = ['anthropic', 'claude', 'openai', 'gemini', 'deepseek', 'copilot', 'grok', 'google', 'kimi_k3', 'huggingface', 'nemotron3'];
+  var FH_STEPS = [
+    { at: 0, a: 'caption', text: 'THE FIRST HUNT' },
+    { at: 0, a: 'camera', name: 'hero' },
+    { at: 0.5, a: 'spin', rate: 1.2 },
+    { at: 5.7, a: 'patrol' }
+  ];
+  RING1_IDS.forEach(function (id, i) { FH_STEPS.push({ at: 6.5 + i * 2.4, a: 'shootMark', id: id }); });
+  FH_STEPS.push({ at: 33.0, a: 'camera', name: 'overview' });
+  FH_STEPS.push({ at: 33.0, a: 'spin', rate: 1.0 });
+  FH_STEPS.push({ at: 34.6, a: 'patrol' });
+  FH_STEPS.push({ at: 35.2, a: 'end' });
+  var SCENARIOS = {
+    'first-hunt': { title: 'The First Hunt', duration: 35.2, steps: FH_STEPS },
+    'pirouette': { title: 'Pirouette', duration: 25, steps: [
+      { at: 0, a: 'caption', text: 'PIROUETTE' },
+      { at: 0, a: 'camera', name: 'hero' },
+      { at: 0, a: 'spin', rate: 0.6 },
+      { at: 2, a: 'moon', factor: 1.6 },
+      { at: 3, a: 'finish', name: 'gold' },
+      { at: 4, a: 'spin', rate: 1.4 },
+      { at: 8, a: 'camera', name: 'orbit' },
+      { at: 9, a: 'spin', rate: 2.2 },
+      { at: 9, a: 'style', v: 'electron' },
+      { at: 11, a: 'finish', name: 'silver' },
+      { at: 14, a: 'spin', rate: 1.2 },
+      { at: 19, a: 'spin', rate: 0.4 },
+      { at: 20, a: 'restoreFinish' },
+      { at: 20, a: 'styleRestore' },
+      { at: 22, a: 'moon', factor: 1.0 },
+      { at: 23, a: 'spin', rate: 0 },
+      { at: 23.5, a: 'patrol' },
+      { at: 24, a: 'camera', name: 'restore' },
+      { at: 25, a: 'end' }
+    ] },
+    'grand-tour': { title: 'Grand Tour', duration: 44, steps: [
+      { at: 0, a: 'caption', text: 'GRAND TOUR' },
+      { at: 0, a: 'camera', name: 'hero' },
+      { at: 1.5, a: 'shootMark', id: 'deepseek' },
+      { at: 12, a: 'camera', name: 'topdown' },
+      { at: 14, a: 'shootMark', id: 'github' },
+      { at: 24, a: 'camera', name: 'overview' },
+      { at: 26, a: 'shootMark', id: 'python' },
+      { at: 36, a: 'camera', name: 'overview' },
+      { at: 38, a: 'spin', rate: 1.3 },
+      { at: 42.8, a: 'patrol' },
+      { at: 44, a: 'end' }
+    ] }
+  };
+  function createScenarioEngine(deps) {
+    deps = deps || {};
+    function call(name, arg) { if (typeof deps[name] === 'function') return deps[name](arg); }
+    var engine = { active: false, name: null, elapsed: 0, steps: [], idx: 0, finishChanged: false, moonChanged: false, styleChanged: false, styleCaptured: null };
+    function cleanup() {
+      call('caption', null);
+      call('patrol');
+      if (engine.finishChanged) { engine.finishChanged = false; call('restoreFinish'); }
+      if (engine.moonChanged) { engine.moonChanged = false; call('restoreMoon'); }
+      if (engine.styleChanged) { engine.styleChanged = false; if (engine.styleCaptured != null) call('setOrbitalStyle', engine.styleCaptured); }
+    }
+    function fire(s) {
+      switch (s.a) {
+        case 'spin': call('setSpin', s.rate); break;
+        case 'patrol': call('patrol'); break;
+        case 'shootMark': call('shootMark', s.id); break;
+        case 'shootPoint': if (typeof deps.shootPoint === 'function') deps.shootPoint(s.point); break;
+        case 'camera': call('setCamera', s.name); break;
+        case 'finish': engine.finishChanged = true; call('setFinish', s.name); break;
+        case 'restoreFinish': engine.finishChanged = false; call('restoreFinish'); break;
+        case 'moon': engine.moonChanged = (s.factor !== 1); call('moonBoost', s.factor); break;
+        case 'restoreMoon': engine.moonChanged = false; call('restoreMoon'); break;
+        case 'caption': call('caption', s.text); break;
+        case 'style': engine.styleChanged = true; call('setOrbitalStyle', s.v); break;
+        case 'styleRestore': if (engine.styleChanged) { engine.styleChanged = false; if (engine.styleCaptured != null) call('setOrbitalStyle', engine.styleCaptured); } break;
+        case 'end': cleanup(); engine.active = false; engine.name = null; break;
+      }
+    }
+    engine.start = function (name) {
+      var sc = SCENARIOS[name];
+      if (!sc) return false;
+      if (typeof deps.motionAllowed === 'function' && !deps.motionAllowed()) return false;
+      if (engine.active) return false;
+      var scale = (typeof deps.spinScale === 'function') ? deps.spinScale() : 1;
+      if (typeof scale !== 'number' || !isFinite(scale)) scale = 1;
+      engine.steps = sc.steps.map(function (s) {
+        var c = {}; for (var kk in s) c[kk] = s[kk];
+        if (c.a === 'spin') c.rate = (c.rate || 0) * scale;
+        return c;
+      }).sort(function (x, y) { return x.at - y.at; });
+      engine.name = name; engine.elapsed = 0; engine.idx = 0;
+      engine.finishChanged = false; engine.moonChanged = false;
+      engine.styleChanged = false;
+      engine.styleCaptured = (typeof deps.getOrbitalStyle === 'function') ? deps.getOrbitalStyle() : null;
+      engine.active = true;
+      return true;
+    };
+    engine.step = function (dt) {
+      if (!engine.active) return;
+      engine.elapsed += dt;
+      while (engine.idx < engine.steps.length && engine.steps[engine.idx].at <= engine.elapsed) {
+        var s = engine.steps[engine.idx++];
+        fire(s);
+        if (!engine.active) break;
+      }
+    };
+    engine.stop = function () {
+      if (!engine.active) return;
+      cleanup();
+      engine.active = false; engine.name = null;
+    };
+    return engine;
+  }
+
+  var ELECTRON_INCL = { 0: 12 * Math.PI / 180, 1: 30 * Math.PI / 180, 2: 52 * Math.PI / 180, 3: 70 * Math.PI / 180 };
+  var PRECESSION = { 0: 0.020, 1: -0.014, 2: 0.010, 3: -0.007 };
+  var OMEGA0 = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
+  function inclinePoint(p, I, Om) {
+    var ci = Math.cos(I), si = Math.sin(I);
+    var y1 = p.y * ci - p.z * si;
+    var z1 = p.y * si + p.z * ci;
+    var co = Math.cos(Om), so = Math.sin(Om);
+    return { x: p.x * co + z1 * so, y: y1, z: -p.x * so + z1 * co };
+  }
+  function faceAngles(carrierPos, camPos, inclFactor) {
+    var dx = camPos.x - carrierPos.x, dy = camPos.y - carrierPos.y, dz = camPos.z - carrierPos.z;
+    var dist = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+    var cl = Math.max(-1, Math.min(1, dy / dist));
+    return { yaw: Math.atan2(dx, dz), pitch: -Math.asin(cl) * (inclFactor || 0) };
+  }
+  function createInclinationTracker() {
+    var cur = [0, 0, 0, 0], from = [0, 0, 0, 0], to = [0, 0, 0, 0], omega = OMEGA0.slice(), t = 0, dur = 2.5, target = 'planetary';
+    var tr = { settled: true, style: 'planetary' };
+    function targetsFor(name) { return name === 'electron' ? [ELECTRON_INCL[0], ELECTRON_INCL[1], ELECTRON_INCL[2], ELECTRON_INCL[3]] : [0, 0, 0, 0]; }
+    tr.setTarget = function (name) {
+      target = (name === 'electron') ? 'electron' : 'planetary';
+      tr.style = target;
+      from = cur.slice(); to = targetsFor(target); t = 0;
+      tr.settled = from.every(function (v, i) { return v === to[i]; });
+    };
+    tr.snapTo = function (name) {
+      target = (name === 'electron') ? 'electron' : 'planetary';
+      tr.style = target;
+      to = targetsFor(target); cur = to.slice(); from = to.slice(); t = dur; tr.settled = true;
+    };
+    tr.step = function (dt) {
+      if (!tr.settled) {
+        t += dt;
+        var k = Math.min(1, t / dur);
+        var s = k * k * (3 - 2 * k);
+        cur = from.map(function (v, i) { return v + (to[i] - v) * s; });
+        if (k >= 1) { cur = to.slice(); tr.settled = true; }
+      }
+      if (target === 'electron' || !tr.settled) {
+        for (var i = 0; i < 4; i++) omega[i] += PRECESSION[i] * dt;
+      }
+      return cur.slice();
+    };
+    tr.current = function () { return cur.slice(); };
+    tr.omega = function () { return omega.slice(); };
+    tr.targets = function () { return to.slice(); };
+    return tr;
+  }
+  function attractDue(idleSec, setting, running) {
+    return setting !== 'off' && !running && idleSec >= 60;
+  }
+  window.__A2DianaLab = {
+    CAMERA_PRESETS: CAMERA_PRESETS,
+    isClick: isClick,
+    aimArgFor: aimArgFor,
+    camStep: camStep,
+    createShotMachine: createShotMachine,
+    createScenarioEngine: createScenarioEngine,
+    attractDue: attractDue,
+    SCENARIOS: SCENARIOS,
+    ELECTRON_INCL: ELECTRON_INCL,
+    PRECESSION: PRECESSION,
+    inclinePoint: inclinePoint,
+    faceAngles: faceAngles,
+    createInclinationTracker: createInclinationTracker
+  };
+
+  /* ---------- Diana view settings (persisted) ---------- */
+  var dianaSettings = { cam: 'overview', finish: 'real', moon: true, plate: true, thread: true, spin: 1, trail: true, attract: 'attract', style: 'planetary' };
+  try {
+    var dianaRaw = localStorage.getItem('tsA2DianaView');
+    if (dianaRaw) {
+      var dianaParsed = JSON.parse(dianaRaw);
+      if (dianaParsed && typeof dianaParsed === 'object') {
+        for (var dsk in dianaSettings) if (Object.prototype.hasOwnProperty.call(dianaParsed, dsk)) dianaSettings[dsk] = dianaParsed[dsk];
+      }
+    }
+  } catch (e) {}
+  function saveDianaSettings() { try { localStorage.setItem('tsA2DianaView', JSON.stringify(dianaSettings)); } catch (e) {} }
+  var dianaSceneCtl = null;
+
+  /* ---------- Diana panel wiring (runs even if the WebGL scene does not) ---------- */
+  function wireDianaPanel() {
+    var panel = document.getElementById('dianaPanel');
+    if (!panel) return null;
+    function qsa(sel) { return Array.prototype.slice.call(panel.querySelectorAll(sel)); }
+    function paint() {
+      qsa('[data-cam]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-cam') === dianaSettings.cam ? 'true' : 'false'); });
+      qsa('[data-finish]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-finish') === dianaSettings.finish ? 'true' : 'false'); });
+      qsa('[data-style]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-style') === dianaSettings.style ? 'true' : 'false'); });
+      qsa('[data-stage]').forEach(function (b) { b.setAttribute('aria-checked', dianaSettings[b.getAttribute('data-stage')] ? 'true' : 'false'); });
+      var spin = panel.querySelector('#dianaSpin');
+      if (spin) spin.value = String(Math.round((dianaSettings.spin || 0) * 100));
+      var sv = panel.querySelector('#dianaSpinVal');
+      if (sv) sv.textContent = Math.round((dianaSettings.spin || 0) * 100) + '%';
+      var at = panel.querySelector('#dianaAttract');
+      if (at) at.value = dianaSettings.attract;
+      qsa('[data-scenario]').forEach(function (b) { b.disabled = !dianaSceneCtl; });
+    }
+    qsa('[data-cam]').forEach(function (b) { b.addEventListener('click', function () { dianaSettings.cam = b.getAttribute('data-cam'); saveDianaSettings(); paint(); if (dianaSceneCtl) dianaSceneCtl.setCamera(dianaSettings.cam); }); });
+    qsa('[data-finish]').forEach(function (b) { b.addEventListener('click', function () { dianaSettings.finish = b.getAttribute('data-finish'); saveDianaSettings(); paint(); if (dianaSceneCtl) dianaSceneCtl.setFinish(dianaSettings.finish); }); });
+    qsa('[data-style]').forEach(function (b) { b.addEventListener('click', function () { dianaSettings.style = b.getAttribute('data-style'); saveDianaSettings(); paint(); if (dianaSceneCtl) dianaSceneCtl.setOrbitalStyle(dianaSettings.style); }); });
+    qsa('[data-stage]').forEach(function (b) { b.addEventListener('click', function () { var key = b.getAttribute('data-stage'); dianaSettings[key] = !dianaSettings[key]; saveDianaSettings(); paint(); if (dianaSceneCtl) dianaSceneCtl.setStage(key, dianaSettings[key]); }); });
+    var spinEl = panel.querySelector('#dianaSpin');
+    if (spinEl) spinEl.addEventListener('input', function () { dianaSettings.spin = (parseInt(spinEl.value, 10) || 0) / 100; saveDianaSettings(); var sv2 = panel.querySelector('#dianaSpinVal'); if (sv2) sv2.textContent = spinEl.value + '%'; });
+    var atEl = panel.querySelector('#dianaAttract');
+    if (atEl) atEl.addEventListener('change', function () { dianaSettings.attract = atEl.value; saveDianaSettings(); });
+    qsa('[data-scenario]').forEach(function (b) { b.addEventListener('click', function () { if (dianaSceneCtl) dianaSceneCtl.startScenario(b.getAttribute('data-scenario')); }); });
+    var stopEl = panel.querySelector('#scenarioStop');
+    if (stopEl) stopEl.addEventListener('click', function () { if (dianaSceneCtl) dianaSceneCtl.stopScenario(); });
+    var togEl = panel.querySelector('#dianaPanelToggle');
+    if (togEl) togEl.addEventListener('click', function () { var c = panel.classList.toggle('collapsed'); togEl.setAttribute('aria-expanded', c ? 'false' : 'true'); });
+    if (window.innerWidth && window.innerWidth <= 720) { panel.classList.add('collapsed'); if (togEl) togEl.setAttribute('aria-expanded', 'false'); }
+    paint();
+    return {
+      refresh: paint,
+      showChip: function (name) { var chip = panel.querySelector('#scenarioChip'); var nm = panel.querySelector('#scenarioName'); if (nm) nm.textContent = name; if (chip) chip.hidden = false; },
+      hideChip: function () { var chip = panel.querySelector('#scenarioChip'); if (chip) chip.hidden = true; },
+      setChipText: function (txt) { var chip = panel.querySelector('#scenarioChip'); var nm = panel.querySelector('#scenarioName'); if (nm) nm.textContent = txt; if (chip) chip.hidden = false; }
+    };
+  }
+
   function boot() {
     var orbit = document.getElementById('orbit');
     var detail = document.getElementById('detail');
     if (!orbit || !detail || !REGISTRY) return;
+    var panelApi = wireDianaPanel();
     if (!window.DianaModule || !window.DianaModule.THREE) return;
     if (!window.OctopusGModule || !window.OctopusGModule.createFigure) return;
     if (!window.__A2Mascots) return;
@@ -7537,8 +8105,15 @@ function buildDeepSeekWhale(THREE) {
     var W = 60; /* world width of the orbit square */
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(38, 1, 0.1, 300);
-    camera.position.set(0, 40, 46);
-    camera.lookAt(0, 1.0, 0);
+    var camState = { pos: [0, 40, 46], tgt: [0, 1, 0], anim: null, orbit: false, azimuth: 0, radius: 46, height: 40, presetName: 'overview', remembered: 'overview' };
+    (function initCam() {
+      var nm = dianaSettings.cam || 'overview';
+      var pr = window.__A2DianaLab.CAMERA_PRESETS[nm];
+      if (nm === 'orbit') { camState.orbit = true; camState.presetName = 'orbit'; }
+      else if (pr && !pr.orbit) { camState.pos = pr.pos.slice(); camState.tgt = pr.tgt.slice(); camState.presetName = nm; camState.remembered = nm; }
+    })();
+    camera.position.set(camState.pos[0], camState.pos[1], camState.pos[2]);
+    camera.lookAt(camState.tgt[0], camState.tgt[1], camState.tgt[2]);
 
     var palettes = (window.OctopusGModule && window.OctopusGModule.palettes) || (window.DianaModule && window.DianaModule.palettes) || {};
     var pal = resolvePal(root.getAttribute('data-view') || 'dark');
@@ -7568,6 +8143,7 @@ function buildDeepSeekWhale(THREE) {
       return l;
     }
     var ringMats = [];
+    var guideLines = {};
     function newRingMat(op) {
       var m = new THREE.LineBasicMaterial({ color: pal.arc, transparent: true, opacity: op });
       ringMats.push(m); return m;
@@ -7580,7 +8156,10 @@ function buildDeepSeekWhale(THREE) {
       var mat = dashed ? new THREE.LineDashedMaterial({ color: pal.arc, transparent: true, opacity: rg.ring === 1 ? 0.85 : 0.4, dashSize: 0.9, gapSize: 0.6 })
                        : newRingMat(rg.ring === 1 ? 0.85 : 0.4);
       if (dashed) ringMats.push(mat);
-      scene.add(ringLine(rg.r * W * 0.5, mat, dashed));
+      var guideLine = ringLine(rg.r * W * 0.5, mat, dashed);
+      guideLine.rotation.order = 'YXZ';
+      guideLines[rg.ring] = guideLine;
+      scene.add(guideLine);
     });
     /* Diana's stage edge */
     var stageEdge = new THREE.Mesh(new THREE.TorusGeometry(5.9, 0.07, 8, 72), brassMat);
@@ -7802,7 +8381,7 @@ function buildDeepSeekWhale(THREE) {
     /* ---------- picking ---------- */
     var ray = new THREE.Raycaster();
     var ptr = new THREE.Vector2();
-    var hoverEntry = null, downAt = 0;
+    var hoverEntry = null, downAt = 0, downX = 0, downY = 0;
     function pick(ev) {
       var rect = renderer.domElement.getBoundingClientRect();
       ptr.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
@@ -7816,12 +8395,316 @@ function buildDeepSeekWhale(THREE) {
       hoverEntry = hit;
       renderer.domElement.style.cursor = hit ? 'pointer' : '';
     });
-    renderer.domElement.addEventListener('pointerdown', function () { downAt = performance.now(); });
+    renderer.domElement.addEventListener('pointerdown', function (ev) { downAt = performance.now(); downX = ev.clientX; downY = ev.clientY; });
     renderer.domElement.addEventListener('pointerup', function (ev) {
-      if (performance.now() - downAt > 350) return;
+      var now = performance.now();
+      if (swallowClickUntil && now <= swallowClickUntil) { swallowClickUntil = 0; return; }
+      var distPx = Math.sqrt(Math.pow(ev.clientX - downX, 2) + Math.pow(ev.clientY - downY, 2));
+      if (!window.__A2DianaLab.isClick(distPx, now - downAt)) return;
+      if (scenarioEngine && scenarioEngine.active) { stopScenarioHost(); return; }
       var hit = pick(ev);
-      if (hit) showDetail(hit.userData.entry, hit.userData.kind);
+      if (hit && hit.userData.kind === 'center') { showDetail(hit.userData.entry, 'center'); return; }
+      var target = null, entry = null, kind = null;
+      if (hit && hit.userData.kind === 'mark') {
+        var car = null;
+        carriers.forEach(function (c) { if (c.entry === hit.userData.entry) car = c; });
+        if (!car) return;
+        target = new THREE.Vector3(); car.group.getWorldPosition(target); target.y += 0.5;
+        entry = hit.userData.entry; kind = 'mark';
+      } else if (hit && hit.userData.kind === 'orbit0') {
+        target = new THREE.Vector3(); octoCarrier.getWorldPosition(target); target.y += 1.6;
+        entry = REGISTRY.orbit0; kind = 'orbit0';
+      } else {
+        var gp = groundPoint(ev);
+        if (!gp) return;
+        target = gp; entry = null; kind = null;
+      }
+      fireShot(target, entry, kind);
     });
+
+    /* ---------- Diana Comes Alive: aim, arrow, camera, scenarios, attract ---------- */
+    var aiming = false;
+    var aimPoint = new THREE.Vector3();
+    var lastInteractMs = performance.now();
+    var nextAttractAt = 0;
+    var swallowClickUntil = 0;
+    var flashGlint = false, flashT = 0;
+    var shotCtx = null;
+    function motionAllowed() { return !!motionOn; }
+    function dispatchDiana(name) {
+      try { document.dispatchEvent(new CustomEvent(name)); }
+      catch (e) { var ev = document.createEvent('Event'); ev.initEvent(name, true, true); document.dispatchEvent(ev); }
+    }
+    function bowWorldVec() {
+      if (!dianaFig || !dianaFig.bowWorld) return null;
+      var out = new THREE.Vector3();
+      var r = dianaFig.bowWorld(out);
+      return r || out;
+    }
+    function groundPoint(ev) {
+      var rect = renderer.domElement.getBoundingClientRect();
+      ptr.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+      ptr.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+      ray.setFromCamera(ptr, camera);
+      var out = new THREE.Vector3();
+      var pl = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      return ray.ray.intersectPlane(pl, out) ? out : null;
+    }
+    function makeGlowTexture() {
+      var cv = document.createElement('canvas'); cv.width = 128; cv.height = 128;
+      var x = cv.getContext('2d');
+      var g = x.createRadialGradient(64, 64, 2, 64, 64, 64);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(0.35, 'rgba(255,233,184,0.55)');
+      g.addColorStop(1, 'rgba(255,233,184,0)');
+      x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+      return new THREE.CanvasTexture(cv);
+    }
+    var glowTex = makeGlowTexture();
+    var UP_VEC = new THREE.Vector3(0, 1, 0);
+    var arrowGroup = new THREE.Group();
+    var shaftMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.3, 8), new THREE.MeshBasicMaterial({ color: 0xf0d49a }));
+    arrowGroup.add(shaftMesh);
+    var headMesh = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.28, 10), new THREE.MeshBasicMaterial({ color: 0xffe9b8 }));
+    headMesh.position.y = 0.79;
+    arrowGroup.add(headMesh);
+    var haloSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffe9b8, transparent: true, opacity: 0.6, depthWrite: false }));
+    haloSprite.scale.set(0.9, 0.9, 1);
+    arrowGroup.add(haloSprite);
+    arrowGroup.visible = false;
+    scene.add(arrowGroup);
+    var trailGeo = new THREE.BufferGeometry();
+    trailGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(26 * 3), 3));
+    var trailLine = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({ color: 0xf0d49a, transparent: true, opacity: 0.5 }));
+    trailLine.visible = false; trailLine.frustumCulled = false;
+    scene.add(trailLine);
+    var flashSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffe9b8, transparent: true, opacity: 0, depthWrite: false }));
+    flashSprite.visible = false;
+    scene.add(flashSprite);
+    var threadGeo = new THREE.BufferGeometry();
+    threadGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+    var threadLine = new THREE.Line(threadGeo, new THREE.LineBasicMaterial({ color: 0xf0d49a, transparent: true, opacity: 0.35 }));
+    threadLine.visible = false; threadLine.frustumCulled = false;
+    scene.add(threadLine);
+    function startFlash(pos) { flashSprite.position.copy(pos); flashSprite.visible = true; flashT = 0; }
+    function updateFlash(k) {
+      var s = 1.2 + (8 - 1.2) * k;
+      flashSprite.scale.set(s, s, 1);
+      if (flashSprite.material) flashSprite.material.opacity = 0.95 * (1 - k);
+    }
+    function updateTrail(curve, k) {
+      if (!dianaSettings.trail) { trailLine.visible = false; return; }
+      trailLine.visible = true;
+      var attr = trailGeo.attributes.position;
+      for (var i = 0; i < 26; i++) { var p = curve.getPoint(k * i / 25); attr.setXYZ(i, p.x, p.y, p.z); }
+      attr.needsUpdate = true;
+    }
+    var shotMachine = window.__A2DianaLab.createShotMachine({
+      flightDur: function (dist) { return Math.max(0.5, Math.min(0.9, 0.45 + (dist || 0) * 0.012)); }
+    });
+    function handleShotEvents(evs) {
+      evs.forEach(function (e) {
+        if (e.type === 'charge') { if (dianaFig) { try { dianaFig.pulseBow(e.k); } catch (err) {} } }
+        else if (e.type === 'release') {
+          var from = bowWorldVec() || (shotCtx && shotCtx.from) || new THREE.Vector3(0, 5, 0);
+          if (shotCtx) {
+            shotCtx.from = from;
+            var mid = from.clone().add(shotCtx.to).multiplyScalar(0.5);
+            mid.y += 1.4 + shotCtx.dist * 0.06;
+            shotCtx.curve = new THREE.QuadraticBezierCurve3(from, mid, shotCtx.to);
+          }
+          dispatchDiana('diana:shot');
+          arrowGroup.visible = true;
+        }
+        else if (e.type === 'fly') {
+          if (shotCtx && shotCtx.curve) {
+            arrowGroup.position.copy(shotCtx.curve.getPoint(e.k));
+            var tan = shotCtx.curve.getTangent(e.k);
+            arrowGroup.quaternion.setFromUnitVectors(UP_VEC, tan);
+            updateTrail(shotCtx.curve, e.k);
+          }
+        }
+        else if (e.type === 'impact') {
+          if (shotCtx) {
+            if (!shotCtx.impactStarted) { shotCtx.impactStarted = true; dispatchDiana('diana:impact'); startFlash(shotCtx.to); }
+            updateFlash(e.k);
+          }
+        }
+        else if (e.type === 'select') { if (e.entry) showDetail(e.entry, e.kind); }
+        else if (e.type === 'glint') { if (shotCtx) { startFlash(shotCtx.to); flashGlint = true; } }
+        else if (e.type === 'done') {
+          arrowGroup.visible = false; trailLine.visible = false;
+          if (dianaFig) { try { dianaFig.pulseBow(0); } catch (err) {} }
+          if (!flashGlint) flashSprite.visible = false;
+          shotCtx = null;
+        }
+      });
+    }
+    function fireShot(target, entry, kind) {
+      if (!dianaFig) return false;
+      var bw = bowWorldVec();
+      var dist = bw ? bw.distanceTo(target) : 10;
+      var started = shotMachine.start({ from: bw, to: target, entry: entry, kind: kind, dist: dist, reduced: !motionAllowed() });
+      if (started) shotCtx = { to: target.clone(), entry: entry, kind: kind, dist: dist, curve: null, impactStarted: false, from: bw ? bw.clone() : null };
+      return started;
+    }
+    renderer.domElement.addEventListener('pointermove', function (ev) {
+      if (scenarioEngine.active) return;
+      var p = groundPoint(ev);
+      if (!p) return;
+      aimPoint.copy(p); aiming = true;
+      if (motionAllowed() && dianaFig) {
+        try { dianaFig.setMode('aim'); dianaFig.setAim(window.__A2DianaLab.aimArgFor(p.x, p.z)); } catch (e) {}
+      }
+    });
+    renderer.domElement.addEventListener('pointerleave', function () {
+      aiming = false; threadLine.visible = false;
+      if (dianaFig && !scenarioEngine.active) { try { dianaFig.setMode('patrol'); dianaFig.pulseBow(0); } catch (e) {} }
+    });
+    function setCameraHost(name) {
+      if (name === 'orbit') {
+        if (!camState.orbit) camState.remembered = camState.presetName || 'overview';
+        camState.orbit = true; camState.anim = null;
+        camState.azimuth = Math.atan2(camState.pos[0], camState.pos[2]);
+        camState.presetName = 'orbit';
+        return;
+      }
+      var targetName = name === 'restore' ? (camState.remembered || 'overview') : name;
+      var pr = window.__A2DianaLab.CAMERA_PRESETS[targetName];
+      if (!pr || pr.orbit) return;
+      camState.orbit = false;
+      camState.anim = { fromPos: camState.pos.slice(), fromTgt: camState.tgt.slice(), toPos: pr.pos.slice(), toTgt: pr.tgt.slice(), t: 0, dur: 1.2 };
+      camState.presetName = targetName;
+    }
+    function moonObj() { return (dianaFig && dianaFig.group && dianaFig.group.getObjectByName) ? dianaFig.group.getObjectByName('DianaMoonGlow') : null; }
+    function plateObj() { return (dianaFig && dianaFig.group && dianaFig.group.getObjectByName) ? dianaFig.group.getObjectByName('DianaNameplate') : null; }
+    var moonBase = null;
+    function moonBoostHost(f) {
+      var o = moonObj(); if (!o) return;
+      if (!moonBase) moonBase = { opacity: (o.material ? o.material.opacity : 1), sx: o.scale.x, sy: o.scale.y, sz: o.scale.z };
+      if (o.material) o.material.opacity = Math.max(0, Math.min(1, moonBase.opacity * f));
+      o.scale.set(moonBase.sx * f, moonBase.sy * f, moonBase.sz);
+    }
+    function restoreMoonHost() { moonBoostHost(1); }
+    function applyStageVisibility() {
+      var mo = moonObj(); if (mo) mo.visible = !!dianaSettings.moon;
+      var pl2 = plateObj(); if (pl2) pl2.visible = !!dianaSettings.plate;
+    }
+    function shootMarkHost(id) {
+      if (id === 'octopusg') {
+        var t0 = new THREE.Vector3(); octoCarrier.getWorldPosition(t0); t0.y += 1.6;
+        return fireShot(t0, REGISTRY.orbit0, 'orbit0');
+      }
+      var car = null, entry = null;
+      carriers.forEach(function (c) { if (c.entry.id === id) { car = c; entry = c.entry; } });
+      if (!car) return false;
+      var t = new THREE.Vector3(); car.group.getWorldPosition(t); t.y += 0.5;
+      return fireShot(t, entry, 'mark');
+    }
+    function showDetailByIdHost(id) {
+      if (id === 'diana' || id === 'center') { showDetail(REGISTRY.center, 'center'); return; }
+      if (id === 'octopusg') { showDetail(REGISTRY.orbit0, 'orbit0'); return; }
+      carriers.forEach(function (c) { if (c.entry.id === id) showDetail(c.entry, 'mark'); });
+    }
+    var inclTracker = window.__A2DianaLab.createInclinationTracker();
+    inclTracker.snapTo(dianaSettings.style === 'electron' ? 'electron' : 'planetary');
+    var curIncl = inclTracker.current();
+    var curOmega = inclTracker.omega();
+    state.orbital = { style: inclTracker.style, incl: curIncl.slice(), omega: curOmega.slice() };
+    function setOrbitalStyleHost(name) {
+      dianaSettings.style = (name === 'electron') ? 'electron' : 'planetary';
+      saveDianaSettings();
+      inclTracker.setTarget(dianaSettings.style);
+      if (panelApi) panelApi.refresh();
+    }
+    function setOrbitalStyleTransient(name) { inclTracker.setTarget(name); }
+    var scenarioEngine = window.__A2DianaLab.createScenarioEngine({
+      shootMark: shootMarkHost,
+      shootPoint: function (p) { return fireShot(new THREE.Vector3(p.x, p.y || 0, p.z), null, null); },
+      setSpin: function (rate) { if (dianaFig) { try { dianaFig.setMode('spin'); dianaFig.setSpin({ rate: rate }); } catch (e) {} } },
+      setMode: function (mm) { if (dianaFig) { try { dianaFig.setMode(mm); } catch (e) {} } },
+      setCamera: setCameraHost,
+      setFinish: function (f) { if (dianaFig) { try { dianaFig.setFinish(f); } catch (e) {} } },
+      restoreFinish: function () { if (dianaFig) { try { dianaFig.setFinish(dianaSettings.finish); } catch (e) {} } },
+      moonBoost: moonBoostHost,
+      restoreMoon: restoreMoonHost,
+      caption: function (txt) { if (!panelApi) return; if (txt) panelApi.setChipText(txt); else panelApi.hideChip(); },
+      showDetailById: showDetailByIdHost,
+      patrol: function () { if (dianaFig) { try { dianaFig.setMode('patrol'); dianaFig.pulseBow(0); } catch (e) {} } },
+      setOrbitalStyle: setOrbitalStyleTransient,
+      getOrbitalStyle: function () { return inclTracker.style; },
+      motionAllowed: motionAllowed,
+      spinScale: function () { return dianaSettings.spin; }
+    });
+    function startScenarioHost(name) {
+      var ok = scenarioEngine.start(name);
+      if (ok && panelApi) { var sc = window.__A2DianaLab.SCENARIOS[name]; panelApi.showChip(sc ? sc.title : name); }
+      return ok;
+    }
+    function stopScenarioHost() { scenarioEngine.stop(); if (panelApi) panelApi.hideChip(); }
+    var sectionEl = document.getElementById('constellation');
+    if (sectionEl) {
+      var interruptHandler = function (ev) {
+        lastInteractMs = performance.now();
+        var t = ev.target;
+        var excluded = t && t.closest && (t.closest('#scenarioStop') || t.closest('[data-scenario]'));
+        if (scenarioEngine.active && !excluded) { stopScenarioHost(); swallowClickUntil = performance.now() + 600; }
+      };
+      sectionEl.addEventListener('pointerdown', interruptHandler, true);
+      sectionEl.addEventListener('wheel', interruptHandler, true);
+      sectionEl.addEventListener('keydown', interruptHandler, true);
+    }
+    var panelEl = document.getElementById('dianaPanel');
+    if (panelEl) {
+      ['pointerdown', 'keydown', 'wheel', 'input', 'change', 'click'].forEach(function (evName) {
+        panelEl.addEventListener(evName, function () { lastInteractMs = performance.now(); });
+      });
+    }
+    function dianaAliveTick(dt) {
+      var effDt = dt;
+      if (camState.orbit && !motionOn) effDt = 0;
+      else if (camState.anim && !motionOn) effDt = 999;
+      window.__A2DianaLab.camStep(camState, effDt);
+      camera.position.set(camState.pos[0], camState.pos[1], camState.pos[2]);
+      camera.lookAt(camState.tgt[0], camState.tgt[1], camState.tgt[2]);
+      curIncl = inclTracker.step(dt);
+      curOmega = inclTracker.omega();
+      state.orbital = { style: inclTracker.style, incl: curIncl.slice(), omega: curOmega.slice() };
+      var wasActive = scenarioEngine.active;
+      if (scenarioEngine.active) scenarioEngine.step(dt);
+      if (wasActive && !scenarioEngine.active) { lastInteractMs = performance.now(); if (panelApi) panelApi.hideChip(); }
+      if (shotMachine.phase !== 'idle') handleShotEvents(shotMachine.step(dt));
+      if (flashGlint && flashSprite.visible) {
+        flashT += dt;
+        var gk = Math.min(1, flashT / 0.25);
+        updateFlash(gk);
+        if (gk >= 1) { flashSprite.visible = false; flashGlint = false; }
+      }
+      if (aiming && dianaSettings.thread && !scenarioEngine.active && motionOn) {
+        var bw2 = bowWorldVec();
+        if (bw2) {
+          var pa = threadGeo.attributes.position;
+          pa.setXYZ(0, bw2.x, bw2.y, bw2.z);
+          pa.setXYZ(1, aimPoint.x, aimPoint.y, aimPoint.z);
+          pa.needsUpdate = true;
+          threadLine.visible = true;
+        }
+        if (shotMachine.phase === 'idle' && dianaFig) { try { dianaFig.pulseBow(0.25); } catch (e) {} }
+      } else { threadLine.visible = false; }
+      var idleSec = (performance.now() - lastInteractMs) / 1000;
+      if (visible && motionAllowed() && window.__A2DianaLab.attractDue(idleSec, dianaSettings.attract, scenarioEngine.active)) {
+        if (dianaSettings.attract === 'attract') {
+          if (performance.now() >= nextAttractAt) {
+            var ids = REGISTRY.marks.map(function (mm) { return mm.id; });
+            shootMarkHost(ids[Math.floor(Math.random() * ids.length)]);
+            nextAttractAt = performance.now() + 20000;
+          }
+        } else {
+          startScenarioHost(dianaSettings.attract);
+        }
+      }
+    }
+
     /* #core stays Diana's click target over the canvas */
     var coreBtn = document.getElementById('core');
     if (coreBtn) coreBtn.addEventListener('click', function (ev) {
@@ -7864,13 +8747,19 @@ function buildDeepSeekWhale(THREE) {
 
     var engineSpokeIdx = 0;
     function placeAll() {
+      for (var gi = 0; gi < 4; gi++) {
+        var gl3 = guideLines[gi];
+        if (gl3) { gl3.rotation.y = curOmega[gi] || 0; gl3.rotation.x = curIncl[gi] || 0; }
+      }
       REGISTRY.rings.forEach(function (rg) {
         carriers.forEach(function (c) {
           if (c.ring !== rg.ring) return;
           var a = (rg.ring * 0.6) + (c.idx / c.n) * Math.PI * 2 + orbitT * rg.speed - Math.PI / 2;
           c.angle = a;
           var Rr = rg.r * W * 0.5;
-          c.group.position.set(Math.cos(a) * Rr, 0.4 + Math.sin(orbitT * 0.8 + c.idx * 1.7) * 0.16, Math.sin(a) * Rr);
+          var basePos = { x: Math.cos(a) * Rr, y: 0.4 + Math.sin(orbitT * 0.8 + c.idx * 1.7) * 0.16, z: Math.sin(a) * Rr };
+          var ip = window.__A2DianaLab.inclinePoint(basePos, curIncl[rg.ring] || 0, curOmega[rg.ring] || 0);
+          c.group.position.set(ip.x, ip.y, ip.z);
           state.carriers[c.entry.id] = a;
         });
       });
@@ -7890,8 +8779,10 @@ function buildDeepSeekWhale(THREE) {
       spokeGeo.attributes.position.needsUpdate = true;
       /* billboard yaw toward camera + selection settle */
       carriers.forEach(function (c) {
-        var dx = camera.position.x - c.group.position.x, dz = camera.position.z - c.group.position.z;
-        c.yaw.rotation.y = Math.atan2(dx, dz);
+        var fa = window.__A2DianaLab.faceAngles(c.group.position, camera.position, (curIncl[c.ring] || 0) / (window.__A2DianaLab.ELECTRON_INCL[c.ring] || 1));
+        c.yaw.rotation.order = 'YXZ';
+        c.yaw.rotation.y = fa.yaw;
+        c.yaw.rotation.x = fa.pitch;
         var target = c.sel ? 1.14 : 1;
         c.group.scale.setScalar(c.group.scale.x + (target - c.group.scale.x) * 0.18);
       });
@@ -7901,6 +8792,7 @@ function buildDeepSeekWhale(THREE) {
     function tick(dt) {
       var view = root.getAttribute('data-view') || 'dark';
       if (view === 'tty') return;
+      dianaAliveTick(dt);
       if (motionOn) {
         orbitT += dt;
         wallSec += dt;
@@ -7948,6 +8840,22 @@ function buildDeepSeekWhale(THREE) {
     if (coreBtn) coreBtn.setAttribute('aria-label', 'Artemis Diana \u2014 the center');
     showDetail(REGISTRY.center, 'center');
     sync();
+    dianaSceneCtl = {
+      setOrbitalStyle: setOrbitalStyleHost,
+      setCamera: setCameraHost,
+      setFinish: function (f) { if (dianaFig) { try { dianaFig.setFinish(f); } catch (e) {} } },
+      setStage: function (key, on) {
+        if (key === 'moon' || key === 'plate') applyStageVisibility();
+      },
+      startScenario: startScenarioHost,
+      stopScenario: stopScenarioHost
+    };
+    if (dianaFig) {
+      try { dianaFig.setFinish(dianaSettings.finish); } catch (e) {}
+      if (dianaFig.ready && dianaFig.ready.then) dianaFig.ready.then(function () { try { dianaFig.setFinish(dianaSettings.finish); } catch (e) {} applyStageVisibility(); });
+    }
+    applyStageVisibility();
+    if (panelApi) panelApi.refresh();
     requestAnimationFrame(loop);
 
     window.__A2Scene = {
@@ -7955,7 +8863,12 @@ function buildDeepSeekWhale(THREE) {
       state: state,
       tick: function (dt) { tick(dt); },
       setMotion: function (on) { motionOn = !!on; octoStaticDone = false; },
-      registry: REGISTRY
+      registry: REGISTRY,
+      diana: dianaFig,
+      lab: window.__A2DianaLab,
+      scenario: scenarioEngine,
+      shootMark: shootMarkHost,
+      setOrbitalStyle: setOrbitalStyleHost
     };
   }
 
