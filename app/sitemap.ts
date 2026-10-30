@@ -63,7 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   );
 
   const toolRoutes = tools
-    .filter((t) => t.status === "live")
+    .filter((t) => t.status === "live" && !t.noIndex)
     .map((t) => ({
       url: `${base}/tools/${t.slug}`,
       lastModified: now,

@@ -63,8 +63,8 @@ describe("registry lookup", () => {
     expect(findArtifact("unknown-artifact", registry)).toBeNull();
   });
 
-  it("ships an empty registry (mechanism only, no lab migrated)", () => {
-    expect(listArtifacts()).toEqual([]);
+  it("ships only the reviewed registry entries", () => {
+    expect(listArtifacts().map((artifact) => artifact.id)).toEqual(["artemis-method-engine"]);
   });
 
   it("enforces ADR-014 registry rules", () => {
