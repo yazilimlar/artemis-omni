@@ -9,6 +9,8 @@ export type ToolMeta = {
   summary: string;
   category: string;
   status: "live" | "beta" | "planned";
+  /** Gated/internal tools stay out of the sitemap (like /control and /system-map). */
+  noIndex?: boolean;
 };
 
 export const tools: ToolMeta[] = [
@@ -19,6 +21,15 @@ export const tools: ToolMeta[] = [
       "Model contract fuel-price adjustment with a baseline, deadband, and fuel-sensitive share.",
     category: "Project Controls",
     status: "live",
+  },
+  {
+    slug: "artemis-method-engine",
+    title: "Artemis Method Engine",
+    summary:
+      "The Artemis Method, case studio, 3D agents office, live system map, and publications register. Internal — allowlisted sign-in required.",
+    category: "Platform",
+    status: "live",
+    noIndex: true,
   },
   {
     slug: "cash-flow-forecast",
