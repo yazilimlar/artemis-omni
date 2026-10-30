@@ -1,30 +1,24 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-export const metadata: Metadata = { title: "Rainbow House | Hudson Valley Stay", description: "Explore the Rainbow House guest experience in Marlboro, New York.", robots: { index: false, follow: false } };
-const root = "/new-client-environment/stay/rainbow-house-marlboro-v20261025";
-const features = [
- ["Hudson Valley", "A quiet base for discovering the Hudson River corridor, wineries, orchards, and nearby towns."],
- ["Private stay", "A separate guest entrance and dedicated parking for an independent arrival."],
- ["Seasonal outdoors", "Enjoy the property's outdoor setting and seasonal pool availability, subject to the listing details."],
-];
-export default function RainbowHouseExperience() {
- return <main style={{minHeight:"100vh",color:"#f5f2e9",background:"linear-gradient(150deg,#172d2a 0%,#10211f 55%,#1c302c 100%)",fontFamily:"Georgia,serif"}}>
- <div style={{maxWidth:1180,margin:"auto",padding:"28px clamp(22px,5vw,72px) 100px"}}>
- <nav style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:16,fontFamily:"system-ui,sans-serif",fontSize:13,letterSpacing:1.5}}>
- <Link href={root} style={{color:"#e2d8b9",textDecoration:"none"}}>← ARTEMIS CLIENT ENVIRONMENT</Link><span style={{color:"#c9d5c7"}}>RAINBOW HOUSE · MARLBORO NY</span></nav>
- <section style={{padding:"clamp(90px,13vw,160px) 0 90px",maxWidth:850}}>
- <p style={{fontFamily:"system-ui,sans-serif",fontSize:12,letterSpacing:4,color:"#d8bd83"}}>A HUDSON VALLEY RETREAT</p>
- <h1 style={{fontSize:"clamp(58px,9vw,120px)",fontWeight:400,letterSpacing:"-.065em",lineHeight:.98,margin:"24px 0"}}>A slower kind<br/>of beautiful.</h1>
- <p style={{fontSize:"clamp(18px,2.3vw,24px)",lineHeight:1.7,color:"#d4dfd5",maxWidth:640}}>Discover Rainbow House in Marlboro, New York — river views, space to unwind, and the character of the Hudson Valley.</p>
- <div style={{display:"flex",flexWrap:"wrap",gap:14,marginTop:38,fontFamily:"system-ui,sans-serif",fontSize:14}}>
- <a href="https://rainbow-house.vercel.app/" style={{padding:"16px 22px",background:"#e3d3a6",color:"#18302c",textDecoration:"none",borderRadius:4,fontWeight:700}}>Explore official listing site ↗</a>
- <Link href={root} style={{padding:"16px 22px",border:"1px solid #779087",color:"#f0e9d9",textDecoration:"none",borderRadius:4}}>About the client platform</Link>
- </div></section>
- <div style={{height:1,background:"#4d6c5e",opacity:.7}}/>
- <section style={{paddingTop:62}}><p style={{fontFamily:"system-ui,sans-serif",fontSize:12,letterSpacing:3,color:"#d8bd83"}}>THE EXPERIENCE</p>
- <h2 style={{fontSize:"clamp(32px,5vw,58px)",fontWeight:400,margin:"14px 0 35px"}}>Stay close to nature.</h2>
- <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(230px,1fr))",gap:16}}>{features.map(([name,description],i)=><article key={name} style={{padding:30,minHeight:225,border:"1px solid #547064",background:"rgba(255,255,255,.035)"}}>
- <span style={{fontFamily:"system-ui,sans-serif",fontSize:12,color:"#d8bd83"}}>0{i+1}</span><h3 style={{fontWeight:400,fontSize:28}}>{name}</h3><p style={{fontFamily:"system-ui,sans-serif",fontSize:14,lineHeight:1.75,color:"#c4d0c8"}}>{description}</p></article>)}</div></section>
- <footer style={{marginTop:100,paddingTop:22,borderTop:"1px solid #547064",fontFamily:"system-ui,sans-serif",fontSize:12,color:"#b6c9bb",lineHeight:1.7}}>Preview of a native Artemis-hosted guest experience. No reservation, payment, guest-data collection, or availability claims are implemented here. Confirm all property details on the official listing site.</footer>
- </div></main>;
-}
+export const metadata: Metadata = {title:"Rainbow House | A Hudson Valley Retreat",description:"A private hillside retreat in Marlboro, New York. Discover river-valley views, a sunroom and a quieter Hudson Valley escape.",robots:{index:false,follow:false}};
+const root="/new-client-environment/stay/rainbow-house-marlboro-v20261025";
+const highlights=[{n:"01",title:"The view",body:"A hillside outlook over the Hudson Valley, where the changing light is part of the experience."},{n:"02",title:"The stay",body:"A private upper-level guest retreat with a separate entrance, kitchen, living areas and sunroom."},{n:"03",title:"The seasons",body:"Orchards, autumn foliage, quiet mornings and seasonal outdoor spaces. Confirm amenity availability before booking."}];
+export default function RainbowHouseExperience(){return <main style={{minHeight:"100vh",background:"#101d1c",color:"#f4f1e9",fontFamily:"Georgia,serif",overflow:"hidden"}}>
+<style>{`@media(prefers-reduced-motion:no-preference){.rh-horizon{animation:rhFloat 24s ease-in-out infinite alternate}}@keyframes rhFloat{from{transform:scale(1)}to{transform:scale(1.045)}}@media(max-width:640px){.rh-hero{min-height:740px!important}.rh-hero-content{padding-top:170px!important}.rh-title{font-size:clamp(60px,16vw,90px)!important}}`}</style>
+<header style={{position:"absolute",zIndex:5,left:0,right:0,top:0,padding:"28px clamp(20px,5vw,80px)",display:"flex",justifyContent:"space-between",alignItems:"center",gap:20,fontFamily:"system-ui,sans-serif",fontSize:12,letterSpacing:2}}>
+<Link href={root} style={{color:"#fff",textDecoration:"none",fontWeight:700}}>RAINBOW HOUSE <span style={{opacity:.65,fontWeight:400}}> / ARTEMIS</span></Link><a href="https://rainbow-house.vercel.app/" style={{color:"#fff",textDecoration:"none",border:"1px solid #ffffff77",padding:"12px 16px",borderRadius:3}}>OFFICIAL SITE ↗</a></header>
+<section className="rh-hero" style={{position:"relative",minHeight:"min(880px,100svh)",background:"linear-gradient(180deg,#7397ad 0%,#a6b9b9 30%,#e0c49e 55%,#586c55 56%,#1c3931 78%,#122b25 100%)",isolation:"isolate"}}>
+<div className="rh-horizon" aria-hidden="true" style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 65% 30%,#f8e7c47a 0%,transparent 35%),linear-gradient(172deg,transparent 52%,#5d745f 52.4%,#536e5a 58%,transparent 58.4%),linear-gradient(188deg,transparent 62%,#365448 62.4%,#24473c 78%,transparent 78.4%)",opacity:.88}}/>
+<div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,#0a221dbd 0%,#122a2870 58%,transparent 100%),linear-gradient(0deg,#10231ee0 0%,transparent 55%)"}}/>
+<div className="rh-hero-content" style={{position:"relative",zIndex:1,maxWidth:1200,margin:"auto",padding:"clamp(210px,24vh,290px) clamp(24px,6vw,80px) 115px"}}>
+<p style={{fontFamily:"system-ui,sans-serif",fontSize:12,letterSpacing:4,color:"#f5dcac"}}>MARLBORO · HUDSON VALLEY · NEW YORK</p>
+<h1 className="rh-title" style={{fontSize:"clamp(76px,10vw,150px)",fontWeight:400,letterSpacing:"-.075em",lineHeight:.94,margin:"25px 0",maxWidth:920}}>Stay above<br/>the ordinary.</h1>
+<p style={{maxWidth:560,fontSize:"clamp(18px,2.2vw,24px)",lineHeight:1.6,color:"#f3eee4"}}>A private hillside retreat. A river-valley horizon. A little more room to slow down.</p>
+<div style={{display:"flex",gap:14,flexWrap:"wrap",marginTop:38,fontFamily:"system-ui,sans-serif",fontSize:13}}>
+<a href="https://rainbow-house.vercel.app/" style={{padding:"17px 23px",background:"#f0e2c1",color:"#142d27",textDecoration:"none",borderRadius:3,fontWeight:700}}>Explore the official site ↗</a><a href="#discover" style={{padding:"17px 23px",border:"1px solid #ffffffa8",color:"#fff",textDecoration:"none",borderRadius:3}}>Discover the retreat ↓</a></div>
+</div><span style={{position:"absolute",bottom:24,right:30,fontFamily:"system-ui,sans-serif",fontSize:11,color:"#f5eee0b8",letterSpacing:1}}>ART-DIRECTED LANDSCAPE PLACEHOLDER · APPROVED PHOTOGRAPHY PENDING</span></section>
+<section id="discover" style={{maxWidth:1250,margin:"auto",padding:"clamp(80px,10vw,140px) clamp(24px,6vw,80px)"}}>
+<p style={{fontFamily:"system-ui,sans-serif",fontSize:12,letterSpacing:3,color:"#d5bd8a"}}>A SENSE OF PLACE</p><h2 style={{fontSize:"clamp(40px,6vw,80px)",fontWeight:400,letterSpacing:"-.045em",lineHeight:1.1,maxWidth:850,margin:"18px 0 40px"}}>Come for the landscape.<br/><em>Stay for the feeling.</em></h2>
+<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(230px,1fr))",gap:18}}>{highlights.map(x=><article key={x.n} style={{padding:"35px 26px",borderTop:"1px solid #819c86",background:"#ffffff07"}}><span style={{fontFamily:"system-ui,sans-serif",color:"#d5bd8a",fontSize:12}}>{x.n}</span><h3 style={{fontSize:30,fontWeight:400,margin:"22px 0 14px"}}>{x.title}</h3><p style={{fontFamily:"system-ui,sans-serif",fontSize:14,lineHeight:1.85,color:"#cbd5cc"}}>{x.body}</p></article>)}</div></section>
+<section style={{background:"#e9e2d4",color:"#223b33",padding:"clamp(80px,10vw,140px) 24px",textAlign:"center"}}><p style={{fontFamily:"system-ui,sans-serif",fontSize:12,letterSpacing:3}}>YOUR HUDSON VALLEY ESCAPE</p><h2 style={{fontWeight:400,fontSize:"clamp(40px,6vw,76px)",margin:"24px auto",maxWidth:850}}>The best moments are often the quietest.</h2><p style={{fontFamily:"system-ui,sans-serif",lineHeight:1.8,maxWidth:620,margin:"auto auto 35px"}}>Plan your stay using the current official listing for accurate availability, occupancy, pricing, house rules and seasonal amenities.</p><a href="https://rainbow-house.vercel.app/" style={{display:"inline-block",background:"#223b33",color:"white",padding:"18px 30px",fontFamily:"system-ui,sans-serif",textDecoration:"none",borderRadius:3}}>View stay details ↗</a></section>
+<footer style={{padding:"35px clamp(24px,6vw,80px)",fontFamily:"system-ui,sans-serif",fontSize:12,lineHeight:1.8,color:"#b4c4b8"}}>RAINBOW HOUSE · MARLBORO, NEW YORK · Artemis client environment. Scenic background is a design illustration, not a photograph of the property. Family media is withheld pending consent. No reservations or payments are collected here.</footer></main>}
