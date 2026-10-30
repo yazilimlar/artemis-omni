@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-10-12T13:06:13.000Z",
+    "generated_at": "2026-10-30T14:53:37.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-10-12T13:06:13.000Z",
+  "generated_at": "2026-10-30T14:53:37.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -4127,6 +4127,562 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-192",
+      "type": "pr_merged",
+      "date": "2026-10-12T14:02:10.000Z",
+      "title": "Prompt C: MEP architecture scoping v2",
+      "summary": "Prompt C: MEP architecture scoping v2 (2 files changed).",
+      "references": [
+        "PR#192",
+        "41ec2d5"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-194",
+      "type": "pr_merged",
+      "date": "2026-10-12T19:23:49.000Z",
+      "title": "E0: evidence contract v2 types + checker",
+      "summary": "E0: evidence contract v2 types + checker (5 files changed).",
+      "references": [
+        "PR#194",
+        "f0a3b67"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-196",
+      "type": "pr_merged",
+      "date": "2026-10-12T20:10:51.000Z",
+      "title": "P2.1: register four model-derived drivers + non-duplication checker",
+      "summary": "P2.1: register four model-derived drivers + non-duplication checker (8 files changed).",
+      "references": [
+        "PR#196",
+        "adc8197"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-198",
+      "type": "pr_merged",
+      "date": "2026-10-12T20:51:20.000Z",
+      "title": "P4a: exhaust-fan commissioning vertical slice",
+      "summary": "P4a: exhaust-fan commissioning vertical slice (5 files changed).",
+      "references": [
+        "PR#198",
+        "4f94925"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-200",
+      "type": "pr_merged",
+      "date": "2026-10-12T22:39:28.000Z",
+      "title": "P4a-V: read-only commissioning visibility panel",
+      "summary": "P4a-V: read-only commissioning visibility panel (8 files changed).",
+      "references": [
+        "PR#200",
+        "ad09bd4"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-202",
+      "type": "pr_merged",
+      "date": "2026-10-13T00:09:49.000Z",
+      "title": "Labs/lab vis fix",
+      "summary": "Labs/lab vis fix (4 files changed).",
+      "references": [
+        "PR#202",
+        "c603b39"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-204",
+      "type": "pr_merged",
+      "date": "2026-10-15T19:22:46.000Z",
+      "title": "feat(labs): the Radcliffe Camera as the Gallery — Diana in orbit + reading room (v2 re-scope)",
+      "summary": "feat(labs): the Radcliffe Camera as the Gallery — Diana in orbit + reading room (v2 re-scope) (2 files changed).",
+      "references": [
+        "PR#204",
+        "7d72e16"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-206",
+      "type": "pr_merged",
+      "date": "2026-10-15T23:00:35.000Z",
+      "title": "feat(labs): Radcliffe becomes its own Diana style; classic Gallery grids restored",
+      "summary": "feat(labs): Radcliffe becomes its own Diana style; classic Gallery grids restored (2 files changed).",
+      "references": [
+        "PR#206",
+        "d1dc9ed"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-208",
+      "type": "pr_merged",
+      "date": "2026-10-25T12:56:46.000Z",
+      "title": "feat(nlpc): publish Rainbow House Marlboro client gateway",
+      "summary": "feat(nlpc): publish Rainbow House Marlboro client gateway (1 files changed).",
+      "references": [
+        "PR#208",
+        "fce9ba0"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-fce9ba0-new-client-environment-stay-rainbow-house-marlboro-v20261025",
+      "type": "route_added",
+      "date": "2026-10-25T12:56:46.000Z",
+      "title": "Route added: /new-client-environment/stay/rainbow-house-marlboro-v20261025",
+      "summary": "app/new-client-environment/stay/rainbow-house-marlboro-v20261025/page.tsx added in fce9ba0.",
+      "references": [
+        "fce9ba0",
+        "app/new-client-environment/stay/rainbow-house-marlboro-v20261025/page.tsx",
+        "PR#208"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-210",
+      "type": "pr_merged",
+      "date": "2026-10-25T13:11:55.000Z",
+      "title": "NLPC: Native Rainbow House guest experience (phase 2)",
+      "summary": "NLPC: Native Rainbow House guest experience (phase 2) (2 files changed).",
+      "references": [
+        "PR#210",
+        "af391e4"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-af391e4-new-client-environment-stay-rainbow-house-marlboro-v20261025-experience",
+      "type": "route_added",
+      "date": "2026-10-25T13:11:55.000Z",
+      "title": "Route added: /new-client-environment/stay/rainbow-house-marlboro-v20261025/experience",
+      "summary": "app/new-client-environment/stay/rainbow-house-marlboro-v20261025/experience/page.tsx added in af391e4.",
+      "references": [
+        "af391e4",
+        "app/new-client-environment/stay/rainbow-house-marlboro-v20261025/experience/page.tsx",
+        "PR#210"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-216",
+      "type": "pr_merged",
+      "date": "2026-10-28T20:50:59.000Z",
+      "title": "Labs: controlled-access entry page for the 2WTC estimate workspace",
+      "summary": "Labs: controlled-access entry page for the 2WTC estimate workspace (1 files changed).",
+      "references": [
+        "PR#216",
+        "37197d4"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-37197d4-labs-pending-contracts-george-mount-vernon-estimates-2wtc",
+      "type": "route_added",
+      "date": "2026-10-28T20:50:59.000Z",
+      "title": "Route added: /labs/pending-contracts/george-mount-vernon/estimates/2wtc",
+      "summary": "app/labs/pending-contracts/george-mount-vernon/estimates/2wtc/page.tsx added in 37197d4.",
+      "references": [
+        "37197d4",
+        "app/labs/pending-contracts/george-mount-vernon/estimates/2wtc/page.tsx",
+        "PR#216"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-218",
+      "type": "pr_merged",
+      "date": "2026-10-29T01:20:20.000Z",
+      "title": "About: publish ARTEMIS Tech Stack — About · Version A1 (TS-A1) at /about/tech-stack.a1",
+      "summary": "About: publish ARTEMIS Tech Stack — About · Version A1 (TS-A1) at /about/tech-stack.a1 (2 files changed).",
+      "references": [
+        "PR#218",
+        "c9ea6e1"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-c9ea6e1-about-tech-stack-a1",
+      "type": "route_added",
+      "date": "2026-10-29T01:20:20.000Z",
+      "title": "Route added: /about/tech-stack.a1",
+      "summary": "app/about/tech-stack.a1/page.tsx added in c9ea6e1.",
+      "references": [
+        "c9ea6e1",
+        "app/about/tech-stack.a1/page.tsx",
+        "PR#218"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-220",
+      "type": "pr_merged",
+      "date": "2026-10-29T01:52:03.000Z",
+      "title": "About: update TS-A1 at /about/tech-stack.a1 — Logo Emphasis Band build",
+      "summary": "About: update TS-A1 at /about/tech-stack.a1 — Logo Emphasis Band build (1 files changed).",
+      "references": [
+        "PR#220",
+        "d7f53f6"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-222",
+      "type": "pr_merged",
+      "date": "2026-10-29T02:07:00.000Z",
+      "title": "feat(about): Tech Stack A1 — OctopusG reposition, DeepSeek logo versions, 3D LEGO schematic",
+      "summary": "feat(about): Tech Stack A1 — OctopusG reposition, DeepSeek logo versions, 3D LEGO schematic (1 files changed).",
+      "references": [
+        "PR#222",
+        "ed8ca34"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-225",
+      "type": "pr_merged",
+      "date": "2026-10-29T02:31:50.000Z",
+      "title": "labs: /about/tech-stack.a1 — §04 redesigned as Collaboration Stage (One Model, Every Phase)",
+      "summary": "labs: /about/tech-stack.a1 — §04 redesigned as Collaboration Stage (One Model, Every Phase) (1 files changed).",
+      "references": [
+        "PR#225",
+        "28def4e"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-227",
+      "type": "pr_merged",
+      "date": "2026-10-29T09:02:29.000Z",
+      "title": "Tech Stack A1: fix OctopusG logo fit + liberate Collaboration Stage",
+      "summary": "Tech Stack A1: fix OctopusG logo fit + liberate Collaboration Stage (1 files changed).",
+      "references": [
+        "PR#227",
+        "b1d826f"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-229",
+      "type": "pr_merged",
+      "date": "2026-10-29T09:41:22.000Z",
+      "title": "Tech Stack A1: add 3D Logos auto-rotate toggle",
+      "summary": "Tech Stack A1: add 3D Logos auto-rotate toggle (1 files changed).",
+      "references": [
+        "PR#229",
+        "e03a87a"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-231",
+      "type": "pr_merged",
+      "date": "2026-10-29T12:00:31.000Z",
+      "title": "feat(demo): publish Go/No-Go A1-26 demo",
+      "summary": "feat(demo): publish Go/No-Go A1-26 demo (2 files changed).",
+      "references": [
+        "PR#231",
+        "6a1738e"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-6a1738e-demo-go-no-go-a1-26-muse",
+      "type": "route_added",
+      "date": "2026-10-29T12:00:31.000Z",
+      "title": "Route added: /demo/go-no-go-a1-26-muse",
+      "summary": "app/demo/go-no-go-a1-26-muse/page.tsx added in 6a1738e.",
+      "references": [
+        "6a1738e",
+        "app/demo/go-no-go-a1-26-muse/page.tsx",
+        "PR#231"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-233",
+      "type": "pr_merged",
+      "date": "2026-10-29T12:05:58.000Z",
+      "title": "Tech Stack A2: publish /academy/tech-stack-a2 with six view modes",
+      "summary": "Tech Stack A2: publish /academy/tech-stack-a2 with six view modes (2 files changed).",
+      "references": [
+        "PR#233",
+        "fcb07a6"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-fcb07a6-academy-tech-stack-a2",
+      "type": "route_added",
+      "date": "2026-10-29T12:05:58.000Z",
+      "title": "Route added: /academy/tech-stack-a2",
+      "summary": "app/academy/tech-stack-a2/page.tsx added in fcb07a6.",
+      "references": [
+        "fcb07a6",
+        "app/academy/tech-stack-a2/page.tsx",
+        "PR#233"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-235",
+      "type": "pr_merged",
+      "date": "2026-10-29T12:21:07.000Z",
+      "title": "feat(demo): forward /demo/pending-contracts/a1-estimates-01.01 to the gated ArtLoop workspace",
+      "summary": "feat(demo): forward /demo/pending-contracts/a1-estimates-01.01 to the gated ArtLoop workspace (2 files changed).",
+      "references": [
+        "PR#235",
+        "b4a779d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-237",
+      "type": "pr_merged",
+      "date": "2026-10-29T13:10:09.000Z",
+      "title": "labs: WDF Go / No-Go A1 GPT synthetic cockpit",
+      "summary": "labs: WDF Go / No-Go A1 GPT synthetic cockpit (3 files changed).",
+      "references": [
+        "PR#237",
+        "6930e24"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-6930e24-demo-go-no-go-a1-26-gpt",
+      "type": "route_added",
+      "date": "2026-10-29T13:10:09.000Z",
+      "title": "Route added: /demo/go-no-go-a1-26-gpt",
+      "summary": "app/demo/go-no-go-a1-26-gpt/page.tsx added in 6930e24.",
+      "references": [
+        "6930e24",
+        "app/demo/go-no-go-a1-26-gpt/page.tsx",
+        "PR#237"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-route-added-8e96164-demo-go-no-go-a3-art-grok",
+      "type": "route_added",
+      "date": "2026-10-29T13:18:32.000Z",
+      "title": "Route added: /demo/go-no-go-a3-art-grok",
+      "summary": "app/demo/go-no-go-a3-art-grok/page.tsx added in 8e96164.",
+      "references": [
+        "8e96164",
+        "app/demo/go-no-go-a3-art-grok/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-241",
+      "type": "pr_merged",
+      "date": "2026-10-29T14:18:22.000Z",
+      "title": "labs: A2 operations monitoring for WDF GPT Go/No-Go demo",
+      "summary": "labs: A2 operations monitoring for WDF GPT Go/No-Go demo (3 files changed).",
+      "references": [
+        "PR#241",
+        "373f3fc"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-243",
+      "type": "pr_merged",
+      "date": "2026-10-29T14:29:27.000Z",
+      "title": "Archive: TS-A2 milestone (frozen copy + milestone record)",
+      "summary": "Archive: TS-A2 milestone (frozen copy + milestone record) (4 files changed).",
+      "references": [
+        "PR#243",
+        "611c385"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-245",
+      "type": "pr_merged",
+      "date": "2026-10-29T18:08:06.000Z",
+      "title": "feat(demo): forward /demo/pending-contracts/b1-estimates-02.01 to the gated 350 Park workspace",
+      "summary": "feat(demo): forward /demo/pending-contracts/b1-estimates-02.01 to the gated 350 Park workspace (1 files changed).",
+      "references": [
+        "PR#245",
+        "7a6cd65"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-247",
+      "type": "pr_merged",
+      "date": "2026-10-29T20:30:42.000Z",
+      "title": "Tech Stack COM-01: publish /academy/tech-stack-com-01 combined edition",
+      "summary": "Tech Stack COM-01: publish /academy/tech-stack-com-01 combined edition (2 files changed).",
+      "references": [
+        "PR#247",
+        "28bbf9d"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-28bbf9d-academy-tech-stack-com-01",
+      "type": "route_added",
+      "date": "2026-10-29T20:30:42.000Z",
+      "title": "Route added: /academy/tech-stack-com-01",
+      "summary": "app/academy/tech-stack-com-01/page.tsx added in 28bbf9d.",
+      "references": [
+        "28bbf9d",
+        "app/academy/tech-stack-com-01/page.tsx",
+        "PR#247"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-249",
+      "type": "pr_merged",
+      "date": "2026-10-29T21:50:30.000Z",
+      "title": "Tech Stack COM-01: restore A2 hero-stack motion + section 04 auto-play",
+      "summary": "Tech Stack COM-01: restore A2 hero-stack motion + section 04 auto-play (1 files changed).",
+      "references": [
+        "PR#249",
+        "709b75b"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-pr-252",
+      "type": "pr_merged",
+      "date": "2026-10-30T14:35:41.000Z",
+      "title": "feat(tools): Artemis Method Engine — sign-in-gated tool (ADR-011/ADR-014)",
+      "summary": "feat(tools): Artemis Method Engine — sign-in-gated tool (ADR-011/ADR-014) (7 files changed).",
+      "references": [
+        "PR#252",
+        "c3e0293"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-c3e0293-tools-artemis-method-engine",
+      "type": "route_added",
+      "date": "2026-10-30T14:35:41.000Z",
+      "title": "Route added: /tools/artemis-method-engine",
+      "summary": "app/tools/artemis-method-engine/page.tsx added in c3e0293.",
+      "references": [
+        "c3e0293",
+        "app/tools/artemis-method-engine/page.tsx",
+        "PR#252"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-254",
+      "type": "pr_merged",
+      "date": "2026-10-30T14:53:37.000Z",
+      "title": "feat(labs): add /labs/private-links directory with 0001.HVAC-cont-org-demo entry",
+      "summary": "feat(labs): add /labs/private-links directory with 0001.HVAC-cont-org-demo entry (1 files changed).",
+      "references": [
+        "PR#254",
+        "495fcdd"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-495fcdd-labs-private-links",
+      "type": "route_added",
+      "date": "2026-10-30T14:53:37.000Z",
+      "title": "Route added: /labs/private-links",
+      "summary": "app/labs/private-links/page.tsx added in 495fcdd.",
+      "references": [
+        "495fcdd",
+        "app/labs/private-links/page.tsx",
+        "PR#254"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
     }
   ],
   "stats": {
@@ -4141,7 +4697,7 @@
     },
     "scenes_total": 7,
     "milestones_shipped": 7,
-    "prs_merged": 95,
+    "prs_merged": 123,
     "verified_capabilities": 8
   }
 }
