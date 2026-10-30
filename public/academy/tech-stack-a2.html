@@ -677,6 +677,7 @@
         </nav>
         <span class="stamp">TS-A2 · VERSION A2</span>
         <button class="motion" id="motionToggle" type="button" role="switch" aria-checked="true" aria-label="Motion"><i aria-hidden="true"></i><span id="motionLabel">MOTION ON</span></button>
+        <button class="motion" id="soundToggle" type="button" role="switch" aria-checked="false" aria-label="Sound"><i aria-hidden="true"></i><span id="soundLabel">SOUND OFF</span></button>
       </div>
       <div class="modebar">
         <div class="wrap modebar-in">
@@ -1314,6 +1315,381 @@
         var mqChange = function () { if (mq.matches) { motion = false; applyMotion(); } };
         if (mq.addEventListener) mq.addEventListener('change', mqChange); else if (mq.addListener) mq.addListener(mqChange);
 
+                /* ---------- room tone: generative audio layer (sound is opt-in, silent by default) ---------- */
+        var AU = (function () {
+          var FREQ = [146.83, 174.61, 196.00, 220.00, 261.63, 293.66];
+          var KNOCK = [146.83, 164.81, 174.61, 196.00, 220.00, 174.61, 220.00];
+          var PIANO = [220.00, 261.63, 293.66, 349.23, 392.00, 440.00, 523.25, 587.33];
+          var TARGET = 0.12;
+          var AC = window.AudioContext || window.webkitAudioContext || null;
+          var sBtn = document.getElementById('soundToggle');
+          var sLab = document.getElementById('soundLabel');
+          var savedS = null;
+          try { savedS = localStorage.getItem('tsA2Sound'); } catch (e) {}
+          var aud = {
+            ctx: null, on: false, built: false, mode: 'dark', motionOn: true,
+            nav: -1, navSeen: false, navLast: 0, shots: [], lastLayer: 0, lastUserLayer: -1e9,
+            px: 0, py: 0, lastMoveT: 0, lastX: 0, lastY: 0, breathLast: 0, idleClosed: false,
+            dragging: false, rot: 0, scrubV: 0, scrubConc: false,
+            vis: {}, lastOut: null, tickLast: 0, matchOn: false, riskOn: false,
+            lastPiano: 0, nextPiano: 6000, engAlt: 0, lastEng: 0, lastPulse: 0,
+            pianoF: 1, pianoDecay: 2.2, noiseF: 1, bedF: 1, air: 0, ticksOk: true, dry: 1
+          };
+          function save(v) { savedS = v; try { localStorage.setItem('tsA2Sound', v); } catch (e) {} }
+          function paint() {
+            if (!sBtn) return;
+            sBtn.setAttribute('aria-checked', aud.on ? 'true' : 'false');
+            if (sLab) sLab.textContent = aud.on ? 'SOUND ON' : 'SOUND OFF';
+          }
+          function budget() {
+            var now = performance.now();
+            aud.shots = aud.shots.filter(function (t) { return now - t < 400; });
+            if (aud.shots.length >= 2) return false;
+            aud.shots.push(now);
+            return true;
+          }
+          function live() { return !!(aud.ctx && aud.on && aud.ctx.state === 'running'); }
+          function ramp(param, v, t) { if (param) param.setTargetAtTime(v, aud.ctx.currentTime, t); }
+          function build() {
+            if (aud.built || !AC) return;
+            var ctx = new AC();
+            aud.ctx = ctx;
+            aud.bus = ctx.createGain();
+            aud.shelf = ctx.createBiquadFilter(); aud.shelf.type = 'highshelf'; aud.shelf.frequency.value = 3800;
+            aud.pan = (ctx.createStereoPanner) ? ctx.createStereoPanner() : null;
+            aud.master = ctx.createGain(); aud.master.gain.value = 0;
+            aud.hp = ctx.createBiquadFilter(); aud.hp.type = 'highpass'; aud.hp.frequency.value = 120;
+            aud.lp = ctx.createBiquadFilter(); aud.lp.type = 'lowpass'; aud.lp.frequency.value = 6000;
+            aud.comp = ctx.createDynamicsCompressor();
+            aud.comp.threshold.value = -20; aud.comp.knee.value = 18; aud.comp.ratio.value = 8;
+            aud.comp.attack.value = 0.01; aud.comp.release.value = 0.24;
+            aud.bus.connect(aud.shelf);
+            if (aud.pan) { aud.shelf.connect(aud.pan); aud.pan.connect(aud.master); } else aud.shelf.connect(aud.master);
+            aud.master.connect(aud.hp); aud.hp.connect(aud.lp); aud.lp.connect(aud.comp); aud.comp.connect(ctx.destination);
+            /* bed: D2 + A2, detuned pair, drifting lowpass */
+            aud.bedFilter = ctx.createBiquadFilter(); aud.bedFilter.type = 'lowpass'; aud.bedFilter.frequency.value = 400; aud.bedFilter.Q.value = 0.4;
+            aud.bedGain = ctx.createGain(); aud.bedGain.gain.value = 0.05 * aud.bedF;
+            aud.bedFilter.connect(aud.bedGain); aud.bedGain.connect(aud.bus);
+            var o1 = ctx.createOscillator(); o1.type = 'sine'; o1.frequency.value = 73.42; o1.detune.value = 4;
+            var o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = 110.00; o2.detune.value = -4;
+            var g1 = ctx.createGain(); g1.gain.value = 0.55; var g2 = ctx.createGain(); g2.gain.value = 0.45;
+            o1.connect(g1); g1.connect(aud.bedFilter); o2.connect(g2); g2.connect(aud.bedFilter);
+            o1.start(); o2.start();
+            var lfo = ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.04;
+            var lfoG = ctx.createGain(); lfoG.gain.value = 110; lfo.connect(lfoG); lfoG.connect(aud.bedFilter.frequency); lfo.start();
+            /* shared noise buffer */
+            var len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), ch = buf.getChannelData(0);
+            for (var i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+            aud.noiseBuf = buf;
+            function noiseSrc() { var n = ctx.createBufferSource(); n.buffer = buf; n.loop = true; return n; }
+            aud.floorGain = ctx.createGain(); aud.floorGain.gain.value = 0.013 * aud.noiseF;
+            var nf = ctx.createBiquadFilter(); nf.type = 'lowpass'; nf.frequency.value = 720;
+            var ns = noiseSrc(); ns.connect(nf); nf.connect(aud.floorGain); aud.floorGain.connect(aud.bus); ns.start();
+            /* rain (matrix, motion-gated) */
+            aud.rainGain = ctx.createGain(); aud.rainGain.gain.value = 0;
+            var rf = ctx.createBiquadFilter(); rf.type = 'bandpass'; rf.frequency.value = 1900; rf.Q.value = 0.5;
+            var rs = noiseSrc(); rs.connect(rf); rf.connect(aud.rainGain); aud.rainGain.connect(aud.bus); rs.start();
+            /* lifecycle bowed voices */
+            aud.lifeGain = ctx.createGain(); aud.lifeGain.gain.value = 0;
+            var lf = ctx.createBiquadFilter(); lf.type = 'lowpass'; lf.frequency.value = 640;
+            var lo1 = ctx.createOscillator(); lo1.type = 'triangle'; lo1.frequency.value = 146.83;
+            var lo2 = ctx.createOscillator(); lo2.type = 'triangle'; lo2.frequency.value = 147.60;
+            lo1.connect(lf); lo2.connect(lf); lf.connect(aud.lifeGain); aud.lifeGain.connect(aud.bus); lo1.start(); lo2.start();
+            aud.life2Gain = ctx.createGain(); aud.life2Gain.gain.value = 0;
+            var lo3 = ctx.createOscillator(); lo3.type = 'sine'; lo3.frequency.value = 220.00;
+            lo3.connect(aud.life2Gain); aud.life2Gain.connect(aud.bus); lo3.start();
+            /* orchestrator low tone */
+            aud.orchFilter = ctx.createBiquadFilter(); aud.orchFilter.type = 'lowpass'; aud.orchFilter.frequency.value = 260;
+            aud.orchGain = ctx.createGain(); aud.orchGain.gain.value = 0;
+            var oo1 = ctx.createOscillator(); oo1.type = 'sine'; oo1.frequency.value = 73.42;
+            var oo2 = ctx.createOscillator(); oo2.type = 'sine'; oo2.frequency.value = 146.83;
+            oo1.connect(aud.orchFilter); oo2.connect(aud.orchFilter); aud.orchFilter.connect(aud.orchGain); aud.orchGain.connect(aud.bus);
+            oo1.start(); oo2.start();
+            /* constellation held tone F3 + C4 */
+            aud.constGain = ctx.createGain(); aud.constGain.gain.value = 0;
+            var co1 = ctx.createOscillator(); co1.type = 'sine'; co1.frequency.value = 174.61;
+            var co2 = ctx.createOscillator(); co2.type = 'sine'; co2.frequency.value = 261.63;
+            co1.connect(aud.constGain); co2.connect(aud.constGain); aud.constGain.connect(aud.bus); co1.start(); co2.start();
+            /* calculator risk tension: F3 + Ab3 held quietly while P80 is on */
+            aud.riskGain = ctx.createGain(); aud.riskGain.gain.value = 0;
+            var ro1 = ctx.createOscillator(); ro1.type = 'sine'; ro1.frequency.value = 174.61;
+            var ro2 = ctx.createOscillator(); ro2.type = 'sine'; ro2.frequency.value = 207.65;
+            ro1.connect(aud.riskGain); ro2.connect(aud.riskGain); aud.riskGain.connect(aud.bus); ro1.start(); ro2.start();
+            /* hero drag friction */
+            aud.fricGain = ctx.createGain(); aud.fricGain.gain.value = 0;
+            aud.fric = ctx.createOscillator(); aud.fric.type = 'sine'; aud.fric.frequency.value = 220;
+            aud.fric.connect(aud.fricGain); aud.fricGain.connect(aud.bus); aud.fric.start();
+            aud.built = true;
+            applyMode();
+          }
+          function fadeMaster(v, secs) {
+            if (!aud.ctx) return;
+            var t = aud.ctx.currentTime;
+            aud.master.gain.cancelScheduledValues(t);
+            aud.master.gain.setValueAtTime(aud.master.gain.value, t);
+            aud.master.gain.linearRampToValueAtTime(v, t + secs);
+          }
+          function startCtx() {
+            if (!AC) return;
+            build();
+            if (!aud.ctx) return;
+            if (aud.ctx.state !== 'running') { var p = aud.ctx.resume(); if (p && p.catch) p.catch(function () {}); }
+            fadeMaster(TARGET, 2.5);
+          }
+          function enable(persist) {
+            aud.on = true;
+            if (persist) save('1');
+            paint();
+            startCtx();
+          }
+          function disable(persist) {
+            aud.on = false;
+            if (persist) save('0');
+            paint();
+            if (aud.ctx) {
+              fadeMaster(0, 1);
+              var c = aud.ctx;
+              setTimeout(function () { if (!aud.on && c.state === 'running') { var p = c.suspend(); if (p && p.catch) p.catch(function () {}); } }, 1080);
+            }
+          }
+          function note(freq, peak, decay, when) {
+            if (!live()) return;
+            var ctx = aud.ctx, t = ctx.currentTime + (when || 0);
+            var g = ctx.createGain();
+            g.gain.setValueAtTime(0, t);
+            g.gain.linearRampToValueAtTime(peak, t + 0.012);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+            var o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = freq;
+            var o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 2;
+            var g2 = ctx.createGain(); g2.gain.value = 0.32;
+            o.connect(g); o2.connect(g2); g2.connect(g); g.connect(aud.bus);
+            o.start(t); o2.start(t); o.stop(t + decay + 0.1); o2.stop(t + decay + 0.1);
+          }
+          function tick(freq, peak, decay) {
+            if (!live() || !aud.ticksOk) return;
+            var ctx = aud.ctx, t = ctx.currentTime;
+            var g = ctx.createGain();
+            g.gain.setValueAtTime(peak, t);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+            var o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = freq;
+            o.connect(g); g.connect(aud.bus); o.start(t); o.stop(t + decay + 0.05);
+          }
+          function applyMode() {
+            var m = aud.mode;
+            aud.pianoF = 1; aud.pianoDecay = 2.2; aud.noiseF = 1; aud.bedF = 1; aud.air = 0; aud.ticksOk = true; aud.dry = 1;
+            if (m === 'day') { aud.bedF = 0.8; aud.air = 2; }
+            else if (m === 'exec') { aud.noiseF = 0.5; aud.pianoF = 1.25; aud.dry = 0.8; }
+            else if (m === 'exec-blue') { aud.air = 1; aud.pianoDecay = 2.9; }
+            else if (m === 'tty') { aud.pianoF = 0; aud.ticksOk = false; }
+            else if (m === 'matrix') { aud.bedF = 0.6; aud.pianoF = 0.8; }
+            if (!aud.ctx) return;
+            ramp(aud.bedGain.gain, 0.05 * aud.bedF, 0.6);
+            ramp(aud.floorGain.gain, 0.013 * aud.noiseF, 0.6);
+            ramp(aud.rainGain.gain, (m === 'matrix' && aud.motionOn && aud.on) ? 0.014 : 0, 0.8);
+          }
+          /* scheduler: piano, engines fifth, network pulse */
+          setInterval(function () {
+            if (!live()) return;
+            var now = performance.now();
+            var idle = now - aud.lastMoveT > 4000;
+            if (aud.pianoF > 0 && !idle && now >= aud.nextPiano) {
+              aud.nextPiano = now + 7000 + Math.random() * 7000;
+              if (budget()) {
+                var f = PIANO[Math.floor(Math.random() * PIANO.length)];
+                var dec = aud.pianoDecay * (aud.visNow === 'standards' ? 0.65 : 1) * aud.dry;
+                note(f, 0.045 * aud.pianoF, dec, 0);
+              }
+            }
+            if (aud.vis.engines && now - aud.lastEng > 10000) {
+              aud.lastEng = now;
+              if (budget()) { note(aud.engAlt ? 440.00 : 659.25, 0.018, 2.6, 0); aud.engAlt = aud.engAlt ? 0 : 1; }
+            }
+            if (aud.vis.network && now - aud.lastPulse > 8000) {
+              aud.lastPulse = now;
+              if (budget()) note(196.00, 0.016, 0.6, 0);
+            }
+          }, 900);
+          /* pointer: one passive listener, stores only */
+          window.addEventListener('pointermove', function (e) {
+            var now = performance.now();
+            if (aud.lastMoveT) {
+              var dt = now - aud.lastMoveT;
+              if (dt > 0) {
+                var dx = e.clientX - aud.lastX, dy = e.clientY - aud.lastY;
+                var sp = Math.sqrt(dx * dx + dy * dy) / dt;
+                if (sp > 0.8 && now - aud.breathLast > 500 && live() && budget()) {
+                  aud.breathLast = now;
+                  var ctx = aud.ctx, t = ctx.currentTime;
+                  var src = ctx.createBufferSource(); src.buffer = aud.noiseBuf;
+                  var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 880; bp.Q.value = 0.7;
+                  var g = ctx.createGain();
+                  g.gain.setValueAtTime(0, t);
+                  g.gain.linearRampToValueAtTime(0.02, t + 0.05);
+                  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.19);
+                  src.connect(bp); bp.connect(g); g.connect(aud.bus);
+                  src.start(t); src.stop(t + 0.25);
+                }
+              }
+            }
+            aud.px = e.clientX; aud.py = e.clientY; aud.lastX = e.clientX; aud.lastY = e.clientY; aud.lastMoveT = now;
+          }, { passive: true });
+          /* first gesture arms the room (never scroll, never the sound switch itself) */
+          function gesture(e) {
+            if (e.target && e.target.closest && e.target.closest('#soundToggle')) return;
+            if (aud.on) { if (aud.ctx && aud.ctx.state !== 'running') startCtx(); else if (!aud.ctx) startCtx(); return; }
+            if (savedS === null && !mq.matches) enable(true);
+          }
+          document.addEventListener('pointerdown', gesture);
+          document.addEventListener('keydown', gesture);
+          document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape' || !aud.on) return;
+            var tg = e.target, tag = tg && tg.tagName ? tg.tagName.toLowerCase() : '';
+            if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+            disable(true);
+          });
+          document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+              if (aud.on && aud.ctx && aud.ctx.state === 'running') {
+                fadeMaster(0, 0.4);
+                var c = aud.ctx;
+                setTimeout(function () { if (document.hidden && c.state === 'running') { var p = c.suspend(); if (p && p.catch) p.catch(function () {}); } }, 460);
+              }
+            } else if (aud.on) startCtx();
+          });
+          /* generic quiet tick for ordinary buttons (not orbs, not the sound switch turning off) */
+          document.addEventListener('click', function (e) {
+            var b = e.target && e.target.closest ? e.target.closest('button') : null;
+            if (!b || !live()) return;
+            if (b.classList && b.classList.contains('orb')) return;
+            if (b.id === 'soundToggle' && !aud.on) return;
+            if (budget()) tick(740, 0.012, 0.04);
+          });
+          /* section stems */
+          aud.visNow = '';
+          if ('IntersectionObserver' in window) {
+            var secMap = [
+              ['header#top', 'top'], ['section#engines', 'engines'], ['section#platform', 'platform'],
+              ['section#stack', 'stack'], ['section#lifecycle', 'lifecycle'], ['section#standards', 'standards'],
+              ['section#network', 'network'], ['div#orchestrator', 'orchestrator']
+            ];
+            var ratios = {};
+            var sio = new IntersectionObserver(function (es) {
+              es.forEach(function (en) { ratios[en.target.getAttribute('data-au')] = en.intersectionRatio; });
+              var best = '', br = 0.34;
+              for (var k in ratios) if (ratios[k] > br) { br = ratios[k]; best = k; }
+              aud.visNow = best;
+              aud.vis = {};
+              for (var k2 in ratios) if (ratios[k2] >= 0.35) aud.vis[k2] = true;
+            }, { threshold: [0, 0.35, 0.6, 1] });
+            secMap.forEach(function (pair) {
+              var el = document.querySelector(pair[0]);
+              if (el) { el.setAttribute('data-au', pair[1]); sio.observe(el); }
+            });
+          }
+          if (sBtn) {
+            if (!AC) { sBtn.disabled = true; }
+            else sBtn.addEventListener('click', function () { if (aud.on) disable(true); else enable(true); });
+          }
+          if (savedS === '1') { aud.on = true; }
+          paint();
+          return {
+            frame: function () {
+              if (!aud.ctx || !aud.on) return;
+              if (aud.pan) {
+                var tx = Math.max(-0.15, Math.min(0.15, (aud.px / Math.max(1, window.innerWidth) - 0.5) * 0.3));
+                aud.pan.pan.value += (tx - aud.pan.pan.value) * 0.04;
+              }
+              var tb = aud.air + (0.5 - aud.py / Math.max(1, window.innerHeight)) * 3;
+              tb = Math.max(-1.5 + aud.air, Math.min(1.5 + aud.air, tb));
+              aud.shelf.gain.value += (tb - aud.shelf.gain.value) * 0.04;
+              var idle = performance.now() - aud.lastMoveT > 4000;
+              if (idle !== aud.idleClosed) {
+                aud.idleClosed = idle;
+                ramp(aud.bedFilter.frequency, idle ? 250 : 400, 1.2);
+              }
+              if (aud.dragging && aud.fric) {
+                var r = ((aud.rot % 360) + 360) % 360;
+                aud.fric.frequency.value = 196.00 + (r / 360) * (293.66 - 196.00);
+              }
+              var lv = aud.vis.lifecycle ? 1 : 0;
+              var g1 = lv * (aud.scrubV / 100) * 0.035, g2 = (lv && aud.scrubConc) ? 0.02 : 0;
+              aud.lifeGain.gain.value += (g1 - aud.lifeGain.gain.value) * 0.08;
+              aud.life2Gain.gain.value += (g2 - aud.life2Gain.gain.value) * 0.08;
+            },
+            layerNote: function (i, fromUser) {
+              if (!live()) return;
+              var now = performance.now();
+              if (now - aud.lastLayer < 900) return;
+              if (!fromUser && now - aud.lastUserLayer < 1800) return;
+              aud.lastLayer = now;
+              if (fromUser) aud.lastUserLayer = now;
+              if (!budget()) return;
+              note(FREQ[i], fromUser ? 0.055 : 0.028, 1.4, 0);
+            },
+            dragStart: function () { aud.dragging = true; if (live()) ramp(aud.fricGain.gain, 0.016, 0.1); },
+            dragRot: function (rz) { aud.rot = rz; },
+            dragEnd: function () { aud.dragging = false; if (aud.ctx) ramp(aud.fricGain.gain, 0, 0.12); },
+            explode: function () {
+              if (!live() || !budget()) return;
+              for (var i = 0; i < 6; i++) note(FREQ[i], 0.015, 0.55, i * 0.04);
+            },
+            settle: function () {
+              if (!live() || !budget()) return;
+              note(293.66, 0.011, 0.4, 0); note(220.00, 0.011, 0.4, 0.07); note(146.83, 0.011, 0.5, 0.14);
+            },
+            constHover: function (onH) { if (aud.ctx) ramp(aud.constGain.gain, onH ? 0.013 : 0, onH ? 0.3 : 0.45); },
+            showTone: function () { if (live() && budget()) { note(174.61, 0.026, 1.3, 0); note(261.63, 0.02, 1.3, 0); } },
+            navSpy: function (cur) {
+              if (!aud.navSeen) { aud.navSeen = true; aud.nav = cur; return; }
+              if (cur === aud.nav) return;
+              aud.nav = cur;
+              if (cur < 0 || !live()) return;
+              var now = performance.now();
+              if (now - aud.navLast < 700) return;
+              aud.navLast = now;
+              if (!budget()) return;
+              var f = KNOCK[cur] || 176;
+              var ctx = aud.ctx, t = ctx.currentTime;
+              var g = ctx.createGain();
+              g.gain.setValueAtTime(cur === 6 ? 0.013 : 0.02, t);
+              g.gain.exponentialRampToValueAtTime(0.0001, t + (cur === 6 ? 0.24 : 0.13));
+              var o = ctx.createOscillator(); o.type = 'sine';
+              o.frequency.setValueAtTime(f, t);
+              o.frequency.exponentialRampToValueAtTime(f * 0.92, t + 0.1);
+              o.connect(g); g.connect(aud.bus); o.start(t); o.stop(t + 0.3);
+            },
+            calcRender: function (str, ratio, matchVis) {
+              if (!live()) return;
+              var now = performance.now();
+              if (aud.lastOut !== null && str !== aud.lastOut && now - aud.tickLast >= 125) {
+                aud.tickLast = now;
+                if (budget()) tick(Math.max(500, Math.min(900, 620 + (ratio - 1) * 260)), 0.011, 0.05);
+              }
+              aud.lastOut = str;
+              if (matchVis && !aud.matchOn) { if (budget()) { note(146.83, 0.03, 1.1, 0); note(220.00, 0.026, 1.1, 0); } }
+              aud.matchOn = matchVis;
+            },
+            risk: function (r) {
+              aud.riskOn = r > 1;
+              if (aud.ctx) ramp(aud.riskGain.gain, (aud.riskOn && aud.on) ? 0.013 : 0, 0.8);
+            },
+            scrub: function (v, conc) { aud.scrubV = v; aud.scrubConc = conc; },
+            clockTick: function () { if (live() && aud.vis.network && budget()) tick(980, 0.007, 0.03); },
+            cmdStep: function (i) {
+              if (!aud.ctx || !aud.on) return;
+              var F = [240, 300, 175, 430, 330], G = [0.02, 0.02, 0.011, 0.022, 0.019];
+              var vis = aud.vis.orchestrator ? 1 : 0;
+              ramp(aud.orchFilter.frequency, F[i % 5], 0.4);
+              ramp(aud.orchGain.gain, vis * (G[i % 5] || 0.018), 0.4);
+            },
+            setModeAudio: function (m) { aud.mode = m; applyMode(); },
+            motionChanged: function (m) {
+              aud.motionOn = m;
+              if (aud.ctx) ramp(aud.rainGain.gain, (aud.mode === 'matrix' && m && aud.on) ? 0.014 : 0, 0.5);
+            }
+          };
+        })();
+        onMotion(function (m) { AU.motionChanged(m); });
         var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
 
         /* ---------- scroll progress + active nav ---------- */
@@ -1325,6 +1701,7 @@
           prog.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, window.scrollY / h) : 0) + ')';
           var cur = -1;
           navTargets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top < 140) cur = i; });
+          AU.navSpy(cur);
           navLinks.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
         }
         window.addEventListener('scroll', onScroll, { passive: true });
@@ -1399,6 +1776,7 @@
           document.getElementById('roNo').textContent = L[0] + ' / 6';
           document.getElementById('roTitle').textContent = L[1];
           document.getElementById('roText').innerHTML = L[3];
+          AU.layerNote(i, fromUser);
           layerRows.forEach(function (r, j) { r.classList.toggle('on', j === i); });
           layoutStack();
           if (fromUser) { idleSpin = false; clearTimeout(spinT); spinT = setTimeout(function () { idleSpin = true; }, 6000); }
@@ -1414,27 +1792,31 @@
         stage.addEventListener('pointerdown', function (e) {
           dragging = true; moved = false; lastX = e.clientX; lastY = e.clientY; idleSpin = false;
           stage.classList.add('dragging');
+          AU.dragStart();
         });
         window.addEventListener('pointermove', function (e) {
           if (!dragging) return;
           var dx = e.clientX - lastX, dy = e.clientY - lastY;
           if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
           rotZ += dx * 0.45; tilt = Math.max(25, Math.min(75, tilt - dy * 0.25));
+          AU.dragRot(rotZ);
           lastX = e.clientX; lastY = e.clientY;
           layoutStack();
         });
         window.addEventListener('pointerup', function () {
           if (!dragging) return;
           dragging = false; stage.classList.remove('dragging');
+          AU.dragEnd();
           clearTimeout(spinT); spinT = setTimeout(function () { idleSpin = true; }, 5000);
           setTimeout(function () { moved = false; }, 0);
         });
-        stage.addEventListener('mouseenter', function () { explode = 1.45; layoutStack(); });
-        stage.addEventListener('mouseleave', function () { explode = 1; layoutStack(); });
+        stage.addEventListener('mouseenter', function () { explode = 1.45; layoutStack(); AU.explode(); });
+        stage.addEventListener('mouseleave', function () { explode = 1; layoutStack(); AU.settle(); });
         var heroVisible = true;
         if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { heroVisible = es[0].isIntersecting; }).observe(stage);
         var lastCycle = 0;
         function heroTick(ts) {
+        AU.frame();
           if (motion && heroVisible && idleSpin && !dragging) {
             rotZ += 0.08;
             if (!lastCycle) lastCycle = ts;
@@ -1522,10 +1904,10 @@
               o.spoke = ln;
             }
             b.addEventListener('click', function () { show(o); });
-            b.addEventListener('mouseenter', function () { hoverPause = true; });
-            b.addEventListener('mouseleave', function () { hoverPause = false; });
-            b.addEventListener('focus', function () { hoverPause = true; });
-            b.addEventListener('blur', function () { hoverPause = false; });
+            b.addEventListener('mouseenter', function () { hoverPause = true; AU.constHover(true); });
+            b.addEventListener('mouseleave', function () { hoverPause = false; AU.constHover(false); });
+            b.addEventListener('focus', function () { hoverPause = true; AU.constHover(true); });
+            b.addEventListener('blur', function () { hoverPause = false; AU.constHover(false); });
             orbs.push(o);
           });
         });
@@ -1535,6 +1917,7 @@
           orbs.forEach(function (x) { x.el.classList.toggle('sel', x === o); });
           selOrb = o;
           detail.innerHTML = '<div class="d-tier">' + it.tier.replace(/&/g, '&amp;') + '</div><div class="d-plate">' + plateHTML(it) + '</div><h3>' + it.name + '</h3><p>' + it.role.replace(/&(?!amp;)/g, '&amp;') + '</p><div class="d-meta">' + (o ? 'RING ' + o.ring + ' · ' : 'CENTER · ') + 'REAL MARK, LABELED — NOTHING REDRAWN</div>';
+          AU.showTone();
           if (it === CORE) detail.querySelector('.d-plate').style.background = '#05090f';
         }
         document.getElementById('core').addEventListener('click', function () { show(null); });
@@ -1617,9 +2000,11 @@
             document.getElementById('ratio').textContent = Math.round(r * 100) + '%';
             document.getElementById('meterFill').style.width = Math.min(100, (r / MAXR) * 100) + '%';
             document.getElementById('match').hidden = !(a === BASE.area && Math.abs(d - BASE.density) < 1e-9 && risk === 1);
+            AU.calcRender(document.getElementById('out-lb').textContent + '|' + document.getElementById('out-tons').textContent + '|' + document.getElementById('out-direct').textContent + '|' + document.getElementById('out-sov').textContent + '|' + document.getElementById('out-days').textContent, r, !document.getElementById('match').hidden);
           }
           function setRisk(r, name, on, off) {
             risk = r; riskName = name;
+            AU.risk(r);
             on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false');
             render();
           }
@@ -1655,6 +2040,7 @@
             });
             var names = PH.filter(function (p, i) { return live[i]; }).map(function (p) { return p[0].replace('&', '&amp;'); });
             now.innerHTML = (names.length > 1 ? 'Running concurrently: ' : 'Live now: ') + '<b>' + names.join(' + ') + '</b>';
+            AU.scrub(v, names.length > 1);
           }
           var playing = false, dir = 1, last = 0, userTouched = false;
           function setPlay(p) { playing = p; playBtn.textContent = p ? 'PAUSE' : 'AUTO-PLAY'; }
@@ -1733,6 +2119,7 @@
               try { c.textContent = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: c.getAttribute('data-tz') }); }
               catch (e) { c.textContent = ''; }
             });
+            AU.clockTick();
           }
           tickClocks(); setInterval(tickClocks, 15000);
         })();
@@ -1745,7 +2132,7 @@
             clearInterval(timer);
             if (!m) { steps.forEach(function (s) { s.classList.remove('on'); }); return; }
             timer = setInterval(function () {
-              steps.forEach(function (s, j) { s.classList.toggle('on', j === i); });
+              steps.forEach(function (s, j) { s.classList.toggle('on', j === i); }); AU.cmdStep(i);
               i = (i + 1) % steps.length;
             }, 1100);
           }
@@ -1795,7 +2182,7 @@
             if (MODES[m][1]) root.setAttribute('data-layout', MODES[m][1]); else root.removeAttribute('data-layout');
             btns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-mode') === m ? 'true' : 'false'); });
             if (meta) meta.setAttribute('content', MODES[m][2]);
-            setRain(m === 'matrix' && motion);
+            setRain(m === 'matrix' && motion); AU.setModeAudio(m);
             if (save) { try { localStorage.setItem('tsA2View', m); } catch (e) {} }
             window.dispatchEvent(new Event('resize'));
           }
