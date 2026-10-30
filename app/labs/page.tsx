@@ -225,6 +225,9 @@ export default function LabsPage() {
       return product && href ? [{ title: product.name, href }] : [];
     }),
     { title: "Rainbow House Botanical Encyclopedia", href: "/labs/rainbow-house-botanical" },
+    { title: "Lab Note: Cost-Curve Hero Without WebGL", href: "/labs/cost-curve-webgl-demo" },
+    { title: "Utility Intelligence Bridge — 3D Model", href: "/labs/utility-intelligence-bridge/3d-model" },
+    { title: "CivicBid Signal Forge — Bid Room v2.1 (review)", href: "/labs/civicbid-signal-forge" },
   ];
   const divisionNames = new Map(loadDivisions().map((division) => [division.id, division.name]));
   const divisionMissions = new Map(loadDivisions().map((division) => [division.id, division.mission]));

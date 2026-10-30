@@ -57,6 +57,19 @@ export default function AboutPage() {
       <section className="border-t border-border/60 py-16 lg:py-20">
         <Container className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
           <SectionHeading
+            eyebrow="Tech Stack"
+            title="The technology stack, stated plainly"
+            description="Document TS-A1 is the official Version A1 statement of the ARTEMIS platform: the six-layer Live 5D model, the assembled stack, the collaboration stage, and the standards and evidence it stands on."
+          />
+          <Button href="/about/tech-stack.a1" size="lg">
+            Read the Tech Stack · A1
+          </Button>
+        </Container>
+      </section>
+
+      <section className="border-t border-border/60 py-16 lg:py-20">
+        <Container className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+          <SectionHeading
             eyebrow="Phase"
             title="A prototype, built deliberately"
             description="Artemis is an early-stage prototype. We build in focused increments, validate on real project data, and measure outcomes before we expand scope."

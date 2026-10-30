@@ -24,6 +24,8 @@ const labRoutes: SiteLink[] = [
   { label: "QA Capture Studio", href: "/labs/utility-intelligence-bridge/qa-capture-studio" },
   { label: "Artemis IX-19", href: "/labs/artemisix19" },
   { label: "CivicBid Intelligence Bridge", href: "/labs/civicbid-intelligence-bridge" },
+  { label: "CivicBid Signal Forge · Bid Room v2.1 (review)", href: "/labs/civicbid-signal-forge" },
+  { label: "Lab Note: Cost-Curve Hero Without WebGL", href: "/labs/cost-curve-webgl-demo" },
   { label: "Construction Intelligence Workbench", href: "/labs/construction-intelligence-workbench" },
   { label: "NYC Sewer Simulator", href: "/labs/nyc-sewer-simulator" },
   { label: "Geodesic Intelligence", href: "/labs/geodesic-intelligence" },
@@ -74,6 +76,8 @@ const groups: SiteGroup[] = [
     heading: "Learn",
     links: [
       { label: "Academy", href: "/academy" },
+      { label: "Tech Stack — Academy · A2", href: "/academy/tech-stack-a2" },
+      { label: "Tech Stack — Combined · COM-01", href: "/academy/tech-stack-com-01" },
       { label: "Library", href: "/library" },
       { label: "Library Programs", href: "/library/programs" },
       { label: "Insights", href: "/insights" },
@@ -89,7 +93,9 @@ const groups: SiteGroup[] = [
     heading: "Company",
     links: [
       { label: "About", href: "/about" },
+      { label: "Tech Stack — About · A1", href: "/about/tech-stack.a1" },
       { label: "Departments", href: "/departments" },
+      { label: "Artemis Art · Sala Rotonda", href: "/departments/art/sala-rotonda" },
       { label: "Contact", href: "/contact" },
     ],
   },
