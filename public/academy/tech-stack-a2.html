@@ -837,7 +837,7 @@
                 <div class="dp-body" id="dianaPanelBody">
                   <div class="dp-row"><span class="dp-lab">CAMERA</span><button type="button" class="dp-btn" data-cam="overview" aria-pressed="true">OVERVIEW</button><button type="button" class="dp-btn" data-cam="hero" aria-pressed="false">HERO</button><button type="button" class="dp-btn" data-cam="closeup" aria-pressed="false">CLOSEUP</button><button type="button" class="dp-btn" data-cam="topdown" aria-pressed="false">TOPDOWN</button><button type="button" class="dp-btn" data-cam="orbit" aria-pressed="false">ORBIT</button></div>
                   <div class="dp-row"><span class="dp-lab">ORBITAL</span><button type="button" class="dp-btn" data-style="planetary" aria-pressed="true">PLANETARY</button><button type="button" class="dp-btn" data-style="electron" aria-pressed="false">ELECTRON</button></div>
-                  <div class="dp-row"><span class="dp-lab">FINISH</span><button type="button" class="dp-btn" data-finish="real" aria-pressed="true">REAL</button><button type="button" class="dp-btn" data-finish="gold" aria-pressed="false">GOLD</button><button type="button" class="dp-btn" data-finish="bronze" aria-pressed="false">BRONZE</button><button type="button" class="dp-btn" data-finish="silver" aria-pressed="false">SILVER</button><button type="button" class="dp-btn" data-finish="wireframe" aria-pressed="false">WIREFRAME</button></div>
+                  <div class="dp-row"><span class="dp-lab">FINISH</span><button type="button" class="dp-btn" data-finish="real" aria-pressed="false">REAL</button><button type="button" class="dp-btn" data-finish="gold" aria-pressed="false">GOLD</button><button type="button" class="dp-btn" data-finish="bronze" aria-pressed="false">BRONZE</button><button type="button" class="dp-btn" data-finish="silver" aria-pressed="false">SILVER</button><button type="button" class="dp-btn" data-finish="wireframe" aria-pressed="true">WIREFRAME</button></div>
                   <div class="dp-row"><span class="dp-lab">STAGE</span><button type="button" class="dp-btn" role="switch" data-stage="moon" aria-checked="true">MOON</button><button type="button" class="dp-btn" role="switch" data-stage="plate" aria-checked="true">NAMEPLATE</button><button type="button" class="dp-btn" role="switch" data-stage="thread" aria-checked="true">AIM THREAD</button></div>
                   <div class="dp-row"><span class="dp-lab">SPIN</span><input type="range" id="dianaSpin" min="0" max="200" value="100" aria-label="Spin speed" /><span class="dp-val" id="dianaSpinVal">100%</span><button type="button" class="dp-btn" role="switch" data-stage="trail" aria-checked="true">TRAIL</button></div>
                   <div class="dp-row"><span class="dp-lab">ATTRACT</span><select id="dianaAttract" aria-label="Attract mode"><option value="off">OFF</option><option value="attract" selected>ATTRACT</option><option value="first-hunt">FIRST HUNT</option><option value="pirouette">PIROUETTE</option><option value="grand-tour">GRAND TOUR</option></select></div>
@@ -7866,15 +7866,12 @@ function buildDeepSeekWhale(THREE) {
       { at: 0, a: 'camera', name: 'hero' },
       { at: 0, a: 'spin', rate: 0.6 },
       { at: 2, a: 'moon', factor: 1.6 },
-      { at: 3, a: 'finish', name: 'gold' },
       { at: 4, a: 'spin', rate: 1.4 },
       { at: 8, a: 'camera', name: 'orbit' },
       { at: 9, a: 'spin', rate: 2.2 },
       { at: 9, a: 'style', v: 'electron' },
-      { at: 11, a: 'finish', name: 'silver' },
       { at: 14, a: 'spin', rate: 1.2 },
       { at: 19, a: 'spin', rate: 0.4 },
-      { at: 20, a: 'restoreFinish' },
       { at: 20, a: 'styleRestore' },
       { at: 22, a: 'moon', factor: 1.0 },
       { at: 23, a: 'spin', rate: 0 },
@@ -8029,7 +8026,7 @@ function buildDeepSeekWhale(THREE) {
   };
 
   /* ---------- Diana view settings (persisted) ---------- */
-  var dianaSettings = { cam: 'overview', finish: 'real', moon: true, plate: true, thread: true, spin: 1, trail: true, attract: 'attract', style: 'planetary' };
+  var dianaSettings = { cam: 'overview', finish: 'wireframe', moon: true, plate: true, thread: true, spin: 1, trail: true, attract: 'attract', style: 'planetary' };
   try {
     var dianaRaw = localStorage.getItem('tsA2DianaView');
     if (dianaRaw) {
