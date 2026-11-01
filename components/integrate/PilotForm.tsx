@@ -27,6 +27,7 @@ export type PilotFormValues = {
   role: string;
   workflow: string;
   website: string; // honeypot
+  submissionId?: string; // client idempotency key for durable capture
 };
 
 /** Client-side checks; the route validates again. Returns an error message or null. */
@@ -53,6 +54,7 @@ export function toPilotRequestPayload(values: PilotFormValues) {
     timeline: "Unspecified",
     sourcePage: "/integrate",
     website: values.website,
+    ...(values.submissionId ? { submissionId: values.submissionId } : {}),
   };
 }
 
@@ -61,6 +63,13 @@ const inputClass =
 const labelClass = "mb-1.5 block text-sm text-foreground/80";
 
 export function PilotForm() {
+  // One submissionId per form mount: retries of the same submission are
+  // deduplicated server-side instead of creating a second stored request.
+  const [submissionId] = useState(() =>
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `sub-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`,
+  );
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -74,6 +83,7 @@ export function PilotForm() {
       role: String(data.get("role") ?? ""),
       workflow: String(data.get("workflow") ?? ""),
       website: String(data.get("website") ?? ""),
+      submissionId,
     };
     const problem = validatePilotForm(values);
     if (problem) {

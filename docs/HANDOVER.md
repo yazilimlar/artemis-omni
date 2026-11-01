@@ -3,6 +3,14 @@
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
 
+## 2026-10-31 update — Communications Hub R2 completed on the preview branch (Issue #276)
+
+- Branch: `labs/artemis-homepage-r2-toggle`. Division: **UNREVIEWED** (Communications Hub has no PRODUCT_REGISTRY entry). Product: Communications Hub R2. Lifecycle: noindex preview / pilot. Visibility: public form + authenticated operator inbox. Data mode: live intake with private data in Supabase only.
+- Files: `lib/comms/` (validation/sanitization, status taxonomy, retry backoff, Svix + GitHub signature verification, server REST/Resend helpers); hardened `app/api/communications/route.ts` (ip-hash rate limit 5/h + 20/day, client idempotency, provider id captured, outbox-honest status PATCH); new `app/api/communications/retry/route.ts` (cron-secret gated), `app/api/communications/webhook/route.ts` (Resend/Svix delivery), `app/api/github/webhook/route.ts` (summary-only event ledger), `app/api/communications/reply/route.ts` + `app/communications/inbox/page.tsx` + `components/comms/ReplyForm.tsx` (allowlist-gated two-way inbox); `supabase/migrations/20261031_artemis_communications_v2.sql`; pilot durability in `app/api/pilot-requests/route.ts` + submissionId in `components/integrate/PilotForm.tsx`; honeypot + status copy in `components/comms/CommunicationsConsole.tsx`; `middleware.ts` matcher; `tests/unit/comms-helpers.test.ts`; full record in `docs/history/artemis-comms-r2-plan-2026-10-31.md`.
+- Verification: see the PR for Issue #276 and that history doc for the gate table (baseline vs final) and live preview probes.
+- Known risks / NOT verified: live delivery, replies, and webhooks are unverified until the owner sets (names only) `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_URL`, `RESEND_API_KEY`, `ARTEMIS_COMMS_FROM`, `ARTEMIS_COMMS_TO` (plus optional `ARTEMIS_COMMS_CRON_SECRET`, `RESEND_WEBHOOK_SECRET`, `GITHUB_WEBHOOK_SECRET`) and runs migrations v1 then v2. WhatsApp/SMS remains deferred (no provider/consent).
+- Next recommended task: owner env setup + migration run, then the test script in the R2 history doc; merge only on owner approval.
+
 ## 2026-10-29 update — /demo/pending-contracts/a1-estimates-01.01 forwards to the gated ArtLoop workspace
 
 - Branch `feature/demo-pending-contracts-a1-estimates`. Division: Artemis Construction (estimating). Product: ArtLoop 2WTC HVAC estimating workspace (owned and built in `yazilimlar/artloop-ws`, release R0.7-rc1).
