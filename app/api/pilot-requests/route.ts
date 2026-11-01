@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
+import { getSupabaseConfig, supabaseRest, supabaseSelect } from "@/lib/comms/server";
+import { isValidIdempotencyKey, sanitizeName } from "@/lib/comms/validation";
 
 export const runtime = "nodejs";
 
@@ -53,11 +56,6 @@ export async function POST(request: Request) {
     return jsonError("Pilot request is too large.", 413);
   }
 
-  const apiKey = process.env.SQUARESPACE_API_KEY;
-  if (!apiKey) {
-    return jsonError("Pilot intake backend is not configured yet.", 503);
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -74,6 +72,26 @@ export async function POST(request: Request) {
     return jsonError(parsed.error, 400);
   }
 
+  // Durable capture FIRST (Issue #276 point 9): the full pilot payload is
+  // persisted to Supabase before the Squarespace contact sync, which only
+  // ever carried name/company/email. The pilot path never sends email
+  // (notification_status = 'not_requested'). When Supabase is not configured,
+  // behaviour is exactly the legacy Squarespace-only flow below.
+  const submissionId =
+    body && typeof body === "object" ? (body as Record<string, unknown>).submissionId : undefined;
+  const persisted = await persistPilotRequest(
+    parsed.payload,
+    isValidIdempotencyKey(submissionId) ? submissionId : null,
+  );
+
+  const apiKey = process.env.SQUARESPACE_API_KEY;
+  if (!apiKey) {
+    if (persisted) {
+      return NextResponse.json({ ok: true, requestId: persisted, status: "stored" });
+    }
+    return jsonError("Pilot intake backend is not configured yet.", 503);
+  }
+
   try {
     const result = await syncSquarespaceContact(parsed.payload, apiKey);
 
@@ -81,6 +99,7 @@ export async function POST(request: Request) {
       ok: true,
       requestId: result.contactId,
       status: result.status,
+      ...(persisted ? { supabaseReference: persisted } : {}),
     });
   } catch (error) {
     const status = error instanceof SquarespaceError ? error.status : 502;
@@ -89,7 +108,75 @@ export async function POST(request: Request) {
       message: error instanceof Error ? error.message : "Unknown Squarespace error",
     });
 
+    // Durable capture wins: the request is stored even if the secondary
+    // Squarespace sync failed, so it is not lost and not duplicated.
+    if (persisted) {
+      return NextResponse.json({ ok: true, requestId: persisted, status: "stored" });
+    }
     return jsonError("Pilot intake could not save the request. Please try again.", status);
+  }
+}
+
+/**
+ * Persist the FULL pilot payload to artemis_communications.
+ * Returns the stored row id, the original row id on an idempotent replay,
+ * or null when Supabase is not configured / the write failed (legacy flow
+ * then decides the outcome, exactly as before this change).
+ */
+async function persistPilotRequest(
+  payload: PilotRequestPayload,
+  submissionId: string | null,
+): Promise<string | null> {
+  const config = getSupabaseConfig();
+  if (!config) return null;
+  try {
+    if (submissionId) {
+      const existing = await supabaseSelect<{ id: string }>(
+        config,
+        `artemis_communications?select=id&idempotency_key=eq.${encodeURIComponent(submissionId)}&limit=1`,
+      );
+      if (existing && existing.length > 0) return existing[0].id;
+    }
+    const id = randomUUID();
+    const message = [
+      `Company: ${payload.company}`,
+      `Industry: ${payload.industry}`,
+      `Current systems: ${payload.currentSystems}`,
+      `Pain point: ${payload.painPoint}`,
+      `Module: ${payload.module}`,
+      `Timeline: ${payload.timeline}`,
+      `Message: ${payload.message || "(none)"}`,
+      `Source page: ${payload.sourcePage || "(unknown)"}`,
+    ].join("\n");
+    const res = await supabaseRest(config, "artemis_communications", {
+      method: "POST",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({
+        id,
+        category: "Project pilot",
+        sender_name: sanitizeName(payload.name) || payload.name,
+        sender_email: payload.email,
+        message,
+        notification_status: "not_requested",
+        source: "integrate-pilot-form",
+        idempotency_key: submissionId,
+      }),
+    });
+    if (!res.ok) {
+      if (res.status === 409 && submissionId) {
+        const existing = await supabaseSelect<{ id: string }>(
+          config,
+          `artemis_communications?select=id&idempotency_key=eq.${encodeURIComponent(submissionId)}&limit=1`,
+        );
+        if (existing && existing.length > 0) return existing[0].id;
+      }
+      console.error("pilot_intake_persist_failed", { status: res.status });
+      return null;
+    }
+    return id;
+  } catch {
+    console.error("pilot_intake_persist_network_error");
+    return null;
   }
 }
 
