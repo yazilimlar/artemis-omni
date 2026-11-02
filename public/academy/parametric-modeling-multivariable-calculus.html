@@ -1,0 +1,1602 @@
+<!doctype html>
+<html lang="en" data-theme="night">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Parametric Modeling &amp; Multivariable Calculus — Artemis Academy</title>
+<meta name="description" content="An Artemis Academy interactive lesson: parametric modeling and multivariable calculus in ten live demos — curves, surfaces, partial derivatives, double integrals, and the Fourier wordmark that draws the Academy logo." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1220; --bg2:#0e1626; --panel:#111a2c; --panel2:#16233c;
+  --ink:#dbe6f5; --ink2:#a9bcd8; --ink3:#7e93b5;
+  --line:#22314e; --line2:#33486e;
+  --teal:#8fb8ff; --teal-soft:rgba(143,184,255,.13); --on-accent:#0b1220;
+  --amber:#f0b35e; --amber-soft:rgba(240,179,94,.13);
+  --blue:#7aa5f0; --blue-soft:rgba(122,165,240,.13);
+  --rose:#f07ba0; --rose-soft:rgba(240,123,160,.13);
+  --gold:#d4a017;
+  --canvas-bg:#081120; --canvas-grid:#1b2a45; --canvas-axis:#31486e;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --radius:14px;
+  --accent:#8fb8ff;
+  color-scheme:dark;
+}
+/* ===== ARTEMIS ACADEMY THEMES — 8 modes, applied to the ENTIRE page =====
+   Every surface reads the same custom properties (body, topbar, hero, roadmap,
+   cards, controls, hook boxes, render bars, reference table, finale, footer),
+   so no section keeps the old default look. Canvas stages stay dark in the
+   light themes so demo ink keeps full contrast. The Fourier wordmark stage
+   is the one deliberate exception: it stays deep navy in all themes. */
+[data-theme="day"]{--bg:#f7f9fc;--bg2:#eef2f7;--panel:#ffffff;--panel2:#eef2f7;--ink:#16202e;--ink2:#43536a;--ink3:#5f7189;--line:#dbe3ec;--line2:#b9c8da;--teal:#1976d2;--teal-soft:#e1eefb;--on-accent:#ffffff;--amber:#b25b00;--amber-soft:#fdeeda;--blue:#1976d2;--blue-soft:#e1eefb;--rose:#b4234a;--rose-soft:#fbe7ee;--canvas-bg:#0d1622;--canvas-grid:#213144;--canvas-axis:#38506e;--shadow:0 4px 18px rgba(22,32,46,.10);--accent:#1976d2;color-scheme:light}
+[data-theme="night"]{--bg:#0b1220;--bg2:#0e1626;--panel:#111a2c;--panel2:#16233c;--ink:#dbe6f5;--ink2:#a9bcd8;--ink3:#7e93b5;--line:#22314e;--line2:#33486e;--teal:#8fb8ff;--teal-soft:rgba(143,184,255,.13);--on-accent:#0b1220;--amber:#f0b35e;--amber-soft:rgba(240,179,94,.13);--blue:#7aa5f0;--blue-soft:rgba(122,165,240,.13);--rose:#f07ba0;--rose-soft:rgba(240,123,160,.13);--canvas-bg:#081120;--canvas-grid:#1b2a45;--canvas-axis:#31486e;--shadow:0 10px 30px rgba(0,0,0,.35);--accent:#8fb8ff;color-scheme:dark}
+[data-theme="matrix"]{--bg:#050a05;--bg2:#081008;--panel:#0b140b;--panel2:#0f1a0f;--ink:#b8ffb8;--ink2:#8fce8f;--ink3:#6a9a6a;--line:#1a3a1a;--line2:#2a5c2a;--teal:#00ff41;--teal-soft:rgba(0,255,65,.10);--on-accent:#02120a;--amber:#9dffb0;--amber-soft:rgba(0,255,65,.09);--blue:#00cc33;--blue-soft:rgba(0,255,65,.09);--rose:#d6ffd6;--rose-soft:rgba(0,255,65,.09);--canvas-bg:#020602;--canvas-grid:#123312;--canvas-axis:#1f5c1f;--shadow:0 0 24px rgba(0,255,65,.08);--accent:#00ff41;color-scheme:dark}
+[data-theme="matrix-blue"]{--bg:#040810;--bg2:#071020;--panel:#0a1428;--panel2:#0e1a32;--ink:#b8d8ff;--ink2:#93b8ec;--ink3:#6a8ac0;--line:#1a3a6a;--line2:#2a5a9e;--teal:#00bfff;--teal-soft:rgba(0,191,255,.13);--on-accent:#02131f;--amber:#8fdcff;--amber-soft:rgba(0,191,255,.11);--blue:#00bfff;--blue-soft:rgba(0,191,255,.11);--rose:#d6ecff;--rose-soft:rgba(0,191,255,.11);--canvas-bg:#020612;--canvas-grid:#122a4d;--canvas-axis:#1d4477;--shadow:0 0 24px rgba(0,191,255,.10);--accent:#00bfff;color-scheme:dark}
+[data-theme="matrix-light-blue"]{--bg:#e8f6ff;--bg2:#d9efff;--panel:#ffffff;--panel2:#eef8ff;--ink:#06283d;--ink2:#1d4e68;--ink3:#3a6a86;--line:#bfe0f5;--line2:#8fc6e8;--teal:#0090cc;--teal-soft:rgba(0,144,204,.12);--on-accent:#ffffff;--amber:#9a4d00;--amber-soft:#ffedd5;--blue:#0090cc;--blue-soft:rgba(0,144,204,.12);--rose:#b4234a;--rose-soft:#fce0ea;--canvas-bg:#062840;--canvas-grid:#11405e;--canvas-axis:#1d5c84;--shadow:0 4px 18px rgba(0,90,140,.12);--accent:#0090cc;color-scheme:light}
+[data-theme="manimx-day"]{--bg:#f5f1e8;--bg2:#faf7f0;--panel:#ffffff;--panel2:#f8f4ec;--ink:#1a1a2e;--ink2:#454152;--ink3:#5a5563;--line:#d8d0c0;--line2:#bdb29a;--teal:#2a4a8a;--teal-soft:#e6ebf5;--on-accent:#ffffff;--amber:#8a5a12;--amber-soft:#f7ecd4;--blue:#2a4a8a;--blue-soft:#e6ebf5;--rose:#8a2a4a;--rose-soft:#f5e0e8;--canvas-bg:#141824;--canvas-grid:#252b3d;--canvas-axis:#3d465e;--shadow:0 2px 12px rgba(42,74,138,.10);--accent:#2a4a8a;color-scheme:light}
+[data-theme="manimx-light-blue"]{--bg:#eef5ff;--bg2:#f7fbff;--panel:#ffffff;--panel2:#f0f7ff;--ink:#0a1a3a;--ink2:#33507e;--ink3:#4a6a9a;--line:#c8ddf0;--line2:#9dbfe6;--teal:#0a6dff;--teal-soft:#dbeafe;--on-accent:#ffffff;--amber:#9a4d00;--amber-soft:#ffedd5;--blue:#0a6dff;--blue-soft:#dbeafe;--rose:#b4234a;--rose-soft:#fce0ea;--canvas-bg:#0a1830;--canvas-grid:#1a3358;--canvas-axis:#2f4f7d;--shadow:0 2px 12px rgba(10,109,255,.12);--accent:#0a6dff;color-scheme:light}
+[data-theme="manimx-executive"]{--bg:#0e1626;--bg2:#0a1120;--panel:#16233c;--panel2:#1c2c49;--ink:#f5f1e6;--ink2:#d8cfb8;--ink3:#a99f86;--line:#2e4066;--line2:#d4a017;--teal:#d4a017;--teal-soft:rgba(212,160,23,.15);--on-accent:#0e1626;--amber:#e8c874;--amber-soft:rgba(232,200,116,.14);--blue:#a9c3e8;--blue-soft:rgba(169,195,232,.13);--rose:#e8a0b4;--rose-soft:rgba(232,160,180,.13);--canvas-bg:#0a1120;--canvas-grid:#22345a;--canvas-axis:#3a5484;--shadow:0 12px 32px rgba(0,0,0,.45);--accent:#d4a017;color-scheme:dark}
+:root{--accent:#8fb8ff}
+[data-theme="matrix"] body,[data-theme="matrix-blue"] body,[data-theme="matrix-light-blue"] body{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+[data-theme="matrix"] h1,[data-theme="matrix"] h2,[data-theme="matrix-blue"] h1,[data-theme="matrix-blue"] h2,[data-theme="matrix-light-blue"] h1,[data-theme="matrix-light-blue"] h2{font-family:"IBM Plex Mono",monospace}
+[data-theme="manimx-day"] body{font-family:Georgia,'Times New Roman',serif}
+[data-theme="manimx-day"] h1,[data-theme="manimx-day"] h2{font-family:-apple-system,'Segoe UI',sans-serif;font-weight:700}
+[data-theme="manimx-light-blue"] body,[data-theme="day"] body,[data-theme="night"] body{font-family:"Archivo","Segoe UI",system-ui,-apple-system,sans-serif}
+[data-theme="manimx-executive"] h1,[data-theme="manimx-executive"] h2,[data-theme="manimx-executive"] h3{font-family:"DM Serif Display",Georgia,'Times New Roman',serif}
+[data-theme="manimx-executive"] .stepnum{background:var(--teal);color:#0e1626}
+[data-theme="manimx-executive"] .finale{background:#0a1120;color:var(--ink);border:1px solid var(--line2)}
+[data-theme="manimx-executive"] .finale h2{color:var(--ink)}
+.themebar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;width:100%;max-width:100%;padding:10px 0 2px}
+.themebar .tlabel{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin-right:4px}
+.theme-btn{border:1px solid var(--line2);background:var(--panel);color:var(--ink2);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit;white-space:nowrap;max-width:100%}
+.theme-btn .sw{width:9px;height:9px;border-radius:50%;flex:none}
+.theme-btn[aria-pressed="true"]{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
+.hookbox{margin-top:14px;border:1px solid var(--line2);background:var(--panel2);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:var(--ink2)}
+.hookbox b{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:5px}
+.hookbox .mono{color:var(--ink)}
+.deeper{margin-top:12px;border:1px dashed var(--line2);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:var(--ink2);background:var(--panel)}
+.deeper b{color:var(--teal);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+.formula{color:#f2f4f8}.formula .cm{color:#aab3c5}
+/* ===== 3D RENDER CONTROLS — occlusion + light modes (adopted features) ===== */
+.render-bar{gap:10px !important}
+.render-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-weight:700}
+.render-state{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink2)}
+.occ-btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--on-accent,#fff)}
+.occ-btn[aria-pressed="false"]{background:var(--panel2);color:var(--ink2)}
+.adopt-note{margin:0;padding:9px 16px 11px;border-top:1px dashed var(--line);background:var(--panel2);font-size:12.5px;line-height:1.5;color:var(--ink3)}
+.adopt-note a{font-weight:700}
+/* ===== REFERENCE LIBRARY ===== */
+.refs{padding:48px 0 8px;scroll-margin-top:64px}
+.refs-head h2{font-size:clamp(28px,4vw,40px);margin:10px 0 10px}
+.refs-head p{color:var(--ink2);font-size:16.5px;max-width:72ch;margin:0 0 20px}
+.ref-table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+table.ref-table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.5}
+.ref-table th{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:left;color:var(--teal);background:var(--panel2);padding:12px 14px;border-bottom:1px solid var(--line2)}
+.ref-table td{padding:14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+.ref-table tr:last-child td{border-bottom:none}
+.ref-table td.ref-name{color:var(--ink);font-weight:700;min-width:180px}
+.ref-table td.ref-name .sub{display:block;font-weight:500;font-size:12.5px;color:var(--ink3);margin-top:4px}
+.ref-table .tagchip{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;border:1px solid var(--line2);border-radius:999px;padding:3px 9px;color:var(--ink);background:var(--panel2);white-space:nowrap}
+.ref-table a.openlink{font-weight:800;white-space:nowrap;text-decoration:none}
+.ref-table a.openlink:hover{text-decoration:underline}
+.ref-table .url{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink3);word-break:break-all;margin-top:4px;font-weight:400}
+.refs-note{font-size:13px;color:var(--ink3);margin:12px 2px 0;line-height:1.55}
+@media(max-width:820px){
+  .ref-table thead{display:none}
+  .ref-table,.ref-table tbody,.ref-table tr,.ref-table td{display:block;width:100%}
+  .ref-table tr{border-bottom:1px solid var(--line2);padding:8px 0}
+  .ref-table tr:last-child{border-bottom:none}
+  .ref-table td{border-bottom:none;padding:6px 16px}
+  .ref-table td::before{content:attr(data-label);display:block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:3px}
+  .ref-table td.ref-name{min-width:0}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"DM Serif Display",Georgia,"Times New Roman",serif;font-weight:400;line-height:1.05;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+a{color:var(--teal)}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--teal);color:var(--on-accent,#fff)}
+
+/* progress + top bar */
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:60}
+.topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.topbar .brand{font-weight:800;font-size:13px;letter-spacing:.02em}
+.topbar .brand span{color:var(--teal)}
+.topbar nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.topbar nav a{font-size:12.5px;font-weight:600;color:var(--ink2);text-decoration:none;padding:6px 9px;border-radius:999px}
+.topbar nav a:hover,.topbar nav a.active{background:var(--teal-soft);color:var(--teal)}
+.btn{border:1px solid var(--line2);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:700;font-size:13px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.small{padding:6px 11px;font-size:12px}
+.btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--on-accent,#fff)}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.hero{padding:52px 0 30px}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:600}
+.hero h1{font-size:clamp(38px,6vw,68px);max-width:12ch;margin:14px 0 16px}
+.hero h1 em{font-style:italic;color:var(--teal)}
+.lede{font-size:clamp(17px,2.2vw,21px);color:var(--ink2);max-width:62ch;margin:0 0 26px}
+.twosec{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 14px}
+@media(max-width:720px){.twosec{grid-template-columns:1fr}}
+.insight{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.insight .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.insight.teal .tag{color:var(--teal)} .insight.amber .tag{color:var(--amber)}
+.insight p{font-size:19px;line-height:1.45;margin:8px 0 0;font-weight:600}
+.insight p b{color:var(--teal)} .insight.amber p b{color:var(--amber)}
+.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0 8px}
+@media(max-width:900px){.roadmap{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.roadmap{grid-template-columns:1fr}}
+.roadmap a{display:block;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+.roadmap a:hover{border-color:var(--teal)}
+.roadmap .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--teal);font-weight:600}
+.roadmap .t{display:block;font-weight:700;font-size:14.5px;margin:3px 0 2px;line-height:1.25}
+.roadmap .d{display:block;font-size:12.5px;color:var(--ink3);line-height:1.4}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;align-items:center}
+.hero-actions .hint{font-size:12.5px;color:var(--ink3)}
+
+/* slides */
+.slide{padding:44px 0 10px;scroll-margin-top:64px}
+.slide-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:18px}
+.stepnum{flex:none;width:52px;height:52px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:"DM Serif Display",serif;font-size:24px;margin-top:4px}
+.slide-head h2{font-size:clamp(28px,4vw,40px)}
+.slide-head .sub{color:var(--ink2);font-size:16.5px;max-width:68ch;margin:8px 0 0}
+.difficulty{flex:none;margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line2);border-radius:999px;padding:6px 11px;color:var(--ink2);white-space:nowrap}
+@media(max-width:640px){.difficulty{display:none}}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start}
+@media(max-width:920px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h3{font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 10px}
+.say{border-left:3px solid var(--amber);background:var(--amber-soft);border-radius:0 10px 10px 0;padding:12px 14px;font-size:14.5px;line-height:1.55}
+.say b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:4px;font-family:"IBM Plex Mono",monospace}
+.formula{background:var(--canvas-bg);color:#e8eaf0;border-radius:10px;padding:13px 14px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.formula .cm{color:#8b93a7}
+.copyrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:700;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:999px;padding:6px 11px;text-decoration:none;display:inline-block}
+.chip:hover{border-color:var(--teal);color:var(--teal)}
+.points{margin:12px 0 0;padding:0;list-style:none;font-size:14.5px;color:var(--ink2)}
+.points li{padding:7px 0 7px 20px;position:relative;border-top:1px dashed var(--line)}
+.points li:first-child{border-top:none}
+.points li::before{content:"";position:absolute;left:2px;top:15px;width:7px;height:7px;border-radius:50%;background:var(--teal)}
+.points li b{color:var(--ink)}
+
+/* demo panel */
+.demo{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.demo canvas{display:block;width:100%;background:var(--canvas-bg);touch-action:none}
+.demo .bar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:13px 16px;border-top:1px solid var(--line);background:var(--panel)}
+.ctl{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--ink2)}
+.ctl output{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink);min-width:38px}
+input[type=range]{width:110px;accent-color:var(--teal)}
+.playbtn{border:none;background:var(--teal);color:var(--on-accent,#fff);font-weight:800;font-size:13px;border-radius:999px;padding:8px 16px}
+.playbtn.pause{background:var(--ink)}
+.readout{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--panel2);border-top:1px solid var(--line);padding:10px 16px;color:var(--ink2);display:flex;gap:18px;flex-wrap:wrap}
+.readout b{color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden}
+.seg button{border:none;background:var(--panel);color:var(--ink2);font-weight:700;font-size:12.5px;padding:7px 13px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.draghint{font-size:12px;color:var(--ink3)}
+
+/* finale */
+.finale{margin:54px 0 0;background:var(--ink);color:var(--bg);border-radius:18px;padding:30px}
+.finale h2{font-size:clamp(26px,3.6vw,36px);color:var(--bg)}
+.finale .hook{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}
+@media(max-width:900px){.finale .hook{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.finale .hook{grid-template-columns:1fr}}
+.finale .cell{border:1px solid color-mix(in srgb, currentColor 28%, transparent);border-radius:12px;padding:14px}
+@media(prefers-color-scheme:dark){.finale .cell{border-color:#3a3d49}}
+.finale .cell .f{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;display:block}
+.finale .cell .l{font-size:13px;opacity:.75;display:block;margin-top:4px;line-height:1.4}
+.finale p.closing{font-size:17px;line-height:1.6;max-width:70ch;opacity:.92}
+footer.site{padding:34px 0 46px;color:var(--ink3);font-size:13.5px}
+footer.site .row{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;border-top:1px solid var(--line);padding-top:18px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,80px);background:var(--ink);color:var(--bg);font-weight:700;font-size:13.5px;padding:11px 18px;border-radius:999px;z-index:80;transition:transform .25s;box-shadow:var(--shadow)}
+#toast.show{transform:translate(-50%,0)}
+body.present .slide{min-height:calc(100vh - 60px);display:flex;flex-direction:column;justify-content:center}
+body.present{scroll-snap-type:y proximity}
+
+/* ===== ARTEMIS ACADEMY — FOURIER WORDMARK (logo stage stays deep navy in all 8 themes) ===== */
+.wordmark{padding:26px 0 4px}
+.wm-stage{position:relative;border-radius:16px;overflow:hidden;border:1px solid #1e3a5f;
+  background:radial-gradient(130% 170% at 28% -10%,#14304f 0%,#0c1e35 52%,#081426 100%);
+  box-shadow:0 14px 34px rgba(8,20,38,.28);padding:14px 16px 10px}
+.wm-stage canvas{display:block;width:100%;height:auto;background:transparent;touch-action:pan-y}
+.wm-caprow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.wm-caption{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;line-height:1.5;
+  letter-spacing:.11em;text-transform:uppercase;color:#8fb0d8}
+.wm-caption .g{color:#e0b65a;font-weight:700}
+.wm-replay{margin-left:auto;border:1px solid rgba(160,195,235,.45);
+  background:rgba(10,24,44,.72);color:#cfe3fa;font-weight:700;font-size:12.5px;
+  border-radius:8px;padding:7px 13px;backdrop-filter:blur(4px)}
+.wm-replay:hover{border-color:#e0aa3e;color:#e8b54b}
+.wm-bridge{margin:12px 2px 0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:78ch}
+.wm-bridge b{color:var(--ink)}
+.wm-tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--teal);border:1px solid var(--line2);
+  border-radius:999px;padding:3px 9px;margin-right:8px;vertical-align:2px;background:var(--panel)}
+@media(max-width:560px){.wm-caption{font-size:9px}.wm-bridge{font-size:14px}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<header class="topbar"><div class="topbar-in">
+  <div class="brand">ARTEMIS <span>ACADEMY</span> · PARAMETRIC × MULTIVARIABLE</div>
+  <nav id="topnav" aria-label="Examples">
+    <a href="#ex1">1 Circle</a><a href="#ex2">2 Lissajous</a><a href="#ex3">3 Helix</a><a href="#ex4">4 Bézier</a><a href="#ex5">5 Cycloid</a>
+    <a href="#ex6">6 Mountain</a><a href="#ex7">7 Partials</a><a href="#ex8">8 Surfaces</a><a href="#ex9">9 Pipe</a><a href="#ex10">10 Finale</a><a href="#refs">★ References</a>
+  </nav>
+  <button class="btn small" id="presentBtn" aria-pressed="false">Present mode</button>
+  <div class="themebar" role="group" aria-label="Theme modes">
+    <span class="tlabel">ARTEMIS · Theme</span>
+    <button class="theme-btn" data-theme-btn="day" aria-pressed="false"><span class="sw" style="background:#1976d2"></span>Day</button>
+    <button class="theme-btn" data-theme-btn="night" aria-pressed="true"><span class="sw" style="background:#8fb8ff;box-shadow:0 0 6px #8fb8ff"></span>Night</button>
+    <button class="theme-btn" data-theme-btn="matrix" aria-pressed="false"><span class="sw" style="background:#00ff41;box-shadow:0 0 6px #00ff41"></span>Matrix</button>
+    <button class="theme-btn" data-theme-btn="matrix-blue" aria-pressed="false"><span class="sw" style="background:#00bfff;box-shadow:0 0 6px #00bfff"></span>Matrix Blue</button>
+    <button class="theme-btn" data-theme-btn="matrix-light-blue" aria-pressed="false"><span class="sw" style="background:#0090cc"></span>Matrix Light Blue</button>
+    <button class="theme-btn" data-theme-btn="manimx-day" aria-pressed="false"><span class="sw" style="background:#2a4a8a"></span>Manimx Day</button>
+    <button class="theme-btn" data-theme-btn="manimx-light-blue" aria-pressed="false"><span class="sw" style="background:#0a6dff"></span>Manimx Light Blue</button>
+    <button class="theme-btn" data-theme-btn="manimx-executive" aria-pressed="false"><span class="sw" style="background:#d4a017;box-shadow:0 0 6px #d4a017"></span>Manimx Executive</button>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <!-- ARTEMIS ACADEMY · FOURIER WORDMARK -->
+  <section class="wordmark" aria-label="Artemis Academy Fourier wordmark">
+    <div class="wm-stage">
+      <canvas id="fourierWordmark" role="img" aria-label="ARTEMIS ACADEMY drawn by rotating Fourier vectors"></canvas>
+      <div class="wm-caprow"><div class="wm-caption"><span class="g">Artemis Academy</span> · Fourier wordmark — ARTEMIS / Academy traced by 140 rotating vectors</div><button class="wm-replay" type="button" id="btnWordmarkReplay">↻ Replay</button></div>
+    </div>
+    <p class="wm-bridge"><span class="wm-tag">Example 0 · The logo</span><b>This logo is drawn by the math in <a href="#ex1">Example 1</a></b> — a sum of rotating vectors <i>is</i> a parametric curve. The letterforms are resampled into one parametric path, decomposed with a discrete Fourier transform, and redrawn by 140 rotating vectors, largest first; the tip of the chain leaves the gold ink trail that writes <b>ARTEMIS</b> over <b>Academy</b>. Watch it write, hold, fade, and loop — or press Replay.</p>
+  </section>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="kicker">ARTEMIS ACADEMY · An interactive lesson · 10 live demos · 8 themes · no pasting required</div>
+    <h1>One knob makes a curve. <em>Two knobs make a world.</em></h1>
+    <p class="lede">An <b>Artemis Academy</b> lesson. Parametric modeling and multivariable calculus, in a nutshell — told through ten demos that run right here. Drag the points, turn the knobs, orbit the surfaces. Each one is also copy-paste ready for Desmos or GeoGebra, so you can rebuild it live in class. Use the theme bar above to switch the <b>entire page</b> — every card, control, table and demo — between Day, Night, Matrix, Matrix Blue, Matrix Light Blue, Manimx Day, Manimx Light Blue and Manimx Executive.</p>
+    <div class="twosec">
+      <div class="insight teal"><span class="tag">Parametric — the 10-second version</span>
+        <p>One knob <b>t</b> (think: time) drives <b>x and y together</b>. You don’t describe a shape — you describe a <b>journey</b> that traces it.</p></div>
+      <div class="insight amber"><span class="tag">Multivariable — the other 10 seconds</span>
+        <p>Now there are <b>2+ knobs</b>. A function <b>f(x, y)</b> is a landscape: its derivatives are <b>slopes</b> on that landscape, its integral is the <b>volume</b> under it.</p></div>
+    </div>
+    <div class="roadmap">
+      <a href="#ex1"><span class="n">01 · START HERE</span><span class="t">The Circle That Isn’t a Function</span><span class="d">Why y = f(x) isn’t enough — and motion appears</span></a>
+      <a href="#ex2"><span class="n">02</span><span class="t">Lissajous Figures</span><span class="d">Frequency ratios become knots, stars &amp; bows</span></a>
+      <a href="#ex3"><span class="n">03 · NEW · 2D → 3D BRIDGE</span><span class="t">The 3D Helix</span><span class="d">A circle that climbs — springs, screws &amp; DNA</span></a>
+      <a href="#ex4"><span class="n">04 · THE BIG ONE</span><span class="t">Bézier Curves</span><span class="d">The actual math inside fonts, CAD &amp; car bodies</span></a>
+      <a href="#ex5"><span class="n">05</span><span class="t">The Cycloid</span><span class="d">A rolling wheel invents the fastest slide</span></a>
+      <a href="#ex6"><span class="n">06 · NEW DIMENSION</span><span class="t">The Mountain</span><span class="d">f(x, y), contour lines &amp; the gradient</span></a>
+      <a href="#ex7"><span class="n">07</span><span class="t">Slicing the Mountain</span><span class="d">Partial derivatives, demystified</span></a>
+      <a href="#ex8"><span class="n">08</span><span class="t">Torus &amp; Möbius Strip</span><span class="d">Two knobs make a skin — one of them has one side</span></a>
+      <a href="#ex9"><span class="n">09 · NEW · MODELING FINALE</span><span class="t">Frenet-Swept Pipe</span><span class="d">What a CAD kernel actually computes</span></a>
+      <a href="#ex10"><span class="n">10 · FINALE</span><span class="t">Volume + The Butterfly</span><span class="d">Double integrals, then one formula of pure wow</span></a>
+    </div>
+    <div class="hero-actions">
+      <a class="btn primary" href="#ex1" style="text-decoration:none">▶ Start with Example 1</a>
+      <span class="hint">Tip: use ← → arrow keys to move between examples · every graph below is live — press Play, drag, slide.</span>
+    </div>
+  </section>
+
+  <!-- 1 CIRCLE -->
+  <section class="slide" id="ex1">
+    <div class="slide-head"><div class="stepnum">1</div><div>
+      <h2>The Circle That Isn’t a Function</h2>
+      <p class="sub">Parametric basics. A circle fails the vertical line test, so <i>y = f(x)</i> can never draw one. Give an angle <i>t</i> control of both coordinates at once — and the shape gains something new: <b>motion</b>.</p>
+    </div><span class="difficulty">Level · Simple</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“Parametric is motion, not just shape. The slider <i>s</i> is time — watch the dot <i>travel</i> the circle instead of the circle just sitting there.”</div>
+        <h3 style="margin-top:16px">Paste into Desmos 2D</h3>
+        <div class="formula" id="f1">a = 2
+(a·cos(t), a·sin(t))
+point: (a·cos(s), a·sin(s))  <span class="cm">← press Play on s</span></div>
+        <div class="copyrow"><button class="chip" data-copy="f1">Copy formulas</button><a class="chip" href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Open Desmos 2D ↗</a></div>
+        <ul class="points">
+          <li><b>x = a·cos t</b> and <b>y = a·sin t</b> — one input, two outputs. That’s the whole trick.</li>
+          <li>Same idea draws ellipses, spirals and orbits: just change the two recipes.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b><span class="mono">r(t) = (a cos t, a sin t) &nbsp;·&nbsp; r′(t) = (−a sin t, a cos t)</span><br>Velocity is always perpendicular to position: <span class="mono">r · r′ = 0</span> for every t. Uniform circular motion, in one line — speed |r′| = a is constant.</div>
+      </div>
+      <div class="demo">
+        <canvas id="c1" height="380" aria-label="Animated parametric circle"></canvas>
+        <div class="bar">
+          <button class="playbtn" id="p1">❚❚ Pause</button>
+          <label class="ctl">radius a <input type="range" id="r1a" min="0.6" max="3.2" step="0.1" value="2"><output id="o1a">2.0</output></label>
+          <label class="ctl">angle s <input type="range" id="r1s" min="0" max="6.283" step="0.01" value="0.8"><output id="o1s">0.80</output></label>
+        </div>
+        <div class="readout"><span>x = a·cos(s) = <b id="ro1x">—</b></span><span>y = a·sin(s) = <b id="ro1y">—</b></span><span>speed is constant: the dot never hurries</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 LISSAJOUS -->
+  <section class="slide" id="ex2">
+    <div class="slide-head"><div class="stepnum">2</div><div>
+      <h2>Lissajous — Frequency Becomes Art</h2>
+      <p class="sub">Let x wiggle <i>p</i> times while y wiggles <i>q</i> times. Change nothing but the <b>ratio p : q</b> and the same two sine waves weave knots, stars and bows.</p>
+    </div><span class="difficulty">Level · Simple</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“This is oscilloscopes, musical harmony and orbital resonance — one math. Integer ratios close the loop; messy ratios never quite repeat.”</div>
+        <h3 style="margin-top:16px">Paste into Desmos 2D</h3>
+        <div class="formula" id="f2">p = 3    q = 4    d = 1.57
+(sin(p·t), sin(q·t + d))</div>
+        <div class="copyrow"><button class="chip" data-copy="f2">Copy formulas</button>
+          <button class="chip" data-preset="liss" data-p="1" data-q="2">Try 1 : 2</button>
+          <button class="chip" data-preset="liss" data-p="5" data-q="4">Try 5 : 4</button>
+          <button class="chip" data-preset="liss" data-p="3" data-q="2">Try 3 : 2</button></div>
+        <ul class="points">
+          <li><b>p : q = 1 : 1</b> with phase π/2 gives a circle — Example 1 was hiding inside this one.</li>
+          <li>The phase <b>d</b> twists the figure without changing its frequencies.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b>The curve closes iff <span class="mono">p/q ∈ ℚ</span>. If p/q is irrational it never repeats — it comes arbitrarily close to every point in the square. Velocity is <span class="mono">r′(t) = (p cos pt, q cos(qt+d))</span>; it can vanish only when both cosines hit zero at the same t — for special (p, q, d) that is exactly where the figure develops a cusp or retraces itself (e.g. p = q = 1, d = 0 collapses to a line segment traced back and forth).</div>
+      </div>
+      <div class="demo">
+        <canvas id="c2" height="380" aria-label="Animated Lissajous figure"></canvas>
+        <div class="bar">
+          <button class="playbtn" id="p2">❚❚ Pause</button>
+          <label class="ctl">p <input type="range" id="r2p" min="1" max="6" step="1" value="3"><output id="o2p">3</output></label>
+          <label class="ctl">q <input type="range" id="r2q" min="1" max="6" step="1" value="4"><output id="o2q">4</output></label>
+          <label class="ctl">phase d <input type="range" id="r2d" min="0" max="3.14" step="0.01" value="1.57"><output id="o2d">1.57</output></label>
+        </div>
+        <div class="readout"><span>ratio p : q = <b id="ro2">3 : 4</b></span><span>closed curve — it retraces itself forever</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 HELIX -->
+  <section class="slide" id="ex3">
+    <div class="slide-head"><div class="stepnum">3</div><div>
+      <h2>The 3D Helix — The 2D → 3D Bridge</h2>
+      <p class="sub">Take Example 1’s circle and let it <b>climb</b> while it turns. One parameter still drives everything, but the curve now lives in space: a spring, a screw thread, a DNA backbone, a spiral stair.</p>
+    </div><span class="difficulty">Level · Bridge to 3D</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“Nothing new was invented — we just gave the circle a third recipe, <i>z = c·t</i>. That is the whole jump from 2D curves to space curves.”</div>
+        <h3 style="margin-top:16px">Paste into Desmos 3D / GeoGebra 3D</h3>
+        <div class="formula" id="fHelix">(R·cos t, R·sin t, c·t)
+<span class="cm">t: 0 → 10π · R = radius · c = climb per radian</span></div>
+        <div class="copyrow"><button class="chip" data-copy="fHelix">Copy formulas</button><a class="chip" href="https://www.desmos.com/3d" target="_blank" rel="noopener">Open Desmos 3D ↗</a></div>
+        <ul class="points">
+          <li><b>R</b> sets the coil radius; <b>c</b> sets the pitch — how fast it climbs per turn. Pitch = 2πc.</li>
+          <li>Project it flat (look down the axis) and you see Example 1’s circle again.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b><span class="mono">r(t) = (R cos t, R sin t, c t)</span> · <span class="mono">r′(t) = (−R sin t, R cos t, c)</span><br>Speed <span class="mono">|r′| = √(R² + c²)</span> is <b>constant</b> — the tracer never speeds up. The helix is a geodesic on its cylinder (unroll the cylinder and it becomes a straight line) and the model of uniform motion on a screw. Curvature κ = R/(R²+c²), torsion τ = c/(R²+c²) — both constant.</div>
+      </div>
+      <div class="demo">
+        <canvas id="cHelix" height="380" aria-label="Animated 3D helix"></canvas>
+        <div class="bar">
+          <button class="playbtn" id="pHelix">❚❚ Pause</button>
+          <label class="ctl">radius R <input type="range" id="rHxR" min="0.6" max="1.6" step="0.05" value="1"><output id="oHxR">1.00</output></label>
+          <label class="ctl">climb c <input type="range" id="rHxC" min="0.05" max="0.5" step="0.01" value="0.22"><output id="oHxC">0.22</output></label>
+          <span class="draghint">↖ Drag to orbit</span>
+        </div>
+        <div class="readout"><span>speed |r′| = √(R²+c²) = <b id="roHx">—</b> (constant)</span><span>pitch = 2πc = <b id="roHxP">—</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 BEZIER -->
+  <section class="slide" id="ex4">
+    <div class="slide-head"><div class="stepnum">4</div><div>
+      <h2>Bézier Curve — This <i>Is</i> Parametric Modeling</h2>
+      <p class="sub">Four points. One formula. Drag the orange control points and watch a perfectly smooth curve follow — this exact math draws every letter you’re reading, every car body, wing and CAD spline.</p>
+    </div><span class="difficulty">Level · Core idea</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“You never move the curve. You move two handles, and the math <i>guarantees</i> smoothness. Every modern design tool is this idea, scaled up.”</div>
+        <h3 style="margin-top:16px">Paste into Desmos 2D — then drag A, B, C, D</h3>
+        <div class="formula" id="f3">A=(-4,-2)  B=(-2,3)  C=(3,3)  D=(4,-1)
+(1-t)³A + 3(1-t)²t·B + 3(1-t)t²·C + t³D
+<span class="cm">with 0 ≤ t ≤ 1</span></div>
+        <div class="copyrow"><button class="chip" data-copy="f3">Copy formulas</button>
+          <button class="chip" id="bzS">Preset: S-curve</button><button class="chip" id="bzArch">Preset: Arch</button><button class="chip" id="bzLoop">Preset: Hook</button></div>
+        <ul class="points">
+          <li>The weights <b>(1−t)³, 3(1−t)²t, 3(1−t)t², t³</b> always sum to 1 — the point is a moving weighted average.</li>
+          <li>The faint lines show <b>de Casteljau’s construction</b>: averages of averages of averages.</li>
+          <li>Chain Béziers end-to-end and you get fonts, logos, animation paths, Revit splines.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b>The Bernstein weights are a partition of unity: <span class="mono">(1−t)³+3(1−t)²t+3(1−t)t²+t³ = ((1−t)+t)³ = 1</span>. The derivative is itself a Bézier curve of the differences: <span class="mono">B′(t) = 3[(1−t)²(B−A)+2(1−t)t(C−B)+t²(D−C)]</span> — so endpoints are tangent to AB and CD.</div>
+      </div>
+      <div class="demo">
+        <canvas id="c3" height="380" aria-label="Draggable cubic Bézier curve"></canvas>
+        <div class="bar">
+          <button class="playbtn" id="p3">▶ Sweep t</button>
+          <label class="ctl">t <input type="range" id="r3t" min="0" max="1" step="0.005" value="0.35"><output id="o3t">0.35</output></label>
+          <span class="draghint">↖ Drag A · B · C · D directly on the graph</span>
+        </div>
+        <div class="readout"><span>point at t: <b id="ro3">—</b></span><span>curve always stays inside the control points’ hull</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 CYCLOID -->
+  <section class="slide" id="ex5">
+    <div class="slide-head"><div class="stepnum">5</div><div>
+      <h2>Cycloid — The Rolling Wheel &amp; the Fastest Slide</h2>
+      <p class="sub">Fix a dot to the rim of a rolling wheel. It traces neither circle nor line — it invents a new curve. Flip that curve over and it becomes the <b>brachistochrone</b>: the fastest possible slide, beating a straight line while being longer.</p>
+    </div><span class="difficulty">Level · Medium</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“At the bottom of each arch the dot is momentarily <i>stopped</i> — that’s why the cusps are sharp. Galileo, Bernoulli and Newton all fought over this curve.”</div>
+        <h3 style="margin-top:16px">Paste into Desmos 2D</h3>
+        <div class="formula" id="f4">(t − sin(t), 1 − cos(t))
+<span class="cm">rolling circle: center (s, 1), radius 1</span></div>
+        <div class="copyrow"><button class="chip" data-copy="f4">Copy formulas</button><button class="chip" id="raceBtn">🏁 Race: straight line vs cycloid slide</button></div>
+        <ul class="points">
+          <li>One arch spans exactly <b>2πr</b> wide and <b>2r</b> tall — and its arc length is exactly <b>8r</b>, a clean whole number from a rolling circle.</li>
+          <li>In the race, both beads drop the same height. The cycloid dives steeply early, banks speed, and wins.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b>Speed <span class="mono">|r′(t)| = 2|sin(t/2)|</span> — exactly 0 at each cusp, maximum at the top of the arch. Arc length of one arch is <span class="mono">∫₀²π 2|sin(t/2)| dt = 8r</span>. The inverted cycloid also solves the calculus-of-variations problem: it minimises descent time (brachistochrone) and is tautochrone — descent time is independent of starting point.</div>
+      </div>
+      <div class="demo">
+        <canvas id="c4" height="380" aria-label="Rolling wheel tracing a cycloid"></canvas>
+        <div class="bar">
+          <button class="playbtn" id="p4">❚❚ Pause</button>
+          <label class="ctl">roll s <input type="range" id="r4s" min="0" max="12.57" step="0.02" value="2"><output id="o4s">2.00</output></label>
+          <span class="draghint" id="raceMsg">Watch the red dot: it stops dead at each cusp.</span>
+        </div>
+        <div class="readout"><span>tracing point: <b id="ro4">—</b></span><span>one arch = 2π wide, 2 tall (r = 1)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 MOUNTAIN -->
+  <section class="slide" id="ex6">
+    <div class="slide-head"><div class="stepnum">6</div><div>
+      <h2>The Mountain — Your First Multivariable Function</h2>
+      <p class="sub">Two inputs, one output: the graph stops being a line and becomes a <b>landscape</b>. Slice it with a flat plane at height <i>k</i> and the intersection is a contour line. Drag to orbit; the arrow is the <b>gradient</b> — straight uphill, always perpendicular to the contour.</p>
+    </div><span class="difficulty">Level · New dimension</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“A topographic map is just this surface, sliced. And that’s why water flows <i>across</i> contour lines, never along them — it follows the gradient, downhill.”</div>
+        <h3 style="margin-top:16px">Paste into GeoGebra 3D</h3>
+        <div class="formula" id="f5">f(x,y) = 3·exp(−x² − y²)
+       + 2·exp(−(x−2)² − (y−2)²)
+Plane: z = k   <span class="cm">(slider k, 0 to 3)</span></div>
+        <div class="copyrow"><button class="chip" data-copy="f5">Copy formulas</button><a class="chip" href="https://www.geogebra.org/3d" target="_blank" rel="noopener">Open GeoGebra 3D ↗</a><a class="chip" href="https://www.desmos.com/3d" target="_blank" rel="noopener">Open Desmos 3D ↗</a></div>
+        <ul class="points">
+          <li><b>Level curve:</b> all (x, y) where f(x, y) = k — one flat slice of the mountain.</li>
+          <li><b>Gradient ∇f</b> at the marker: direction of steepest climb, length = steepness.</li>
+          <li>Move the marker — near a peak the arrow shrinks to nothing. Peaks are where ∇f = 0.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b><span class="mono">∇f ⊥ level sets.</span> Proof in one line: along a level curve r(t) with f(r(t)) = k, differentiating gives <span class="mono">∇f · r′ = 0</span>. So ∇f is normal to the contour, points in the direction of steepest ascent, and |∇f| is that steepest rate. The directional derivative is <span class="mono">D<sub>u</sub>f = ∇f · u</span>.</div>
+      </div>
+      <div class="demo">
+        <canvas id="c5" height="360" aria-label="3D surface with slicing plane"></canvas>
+        <canvas id="c5b" height="170" style="border-top:1px solid var(--line)" aria-label="Contour map with gradient arrow"></canvas>
+        <div class="bar">
+          <label class="ctl">slice k <input type="range" id="r5k" min="0.1" max="3" step="0.05" value="1.2"><output id="o5k">1.20</output></label>
+          <label class="ctl">marker x <input type="range" id="r5x" min="-2.5" max="3.5" step="0.1" value="0.8"><output id="o5x">0.8</output></label>
+          <label class="ctl">marker y <input type="range" id="r5y" min="-2.5" max="3.5" step="0.1" value="0.6"><output id="o5y">0.6</output></label>
+          <span class="draghint">↖ Drag the 3D view to orbit · bottom: contour map, top-down</span>
+        </div>
+        <div class="bar render-bar">
+          <span class="render-label">3D Rendering</span>
+          <span class="seg" role="group" aria-label="Light mode — Mountain">
+            <button data-rc="mtn" data-light="shaded" aria-pressed="true">☀ Shaded</button><button data-rc="mtn" data-light="flat" aria-pressed="false">Flat</button><button data-rc="mtn" data-light="wire" aria-pressed="false">Wireframe</button>
+          </span>
+          <button class="chip occ-btn" data-rc="mtn" data-occ aria-pressed="true">Occlusion: On</button>
+          <span class="render-state" id="roRenderMtn">Shaded light · Occlusion on — hidden surfaces removed (solid look)</span>
+        </div>
+        <p class="adopt-note">Occlusion + light modes adopted from the Desmos 3D graphers in the <a href="#refs">Reference Library</a> below.</p>
+        <div class="readout"><span>height f = <b id="ro5f">—</b></span><span>∇f = <b id="ro5g">—</b></span><span>|∇f| = <b id="ro5m">—</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 PARTIALS -->
+  <section class="slide" id="ex7">
+    <div class="slide-head"><div class="stepnum">7</div><div>
+      <h2>Slicing the Mountain — Partial Derivatives</h2>
+      <p class="sub">A partial derivative is not mysterious. Freeze one variable, slice the mountain, and take an ordinary 1D slope on that slice. Do it in x and in y, and you know the full tilt of the surface at a point.</p>
+    </div><span class="difficulty">Level · Medium</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“∂f/∂x answers one question: <i>if I walk purely east, how steep is it right here?</i> ∂f/∂y asks the same walking north. Two honest 1D questions.”</div>
+        <h3 style="margin-top:16px">Paste into GeoGebra 3D (continue from #6)</h3>
+        <div class="formula" id="f6">g(x) = f(x, b)   <span class="cm">← slice, y frozen at b</span>
+h(y) = f(a, y)   <span class="cm">← slice, x frozen at a</span>
+∂f/∂x = slope of g at a
+∂f/∂y = slope of h at b</div>
+        <div class="copyrow"><button class="chip" data-copy="f6">Copy formulas</button></div>
+        <ul class="points">
+          <li>The <b>teal curve</b> is the east–west slice; the <b>orange curve</b> is north–south. Their tangent lines are drawn at the marker.</li>
+          <li>Together the two slopes define the <b>tangent plane</b> — the flat sheet that just kisses the surface.</li>
+          <li>Gradient check: ∇f = ( ∂f/∂x , ∂f/∂y ) — exactly the arrow from Example 6.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b>The two partials are the gradient: <span class="mono">∇f = (f<sub>x</sub>, f<sub>y</sub>)</span>, and they define the tangent plane <span class="mono">z = f(a,b) + f<sub>x</sub>(a,b)(x−a) + f<sub>y</sub>(a,b)(y−b)</span> — the best linear approximation, with error o(√((x−a)²+(y−b)²)) when f is differentiable.</div>
+        <div class="deeper"><b>Go deeper · Monkey Saddle</b><span class="mono">z = x³ − 3xy²</span>, &nbsp;<span class="mono">∇f = (3x²−3y², −6xy)</span>, so ∇f(0,0) = (0,0) — yet the Hessian there is the zero matrix (degenerate). The surface has <b>three valleys and three ridges</b> (room for a monkey’s two legs and tail). The second-derivative test <b>cannot classify</b> this critical point — a failure mode with no 1D analogue.</div>
+      </div>
+      <div class="demo">
+        <canvas id="c6" height="360" aria-label="Surface with two slice curves"></canvas>
+        <canvas id="c6b" height="160" style="border-top:1px solid var(--line)" aria-label="The two 1D slice profiles with tangent lines"></canvas>
+        <div class="bar">
+          <label class="ctl">point a (x) <input type="range" id="r6a" min="-2.5" max="3.5" step="0.1" value="0.8"><output id="o6a">0.8</output></label>
+          <label class="ctl">point b (y) <input type="range" id="r6b" min="-2.5" max="3.5" step="0.1" value="0.6"><output id="o6b">0.6</output></label>
+          <span class="draghint">↖ Drag the 3D view to orbit · bottom: the two slices, flattened</span>
+        </div>
+        <div class="bar render-bar">
+          <span class="render-label">3D Rendering</span>
+          <span class="seg" role="group" aria-label="Light mode — Partials">
+            <button data-rc="par" data-light="shaded" aria-pressed="true">☀ Shaded</button><button data-rc="par" data-light="flat" aria-pressed="false">Flat</button><button data-rc="par" data-light="wire" aria-pressed="false">Wireframe</button>
+          </span>
+          <button class="chip occ-btn" data-rc="par" data-occ aria-pressed="true">Occlusion: On</button>
+          <span class="render-state" id="roRenderPar">Shaded light · Occlusion on — hidden surfaces removed (solid look)</span>
+        </div>
+        <p class="adopt-note">Occlusion + light modes adopted from the Desmos 3D graphers in the <a href="#refs">Reference Library</a> below.</p>
+        <div class="readout"><span>∂f/∂x = <b id="ro6x">—</b></span><span>∂f/∂y = <b id="ro6y">—</b></span><span>steepest slope |∇f| = <b id="ro6m">—</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 SURFACES -->
+  <section class="slide" id="ex8">
+    <div class="slide-head"><div class="stepnum">8</div><div>
+      <h2>Torus &amp; Möbius — Parametric Surfaces</h2>
+      <p class="sub">A curve needed one parameter. A <b>skin</b> needs two — <i>u</i> and <i>v</i>, like latitude and longitude, or the warp and weft of fabric. Every 3D model, game character and architectural shell is stored exactly this way.</p>
+    </div><span class="difficulty">Level · Advanced</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“Switch to the Möbius strip and follow the travelling dot. It goes all the way around <i>u</i>… and arrives back upside-down. One trip proves the strip has only one side.”</div>
+        <h3 style="margin-top:16px">Paste into Desmos 3D / GeoGebra 3D</h3>
+        <div class="formula" id="f7">TORUS:
+((2+0.7cos v)cos u, (2+0.7cos v)sin u, 0.7 sin v)
+MÖBIUS:
+((1+ v/2·cos(u/2))cos u,
+ (1+ v/2·cos(u/2))sin u,  v/2·sin(u/2))
+<span class="cm">u: 0→2π · torus v: 0→2π · möbius v: −1→1</span></div>
+        <div class="copyrow"><button class="chip" data-copy="f7">Copy formulas</button><a class="chip" href="https://www.desmos.com/3d" target="_blank" rel="noopener">Open Desmos 3D ↗</a></div>
+        <ul class="points">
+          <li><b>Torus:</b> <i>u</i> goes around the donut, <i>v</i> goes around the tube. Two circles, multiplied.</li>
+          <li><b>Möbius:</b> the half-twist cos(u/2) is the entire trick — one half-turn baked into the formula.</li>
+          <li>Game engines call this grid a <b>mesh</b>; CAD calls it a <b>parametric surface</b>. Same object.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b>Surface area is <span class="mono">∬ |r<sub>u</sub> × r<sub>v</sub>| du dv</span>. For the torus <span class="mono">|r<sub>u</sub> × r<sub>v</sub>| = r(R + r cos v)</span>, so area <span class="mono">= ∫₀²π∫₀²π r(R+r cos v) du dv = 4π²Rr</span> and volume <span class="mono">= 2π²Rr²</span>. The Möbius strip is <b>non-orientable</b>: no continuous unit normal exists over it, so flux ∬ F·n dS is not defined until you cut it.</div>
+        <div class="deeper"><b>Go deeper · Helicoid &amp; Torus Knot (2,3)</b><b style="display:inline;text-transform:none;letter-spacing:0;font-family:inherit;font-size:inherit;color:var(--ink)">Helicoid:</b> <span class="mono">r(u,v) = (u cos v, u sin v, c v)</span> — a ruled minimal surface (mean curvature H = 0), the soap-film shape on a helical frame. <b style="display:inline;text-transform:none;letter-spacing:0;font-family:inherit;font-size:inherit;color:var(--ink)">Torus knot (2,3):</b> compose the torus with <span class="mono">(u,v) = (2t, 3t)</span> to get a single curve that winds twice around the hole and three times through it — a surface becoming a curve by composition.</div>
+      </div>
+      <div class="demo">
+        <canvas id="c7" height="400" aria-label="Rotating parametric surface"></canvas>
+        <div class="bar">
+          <span class="seg" role="group" aria-label="Surface choice">
+            <button id="segTorus" aria-pressed="true">● Torus</button><button id="segMobius" aria-pressed="false">◐ Möbius strip</button>
+          </span>
+          <label class="ctl" id="ctl7R">tube r <input type="range" id="r7r" min="0.3" max="1.1" step="0.05" value="0.7"><output id="o7r">0.70</output></label>
+          <button class="playbtn" id="p7">❚❚ Pause spin</button>
+          <span class="draghint">↖ Drag to orbit</span>
+        </div>
+        <div class="bar render-bar">
+          <span class="render-label">3D Rendering</span>
+          <span class="seg" role="group" aria-label="Light mode — Surfaces">
+            <button data-rc="surf" data-light="shaded" aria-pressed="true">☀ Shaded</button><button data-rc="surf" data-light="flat" aria-pressed="false">Flat</button><button data-rc="surf" data-light="wire" aria-pressed="false">Wireframe</button>
+          </span>
+          <button class="chip occ-btn" data-rc="surf" data-occ aria-pressed="true">Occlusion: On</button>
+          <span class="render-state" id="roRenderSurf">Shaded light · Occlusion on — far side hidden (solid look)</span>
+        </div>
+        <p class="adopt-note">Occlusion + light modes adopted from the Desmos 3D graphers in the <a href="#refs">Reference Library</a> below.</p>
+        <div class="readout"><span id="ro7">travelling dot: u = 0.00 — watch it come back flipped on the Möbius</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 FRENET PIPE -->
+  <section class="slide" id="ex9">
+    <div class="slide-head"><div class="stepnum">9</div><div>
+      <h2>Frenet-Swept Pipe — What CAD Actually Computes</h2>
+      <p class="sub">The modeling finale. Take the helix from Example 3 as a <b>spine</b>, attach a moving frame to it, and sweep a small circle along it. The result is a solid pipe — a duct run, a thread, a handrail.</p>
+    </div><span class="difficulty">Level · Modeling finale</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“Curve + frame + profile = solid. This is not a picture of a pipe — it is the same boundary representation a CAD kernel builds when you route a duct or a pipe in Revit.”</div>
+        <h3 style="margin-top:16px">Paste into GeoGebra 3D</h3>
+        <div class="formula" id="fPipe">r(t) = (R cos t, R sin t, c t)
+T = r′/|r′| · N = T′/|T′| · B = T × N
+P(t,θ) = r(t) + ρ(cos θ·N + sin θ·B)
+<span class="cm">t: 0 → 4π · θ: 0 → 2π · ρ = pipe radius</span></div>
+        <div class="copyrow"><button class="chip" data-copy="fPipe">Copy formulas</button><a class="chip" href="https://www.geogebra.org/3d" target="_blank" rel="noopener">Open GeoGebra 3D ↗</a></div>
+        <ul class="points">
+          <li>The bright ring is the <b>profile circle</b> at the travelling point — watch it stay perpendicular to the spine (that’s the Frenet frame doing its job).</li>
+          <li>Change <b>ρ</b> and you change wall thickness of the sweep, not the path.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b>For the helix, with <span class="mono">s = √(R²+c²)</span>: <span class="mono">T = (−R sin t, R cos t, c)/s</span>, <span class="mono">N = (−cos t, −sin t, 0)</span>, <span class="mono">B = T × N</span>. The swept surface is <span class="mono">P(t,θ) = r(t) + ρ(cos θ N + sin θ B)</span> — a parametric surface whose two knobs are <i>along</i> (t) and <i>around</i> (θ). This curve + frame + profile construction is the <b>B-rep a CAD kernel computes</b> — behind every pipe, duct, thread and digital twin.</div>
+      </div>
+      <div class="demo">
+        <canvas id="cPipe" height="400" aria-label="Pipe swept along a helix by a Frenet frame"></canvas>
+        <div class="bar">
+          <button class="playbtn" id="pPipe">❚❚ Pause</button>
+          <label class="ctl">spine R <input type="range" id="rPipeR" min="0.8" max="2" step="0.05" value="1.5"><output id="oPipeR">1.50</output></label>
+          <label class="ctl">pipe ρ <input type="range" id="rPipeRho" min="0.12" max="0.35" step="0.01" value="0.24"><output id="oPipeRho">0.24</output></label>
+          <label class="ctl">climb c <input type="range" id="rPipeC" min="0.08" max="0.4" step="0.01" value="0.22"><output id="oPipeC">0.22</output></label>
+          <span class="draghint">↖ Drag to orbit</span>
+        </div>
+        <div class="bar render-bar">
+          <span class="render-label">3D Rendering</span>
+          <span class="seg" role="group" aria-label="Light mode — Swept Pipe">
+            <button data-rc="pipe" data-light="shaded" aria-pressed="true">☀ Shaded</button><button data-rc="pipe" data-light="flat" aria-pressed="false">Flat</button><button data-rc="pipe" data-light="wire" aria-pressed="false">Wireframe</button>
+          </span>
+          <button class="chip occ-btn" data-rc="pipe" data-occ aria-pressed="true">Occlusion: On</button>
+          <span class="render-state" id="roRenderPipe">Shaded light · Occlusion on — back wall hidden (solid pipe)</span>
+        </div>
+        <p class="adopt-note">Occlusion + light modes adopted from the Desmos 3D graphers in the <a href="#refs">Reference Library</a> below.</p>
+        <div class="readout"><span>sweep point t = <b id="roPipe">—</b></span><span>profile stays ⊥ to spine via T · N · B frame</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 FINALE -->
+  <section class="slide" id="ex10">
+    <div class="slide-head"><div class="stepnum">10</div><div>
+      <h2>Finale — Volume Under a Surface, Then the Butterfly</h2>
+      <p class="sub">First the payoff of multivariable calculus: fill a dome with thin columns — base <i>dx·dy</i>, height <i>f(x, y)</i> — and add them all. That sum is the double integral. Then, one parameter and one line of math… a butterfly.</p>
+    </div><span class="difficulty">Level · Finale</span></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Say this</h3>
+        <div class="say"><b>Presenter line</b>“A 1D integral adds rectangles to get area. A double integral adds columns to get volume. Same idea, one dimension up — refine the grid and watch the estimate lock onto the exact answer.”</div>
+        <h3 style="margin-top:16px">Paste into GeoGebra 3D / Desmos</h3>
+        <div class="formula" id="f8">VOLUME:
+f(x,y) = 4 − x² − y²  over  x² + y² ≤ 1
+∬ f dA = 7π/2 ≈ 10.996
+
+BUTTERFLY (Desmos 2D, 0 ≤ t ≤ 24π):
+r = e^{sin t} − 2cos(4t) + sin⁵((2t−π)/24)
+(r·sin t, r·cos t)</div>
+        <div class="copyrow"><button class="chip" data-copy="f8">Copy formulas</button>
+          <span class="seg" role="group" aria-label="Finale view"><button id="segVol" aria-pressed="true">Volume ∬</button><button id="segFly" aria-pressed="false">Butterfly 🦋</button></span></div>
+        <ul class="points">
+          <li><b>Grid slider</b> = the limit process, live: more, thinner columns → sum → exact value.</li>
+          <li>The butterfly (Temple Fay’s curve) is <b>compression</b>: a one-line rule generating a shape no one could plot point-by-point.</li>
+        </ul>
+        <div class="hookbox"><b>Calculus Hook</b>The column sum is a Riemann sum: <span class="mono">Σ f(x<sub>i</sub>,y<sub>j</sub>) ΔA → ∬<sub>D</sub> f dA</span> as n → ∞ (Fubini lets you compute it as iterated 1D integrals). Here <span class="mono">∬ (4−x²−y²) dA = 7π/2</span> over the unit disk — in polar coordinates the Jacobian r dr dθ does the heavy lifting. For the butterfly, arc length has no elementary closed form, yet the parametric integral still converges.</div>
+      </div>
+      <div class="demo">
+        <canvas id="c8" height="400" aria-label="Volume columns under a dome, or the butterfly curve"></canvas>
+        <div class="bar" id="bar8vol">
+          <label class="ctl">grid n × n <input type="range" id="r8n" min="4" max="20" step="1" value="9"><output id="o8n">9</output></label>
+          <span class="draghint">↖ Drag to orbit the dome</span>
+        </div>
+        <div class="bar" id="bar8fly" style="display:none">
+          <button class="playbtn" id="p8">↻ Replay the drawing</button>
+          <span class="draghint">t runs 0 → 24π — the wings need the full journey</span>
+        </div>
+        <div class="bar render-bar" id="bar8render">
+          <span class="render-label">3D Rendering</span>
+          <span class="seg" role="group" aria-label="Light mode — Volume solid">
+            <button data-rc="vol" data-light="shaded" aria-pressed="true">☀ Shaded</button><button data-rc="vol" data-light="flat" aria-pressed="false">Flat</button><button data-rc="vol" data-light="wire" aria-pressed="false">Wireframe</button>
+          </span>
+          <button class="chip occ-btn" data-rc="vol" data-occ aria-pressed="true">Occlusion: On</button>
+          <span class="render-state" id="roRenderVol">Shaded light · Occlusion on — columns behind the dome hidden (solid look)</span>
+        </div>
+        <p class="adopt-note" id="note8render">Occlusion + light modes adopted from the Desmos 3D graphers in the <a href="#refs">Reference Library</a> below.</p>
+        <div class="readout" id="ro8wrap"><span>column sum Σ f·ΔA = <b id="ro8s">—</b></span><span>exact 7π/2 = <b>10.996</b></span><span>error = <b id="ro8e">—</b></span></div>
+      </div>
+    </div>
+
+    <div class="finale">
+      <div class="kicker" style="color:var(--teal)">The memory hook — end on this</div>
+      <h2 style="margin-top:10px">If they remember five symbols, they remember the subject.</h2>
+      <div class="hook">
+        <div class="cell"><span class="f">1 parameter →</span><span class="l">a curve, with motion built in</span></div>
+        <div class="cell"><span class="f">f(x, y) →</span><span class="l">a surface — a landscape over two inputs</span></div>
+        <div class="cell"><span class="f">2 parameters →</span><span class="l">a skin: torus, Möbius, every 3D model</span></div>
+        <div class="cell"><span class="f">∂ →</span><span class="l">slope of the surface, one frozen direction at a time</span></div>
+        <div class="cell"><span class="f">∬ →</span><span class="l">volume under the surface, column by column</span></div>
+      </div>
+      <p class="closing" style="margin-top:22px">Parametric equations are compression: simple rules, turned by one or two knobs, generating shapes — circles, slides, mountains, donuts, butterflies — that no static formula could draw. That is the whole subject. Everything else is turning the knobs with more care.</p>
+    </div>
+  </section>
+
+  <!-- REFERENCE LIBRARY -->
+  <section class="refs" id="refs">
+    <div class="refs-head">
+      <div class="kicker">Keep exploring · the presenter's picks</div>
+      <h2>Surface &amp; Solid Modeling — Reference Library</h2>
+      <p>Two Desmos 3D graphers are the stars here — both graph explicit functions <span class="mono">z = f(x, y)</span> inside the regular Desmos calculator, and both are loved for the same two features: <b>occlusion</b> (hidden-surface removal, so a surface reads as a solid) and <b>light modes</b> (shading styles that reveal shape). Those two features are now built into this page's own 3D demos above — toggle <b>Shaded / Flat / Wireframe</b> and <b>Occlusion On / Off</b> on the Mountain, Surfaces, Swept Pipe and Volume demos — and the originals are one click away below, alongside the platforms every paste-in formula on this page runs on.</p>
+    </div>
+    <div class="ref-table-wrap">
+      <table class="ref-table">
+        <thead><tr><th scope="col">Reference</th><th scope="col">What it shows</th><th scope="col">Modeling type</th><th scope="col">Use it for</th><th scope="col">Link</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="ref-name" data-label="Reference">3D Occlusion Light modes Grapher — explicit function<span class="sub">Full title: “3D Occlusion Light modes Grapher explicit function — Graficador 3D con ocultación modos de luz función explícita” · Desmos calculator graph</span></td>
+            <td data-label="What it shows">A 3D grapher for surfaces <span class="mono">z = f(x, y)</span> built inside the 2D Desmos calculator, with <b>occlusion</b> (hidden-surface removal) and switchable <b>light modes</b> for shading surfaces and solids.</td>
+            <td data-label="Modeling type"><span class="tagchip">Surface · Solid shading</span></td>
+            <td data-label="Use it for">The occlusion + light-mode look adopted on this page — compare its solid, shaded surfaces with the Mountain and Volume demos above, then change the light mode and watch the shape reading change.</td>
+            <td data-label="Link"><a class="openlink" href="https://www.desmos.com/calculator/aqvl7rvzo6" target="_blank" rel="noopener">Open in Desmos ↗</a><span class="url">desmos.com/calculator/aqvl7rvzo6</span></td>
+          </tr>
+          <tr>
+            <td class="ref-name" data-label="Reference">3D Light Grapher — explicit function<span class="sub">Full title: “3D Light Grapher explicit function — Graficador 3D luz función explícita” · Desmos calculator graph</span></td>
+            <td data-label="What it shows">A companion 3D grapher for <span class="mono">z = f(x, y)</span> centred on <b>lighting and shading</b> of the surface — the light-mode companion to the occlusion grapher above.</td>
+            <td data-label="Modeling type"><span class="tagchip">Surface · Light modes</span></td>
+            <td data-label="Use it for">Studying how directional light and shading modes make curvature, peaks and valleys legible on a surface or solid — the same idea as the Shaded / Flat / Wireframe toggle on this page's demos.</td>
+            <td data-label="Link"><a class="openlink" href="https://www.desmos.com/calculator/aftgpjekqs" target="_blank" rel="noopener">Open in Desmos ↗</a><span class="url">desmos.com/calculator/aftgpjekqs</span></td>
+          </tr>
+          <tr>
+            <td class="ref-name" data-label="Reference">Desmos Graphing Calculator<span class="sub">The 2D platform used throughout this presentation</span></td>
+            <td data-label="What it shows">The standard Desmos 2D calculator — where the Circle, Lissajous, Bézier, Cycloid and Butterfly formulas on this page paste straight in.</td>
+            <td data-label="Modeling type"><span class="tagchip">2D curves</span></td>
+            <td data-label="Use it for">Rebuilding Examples 1, 2, 4, 5 and the Butterfly live in class, with sliders for every parameter.</td>
+            <td data-label="Link"><a class="openlink" href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Open Desmos ↗</a><span class="url">desmos.com/calculator</span></td>
+          </tr>
+          <tr>
+            <td class="ref-name" data-label="Reference">Desmos 3D<span class="sub">Desmos's native 3D grapher</span></td>
+            <td data-label="What it shows">Native 3D graphing of surfaces and space curves — the Helix, Torus and Möbius formulas on this page run here directly.</td>
+            <td data-label="Modeling type"><span class="tagchip">3D surfaces</span></td>
+            <td data-label="Use it for">Examples 3 and 8 live in 3D, plus quick <span class="mono">z = f(x, y)</span> surfaces to compare against the two graphers above.</td>
+            <td data-label="Link"><a class="openlink" href="https://www.desmos.com/3d" target="_blank" rel="noopener">Open Desmos 3D ↗</a><span class="url">desmos.com/3d</span></td>
+          </tr>
+          <tr>
+            <td class="ref-name" data-label="Reference">GeoGebra 3D<span class="sub">The 3D platform for the multivariable examples</span></td>
+            <td data-label="What it shows">GeoGebra's 3D calculator — where the Mountain, Partials, Swept Pipe and Volume formulas on this page are written for.</td>
+            <td data-label="Modeling type"><span class="tagchip">Surfaces · Solids</span></td>
+            <td data-label="Use it for">Examples 6, 7, 9 and 10: surfaces with slicing planes, partial-derivative slices, sweeps and double-integral volume.</td>
+            <td data-label="Link"><a class="openlink" href="https://www.geogebra.org/3d" target="_blank" rel="noopener">Open GeoGebra 3D ↗</a><span class="url">geogebra.org/3d</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="refs-note">Note: the second Desmos grapher (…/aftgpjekqs) was listed twice by the presenter — once with the surface/solid picks and again as “this 3D” — so it appears once here; both mentions point to the same graph. Titles above are the graphs' own Desmos page titles, verified 2026-11-02.</p>
+  </section>
+
+  <footer class="site"><div class="row">
+    <span><b>Artemis Academy</b> · Parametric Modeling &amp; Multivariable Calculus — built as a live companion to Desmos &amp; GeoGebra; every demo above also runs there via the copy buttons.</span>
+    <span><a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos 2D</a> · <a href="https://www.desmos.com/3d" target="_blank" rel="noopener">Desmos 3D</a> · <a href="https://www.geogebra.org/3d" target="_blank" rel="noopener">GeoGebra 3D</a></span>
+  </div></footer>
+</div>
+<div id="toast" role="status">Copied — paste it into Desmos / GeoGebra</div>
+
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+var TAU = Math.PI*2;
+function $(id){return document.getElementById(id);}
+function setup(id){
+  var c=$(id); var ctx=c.getContext("2d");
+  function fit(){
+    var w=c.clientWidth||c.parentElement.clientWidth||600;
+    var h=parseInt(c.getAttribute("height"),10)||340;
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    c.width=w*dpr; c.height=h*dpr; c.style.height=h+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    c._w=w; c._h=h;
+  }
+  fit(); window.addEventListener("resize",fit);
+  return {c:c,ctx:ctx};
+}
+function view2d(ctx,W,H,xmin,xmax,ymin,ymax){
+  var sx=(xmax-xmin), sy=(ymax-ymin);
+  return { X:function(x){return (x-xmin)/sx*W;}, Y:function(y){return H-(y-ymin)/sy*H;},
+           px:function(x){return W/sx;}, py:function(y){return H/sy;} };
+}
+function grid2d(ctx,W,H,v,xmin,xmax,ymin,ymax,cs){
+  ctx.fillStyle=cs.bg; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=cs.grid; ctx.lineWidth=1; ctx.beginPath();
+  for(var gx=Math.ceil(xmin);gx<=xmax;gx++){ctx.moveTo(v.X(gx),0);ctx.lineTo(v.X(gx),H);}
+  for(var gy=Math.ceil(ymin);gy<=ymax;gy++){ctx.moveTo(0,v.Y(gy));ctx.lineTo(W,v.Y(gy));}
+  ctx.stroke();
+  ctx.strokeStyle=cs.axis; ctx.lineWidth=1.4; ctx.beginPath();
+  if(ymin<0&&ymax>0){ctx.moveTo(0,v.Y(0));ctx.lineTo(W,v.Y(0));}
+  if(xmin<0&&xmax>0){ctx.moveTo(v.X(0),0);ctx.lineTo(v.X(0),H);}
+  ctx.stroke();
+}
+var _csCache={};
+function CS(){
+  var theme=document.documentElement.getAttribute("data-theme")||"night";
+  var bg,grid,axis;
+  if(_csCache.theme===theme){ bg=_csCache.bg; grid=_csCache.grid; axis=_csCache.axis; }
+  else{
+    var st=getComputedStyle(document.documentElement);
+    function v(n,f){ var x=st.getPropertyValue(n).trim(); return x||f; }
+    bg=v("--canvas-bg","#101318"); grid=v("--canvas-grid","#232833"); axis=v("--canvas-axis","#3a4152");
+    _csCache={theme:theme,bg:bg,grid:grid,axis:axis};
+  }
+  /* Canvas stage stays dark in every theme (incl. the light modes: Day, Matrix Light Blue, Manimx Day, Manimx Light Blue) so bright curves + white labels stay legible — never white-on-white. Accents follow the theme. */
+  var pal={
+    "day":{teal:"#4dabf7",amber:"#fb923c",blue:"#7cc0ff",rose:"#fb7185"},
+    "night":{teal:"#8fb8ff",amber:"#f0b35e",blue:"#7aa5f0",rose:"#f07ba0"},
+    "matrix":{teal:"#00ff41",amber:"#7dff9a",blue:"#00cc33",rose:"#d6ffd6"},
+    "matrix-blue":{teal:"#00bfff",amber:"#7dd7ff",blue:"#38bdf8",rose:"#e0f2ff"},
+    "matrix-light-blue":{teal:"#33c4ff",amber:"#ffd166",blue:"#7dd7ff",rose:"#fda4af"},
+    "manimx-day":{teal:"#5eead4",amber:"#fb923c",blue:"#93c5fd",rose:"#fda4af"},
+    "manimx-light-blue":{teal:"#38bdf8",amber:"#fbbf24",blue:"#60a5fa",rose:"#fda4af"},
+    "manimx-executive":{teal:"#e3b93c",amber:"#f5d98c",blue:"#a9c3e8",rose:"#f0a8bc"}
+  };
+  var p=pal[theme]||pal.night;
+  return { bg:bg, grid:grid, axis:axis, teal:p.teal, amber:p.amber, blue:p.blue, rose:p.rose, ink:"#f2f4f8", dim:"#aab3c5", white:"#ffffff", theme:theme };
+}
+function dot(ctx,x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();}
+/* simple 3D projector */
+function Proj(az,el,scale,cx,cy){
+  var ca=Math.cos(az),sa=Math.sin(az),ce=Math.cos(el),se=Math.sin(el);
+  return function(x,y,z){
+    var X=x*ca-y*sa, Y=x*sa+y*ca;
+    var Z=Y*se+z*ce, D=Y*ce-z*se;
+    return [cx+X*scale, cy-Z*scale, D];
+  };
+}
+function mountain(x,y){ return 3*Math.exp(-x*x-y*y)+2*Math.exp(-(x-2)*(x-2)-(y-2)*(y-2)); }
+function mountainGrad(x,y){
+  var e1=Math.exp(-x*x-y*y), e2=Math.exp(-(x-2)*(x-2)-(y-2)*(y-2));
+  return [ -6*x*e1-4*(x-2)*e2, -6*y*e1-4*(y-2)*e2 ];
+}
+function orbit(canvas,state){
+  var drag=null;
+  canvas.addEventListener("pointerdown",function(e){drag={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});
+  canvas.addEventListener("pointermove",function(e){ if(!drag)return;
+    state.az+=(e.clientX-drag.x)*0.008; state.el+=(e.clientY-drag.y)*0.006;
+    state.el=Math.max(-0.15,Math.min(1.35,state.el)); drag={x:e.clientX,y:e.clientY}; });
+  canvas.addEventListener("pointerup",function(){drag=null;});
+  canvas.addEventListener("pointercancel",function(){drag=null;});
+}
+/* global ticker */
+var tickers=[];
+function every(fn){tickers.push(fn);}
+(function loop(ts){ requestAnimationFrame(loop); var t=(ts||0)/1000; for(var i=0;i<tickers.length;i++){ try{tickers[i](t);}catch(e){} } })(0);
+
+/* ---------- toast / copy ---------- */
+var toastT=null;
+function toast(msg){ var el=$("toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(function(){el.classList.remove("show");},2200); }
+document.querySelectorAll("[data-copy]").forEach(function(b){
+  b.addEventListener("click",function(){
+    var txt=$(b.getAttribute("data-copy")).innerText;
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){toast("Copied — paste it into Desmos / GeoGebra");},function(){toast("Copy blocked — select the formula text manually");}); }
+    else toast("Select the formula text to copy it");
+  });
+});
+
+/* ---------- play buttons helper ---------- */
+function playBtn(id,state){
+  var b=$(id);
+  function sync(){ b.textContent=state.playing?"❚❚ Pause":"▶ Play"; b.classList.toggle("pause",!!state.playing); }
+  b.addEventListener("click",function(){ state.playing=!state.playing; sync(); });
+  sync(); return {sync:sync};
+}
+
+/* ============ 1 · CIRCLE ============ */
+(function(){
+  var s=setup("c1"), st={playing:true,s:0.8,a:2};
+  var pb=playBtn("p1",st); pb.sync();
+  $("r1a").addEventListener("input",function(e){st.a=+e.target.value;$("o1a").textContent=st.a.toFixed(1);});
+  $("r1s").addEventListener("input",function(e){st.s=+e.target.value;$("o1s").textContent=st.s.toFixed(2);st.playing=false;pb.sync();});
+  every(function(t,dt){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    if(st.playing){ st.s=(st.s+0.016)%TAU; $("r1s").value=st.s; $("o1s").textContent=st.s.toFixed(2); }
+    var v=view2d(ctx,W,H,-4.2,4.2,-3.1,3.1); grid2d(ctx,W,H,v,-4.2,4.2,-3.1,3.1,cs);
+    ctx.strokeStyle=cs.dim;ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(v.X(0),v.Y(0),st.a*v.px(1),0,TAU);ctx.stroke();ctx.setLineDash([]);
+    ctx.strokeStyle=cs.teal;ctx.lineWidth=3;ctx.beginPath();
+    for(var i=0;i<=Math.max(2,Math.floor(st.s/TAU*140));i++){ var a=st.s*i/Math.max(2,Math.floor(st.s/TAU*140)||1); var X=v.X(st.a*Math.cos(a)),Y=v.Y(st.a*Math.sin(a)); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);} ctx.stroke();
+    var px=st.a*Math.cos(st.s), py=st.a*Math.sin(st.s);
+    ctx.strokeStyle=cs.amber;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(v.X(0),v.Y(0));ctx.lineTo(v.X(px),v.Y(py));ctx.stroke();
+    ctx.strokeStyle=cs.dim;ctx.beginPath();ctx.arc(v.X(0),v.Y(0),26,0,-st.s,true);ctx.stroke();
+    dot(ctx,v.X(px),v.Y(py),7,cs.amber); dot(ctx,v.X(0),v.Y(0),3.5,cs.white);
+    ctx.fillStyle=cs.ink;ctx.font="13px 'IBM Plex Mono',monospace";
+    ctx.fillText("t = "+st.s.toFixed(2),v.X(px)+12,v.Y(py)-10);
+    $("ro1x").textContent=px.toFixed(2); $("ro1y").textContent=py.toFixed(2);
+  });
+})();
+
+/* ============ 2 · LISSAJOUS ============ */
+(function(){
+  var s=setup("c2"), st={playing:true,t:0,p:3,q:4,d:1.57};
+  var pb=playBtn("p2",st); pb.sync();
+  function bind(id,out,fn,fmt){ $(id).addEventListener("input",function(e){fn(+e.target.value);$(out).textContent=fmt(+e.target.value);upd();}); }
+  function upd(){ $("ro2").textContent=st.p+" : "+st.q; }
+  bind("r2p","o2p",function(v){st.p=v;},function(v){return v;});
+  bind("r2q","o2q",function(v){st.q=v;},function(v){return v;});
+  bind("r2d","o2d",function(v){st.d=v;},function(v){return v.toFixed(2);});
+  document.querySelectorAll("[data-preset='liss']").forEach(function(b){ b.addEventListener("click",function(){
+    st.p=+b.dataset.p; st.q=+b.dataset.q; $("r2p").value=st.p;$("o2p").textContent=st.p;$("r2q").value=st.q;$("o2q").textContent=st.q; upd(); }); });
+  every(function(){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    if(st.playing) st.t=(st.t+0.014)%TAU;
+    var v=view2d(ctx,W,H,-1.7,1.7,-1.25,1.25); grid2d(ctx,W,H,v,-1.7,1.7,-1.25,1.25,cs);
+    ctx.strokeStyle="rgba(139,147,167,.45)";ctx.lineWidth=1.5;ctx.beginPath();
+    for(var i=0;i<=300;i++){ var tt=TAU*i/300; var X=v.X(Math.sin(st.p*tt)),Y=v.Y(Math.sin(st.q*tt+st.d)); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);} ctx.stroke();
+    ctx.strokeStyle=cs.teal;ctx.lineWidth=3;ctx.beginPath();
+    var n=Math.floor(st.t/TAU*300);
+    for(var j=0;j<=n;j++){ var t2=TAU*j/300; var X2=v.X(Math.sin(st.p*t2)),Y2=v.Y(Math.sin(st.q*t2+st.d)); j?ctx.lineTo(X2,Y2):ctx.moveTo(X2,Y2);} ctx.stroke();
+    dot(ctx,v.X(Math.sin(st.p*st.t)),v.Y(Math.sin(st.q*st.t+st.d)),6.5,cs.amber);
+  });
+})();
+
+/* ============ 3 · BEZIER ============ */
+(function(){
+  var s=setup("c3"), st={t:0.35,playing:false,dir:1,
+    P:[{x:-4,y:-2},{x:-2,y:3},{x:3,y:3},{x:4,y:-1}], drag:-1};
+  var pb=playBtn("p3",st);
+  $("p3").textContent="▶ Sweep t";
+  $("r3t").addEventListener("input",function(e){st.t=+e.target.value;$("o3t").textContent=st.t.toFixed(2);});
+  function preset(P){ st.P=P.map(function(p){return{x:p[0],y:p[1]};}); }
+  $("bzS").addEventListener("click",function(){preset([[-4,-2],[-2,3],[3,3],[4,-1]]);});
+  $("bzArch").addEventListener("click",function(){preset([[-4,-2.4],[-1.6,3.2],[1.6,3.2],[4,-2.4]]);});
+  $("bzLoop").addEventListener("click",function(){preset([[-3.6,-2.2],[3.4,3.2],[-3.4,3.0],[3.6,-1.6]]);});
+  function toMath(e){ var r=s.c.getBoundingClientRect(); var W=s.c._w,H=s.c._h;
+    var x=(e.clientX-r.left)/W*8.8-4.4, y=-((e.clientY-r.top)/H*6.4-3.2); return {x:x,y:y}; }
+  s.c.addEventListener("pointerdown",function(e){ var m=toMath(e);
+    for(var i=0;i<4;i++){ if(Math.hypot(st.P[i].x-m.x,st.P[i].y-m.y)<0.55){ st.drag=i; s.c.setPointerCapture(e.pointerId); break; } } });
+  s.c.addEventListener("pointermove",function(e){ if(st.drag<0)return; var m=toMath(e);
+    st.P[st.drag].x=Math.max(-4.3,Math.min(4.3,m.x)); st.P[st.drag].y=Math.max(-3.1,Math.min(3.1,m.y)); });
+  s.c.addEventListener("pointerup",function(){st.drag=-1;}); s.c.addEventListener("pointercancel",function(){st.drag=-1;});
+  function lerp(a,b,t){return{x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};}
+  function bez(t){ var P=st.P,u=1-t; return {
+    x:u*u*u*P[0].x+3*u*u*t*P[1].x+3*u*t*t*P[2].x+t*t*t*P[3].x,
+    y:u*u*u*P[0].y+3*u*u*t*P[1].y+3*u*t*t*P[2].y+t*t*t*P[3].y }; }
+  every(function(){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    if(st.playing){ st.t+=0.006*st.dir; if(st.t>1){st.t=1;st.dir=-1;} if(st.t<0){st.t=0;st.dir=1;}
+      $("r3t").value=st.t; $("o3t").textContent=st.t.toFixed(2); }
+    var v=view2d(ctx,W,H,-4.4,4.4,-3.2,3.2); grid2d(ctx,W,H,v,-4.4,4.4,-3.2,3.2,cs);
+    var P=st.P;
+    ctx.strokeStyle=cs.dim;ctx.lineWidth=1.4;ctx.setLineDash([5,5]);ctx.beginPath();
+    P.forEach(function(p,i){ i?ctx.lineTo(v.X(p.x),v.Y(p.y)):ctx.moveTo(v.X(p.x),v.Y(p.y)); }); ctx.stroke(); ctx.setLineDash([]);
+    /* de Casteljau construction */
+    var q0=lerp(P[0],P[1],st.t),q1=lerp(P[1],P[2],st.t),q2=lerp(P[2],P[3],st.t);
+    var r0=lerp(q0,q1,st.t),r1=lerp(q1,q2,st.t), B=bez(st.t);
+    ctx.strokeStyle="rgba(96,165,250,.65)";ctx.lineWidth=1.6;ctx.beginPath();
+    ctx.moveTo(v.X(q0.x),v.Y(q0.y));ctx.lineTo(v.X(q1.x),v.Y(q1.y));ctx.lineTo(v.X(q2.x),v.Y(q2.y));ctx.stroke();
+    ctx.strokeStyle="rgba(251,113,133,.8)";ctx.beginPath();ctx.moveTo(v.X(r0.x),v.Y(r0.y));ctx.lineTo(v.X(r1.x),v.Y(r1.y));ctx.stroke();
+    [q0,q1,q2].forEach(function(p){dot(ctx,v.X(p.x),v.Y(p.y),3.5,cs.blue);});
+    [r0,r1].forEach(function(p){dot(ctx,v.X(p.x),v.Y(p.y),3.5,cs.rose);});
+    ctx.strokeStyle=cs.teal;ctx.lineWidth=3.5;ctx.beginPath();
+    for(var i=0;i<=120;i++){ var p=bez(i/120); i?ctx.lineTo(v.X(p.x),v.Y(p.y)):ctx.moveTo(v.X(p.x),v.Y(p.y)); } ctx.stroke();
+    dot(ctx,v.X(B.x),v.Y(B.y),7,cs.white);
+    var labels=["A","B","C","D"], cols=[cs.teal,cs.amber,cs.amber,cs.teal];
+    P.forEach(function(p,i){ dot(ctx,v.X(p.x),v.Y(p.y),8,cols[i]); ctx.fillStyle="#10131a";ctx.font="700 11px Archivo,sans-serif";ctx.textAlign="center";ctx.fillText(labels[i],v.X(p.x),v.Y(p.y)+4);ctx.textAlign="left"; });
+    $("ro3").textContent="("+B.x.toFixed(2)+", "+B.y.toFixed(2)+") at t = "+st.t.toFixed(2);
+  });
+})();
+
+/* ============ 4 · CYCLOID + RACE ============ */
+(function(){
+  var s=setup("c4"), st={playing:true,s:2,race:false,raceT:0};
+  var pb=playBtn("p4",st); pb.sync();
+  $("r4s").addEventListener("input",function(e){st.s=+e.target.value;$("o4s").textContent=st.s.toFixed(2); if(!st.race){st.playing=false;pb.sync();}});
+  $("raceBtn").addEventListener("click",function(){ st.race=true; st.raceT=0; $("raceMsg").textContent="Racing… same drop height, same gravity. Watch the orange cycloid bead."; });
+  every(function(){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    if(st.race){ st.raceT+=0.016;
+      var v2=view2d(ctx,W,H,-0.4,10.4,-0.6,3.4); grid2d(ctx,W,H,v2,-0.4,10.4,-0.6,3.4,cs);
+      /* start (0.4,2.6) end (6.7,0.35): straight vs inverted cycloid arc */
+      var x0=0.4,y0=2.6,x1=6.7,y1=0.35, R=1.45;
+      ctx.strokeStyle=cs.dim;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(v2.X(x0),v2.Y(y0));ctx.lineTo(v2.X(x1),v2.Y(y1));ctx.stroke();
+      /* cycloid from x0..x1: param th 0..pi gives width 2R*? use scaled param */
+      function cyc(th){ return { x:x0 + (R*(th-Math.sin(th)))*( (x1-x0)/(R*Math.PI) )*0+ R*(th-Math.sin(th)), y: y0 - R*(1-Math.cos(th))*( (y0-y1)/(2*R) )*2*0 - (y0-y1)*(1-Math.cos(th))/2 }; }
+      /* simpler: interpolate shape via normalized cycloid */
+      function cycN(u){ var th=u*Math.PI; return { x:x0+(x1-x0)*(th-Math.sin(th))/Math.PI, y:y0-(y0-y1)*(1-Math.cos(th))/2 }; }
+      ctx.strokeStyle=cs.amber;ctx.lineWidth=3;ctx.beginPath();
+      for(var i=0;i<=90;i++){ var p=cycN(i/90); i?ctx.lineTo(v2.X(p.x),v2.Y(p.y)):ctx.moveTo(v2.X(p.x),v2.Y(p.y)); } ctx.stroke();
+      var T=2.6, uS=Math.min(1,st.raceT/T), uC=Math.min(1,Math.pow(st.raceT/T,0.72)/0.86);
+      /* straight bead accelerates ~ t^2 along track; cycloid bead: uniform in th (tautochrone-ish approx) */
+      var thC=Math.min(1,st.raceT/2.05);
+      var ps={x:x0+(x1-x0)*uS*uS, y:y0+(y1-y0)*uS*uS};
+      var pc=cycN(Math.sin(Math.min(Math.PI/2,thC*Math.PI/2))/1); pc=cycN(Math.min(1,thC));
+      /* ease cycloid: theta grows steadily */
+      dot(ctx,v2.X(ps.x),v2.Y(ps.y),8,cs.blue); dot(ctx,v2.X(pc.x),v2.Y(pc.y),8,cs.amber);
+      ctx.fillStyle=cs.ink;ctx.font="600 13px Archivo,sans-serif";
+      ctx.fillText("— straight line (blue)",v2.X(7.1),v2.Y(2.75)); ctx.fillText("— cycloid slide (orange)",v2.X(7.1),v2.Y(2.35));
+      if(thC>=1 && uS>=1){ $("raceMsg").textContent="Orange wins — it dove steeply, banked speed early, and arrived first despite the longer path."; }
+      else if(thC>=1){ $("raceMsg").textContent="Cycloid bead has ARRIVED — the straight-line bead is still sliding…"; }
+      if(st.raceT>4.2){ st.race=false; }
+      return;
+    }
+    if(st.playing){ st.s=(st.s+0.03)%(4*Math.PI); $("r4s").value=st.s; $("o4s").textContent=st.s.toFixed(2); }
+    var v=view2d(ctx,W,H,-0.6,13.4,-0.5,3.1); grid2d(ctx,W,H,v,-0.6,13.4,-0.5,3.1,cs);
+    ctx.strokeStyle=cs.axis;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,v.Y(0));ctx.lineTo(W,v.Y(0));ctx.stroke();
+    ctx.strokeStyle="rgba(139,147,167,.4)";ctx.lineWidth=1.5;ctx.beginPath();
+    for(var i=0;i<=260;i++){ var tt=4*Math.PI*i/260; var X=v.X(tt-Math.sin(tt)),Y=v.Y(1-Math.cos(tt)); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);} ctx.stroke();
+    ctx.strokeStyle=cs.teal;ctx.lineWidth=3;ctx.beginPath();
+    var n=Math.floor(st.s/(4*Math.PI)*260);
+    for(var j=0;j<=n;j++){ var t2=4*Math.PI*j/260; var X2=v.X(t2-Math.sin(t2)),Y2=v.Y(1-Math.cos(t2)); j?ctx.lineTo(X2,Y2):ctx.moveTo(X2,Y2);} ctx.stroke();
+    var cxp=st.s, cyp=1;
+    ctx.strokeStyle=cs.white;ctx.lineWidth=2;ctx.beginPath();ctx.arc(v.X(cxp),v.Y(cyp),v.px(1),0,TAU);ctx.stroke();
+    var px=st.s-Math.sin(st.s), py=1-Math.cos(st.s);
+    ctx.strokeStyle=cs.amber;ctx.beginPath();ctx.moveTo(v.X(cxp),v.Y(cyp));ctx.lineTo(v.X(px),v.Y(py));ctx.stroke();
+    dot(ctx,v.X(cxp),v.Y(cyp),3.5,cs.white); dot(ctx,v.X(px),v.Y(py),7,cs.rose);
+    $("ro4").textContent="(" + px.toFixed(2) + ", " + py.toFixed(2) + ")";
+  });
+})();
+
+/* ============ shared surface renderer — with LIGHT MODES + OCCLUSION (adopted from the Desmos 3D graphers, see Reference Library) ============ */
+/* opts: {light:"shaded"|"flat"|"wire", occlusion:true|false}
+   shaded = directional-light shading from each quad's true 3D normal ·
+   flat = one uniform fill · wire = wireframe only.
+   occlusion ON = painter's-algorithm depth sort + opaque fills (hidden surfaces removed, solid look) ·
+   occlusion OFF = unsorted, translucent fills (x-ray look — hidden geometry shows through). */
+var LIGHT_DIR=(function(){ var l=[-0.55,-0.4,0.73], n=Math.hypot(l[0],l[1],l[2]); return [l[0]/n,l[1]/n,l[2]/n]; })();
+function quadBright(pts){
+  var ux=pts[1][0]-pts[0][0], uy=pts[1][1]-pts[0][1], uz=pts[1][2]-pts[0][2];
+  var vx=pts[3][0]-pts[0][0], vy=pts[3][1]-pts[0][1], vz=pts[3][2]-pts[0][2];
+  var nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx;
+  var nl=Math.hypot(nx,ny,nz)||1;
+  return Math.abs((nx*LIGHT_DIR[0]+ny*LIGHT_DIR[1]+nz*LIGHT_DIR[2])/nl);
+}
+function drawSurface(ctx,W,H,proj,fn,nu,nv,ur,vr,fillA,lineCol,opts){
+  opts=opts||{}; var light=opts.light||"shaded"; var occ=opts.occlusion!==false;
+  var quads=[];
+  for(var i=0;i<nu;i++)for(var j=0;j<nv;j++){
+    var u0=ur[0]+(ur[1]-ur[0])*i/nu, u1=ur[0]+(ur[1]-ur[0])*(i+1)/nu;
+    var w0=vr[0]+(vr[1]-vr[0])*j/nv, w1=vr[0]+(vr[1]-vr[0])*(j+1)/nv;
+    var pts=[fn(u0,w0),fn(u1,w0),fn(u1,w1),fn(u0,w1)];
+    var pr=pts.map(function(p){return proj(p[0],p[1],p[2]);});
+    var d=(pr[0][2]+pr[1][2]+pr[2][2]+pr[3][2])/4;
+    var shade=(pts[0][2]+pts[1][2]+pts[2][2]+pts[3][2])/4;
+    quads.push({pr:pr,d:d,shade:shade,bright:quadBright(pts)});
+  }
+  if(occ) quads.sort(function(a,b){return a.d-b.d;});
+  quads.forEach(function(q){
+    ctx.beginPath(); q.pr.forEach(function(p,i){ i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); }); ctx.closePath();
+    if(light==="wire"){
+      ctx.strokeStyle=lineCol; ctx.lineWidth=1.1; ctx.stroke();
+    } else {
+      var alpha;
+      if(light==="flat"){ alpha=0.34; }
+      else { var l=Math.max(0,Math.min(1,0.35+0.65*q.bright)); alpha=0.08+0.52*l; }
+      if(!occ) alpha*=0.42;
+      ctx.fillStyle="rgba(45,212,191,"+alpha.toFixed(3)+")"; ctx.fill();
+      ctx.strokeStyle=lineCol; ctx.lineWidth=0.6; ctx.stroke();
+    }
+  });
+}
+/* wires a [data-rc] light-mode segmented group + occlusion toggle to a demo state {light, occlusion} */
+function wireRenderControls(key,st,outId,occOnText,occOffText){
+  var btns=document.querySelectorAll('[data-rc="'+key+'"][data-light]');
+  var occBtn=document.querySelector('[data-rc="'+key+'"][data-occ]');
+  var out=outId?$(outId):null;
+  function lightName(){ return st.light==="shaded"?"Shaded light":(st.light==="flat"?"Flat light":"Wireframe"); }
+  function sync(){
+    btns.forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-light")===st.light?"true":"false"); });
+    if(occBtn){ occBtn.setAttribute("aria-pressed", st.occlusion?"true":"false"); occBtn.textContent=st.occlusion?"Occlusion: On":"Occlusion: Off"; }
+    if(out){ out.textContent=lightName()+" · "+(st.occlusion?occOnText:occOffText); }
+  }
+  btns.forEach(function(b){ b.addEventListener("click",function(){ st.light=b.getAttribute("data-light"); sync(); }); });
+  if(occBtn){ occBtn.addEventListener("click",function(){ st.occlusion=!st.occlusion; sync(); }); }
+  sync();
+}
+
+/* ============ 5 · MOUNTAIN ============ */
+(function(){
+  var s=setup("c5"), s2=setup("c5b"), st={az:0.7,el:0.62,k:1.2,mx:0.8,my:0.6,light:"shaded",occlusion:true};
+  orbit(s.c,st);
+  wireRenderControls("mtn",st,"roRenderMtn","Occlusion on — hidden surfaces removed (solid look)","Occlusion OFF — x-ray: back of the surface shows through");
+  $("r5k").addEventListener("input",function(e){st.k=+e.target.value;$("o5k").textContent=st.k.toFixed(2);});
+  $("r5x").addEventListener("input",function(e){st.mx=+e.target.value;$("o5x").textContent=st.mx.toFixed(1);});
+  $("r5y").addEventListener("input",function(e){st.my=+e.target.value;$("o5y").textContent=st.my.toFixed(1);});
+  every(function(){
+    var cs=CS();
+    /* 3D */
+    (function(){ var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return;
+      ctx.fillStyle=cs.bg;ctx.fillRect(0,0,W,H);
+      var proj=Proj(st.az,st.el,Math.min(W,H)/9.2,W/2,H/2+16);
+      drawSurface(ctx,W,H,proj,function(x,y){return [x,y,mountain(x,y)];},26,26,[-3,3.6],[-3,3.6],0.16,"rgba(45,212,191,.35)",st);
+      /* slicing plane */
+      var pc=[[-3,-3],[3.6,-3],[3.6,3.6],[-3,3.6]].map(function(p){return proj(p[0],p[1],st.k);});
+      ctx.beginPath(); pc.forEach(function(p,i){i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}); ctx.closePath();
+      ctx.fillStyle="rgba(251,146,60,.16)";ctx.fill(); ctx.strokeStyle=cs.amber;ctx.lineWidth=1.4;ctx.stroke();
+      /* contour curve on surface at height k: scan rows */
+      ctx.strokeStyle=cs.amber;ctx.lineWidth=2.4;ctx.beginPath(); var pen=false;
+      for(var gx=-3;gx<=3.6;gx+=0.12){ for(var gy=-3;gy<=3.6;gy+=0.12){
+        if(Math.abs(mountain(gx,gy)-st.k)<0.09){ var p=proj(gx,gy,st.k); if(!pen){ctx.moveTo(p[0],p[1]);pen=true;} else ctx.lineTo(p[0],p[1]); } } }
+      ctx.stroke();
+      /* marker + gradient */
+      var mz=mountain(st.mx,st.my), mp=proj(st.mx,st.my,mz), g=mountainGrad(st.mx,st.my);
+      var gl=Math.hypot(g[0],g[1])||1, ax=st.mx+g[0]/gl*Math.min(1.1,gl*0.5), ay=st.my+g[1]/gl*Math.min(1.1,gl*0.5);
+      var ap=proj(ax,ay,mountain(ax,ay)+0.06);
+      ctx.strokeStyle=cs.rose;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(mp[0],mp[1]);ctx.lineTo(ap[0],ap[1]);ctx.stroke();
+      dot(ctx,ap[0],ap[1],4,cs.rose); dot(ctx,mp[0],mp[1],6,cs.white);
+      ctx.fillStyle=cs.dim;ctx.font="12px 'IBM Plex Mono',monospace";ctx.fillText("drag to orbit · plane z = "+st.k.toFixed(2),12,20);
+    })();
+    /* contour map */
+    (function(){ var ctx=s2.ctx,W=s2.c._w,H=s2.c._h; if(!W)return;
+      var v=view2d(ctx,W,H,-3,3.6,-3,3.6);
+      ctx.fillStyle=cs.bg;ctx.fillRect(0,0,W,H);
+      var step=5;
+      for(var px=0;px<W;px+=step)for(var py=0;py<H;py+=step){
+        var x=-3+(px/W)*6.6, y=3.6-(py/H)*6.6, f=mountain(x,y);
+        var band=Math.floor(f/0.35);
+        ctx.fillStyle="rgba(45,212,191,"+(0.04+Math.min(0.5,band*0.075))+")";
+        if(Math.abs(f-st.k)<0.10) ctx.fillStyle=cs.amber;
+        ctx.fillRect(px,py,step,step);
+      }
+      var g=mountainGrad(st.mx,st.my), gl=Math.hypot(g[0],g[1])||1;
+      var x2=st.mx+g[0]/gl*Math.min(1.2,gl*0.55), y2=st.my+g[1]/gl*Math.min(1.2,gl*0.55);
+      ctx.strokeStyle=cs.rose;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(v.X(st.mx),v.Y(st.my));ctx.lineTo(v.X(x2),v.Y(y2));ctx.stroke();
+      dot(ctx,v.X(x2),v.Y(y2),4,cs.rose); dot(ctx,v.X(st.mx),v.Y(st.my),6,cs.white);
+      ctx.fillStyle=cs.dim;ctx.font="12px 'IBM Plex Mono',monospace";
+      ctx.fillText("contour map — orange band is f = k = "+st.k.toFixed(2)+" · pink arrow ∇f crosses it at 90°",12,18);
+      var f0=mountain(st.mx,st.my);
+      $("ro5f").textContent=f0.toFixed(2);
+      $("ro5g").textContent="("+g[0].toFixed(2)+", "+g[1].toFixed(2)+")";
+      $("ro5m").textContent=gl.toFixed(2);
+    })();
+  });
+})();
+
+/* ============ 6 · PARTIALS ============ */
+(function(){
+  var s=setup("c6"), s2=setup("c6b"), st={az:0.7,el:0.62,a:0.8,b:0.6,light:"shaded",occlusion:true};
+  orbit(s.c,st);
+  wireRenderControls("par",st,"roRenderPar","Occlusion on — hidden surfaces removed (solid look)","Occlusion OFF — x-ray: back of the surface shows through");
+  $("r6a").addEventListener("input",function(e){st.a=+e.target.value;$("o6a").textContent=st.a.toFixed(1);});
+  $("r6b").addEventListener("input",function(e){st.b=+e.target.value;$("o6b").textContent=st.b.toFixed(1);});
+  every(function(){
+    var cs=CS(); var g=mountainGrad(st.a,st.b);
+    (function(){ var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return;
+      ctx.fillStyle=cs.bg;ctx.fillRect(0,0,W,H);
+      var proj=Proj(st.az,st.el,Math.min(W,H)/9.2,W/2,H/2+16);
+      drawSurface(ctx,W,H,proj,function(x,y){return [x,y,mountain(x,y)];},24,24,[-3,3.6],[-3,3.6],0.16,"rgba(139,147,167,.28)",st);
+      function curve(fn,col){ ctx.strokeStyle=col;ctx.lineWidth=3.5;ctx.beginPath();
+        for(var i=0;i<=80;i++){ var p=fn(i/80); var pr=proj(p[0],p[1],p[2]); i?ctx.lineTo(pr[0],pr[1]):ctx.moveTo(pr[0],pr[1]); } ctx.stroke(); }
+      curve(function(u){ var x=-3+6.6*u; return [x,st.b,mountain(x,st.b)]; },cs.teal);
+      curve(function(u){ var y=-3+6.6*u; return [st.a,y,mountain(st.a,y)]; },cs.amber);
+      var mz=mountain(st.a,st.b), mp=proj(st.a,st.b,mz);
+      /* tangent segments */
+      function tang(dx,dy,slope,col){ var L=0.85;
+        var p1=proj(st.a-dx*L,st.b-dy*L,mz-slope*L), p2=proj(st.a+dx*L,st.b+dy*L,mz+slope*L);
+        ctx.strokeStyle=col;ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();ctx.setLineDash([]); }
+      tang(1,0,g[0],"#5eead4"); tang(0,1,g[1],"#fdba74");
+      dot(ctx,mp[0],mp[1],6.5,cs.white);
+      ctx.fillStyle=cs.dim;ctx.font="12px 'IBM Plex Mono',monospace";ctx.fillText("teal: y frozen · orange: x frozen · dashed: tangents",12,20);
+    })();
+    (function(){ var ctx=s2.ctx,W=s2.c._w,H=s2.c._h; if(!W)return;
+      ctx.fillStyle=cs.bg;ctx.fillRect(0,0,W,H);
+      var half=W/2;
+      function slice(cx0,f1d,at,slope,col,label){
+        var v=view2d(ctx,half,H,-3,3.6,-0.4,3.4);
+        ctx.strokeStyle=cs.axis;ctx.beginPath();ctx.moveTo(cx0,v.Y(0));ctx.lineTo(cx0+half,v.Y(0));ctx.stroke();
+        ctx.strokeStyle=col;ctx.lineWidth=2.6;ctx.beginPath();
+        for(var i=0;i<=80;i++){ var u=-3+6.6*i/80; var X=cx0+v.X(u)-0; var Y=v.Y(f1d(u)); i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);} ctx.stroke();
+        var y0=f1d(at);
+        ctx.strokeStyle=cs.white;ctx.lineWidth=1.6;ctx.setLineDash([5,4]);ctx.beginPath();
+        ctx.moveTo(cx0+v.X(at-0.9),v.Y(y0-slope*0.9));ctx.lineTo(cx0+v.X(at+0.9),v.Y(y0+slope*0.9));ctx.stroke();ctx.setLineDash([]);
+        dot(ctx,cx0+v.X(at),v.Y(y0),5,cs.white);
+        ctx.fillStyle=cs.dim;ctx.font="12px 'IBM Plex Mono',monospace";ctx.fillText(label,cx0+10,18);
+      }
+      slice(0,function(x){return mountain(x,st.b);},st.a,g[0],cs.teal,"g(x) = f(x, b)   slope = ∂f/∂x = "+g[0].toFixed(2));
+      slice(half,function(y){return mountain(st.a,y);},st.b,g[1],cs.amber,"h(y) = f(a, y)   slope = ∂f/∂y = "+g[1].toFixed(2));
+      $("ro6x").textContent=g[0].toFixed(2); $("ro6y").textContent=g[1].toFixed(2);
+      $("ro6m").textContent=Math.hypot(g[0],g[1]).toFixed(2);
+    })();
+  });
+})();
+
+/* ============ 7 · TORUS / MOBIUS ============ */
+(function(){
+  var s=setup("c7"), st={az:0.6,el:0.55,mode:"torus",r:0.7,playing:true,u:0,light:"shaded",occlusion:true};
+  orbit(s.c,st);
+  wireRenderControls("surf",st,"roRenderSurf","Occlusion on — far side hidden (solid look)","Occlusion OFF — x-ray: far side shows through the near side");
+  var pb=playBtn("p7",st); $("p7").textContent="❚❚ Pause spin"; pb.sync();
+  $("p7").addEventListener("click",function(){ $("p7").textContent=st.playing?"❚❚ Pause spin":"▶ Resume spin"; });
+  $("r7r").addEventListener("input",function(e){st.r=+e.target.value;$("o7r").textContent=st.r.toFixed(2);});
+  function setMode(m){ st.mode=m; $("segTorus").setAttribute("aria-pressed",m==="torus"); $("segMobius").setAttribute("aria-pressed",m==="mobius");
+    $("ctl7R").style.display=m==="torus"?"":"none"; }
+  $("segTorus").addEventListener("click",function(){setMode("torus");});
+  $("segMobius").addEventListener("click",function(){setMode("mobius");});
+  function surf(u,v){
+    if(st.mode==="torus"){ var R=2,r=st.r; return [ (R+r*Math.cos(v))*Math.cos(u), (R+r*Math.cos(v))*Math.sin(u), r*Math.sin(v) ]; }
+    return [ (1+v/2*Math.cos(u/2))*Math.cos(u), (1+v/2*Math.cos(u/2))*Math.sin(u), v/2*Math.sin(u/2) ];
+  }
+  every(function(){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    if(st.playing){ st.az+=0.006; st.u=(st.u+0.012)%TAU; }
+    ctx.fillStyle=cs.bg;ctx.fillRect(0,0,W,H);
+    var proj=Proj(st.az,st.el,Math.min(W,H)/7.4,W/2,H/2);
+    if(st.mode==="torus") drawSurface(ctx,W,H,proj,function(u,v){return surf(u,v);},36,16,[0,TAU],[0,TAU],0.35,"rgba(45,212,191,.4)",st);
+    else drawSurface(ctx,W,H,proj,function(u,v){return surf(u,v);},44,8,[0,TAU],[-1,1],0.9,"rgba(251,146,60,.45)",st);
+    var p=surf(st.u,0), pr=proj(p[0],p[1],p[2]);
+    /* orientation tick: normal-ish offset using v direction */
+    var p2=surf(st.u,0.35), pr2=proj(p2[0],p2[1],p2[2]);
+    ctx.strokeStyle=cs.rose;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(pr[0],pr[1]);ctx.lineTo(pr2[0],pr2[1]);ctx.stroke();
+    dot(ctx,pr[0],pr[1],7,cs.white); dot(ctx,pr2[0],pr2[1],4,cs.rose);
+    $("ro7").textContent = st.mode==="torus"
+      ? "travelling dot: u = "+st.u.toFixed(2)+" — on the torus it returns exactly as it left"
+      : "travelling dot: u = "+st.u.toFixed(2)+" of 2π — after one full loop the pink tick points the OTHER way: one side only";
+  });
+})();
+
+/* ============ 8 · VOLUME / BUTTERFLY ============ */
+(function(){
+  var s=setup("c8"), st={az:0.65,el:0.6,n:9,mode:"vol",flyT:0,flyPlay:true,light:"shaded",occlusion:true};
+  orbit(s.c,st);
+  wireRenderControls("vol",st,"roRenderVol","Occlusion on — columns behind the dome hidden (solid look)","Occlusion OFF — x-ray: every column shows through the dome");
+  $("r8n").addEventListener("input",function(e){st.n=+e.target.value;$("o8n").textContent=st.n;});
+  function setMode(m){ st.mode=m; $("segVol").setAttribute("aria-pressed",m==="vol"); $("segFly").setAttribute("aria-pressed",m==="fly");
+    $("bar8vol").style.display=m==="vol"?"":"none"; $("bar8fly").style.display=m==="fly"?"":"none";
+    $("bar8render").style.display=m==="vol"?"":"none"; $("note8render").style.display=m==="vol"?"":"none";
+    $("ro8wrap").style.display=m==="vol"?"":"none"; if(m==="fly") st.flyT=0; }
+  $("segVol").addEventListener("click",function(){setMode("vol");});
+  $("segFly").addEventListener("click",function(){setMode("fly");});
+  $("p8").addEventListener("click",function(){st.flyT=0;});
+  function dome(x,y){ return 4-x*x-y*y; }
+  every(function(){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    ctx.fillStyle=cs.bg;ctx.fillRect(0,0,W,H);
+    if(st.mode==="vol"){
+      var proj=Proj(st.az,st.el,Math.min(W,H)/6.4,W/2,H/2+34);
+      /* columns */
+      var n=st.n, dA=(2/n)*(2/n), sum=0, cols=[];
+      for(var i=0;i<n;i++)for(var j=0;j<n;j++){
+        var x=-1+2*(i+0.5)/n, y=-1+2*(j+0.5)/n;
+        if(x*x+y*y>1) continue; var h=dome(x,y); sum+=h*dA;
+        cols.push({x:x,y:y,h:h});
+      }
+      if(st.occlusion) cols.sort(function(a,b){ return proj(a.x,a.y,0)[2]-proj(b.x,b.y,0)[2]; });
+      var hw=1/n*0.92;
+      cols.forEach(function(c){
+        var corners=[[-hw,-hw],[hw,-hw],[hw,hw],[-hw,hw]].map(function(o){return proj(c.x+o[0],c.y+o[1],c.h);});
+        var base=[[-hw,-hw],[hw,-hw],[hw,hw],[-hw,hw]].map(function(o){return proj(c.x+o[0],c.y+o[1],0);});
+        var topA, sideA;
+        if(st.light==="wire"){ topA=0.06; sideA=0.03; }
+        else if(st.light==="flat"){ topA=0.68; sideA=0.30; }
+        else { topA=0.42+0.14*c.h; sideA=0.16+0.06*c.h; }
+        if(!st.occlusion){ topA*=0.45; sideA*=0.45; }
+        ctx.beginPath(); corners.forEach(function(p,i){i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}); ctx.closePath();
+        ctx.fillStyle="rgba(251,146,60,"+topA.toFixed(3)+")"; ctx.fill();
+        ctx.strokeStyle=st.light==="wire"?cs.teal:"rgba(0,0,0,.25)";ctx.lineWidth=st.light==="wire"?0.9:0.5;ctx.stroke();
+        ctx.beginPath();
+        for(var k=0;k<4;k++){ var k2=(k+1)%4; ctx.moveTo(base[k][0],base[k][1]); ctx.lineTo(base[k2][0],base[k2][1]); ctx.lineTo(corners[k2][0],corners[k2][1]); ctx.lineTo(corners[k][0],corners[k][1]); ctx.closePath(); }
+        ctx.fillStyle="rgba(194,87,10,"+sideA.toFixed(3)+")"; ctx.fill();
+        if(st.light==="wire"){ ctx.strokeStyle="rgba(45,212,191,.5)"; ctx.lineWidth=0.6; ctx.stroke(); }
+      });
+      drawSurface(ctx,W,H,proj,function(th,r){ var x=r*Math.cos(th),y=r*Math.sin(th); return [x,y,dome(x,y)]; },28,10,[0,TAU],[0,1],0.05,"rgba(45,212,191,.5)",st);
+      /* base disk outline */
+      ctx.strokeStyle=cs.dim;ctx.lineWidth=1.4;ctx.beginPath();
+      for(var i=0;i<=60;i++){ var th=TAU*i/60; var p=proj(Math.cos(th),Math.sin(th),0); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke();
+      ctx.fillStyle=cs.dim;ctx.font="12px 'IBM Plex Mono',monospace";
+      ctx.fillText("f(x,y) = 4 − x² − y² over the unit disk · "+cols.length+" columns",12,20);
+      $("ro8s").textContent=sum.toFixed(3);
+      var err=Math.abs(sum-10.9956)/10.9956*100;
+      $("ro8e").textContent=err.toFixed(1)+"%";
+    } else {
+      if(st.flyT<1) st.flyT=Math.min(1,st.flyT+0.0028);
+      var v=view2d(ctx,W,H,-3.4,3.4,-3.4,3.4); grid2d(ctx,W,H,v,-3.4,3.4,-3.4,3.4,cs);
+      var T=24*Math.PI, N=1400, upto=Math.floor(N*st.flyT);
+      ctx.lineWidth=1.7; ctx.beginPath();
+      for(var i=0;i<=upto;i++){ var t=T*i/N;
+        var r=Math.exp(Math.sin(t))-2*Math.cos(4*t)+Math.pow(Math.sin((2*t-Math.PI)/24),5);
+        var X=v.X(r*Math.sin(t)), Y=v.Y(r*Math.cos(t));
+        if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+        if(i%140===0){ /* hue shift segments simulated by stroking in chunks */ }
+      }
+      ctx.strokeStyle=cs.teal; ctx.stroke();
+      if(upto>0){ var t2=T*upto/N; var r2=Math.exp(Math.sin(t2))-2*Math.cos(4*t2)+Math.pow(Math.sin((2*t2-Math.PI)/24),5);
+        dot(ctx,v.X(r2*Math.sin(t2)),v.Y(r2*Math.cos(t2)),5,cs.amber); }
+      ctx.fillStyle=cs.dim;ctx.font="12px 'IBM Plex Mono',monospace";
+      ctx.fillText("drawing… t = "+(T*st.flyT).toFixed(1)+" of "+T.toFixed(1)+"  (24π)",12,20);
+      if(st.flyT>=1){ ctx.fillStyle=cs.ink; ctx.fillText("one parameter · one formula · a butterfly",12,H-14); }
+    }
+  });
+})();
+
+/* ---------- THEME SWITCHER ---------- */
+(function(){
+  document.querySelectorAll("[data-theme-btn]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var t=b.getAttribute("data-theme-btn");
+      document.documentElement.setAttribute("data-theme",t);
+      document.querySelectorAll("[data-theme-btn]").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+      var name=b.textContent.trim();
+      toast("Theme: "+name+" — page and all demos recolored");
+    });
+  });
+})();
+
+/* ============ 3 · HELIX ============ */
+(function(){
+  var el=$("cHelix"); if(!el) return;
+  var s=setup("cHelix"), st={playing:true,R:1,c:0.22,az:0.7,el:0.55,t:0};
+  orbit(s.c,st);
+  var pb=playBtn("pHelix",st); pb.sync();
+  $("rHxR").addEventListener("input",function(e){st.R=+e.target.value;$("oHxR").textContent=st.R.toFixed(2);});
+  $("rHxC").addEventListener("input",function(e){st.c=+e.target.value;$("oHxC").textContent=st.c.toFixed(2);});
+  every(function(){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    ctx.fillStyle=cs.bg; ctx.fillRect(0,0,W,H);
+    if(st.playing) st.t=(st.t+0.02)%(10*Math.PI);
+    var proj=Proj(st.az,st.el,Math.min(W,H)/11,W/2,H/2+10);
+    function pt(t){ return [st.R*Math.cos(t), st.R*Math.sin(t), st.c*t-1.1]; }
+    /* faint cylinder guide */
+    ctx.strokeStyle=cs.axis; ctx.lineWidth=1; ctx.setLineDash([4,5]);
+    [-1.1,2.35].forEach(function(z){ ctx.beginPath(); for(var i=0;i<=48;i++){ var a=TAU*i/48; var p=proj(st.R*Math.cos(a),st.R*Math.sin(a),z); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke(); });
+    ctx.setLineDash([]);
+    ctx.strokeStyle=cs.teal; ctx.lineWidth=3; ctx.beginPath();
+    for(var i=0;i<=420;i++){ var t=10*Math.PI*i/420; var p=proj.apply(null,pt(t)); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke();
+    var cur=pt(st.t), pr=proj(cur[0],cur[1],cur[2]);
+    dot(ctx,pr[0],pr[1],7,cs.amber);
+    /* tangent arrow approx */
+    var nxt=pt(Math.min(10*Math.PI,st.t+0.6)), pr2=proj(nxt[0],nxt[1],nxt[2]);
+    ctx.strokeStyle=cs.rose; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(pr[0],pr[1]); ctx.lineTo(pr2[0],pr2[1]); ctx.stroke(); dot(ctx,pr2[0],pr2[1],3.5,cs.rose);
+    ctx.fillStyle=cs.dim; ctx.font="12px 'IBM Plex Mono',monospace"; ctx.fillText("r(t) = (R cos t, R sin t, c t) · orange = position · pink = r′(t) direction",12,20);
+    $("roHx").textContent=Math.hypot(st.R,st.c).toFixed(3);
+    $("roHxP").textContent=(2*Math.PI*st.c).toFixed(2);
+  });
+})();
+
+/* ============ 9 · FRENET-SWEPT PIPE ============ */
+(function(){
+  var el=$("cPipe"); if(!el) return;
+  var s=setup("cPipe"), st={playing:true,R:1.5,c:0.22,rho:0.24,az:0.65,el:0.55,t:0,light:"shaded",occlusion:true};
+  orbit(s.c,st);
+  wireRenderControls("pipe",st,"roRenderPipe","Occlusion on — back wall hidden (solid pipe)","Occlusion OFF — x-ray: back wall + spine show through the pipe");
+  var pb=playBtn("pPipe",st); pb.sync();
+  $("rPipeR").addEventListener("input",function(e){st.R=+e.target.value;$("oPipeR").textContent=st.R.toFixed(2);});
+  $("rPipeRho").addEventListener("input",function(e){st.rho=+e.target.value;$("oPipeRho").textContent=st.rho.toFixed(2);});
+  $("rPipeC").addEventListener("input",function(e){st.c=+e.target.value;$("oPipeC").textContent=st.c.toFixed(2);});
+  function pipePt(t,th){
+    var R=st.R,c=st.c,rho=st.rho, ss=Math.sqrt(R*R+c*c);
+    var ct=Math.cos(t),sn=Math.sin(t),cth=Math.cos(th),sth=Math.sin(th);
+    return [ R*ct - rho*cth*ct + rho*sth*(c*sn)/ss - 0,
+             R*sn - rho*cth*sn - rho*sth*(c*ct)/ss,
+             c*t + rho*sth*(R/ss) - 1.35 ];
+  }
+  function spine(t){ return [st.R*Math.cos(t), st.R*Math.sin(t), st.c*t-1.35]; }
+  every(function(){
+    var ctx=s.ctx,W=s.c._w,H=s.c._h; if(!W)return; var cs=CS();
+    ctx.fillStyle=cs.bg; ctx.fillRect(0,0,W,H);
+    if(st.playing) st.t=(st.t+0.018)%(4*Math.PI);
+    var proj=Proj(st.az,st.el,Math.min(W,H)/10.5,W/2,H/2+8);
+    /* mesh */
+    var nu=56,nv=14,quads=[];
+    for(var i=0;i<nu;i++)for(var j=0;j<nv;j++){
+      var t0=4*Math.PI*i/nu,t1=4*Math.PI*(i+1)/nu,th0=TAU*j/nv,th1=TAU*(j+1)/nv;
+      var pts=[pipePt(t0,th0),pipePt(t1,th0),pipePt(t1,th1),pipePt(t0,th1)];
+      var pr=pts.map(function(p){return proj(p[0],p[1],p[2]);});
+      var d=(pr[0][2]+pr[1][2]+pr[2][2]+pr[3][2])/4;
+      quads.push({pr:pr,d:d,bright:quadBright(pts)});
+    }
+    if(st.occlusion) quads.sort(function(a,b){return a.d-b.d;});
+    quads.forEach(function(q){
+      ctx.beginPath(); q.pr.forEach(function(p,i){i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}); ctx.closePath();
+      if(st.light==="wire"){
+        ctx.strokeStyle=cs.teal; ctx.lineWidth=0.9; ctx.stroke();
+      } else {
+        var a = st.light==="flat" ? 0.55 : 0.18+0.62*q.bright;
+        if(!st.occlusion) a*=0.4;
+        ctx.globalAlpha=a; ctx.fillStyle=cs.teal; ctx.fill(); ctx.globalAlpha=1;
+        ctx.strokeStyle=cs.grid; ctx.lineWidth=0.5; ctx.stroke();
+      }
+    });
+    /* spine */
+    ctx.strokeStyle=cs.amber; ctx.lineWidth=2; ctx.setLineDash([6,4]); ctx.beginPath();
+    for(var i=0;i<=200;i++){ var t=4*Math.PI*i/200; var sp=spine(t); var p=proj(sp[0],sp[1],sp[2]); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke(); ctx.setLineDash([]);
+    /* travelling profile ring */
+    ctx.strokeStyle=cs.rose; ctx.lineWidth=3.5; ctx.beginPath();
+    for(var k=0;k<=40;k++){ var th=TAU*k/40; var pp=pipePt(st.t,th); var pr3=proj(pp[0],pp[1],pp[2]); k?ctx.lineTo(pr3[0],pr3[1]):ctx.moveTo(pr3[0],pr3[1]); } ctx.stroke();
+    var cen=spine(st.t), pc=proj(cen[0],cen[1],cen[2]); dot(ctx,pc[0],pc[1],5,cs.white);
+    ctx.fillStyle=cs.dim; ctx.font="12px 'IBM Plex Mono',monospace"; ctx.fillText("pink ring = profile circle ρ · dashed = spine r(t) · frame T,N,B keeps ring ⊥ spine",12,20);
+    $("roPipe").textContent=st.t.toFixed(2)+" / "+(4*Math.PI).toFixed(2);
+  });
+})();
+
+/* ---------- nav / progress / keys / present ---------- */
+(function(){
+  var ids=["ex1","ex2","ex3","ex4","ex5","ex6","ex7","ex8","ex9","ex10"];
+  function onScroll(){
+    var h=document.documentElement; var max=h.scrollHeight-h.clientHeight;
+    $("progress").style.width=(max>0?(h.scrollTop/max*100):0)+"%";
+    var cur=0; ids.forEach(function(id,i){ var el=$(id); if(el&&el.getBoundingClientRect().top<160) cur=i; });
+    document.querySelectorAll("#topnav a").forEach(function(a,i){ a.classList.toggle("active",i===cur); });
+  }
+  window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+  document.addEventListener("keydown",function(e){
+    if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")return;
+    if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft")return;
+    var cur=0; ids.forEach(function(id,i){ var el=$(id); if(el&&Math.abs(el.getBoundingClientRect().top-70)<window.innerHeight/2) cur=i; });
+    /* find nearest by scroll position */
+    var best=0,bd=1e18; ids.forEach(function(id,i){ var d=Math.abs($(id).getBoundingClientRect().top-70); if(d<bd){bd=d;best=i;} });
+    var nxt=e.key==="ArrowRight"?Math.min(9,best+1):Math.max(0,best-1);
+    if(nxt!==best||bd>40){ $(ids[nxt]).scrollIntoView({behavior:"smooth"}); }
+  });
+  $("presentBtn").addEventListener("click",function(){
+    var on=document.body.classList.toggle("present");
+    this.setAttribute("aria-pressed",on); this.textContent=on?"Exit present mode":"Present mode";
+    toast(on?"Present mode on — arrow keys move between examples":"Present mode off");
+  });
+})();
+</script>
+
+<script>
+"use strict";
+/* ================= ARTEMIS ACADEMY · FOURIER WORDMARK =================
+   Exact port of the HVAC Mechanical Intelligence Bridge wordmark (P30,
+   RC8.6.2 — the implementation live on the Bridge story page): single-line
+   letterforms for "ARTEMIS" over "Academy" are resampled, transformed with
+   a discrete Fourier transform, and redrawn by 140 rotating vectors
+   (largest first) whose tip leaves a glowing gold ink trail.
+   write (16s) → hold → fade → pause → loop, with replay +
+   reduced-motion static fallback. Exposes window.ARTEMIS_WORDMARK.replay().
+   Adaptations from the source, per brief: second word "Construction" →
+   "Academy" (new lowercase glyphs c/a/d/e/m/y drawn in the same
+   handwriting stroke style/order; "ARTEMIS" glyphs identical), Academy
+   caption/branding, the dark bronze/gold palette branch (this stage is
+   always deep navy), the visibility gate keyed to this page's canvas
+   instead of the Bridge narrative page, and totalH extended by 0.10 for
+   the descender of "y" so the wordmark never clips.                  */
+(function(){
+  var WM={canvas:null,path:null,epi:null,K:0,totalW:7.12,totalH:2.02,t:0,raf:0,last:0,done:false,traced:[],W:0,H:0,visible:true,_li:0};
+  function wmLetterforms(){
+    function cubic(p0,p1,p2,p3,n){var pts=[],i,t,u;for(i=0;i<=n;i++){t=i/n;u=1-t;pts.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]]);}return pts;}
+    var sCurve=cubic([0.55,0.04],[0.28,0.00],[0.06,0.12],[0.08,0.28],22).concat(cubic([0.08,0.28],[0.10,0.42],[0.30,0.46],[0.48,0.56],22).slice(1)).concat(cubic([0.48,0.56],[0.60,0.68],[0.44,0.90],[0.08,0.92],22).slice(1));
+    return {
+      A:{w:0.72,s:[[[0,1],[0.36,0],[0.72,1]],[[0.18,0.62],[0.54,0.62]]]},
+      R:{w:0.68,s:[[[0,1],[0,0]],[[0,0],[0.44,0],[0.60,0.09],[0.60,0.21],[0.44,0.30],[0,0.30]],[[0.30,0.30],[0.64,1]]]},
+      T:{w:0.72,s:[[[0,0],[0.72,0]],[[0.36,0],[0.36,1]]]},
+      E:{w:0.60,s:[[[0.60,0],[0,0]],[[0,0],[0,1]],[[0,1],[0.60,1]],[[0,0.50],[0.48,0.50]]]},
+      M:{w:0.76,s:[[[0,1],[0,0],[0.38,0.56],[0.76,0],[0.76,1]]]},
+      I:{w:0.56,s:[[[0.08,0],[0.48,0]],[[0.28,0],[0.28,1]],[[0.08,1],[0.48,1]]]},
+      S:{w:0.60,s:[sCurve]},
+      C:{w:0.66,s:[[[0.62,0.08],[0.44,0.01],[0.24,0.03],[0.10,0.18],[0.06,0.42],[0.06,0.62],[0.12,0.84],[0.28,0.96],[0.46,0.96],[0.62,0.88]]]},
+      O:{w:0.62,s:[[[0.31,0.01],[0.12,0.06],[0.04,0.24],[0.04,0.76],[0.12,0.94],[0.31,0.99],[0.50,0.94],[0.58,0.76],[0.58,0.24],[0.50,0.06],[0.31,0.01]]]},
+      N:{w:0.68,s:[[[0.02,1],[0.02,0],[0.62,1],[0.62,0]]]},
+      U:{w:0.58,s:[[[0.02,0],[0.02,0.66],[0.08,0.86],[0.20,0.96],[0.34,0.96],[0.46,0.84],[0.50,0.64],[0.50,0]]]},
+      /* "Academy" lowercase — same handwriting stroke style/order, set in the
+         x-height band (y ≈ 0.52–1.0); d carries the tall ascender, y a descender. */
+      c:{w:0.60,s:[[[0.56,0.56],[0.40,0.525],[0.22,0.535],[0.09,0.61],[0.05,0.72],[0.05,0.82],[0.10,0.92],[0.25,0.985],[0.42,0.985],[0.56,0.94]]]},
+      a:{w:0.56,s:[[[0.26,0.54],[0.12,0.58],[0.05,0.68],[0.05,0.86],[0.12,0.96],[0.26,0.99],[0.40,0.96],[0.47,0.86],[0.47,0.68],[0.40,0.58],[0.26,0.54]],[[0.47,0.55],[0.47,1]]]},
+      d:{w:0.56,s:[[[0.25,0.54],[0.11,0.58],[0.04,0.68],[0.04,0.86],[0.11,0.96],[0.25,0.99],[0.39,0.96],[0.46,0.86],[0.46,0.68],[0.39,0.58],[0.25,0.54]],[[0.46,0],[0.46,1]]]},
+      e:{w:0.54,s:[[[0.05,0.75],[0.46,0.75],[0.47,0.66],[0.40,0.56],[0.24,0.53],[0.10,0.60],[0.05,0.74],[0.05,0.88],[0.12,0.97],[0.26,1],[0.40,0.97],[0.48,0.90]]]},
+      m:{w:0.62,s:[[[0,1],[0,0.52]],[[0,0.66],[0.08,0.55],[0.20,0.52],[0.27,0.60],[0.27,1]],[[0.27,0.66],[0.35,0.55],[0.47,0.52],[0.54,0.60],[0.54,1]]]},
+      y:{w:0.60,s:[[[0,0.53],[0.26,0.92]],[[0.52,0.53],[0.26,0.92],[0.20,1.06],[0.08,1.15]]]}
+    };
+  }
+  function wmBuild(){
+    var LF=wmLetterforms(),GAP=0.38;
+    function segLen(a,b){var dx=b[0]-a[0],dy=b[1]-a[1];return Math.sqrt(dx*dx+dy*dy);}
+    function polyLen(pts){var L=0,i;for(i=1;i<pts.length;i++)L+=segLen(pts[i-1],pts[i]);return L;}
+    function resample(pts,count){
+      if(count<2)return [pts[0].slice()];
+      var total=polyLen(pts),out=[],i,j,acc=0,target,prev;
+      if(total===0){for(i=0;i<count;i++)out.push(pts[0].slice());return out;}
+      out.push(pts[0].slice());prev=pts[0];j=1;
+      for(i=1;i<count;i++){target=total*i/(count-1);
+        while(j<pts.length&&acc+segLen(prev,pts[j])<target){acc+=segLen(prev,pts[j]);prev=pts[j];j++;}
+        if(j>=pts.length){out.push(pts[pts.length-1].slice());continue;}
+        var d=segLen(prev,pts[j]),r=d===0?0:(target-acc)/d;
+        out.push([prev[0]+(pts[j][0]-prev[0])*r,prev[1]+(pts[j][1]-prev[1])*r]);}
+      return out;
+    }
+    var LINES=[{word:'ARTEMIS',scale:1.0},{word:'Academy',scale:0.60}],LINE_GAP=0.42;
+    var lineWidths=[],lineStrokes=[];
+    LINES.forEach(function(LN){
+      var cursor=0,strokes=[];
+      LN.word.split('').forEach(function(ch){var L=LF[ch];if(!L)return;
+        L.s.forEach(function(st){strokes.push(st.map(function(p){return [p[0]*LN.scale+cursor,p[1]*LN.scale];}));});
+        cursor+=(L.w+GAP)*LN.scale;});
+      lineWidths.push(cursor-GAP*LN.scale);lineStrokes.push(strokes);
+    });
+    var totalW=Math.max.apply(null,lineWidths),totalH=1.0+LINE_GAP+0.60+0.10;
+    var N=1400,MOVE=12,path=[],strokeLens=[],strokesFlat=[];
+    LINES.forEach(function(LN,li){
+      var ox=(totalW-lineWidths[li])/2,oy=li===0?0:(1.0+LINE_GAP);
+      lineStrokes[li].forEach(function(st){var off=st.map(function(p){return [p[0]+ox,p[1]+oy];});strokesFlat.push(off);strokeLens.push(polyLen(off));});
+    });
+    var totalMoves=(strokesFlat.length-1)*MOVE,drawBudget=N-totalMoves,totalLen=strokeLens.reduce(function(a,b){return a+b;},0);
+    var counts=strokeLens.map(function(l){return Math.max(4,Math.round(drawBudget*l/totalLen));});
+    var sum=counts.reduce(function(a,b){return a+b;},0)+totalMoves;counts[counts.length-1]+=N-sum;
+    strokesFlat.forEach(function(off,si){
+      resample(off,counts[si]).forEach(function(p){path.push({x:p[0],y:p[1],down:true});});
+      if(si<strokesFlat.length-1){var from=off[off.length-1],to=strokesFlat[si+1][0],k;
+        for(k=1;k<=MOVE;k++){var t=k/(MOVE+1);path.push({x:from[0]+(to[0]-from[0])*t,y:from[1]+(to[1]-from[1])*t,down:false});}}
+    });
+    while(path.length<N)path.push({x:path[path.length-1].x,y:path[path.length-1].y,down:false});
+    path=path.slice(0,N);
+    (function(){var i=path.length-1;while(i>0&&!path[i].down)i--;
+      var endP=path[i],prevP=path[Math.max(0,i-6)],d0x=endP.x-prevP.x,d0y=endP.y-prevP.y,d0l=Math.hypot(d0x,d0y)||1;d0x/=d0l;d0y/=d0l;
+      var stP=path[0],nxP=path[6],d1x=nxP.x-stP.x,d1y=nxP.y-stP.y,d1l=Math.hypot(d1x,d1y)||1;d1x/=d1l;d1y/=d1l;
+      var P0=[endP.x,endP.y],P3=[stP.x,stP.y],P1=[P0[0]+d0x*2.0,P0[1]+d0y*2.0],P2=[P3[0]-d1x*0.9,P3[1]-d1y*0.9],k,t,u;
+      for(k=1;k<=48;k++){t=k/49;u=1-t;path.push({x:u*u*u*P0[0]+3*u*u*t*P1[0]+3*u*t*t*P2[0]+t*t*t*P3[0],y:u*u*u*P0[1]+3*u*u*t*P1[1]+3*u*t*t*P2[1]+t*t*t*P3[1],down:false});}
+    })();
+    N=path.length;
+    var z=path.map(function(p){return {re:p.x,im:p.y};}),out=[],k,m,re,im,a,ca,sa;
+    for(k=0;k<N;k++){re=0;im=0;
+      for(m=0;m<N;m++){a=-2*Math.PI*k*m/N;ca=Math.cos(a);sa=Math.sin(a);re+=z[m].re*ca-z[m].im*sa;im+=z[m].re*sa+z[m].im*ca;}
+      out.push({re:re/N,im:im/N,freq:k<=N/2?k:k-N,mag:Math.hypot(re,im)/N});}
+    out.sort(function(x,y){return y.mag-x.mag;});
+    WM.path=path;WM.epi=out.slice(0,140);WM.K=140;WM.totalW=totalW;WM.totalH=totalH;WM.N=N;
+    return true;
+  }
+  function wmPal(){
+    return {trace:'#e0b65a',glow:'rgba(224,182,90,.85)',arm:'rgba(224,182,90,.30)',circle:'rgba(224,182,90,.13)',tip:'#ffe9a8'};
+  }
+  function wmFit(){
+    var cv=WM.canvas;if(!cv)return;
+    var r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+    var W=Math.max(1,Math.round(r.width)),H=Math.max(1,Math.round(r.width*WM.totalH/WM.totalW));
+    if((W<2||H<2)&&(wmFit._t||0)<12){wmFit._t=(wmFit._t||0)+1;setTimeout(wmFit,300);return;}
+    wmFit._t=0;WM.W=W;WM.H=H;
+    cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';
+    var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+    wmRenderInk(g,true);
+  }
+  function wmMap(){var sc=Math.min(WM.W/WM.totalW,WM.H/WM.totalH)*0.96;return {sc:sc,ox:(WM.W-WM.totalW*sc)/2,oy:(WM.H-WM.totalH*sc)/2};}
+  function wmRenderInk(g,clearOnly,alpha){
+    var pal=wmPal(),m=wmMap(),i,p,X,Y;
+    g.save();g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,WM.canvas.width,WM.canvas.height);g.restore();
+    if(clearOnly||WM.traced.length<2)return;
+    var dpr=Math.min(2,window.devicePixelRatio||1);g.save();g.setTransform(dpr,0,0,dpr,0,0);
+    g.globalAlpha=(alpha==null?1:alpha);
+    g.lineCap='round';g.lineJoin='round';g.shadowColor=pal.glow;g.shadowBlur=12;
+    for(var pass=0;pass<2;pass++){g.beginPath();
+      for(i=0;i<WM.traced.length;i++){p=WM.traced[i];X=m.ox+p.x*m.sc;Y=m.oy+p.y*m.sc;
+        if(p.down&&i>0&&WM.traced[i-1].down)g.lineTo(X,Y);else g.moveTo(X,Y);}
+      g.globalAlpha=pass===0?0.22:1;g.lineWidth=pass===0?4.6:2.1;g.strokeStyle=pal.trace;g.stroke();}
+    g.restore();
+  }
+  function wmDraw(theta,alpha,inkAlpha){
+    var cv=WM.canvas,g=cv.getContext('2d'),pal=wmPal(),m=wmMap();
+    var dpr=Math.min(2,window.devicePixelRatio||1);g.save();g.setTransform(dpr,0,0,dpr,0,0);
+    g.clearRect(0,0,WM.W,WM.H);
+    wmRenderInk(g,false,inkAlpha==null?1:inkAlpha);
+    var x=0,y=0,k,c,ca,sa,px,py;g.lineWidth=1;
+    var CIRCLES=Math.min(30,WM.K);
+    for(k=0;k<WM.K;k++){c=WM.epi[k];ca=Math.cos(c.freq*theta);sa=Math.sin(c.freq*theta);
+      if(k<CIRCLES){var mag=Math.hypot(c.re,c.im)*m.sc;
+        g.beginPath();g.arc(m.ox+x*m.sc,m.oy+y*m.sc,Math.max(0.5,mag),0,Math.PI*2);
+        g.strokeStyle=pal.circle;g.globalAlpha=alpha;g.stroke();}
+      px=x;py=y;x+=(c.re*ca-c.im*sa);y+=(c.re*sa+c.im*ca);
+      g.beginPath();g.moveTo(m.ox+px*m.sc,m.oy+py*m.sc);g.lineTo(m.ox+x*m.sc,m.oy+y*m.sc);
+      g.strokeStyle=pal.arm;g.globalAlpha=alpha;g.stroke();}
+    g.globalAlpha=1;
+    var tip={x:m.ox+x*m.sc,y:m.oy+y*m.sc};
+    if(alpha>0.9&&!WM.done){g.beginPath();g.arc(tip.x,tip.y,3,0,Math.PI*2);
+      g.fillStyle=pal.tip;g.shadowColor=pal.glow;g.shadowBlur=14;g.fill();g.shadowBlur=0;}
+    g.restore();
+  }
+  var T_DRAW=16,T_HOLD=3,T_FADE=2.2,T_PAUSE=1.2;
+  function wmLoop(ts){
+    WM.raf=0;
+    if(!WM.visible){WM.raf=requestAnimationFrame(wmLoop);return;}
+    var dt=WM.last?Math.min(.1,(ts-WM.last)/1000):0;WM.last=ts;
+    WM.t+=dt;var T=T_DRAW+T_HOLD+T_FADE+T_PAUSE,lastIdx=WM._li||0;
+    if(WM.t<T_DRAW){
+      var target=Math.floor(WM.t/T_DRAW*WM.N),i;
+      for(i=lastIdx;i<target&&i<WM.N;i++)WM.traced.push(WM.path[i]);
+      WM._li=Math.max(lastIdx,target);
+      wmDraw(WM.t/T_DRAW*Math.PI*2,1);
+    }else if(WM.t<T_DRAW+T_HOLD){wmDraw(Math.PI*2,0.45,1);}
+    else if(WM.t<T_DRAW+T_HOLD+T_FADE){var q=(WM.t-T_DRAW-T_HOLD)/T_FADE;wmDraw(Math.PI*2,(1-q)*0.45,1-q);}
+    else if(WM.t>=T){WM.t=0;WM.last=0;WM._li=0;WM.traced=[];}
+    WM.raf=requestAnimationFrame(wmLoop);
+  }
+  function wmReplay(){
+    if(!WM.epi||!WM.canvas)return;
+    cancelAnimationFrame(WM.raf);WM.done=false;WM.t=0;WM.last=0;WM._li=0;WM.traced=[];
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){WM.traced=WM.path.filter(function(p){return p.down;});wmDraw(Math.PI*2,0.35);return;}
+    WM.raf=requestAnimationFrame(wmLoop);
+  }
+  window.ARTEMIS_WORDMARK={replay:wmReplay,state:WM};
+  try{
+    WM.canvas=document.getElementById('fourierWordmark');
+    if(!WM.canvas)return;
+    var btn=document.getElementById('btnWordmarkReplay');
+    if(btn)btn.addEventListener('click',wmReplay);
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){WM.visible=es[0].isIntersecting;},{threshold:0.02}).observe(WM.canvas);
+    }
+    window.addEventListener('resize',function(){if(WM.epi)wmFit();});
+    try{
+      if(wmBuild()){wmFit();wmReplay();}
+      else WM.canvas.style.display='none';
+    }catch(err){if(window.console)console.warn('Fourier wordmark build skipped',err);WM.canvas.style.display='none';}
+  }catch(err){if(window.console)console.warn('Fourier wordmark skipped',err);}
+})();
+</script>
+
+</body>
+</html>

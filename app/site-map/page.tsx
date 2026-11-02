@@ -78,6 +78,7 @@ const groups: SiteGroup[] = [
       { label: "Academy", href: "/academy" },
       { label: "Tech Stack — Academy · A2", href: "/academy/tech-stack-a2" },
       { label: "Tech Stack — Combined · COM-01", href: "/academy/tech-stack-com-01" },
+      { label: "Parametric Modeling & Multivariable Calculus", href: "/academy/parametric-modeling-multivariable-calculus" },
       { label: "Library", href: "/library" },
       { label: "Library Programs", href: "/library/programs" },
       { label: "Insights", href: "/insights" },

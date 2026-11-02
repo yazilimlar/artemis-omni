@@ -40,6 +40,24 @@ const techStackDocuments: ContentMeta[] = [
   },
 ];
 
+/**
+ * Standalone interactive lessons. Like the Tech Stack documents above, these
+ * live as their own routes (app/academy/<slug> + public/academy/<slug>.html)
+ * rather than MDX articles, so they are listed here explicitly — otherwise
+ * the routes are live but linked from nowhere.
+ */
+const standaloneLessons: ContentMeta[] = [
+  {
+    slug: "parametric-modeling-multivariable-calculus",
+    collection: "academy",
+    title: "Parametric Modeling & Multivariable Calculus",
+    summary:
+      "Parametric modeling and multivariable calculus in a nutshell: ten live examples from a parametric circle to Bézier modeling, gradients, parametric surfaces, a swept-pipe CAD solid and the double integral — with Desmos and GeoGebra formulas throughout.",
+    date: "2026-11-02",
+    category: "Mathematics",
+  },
+];
+
 export default function AcademyPage() {
   const articles = getAllMeta("academy");
 
@@ -72,6 +90,20 @@ export default function AcademyPage() {
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {techStackDocuments.map((item) => (
+              <ContentCard key={item.slug} item={item} basePath="/academy" />
+            ))}
+          </div>
+        </Container>
+      </section>
+      <section className="border-t border-border/60 py-16 lg:py-20">
+        <Container>
+          <SectionHeading
+            eyebrow="Lessons"
+            title="Interactive lessons"
+            description="Standalone interactive lessons — live presentations you present from, with the formulas to keep exploring in Desmos and GeoGebra."
+          />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {standaloneLessons.map((item) => (
               <ContentCard key={item.slug} item={item} basePath="/academy" />
             ))}
           </div>
