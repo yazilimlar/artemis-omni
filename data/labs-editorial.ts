@@ -334,4 +334,42 @@ export const labsEditorial: LabEditorial[] = [
       "Introductory page for a standard in development. It publishes no operating data, no rates, and no specification text; module statuses are development states, not availability.",
     category: "controls",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "ArtLoop \u2014 The Estimation Pipeline",
+    eyebrow: "Construction Intelligence",
+    href: "/labs/artloop",
+    statusLabel: "Private operation",
+    statusTone: "private",
+    Icon: Zap,
+    accentIcon: Landmark,
+    description:
+      "The single-project estimation pipeline of ARTEMIS Construction Intelligence: intake, takeoff, priced basis, figure governance, and proposal inside one governed loop \u2014 every figure traceable to its basis, every submitted version locked and checksummed.",
+    signals: ["Intake \u2192 Proposal", "Governed figures", "Version checksums", "Experience capture"],
+    commercialPath:
+      "Best pilot path: one live pursuit run end-to-end under full figure governance.",
+    boundary:
+      "Introduction page for a gated system in private operation. It publishes no project data, no figures, and no workspace access.",
+    category: "construction",
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "ArtPlex \u2014 Estimation Commanding",
+    eyebrow: "Project Controls",
+    href: "/labs/artplex",
+    statusLabel: "Private operation",
+    statusTone: "private",
+    Icon: Crown,
+    accentIcon: Landmark,
+    description:
+      "The multi-project commanding layer over every ArtLoop: pursuit control with live countdowns and ball-in-court, explicit go/no-go gates, historical results with evidence states, and the cumulative experience of every bid.",
+    signals: ["Pursuit control", "Countdowns & gates", "Ball-in-court", "Experience ledger"],
+    commercialPath:
+      "Best pilot path: a pursuit portfolio reviewed from one command board.",
+    boundary:
+      "Introduction page for a gated system in private operation. It publishes no project data, no figures, and no workspace access.",
+    category: "controls",
+  },
 ];
