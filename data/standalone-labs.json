@@ -188,11 +188,27 @@
     },
     {
       "id": "ai-operations-intelligence",
-      "sandbox": "allow-scripts",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
       "paths": [
         "/standalone/ai-operations-intelligence.html"
       ],
-      "reason": "Static coming-soon document: no scripts execute and it uses no downloads, modals, popups, or storage; allow-scripts is the registry minimum non-empty token set"
+      "reason": "Static document: no scripts execute and it uses no downloads, modals, or storage; family links to the ArtLoop and ArtPlex lab pages open in a new tab outside the sandbox (popups tokens)"
+    },
+    {
+      "id": "artloop",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/artloop.html"
+      ],
+      "reason": "Static introduction page: no scripts execute and it uses no downloads, modals, or storage; family-strip links open in a new tab outside the sandbox (popups tokens)"
+    },
+    {
+      "id": "artplex",
+      "sandbox": "allow-scripts allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/artplex.html"
+      ],
+      "reason": "Static introduction page: no scripts execute and it uses no downloads, modals, or storage; family-strip links open in a new tab outside the sandbox (popups tokens)"
     }
   ]
 }
