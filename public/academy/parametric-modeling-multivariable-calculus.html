@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="artemis">
+<html lang="en" data-theme="night">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -12,46 +12,47 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#faf9f6; --bg2:#f1efe9; --panel:#ffffff; --panel2:#f6f4ee;
-  --ink:#17181c; --ink2:#4a4d55; --ink3:#7a7e88;
-  --line:#e2ded2; --line2:#cfc9b8;
-  --teal:#0e7c6f; --teal-soft:#e0f2ee;
-  --amber:#c2570a; --amber-soft:#fdeeda;
-  --blue:#2456a6; --blue-soft:#e3ebfa;
-  --rose:#b4234a; --rose-soft:#fbe7ee;
-  --gold:#8a6d00;
-  --canvas-bg:#101318; --canvas-grid:#232833; --canvas-axis:#3a4152;
-  --shadow:0 10px 30px rgba(23,24,28,.08);
+  --bg:#0b1220; --bg2:#0e1626; --panel:#111a2c; --panel2:#16233c;
+  --ink:#dbe6f5; --ink2:#a9bcd8; --ink3:#7e93b5;
+  --line:#22314e; --line2:#33486e;
+  --teal:#8fb8ff; --teal-soft:rgba(143,184,255,.13); --on-accent:#0b1220;
+  --amber:#f0b35e; --amber-soft:rgba(240,179,94,.13);
+  --blue:#7aa5f0; --blue-soft:rgba(122,165,240,.13);
+  --rose:#f07ba0; --rose-soft:rgba(240,123,160,.13);
+  --gold:#d4a017;
+  --canvas-bg:#081120; --canvas-grid:#1b2a45; --canvas-axis:#31486e;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
   --radius:14px;
+  --accent:#8fb8ff;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#121317; --bg2:#17181d; --panel:#1b1d23; --panel2:#22242c;
-    --ink:#f2f1ec; --ink2:#c6c8cf; --ink3:#9a9ea9;
-    --line:#2c2e37; --line2:#3a3d49;
-    --teal:#3ec9b6; --teal-soft:#12332e;
-    --amber:#f59a4a; --amber-soft:#3a2410;
-    --blue:#7aa5f0; --blue-soft:#1c2a4a;
-    --rose:#f07ba0; --rose-soft:#3d1b2a;
-    --canvas-bg:#0b0d11; --canvas-grid:#1e232e; --canvas-axis:#343b4d;
-    --shadow:0 10px 30px rgba(0,0,0,.35);
-  }
-}
-/* ===== ARTEMIS THEMES — DeepSeek palettes re-expressed in this page ===== */
-:root{--accent:#0e7c6f}
-[data-theme="matrix-green"]{--bg:#050a05;--bg2:#081008;--panel:#0b140b;--panel2:#0f1a0f;--ink:#b8ffb8;--ink2:#8fce8f;--ink3:#6a9a6a;--line:#1a3a1a;--line2:#2a5c2a;--teal:#00ff41;--teal-soft:rgba(0,255,65,.10);--amber:#9dffb0;--amber-soft:rgba(0,255,65,.09);--blue:#00cc33;--blue-soft:rgba(0,255,65,.09);--rose:#d6ffd6;--rose-soft:rgba(0,255,65,.09);--canvas-bg:#020602;--canvas-grid:#123312;--canvas-axis:#1f5c1f;--shadow:0 0 24px rgba(0,255,65,.08);--accent:#00ff41;color-scheme:dark}
-[data-theme="matrix-blue"]{--bg:#040810;--bg2:#071020;--panel:#0a1428;--panel2:#0e1a32;--ink:#b8d8ff;--ink2:#93b8ec;--ink3:#6a8ac0;--line:#1a3a6a;--line2:#2a5a9e;--teal:#00bfff;--teal-soft:rgba(0,191,255,.13);--amber:#8fdcff;--amber-soft:rgba(0,191,255,.11);--blue:#00bfff;--blue-soft:rgba(0,191,255,.11);--rose:#d6ecff;--rose-soft:rgba(0,191,255,.11);--canvas-bg:#020612;--canvas-grid:#122a4d;--canvas-axis:#1d4477;--shadow:0 0 24px rgba(0,191,255,.10);--accent:#00bfff;color-scheme:dark}
-[data-theme="manimx-light"]{--bg:#f5f1e8;--bg2:#faf7f0;--panel:#ffffff;--panel2:#f8f4ec;--ink:#1a1a2e;--ink2:#454152;--ink3:#5a5563;--line:#d8d0c0;--line2:#bdb29a;--teal:#2a4a8a;--teal-soft:#e6ebf5;--amber:#8a5a12;--amber-soft:#f7ecd4;--blue:#2a4a8a;--blue-soft:#e6ebf5;--rose:#8a2a4a;--rose-soft:#f5e0e8;--canvas-bg:#141824;--canvas-grid:#252b3d;--canvas-axis:#3d465e;--shadow:0 2px 12px rgba(42,74,138,.10);--accent:#2a4a8a;color-scheme:light}
-[data-theme="manimx-light-blue"]{--bg:#eef5ff;--bg2:#f7fbff;--panel:#ffffff;--panel2:#f0f7ff;--ink:#0a1a3a;--ink2:#33507e;--ink3:#4a6a9a;--line:#c8ddf0;--line2:#9dbfe6;--teal:#0a6dff;--teal-soft:#dbeafe;--amber:#9a4d00;--amber-soft:#ffedd5;--blue:#0a6dff;--blue-soft:#dbeafe;--rose:#b4234a;--rose-soft:#fce0ea;--canvas-bg:#0a1830;--canvas-grid:#1a3358;--canvas-axis:#2f4f7d;--shadow:0 2px 12px rgba(10,109,255,.12);--accent:#0a6dff;color-scheme:light}
-[data-theme="manimx-dark"]{--bg:#0e1116;--bg2:#141820;--panel:#1a1f2a;--panel2:#1f2530;--ink:#e6eaf2;--ink2:#c2cad8;--ink3:#9aa5b8;--line:#2a3446;--line2:#46536e;--teal:#a78bfa;--teal-soft:rgba(167,139,250,.15);--amber:#f0b35e;--amber-soft:rgba(240,179,94,.13);--blue:#7aa5f0;--blue-soft:rgba(122,165,240,.13);--rose:#f07ba0;--rose-soft:rgba(240,123,160,.13);--canvas-bg:#0b0e14;--canvas-grid:#1e2636;--canvas-axis:#34405a;--shadow:0 2px 16px rgba(167,139,250,.12);--accent:#a78bfa;color-scheme:dark}
-[data-theme="matrix-green"] body,[data-theme="matrix-blue"] body{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
-[data-theme="matrix-green"] h1,[data-theme="matrix-green"] h2,[data-theme="matrix-blue"] h1,[data-theme="matrix-blue"] h2{font-family:"IBM Plex Mono",monospace}
-[data-theme="manimx-light"] body{font-family:Georgia,'Times New Roman',serif}
-[data-theme="manimx-light"] h1,[data-theme="manimx-light"] h2{font-family:-apple-system,'Segoe UI',sans-serif;font-weight:700}
-[data-theme="manimx-light-blue"] body,[data-theme="manimx-dark"] body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif}
-.themebar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;width:100%;padding:10px 0 2px}
+/* ===== ARTEMIS ACADEMY THEMES — 8 modes, applied to the ENTIRE page =====
+   Every surface reads the same custom properties (body, topbar, hero, roadmap,
+   cards, controls, hook boxes, render bars, reference table, finale, footer),
+   so no section keeps the old default look. Canvas stages stay dark in the
+   light themes so demo ink keeps full contrast. The Fourier wordmark stage
+   is the one deliberate exception: it stays deep navy in all themes. */
+[data-theme="day"]{--bg:#f7f9fc;--bg2:#eef2f7;--panel:#ffffff;--panel2:#eef2f7;--ink:#16202e;--ink2:#43536a;--ink3:#5f7189;--line:#dbe3ec;--line2:#b9c8da;--teal:#1976d2;--teal-soft:#e1eefb;--on-accent:#ffffff;--amber:#b25b00;--amber-soft:#fdeeda;--blue:#1976d2;--blue-soft:#e1eefb;--rose:#b4234a;--rose-soft:#fbe7ee;--canvas-bg:#0d1622;--canvas-grid:#213144;--canvas-axis:#38506e;--shadow:0 4px 18px rgba(22,32,46,.10);--accent:#1976d2;color-scheme:light}
+[data-theme="night"]{--bg:#0b1220;--bg2:#0e1626;--panel:#111a2c;--panel2:#16233c;--ink:#dbe6f5;--ink2:#a9bcd8;--ink3:#7e93b5;--line:#22314e;--line2:#33486e;--teal:#8fb8ff;--teal-soft:rgba(143,184,255,.13);--on-accent:#0b1220;--amber:#f0b35e;--amber-soft:rgba(240,179,94,.13);--blue:#7aa5f0;--blue-soft:rgba(122,165,240,.13);--rose:#f07ba0;--rose-soft:rgba(240,123,160,.13);--canvas-bg:#081120;--canvas-grid:#1b2a45;--canvas-axis:#31486e;--shadow:0 10px 30px rgba(0,0,0,.35);--accent:#8fb8ff;color-scheme:dark}
+[data-theme="matrix"]{--bg:#050a05;--bg2:#081008;--panel:#0b140b;--panel2:#0f1a0f;--ink:#b8ffb8;--ink2:#8fce8f;--ink3:#6a9a6a;--line:#1a3a1a;--line2:#2a5c2a;--teal:#00ff41;--teal-soft:rgba(0,255,65,.10);--on-accent:#02120a;--amber:#9dffb0;--amber-soft:rgba(0,255,65,.09);--blue:#00cc33;--blue-soft:rgba(0,255,65,.09);--rose:#d6ffd6;--rose-soft:rgba(0,255,65,.09);--canvas-bg:#020602;--canvas-grid:#123312;--canvas-axis:#1f5c1f;--shadow:0 0 24px rgba(0,255,65,.08);--accent:#00ff41;color-scheme:dark}
+[data-theme="matrix-blue"]{--bg:#040810;--bg2:#071020;--panel:#0a1428;--panel2:#0e1a32;--ink:#b8d8ff;--ink2:#93b8ec;--ink3:#6a8ac0;--line:#1a3a6a;--line2:#2a5a9e;--teal:#00bfff;--teal-soft:rgba(0,191,255,.13);--on-accent:#02131f;--amber:#8fdcff;--amber-soft:rgba(0,191,255,.11);--blue:#00bfff;--blue-soft:rgba(0,191,255,.11);--rose:#d6ecff;--rose-soft:rgba(0,191,255,.11);--canvas-bg:#020612;--canvas-grid:#122a4d;--canvas-axis:#1d4477;--shadow:0 0 24px rgba(0,191,255,.10);--accent:#00bfff;color-scheme:dark}
+[data-theme="matrix-light-blue"]{--bg:#e8f6ff;--bg2:#d9efff;--panel:#ffffff;--panel2:#eef8ff;--ink:#06283d;--ink2:#1d4e68;--ink3:#3a6a86;--line:#bfe0f5;--line2:#8fc6e8;--teal:#0090cc;--teal-soft:rgba(0,144,204,.12);--on-accent:#ffffff;--amber:#9a4d00;--amber-soft:#ffedd5;--blue:#0090cc;--blue-soft:rgba(0,144,204,.12);--rose:#b4234a;--rose-soft:#fce0ea;--canvas-bg:#062840;--canvas-grid:#11405e;--canvas-axis:#1d5c84;--shadow:0 4px 18px rgba(0,90,140,.12);--accent:#0090cc;color-scheme:light}
+[data-theme="manimx-day"]{--bg:#f5f1e8;--bg2:#faf7f0;--panel:#ffffff;--panel2:#f8f4ec;--ink:#1a1a2e;--ink2:#454152;--ink3:#5a5563;--line:#d8d0c0;--line2:#bdb29a;--teal:#2a4a8a;--teal-soft:#e6ebf5;--on-accent:#ffffff;--amber:#8a5a12;--amber-soft:#f7ecd4;--blue:#2a4a8a;--blue-soft:#e6ebf5;--rose:#8a2a4a;--rose-soft:#f5e0e8;--canvas-bg:#141824;--canvas-grid:#252b3d;--canvas-axis:#3d465e;--shadow:0 2px 12px rgba(42,74,138,.10);--accent:#2a4a8a;color-scheme:light}
+[data-theme="manimx-light-blue"]{--bg:#eef5ff;--bg2:#f7fbff;--panel:#ffffff;--panel2:#f0f7ff;--ink:#0a1a3a;--ink2:#33507e;--ink3:#4a6a9a;--line:#c8ddf0;--line2:#9dbfe6;--teal:#0a6dff;--teal-soft:#dbeafe;--on-accent:#ffffff;--amber:#9a4d00;--amber-soft:#ffedd5;--blue:#0a6dff;--blue-soft:#dbeafe;--rose:#b4234a;--rose-soft:#fce0ea;--canvas-bg:#0a1830;--canvas-grid:#1a3358;--canvas-axis:#2f4f7d;--shadow:0 2px 12px rgba(10,109,255,.12);--accent:#0a6dff;color-scheme:light}
+[data-theme="manimx-executive"]{--bg:#0e1626;--bg2:#0a1120;--panel:#16233c;--panel2:#1c2c49;--ink:#f5f1e6;--ink2:#d8cfb8;--ink3:#a99f86;--line:#2e4066;--line2:#d4a017;--teal:#d4a017;--teal-soft:rgba(212,160,23,.15);--on-accent:#0e1626;--amber:#e8c874;--amber-soft:rgba(232,200,116,.14);--blue:#a9c3e8;--blue-soft:rgba(169,195,232,.13);--rose:#e8a0b4;--rose-soft:rgba(232,160,180,.13);--canvas-bg:#0a1120;--canvas-grid:#22345a;--canvas-axis:#3a5484;--shadow:0 12px 32px rgba(0,0,0,.45);--accent:#d4a017;color-scheme:dark}
+:root{--accent:#8fb8ff}
+[data-theme="matrix"] body,[data-theme="matrix-blue"] body,[data-theme="matrix-light-blue"] body{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+[data-theme="matrix"] h1,[data-theme="matrix"] h2,[data-theme="matrix-blue"] h1,[data-theme="matrix-blue"] h2,[data-theme="matrix-light-blue"] h1,[data-theme="matrix-light-blue"] h2{font-family:"IBM Plex Mono",monospace}
+[data-theme="manimx-day"] body{font-family:Georgia,'Times New Roman',serif}
+[data-theme="manimx-day"] h1,[data-theme="manimx-day"] h2{font-family:-apple-system,'Segoe UI',sans-serif;font-weight:700}
+[data-theme="manimx-light-blue"] body,[data-theme="day"] body,[data-theme="night"] body{font-family:"Archivo","Segoe UI",system-ui,-apple-system,sans-serif}
+[data-theme="manimx-executive"] h1,[data-theme="manimx-executive"] h2,[data-theme="manimx-executive"] h3{font-family:"DM Serif Display",Georgia,'Times New Roman',serif}
+[data-theme="manimx-executive"] .stepnum{background:var(--teal);color:#0e1626}
+[data-theme="manimx-executive"] .finale{background:#0a1120;color:var(--ink);border:1px solid var(--line2)}
+[data-theme="manimx-executive"] .finale h2{color:var(--ink)}
+.themebar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;width:100%;max-width:100%;padding:10px 0 2px}
 .themebar .tlabel{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin-right:4px}
-.theme-btn{border:1px solid var(--line2);background:var(--panel);color:var(--ink2);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit}
+.theme-btn{border:1px solid var(--line2);background:var(--panel);color:var(--ink2);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:700;display:inline-flex;gap:7px;align-items:center;cursor:pointer;font-family:inherit;white-space:nowrap;max-width:100%}
 .theme-btn .sw{width:9px;height:9px;border-radius:50%;flex:none}
 .theme-btn[aria-pressed="true"]{border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}
 .hookbox{margin-top:14px;border:1px solid var(--line2);background:var(--panel2);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:var(--ink2)}
@@ -64,7 +65,7 @@
 .render-bar{gap:10px !important}
 .render-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-weight:700}
 .render-state{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink2)}
-.occ-btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.occ-btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--on-accent,#fff)}
 .occ-btn[aria-pressed="false"]{background:var(--panel2);color:var(--ink2)}
 .adopt-note{margin:0;padding:9px 16px 11px;border-top:1px dashed var(--line);background:var(--panel2);font-size:12.5px;line-height:1.5;color:var(--ink3)}
 .adopt-note a{font-weight:700}
@@ -100,7 +101,7 @@ h1,h2,h3{font-family:"DM Serif Display",Georgia,"Times New Roman",serif;font-wei
 .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
 a{color:var(--teal)}
 button{font-family:inherit;cursor:pointer}
-::selection{background:var(--teal);color:#fff}
+::selection{background:var(--teal);color:var(--on-accent,#fff)}
 
 /* progress + top bar */
 #progress{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0;z-index:60}
@@ -114,7 +115,7 @@ button{font-family:inherit;cursor:pointer}
 .btn{border:1px solid var(--line2);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:700;font-size:13px}
 .btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .btn.small{padding:6px 11px;font-size:12px}
-.btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--on-accent,#fff)}
 
 /* layout */
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
@@ -173,7 +174,7 @@ button{font-family:inherit;cursor:pointer}
 .ctl{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--ink2)}
 .ctl output{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink);min-width:38px}
 input[type=range]{width:110px;accent-color:var(--teal)}
-.playbtn{border:none;background:var(--teal);color:#fff;font-weight:800;font-size:13px;border-radius:999px;padding:8px 16px}
+.playbtn{border:none;background:var(--teal);color:var(--on-accent,#fff);font-weight:800;font-size:13px;border-radius:999px;padding:8px 16px}
 .playbtn.pause{background:var(--ink)}
 .readout{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--panel2);border-top:1px solid var(--line);padding:10px 16px;color:var(--ink2);display:flex;gap:18px;flex-wrap:wrap}
 .readout b{color:var(--ink)}
@@ -188,7 +189,7 @@ input[type=range]{width:110px;accent-color:var(--teal)}
 .finale .hook{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}
 @media(max-width:900px){.finale .hook{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.finale .hook{grid-template-columns:1fr}}
-.finale .cell{border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:14px}
+.finale .cell{border:1px solid color-mix(in srgb, currentColor 28%, transparent);border-radius:12px;padding:14px}
 @media(prefers-color-scheme:dark){.finale .cell{border-color:#3a3d49}}
 .finale .cell .f{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;display:block}
 .finale .cell .l{font-size:13px;opacity:.75;display:block;margin-top:4px;line-height:1.4}
@@ -200,17 +201,17 @@ footer.site .row{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-betw
 body.present .slide{min-height:calc(100vh - 60px);display:flex;flex-direction:column;justify-content:center}
 body.present{scroll-snap-type:y proximity}
 
-/* ===== ARTEMIS ACADEMY — FOURIER WORDMARK (logo stage stays deep navy in all 6 themes) ===== */
+/* ===== ARTEMIS ACADEMY — FOURIER WORDMARK (logo stage stays deep navy in all 8 themes) ===== */
 .wordmark{padding:26px 0 4px}
 .wm-stage{position:relative;border-radius:16px;overflow:hidden;border:1px solid #1e3a5f;
   background:radial-gradient(130% 170% at 28% -10%,#14304f 0%,#0c1e35 52%,#081426 100%);
-  box-shadow:0 14px 34px rgba(8,20,38,.28)}
-.wm-stage canvas{display:block;width:100%;background:transparent;touch-action:pan-y}
-.wm-caption{position:absolute;left:16px;bottom:12px;max-width:calc(100% - 138px);
-  font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;line-height:1.5;
-  letter-spacing:.11em;text-transform:uppercase;color:#8fb0d8;pointer-events:none}
-.wm-caption .g{color:#e0aa3e;font-weight:700}
-.wm-replay{position:absolute;right:12px;bottom:10px;border:1px solid rgba(160,195,235,.45);
+  box-shadow:0 14px 34px rgba(8,20,38,.28);padding:14px 16px 10px}
+.wm-stage canvas{display:block;width:100%;height:auto;background:transparent;touch-action:pan-y}
+.wm-caprow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.wm-caption{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;line-height:1.5;
+  letter-spacing:.11em;text-transform:uppercase;color:#8fb0d8}
+.wm-caption .g{color:#e0b65a;font-weight:700}
+.wm-replay{margin-left:auto;border:1px solid rgba(160,195,235,.45);
   background:rgba(10,24,44,.72);color:#cfe3fa;font-weight:700;font-size:12.5px;
   border-radius:8px;padding:7px 13px;backdrop-filter:blur(4px)}
 .wm-replay:hover{border-color:#e0aa3e;color:#e8b54b}
@@ -219,7 +220,7 @@ body.present{scroll-snap-type:y proximity}
 .wm-tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;color:var(--teal);border:1px solid var(--line2);
   border-radius:999px;padding:3px 9px;margin-right:8px;vertical-align:2px;background:var(--panel)}
-@media(max-width:560px){.wm-caption{font-size:9px;max-width:calc(100% - 118px)}.wm-bridge{font-size:14px}}
+@media(max-width:560px){.wm-caption{font-size:9px}.wm-bridge{font-size:14px}}
 </style>
 </head>
 <body>
@@ -233,12 +234,14 @@ body.present{scroll-snap-type:y proximity}
   <button class="btn small" id="presentBtn" aria-pressed="false">Present mode</button>
   <div class="themebar" role="group" aria-label="Theme modes">
     <span class="tlabel">ARTEMIS · Theme</span>
-    <button class="theme-btn" data-theme-btn="artemis" aria-pressed="true"><span class="sw" style="background:#0e7c6f"></span>Artemis (original)</button>
-    <button class="theme-btn" data-theme-btn="matrix-green" aria-pressed="false"><span class="sw" style="background:#00ff41;box-shadow:0 0 6px #00ff41"></span>Matrix Green</button>
+    <button class="theme-btn" data-theme-btn="day" aria-pressed="false"><span class="sw" style="background:#1976d2"></span>Day</button>
+    <button class="theme-btn" data-theme-btn="night" aria-pressed="true"><span class="sw" style="background:#8fb8ff;box-shadow:0 0 6px #8fb8ff"></span>Night</button>
+    <button class="theme-btn" data-theme-btn="matrix" aria-pressed="false"><span class="sw" style="background:#00ff41;box-shadow:0 0 6px #00ff41"></span>Matrix</button>
     <button class="theme-btn" data-theme-btn="matrix-blue" aria-pressed="false"><span class="sw" style="background:#00bfff;box-shadow:0 0 6px #00bfff"></span>Matrix Blue</button>
-    <button class="theme-btn" data-theme-btn="manimx-light" aria-pressed="false"><span class="sw" style="background:#2a4a8a"></span>Manimx Light</button>
+    <button class="theme-btn" data-theme-btn="matrix-light-blue" aria-pressed="false"><span class="sw" style="background:#0090cc"></span>Matrix Light Blue</button>
+    <button class="theme-btn" data-theme-btn="manimx-day" aria-pressed="false"><span class="sw" style="background:#2a4a8a"></span>Manimx Day</button>
     <button class="theme-btn" data-theme-btn="manimx-light-blue" aria-pressed="false"><span class="sw" style="background:#0a6dff"></span>Manimx Light Blue</button>
-    <button class="theme-btn" data-theme-btn="manimx-dark" aria-pressed="false"><span class="sw" style="background:#a78bfa;box-shadow:0 0 6px #a78bfa"></span>Manimx Dark</button>
+    <button class="theme-btn" data-theme-btn="manimx-executive" aria-pressed="false"><span class="sw" style="background:#d4a017;box-shadow:0 0 6px #d4a017"></span>Manimx Executive</button>
   </div>
 </div></header>
 
@@ -246,18 +249,17 @@ body.present{scroll-snap-type:y proximity}
   <!-- ARTEMIS ACADEMY · FOURIER WORDMARK -->
   <section class="wordmark" aria-label="Artemis Academy Fourier wordmark">
     <div class="wm-stage">
-      <canvas id="cWord" height="250" role="img" aria-label="Animated Fourier wordmark: the words ARTEMIS Academy, traced live by a chain of rotating vectors (epicycles)"></canvas>
-      <div class="wm-caption"><span class="g">Artemis Academy</span> · Fourier wordmark — the outline traced by rotating vectors, largest first</div>
-      <button class="wm-replay" id="wmReplay" type="button">↻ Replay</button>
+      <canvas id="fourierWordmark" role="img" aria-label="ARTEMIS ACADEMY drawn by rotating Fourier vectors"></canvas>
+      <div class="wm-caprow"><div class="wm-caption"><span class="g">Artemis Academy</span> · Fourier wordmark — ARTEMIS / Academy traced by 140 rotating vectors</div><button class="wm-replay" type="button" id="btnWordmarkReplay">↻ Replay</button></div>
     </div>
-    <p class="wm-bridge"><span class="wm-tag">Example 0 · The logo</span><b>This logo is drawn by the math in <a href="#ex1">Example 1</a></b> — a sum of rotating vectors <i>is</i> a parametric curve. Each vector is a (cos t, sin t) spinning at its own whole-number frequency; add roughly 140 of them tip-to-tail, largest first, and the tip of the chain writes <b>ARTEMIS</b> in gold and <b>Academy</b> in blue. Watch it write, hold, fade, and loop — or press Replay.</p>
+    <p class="wm-bridge"><span class="wm-tag">Example 0 · The logo</span><b>This logo is drawn by the math in <a href="#ex1">Example 1</a></b> — a sum of rotating vectors <i>is</i> a parametric curve. The letterforms are resampled into one parametric path, decomposed with a discrete Fourier transform, and redrawn by 140 rotating vectors, largest first; the tip of the chain leaves the gold ink trail that writes <b>ARTEMIS</b> over <b>Academy</b>. Watch it write, hold, fade, and loop — or press Replay.</p>
   </section>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="kicker">ARTEMIS ACADEMY · An interactive lesson · 10 live demos · 6 themes · no pasting required</div>
+    <div class="kicker">ARTEMIS ACADEMY · An interactive lesson · 10 live demos · 8 themes · no pasting required</div>
     <h1>One knob makes a curve. <em>Two knobs make a world.</em></h1>
-    <p class="lede">An <b>Artemis Academy</b> lesson. Parametric modeling and multivariable calculus, in a nutshell — told through ten demos that run right here. Drag the points, turn the knobs, orbit the surfaces. Each one is also copy-paste ready for Desmos or GeoGebra, so you can rebuild it live in class. Use the theme bar above to present in Artemis, Matrix Green / Blue, or Manimx Light / Light Blue / Dark.</p>
+    <p class="lede">An <b>Artemis Academy</b> lesson. Parametric modeling and multivariable calculus, in a nutshell — told through ten demos that run right here. Drag the points, turn the knobs, orbit the surfaces. Each one is also copy-paste ready for Desmos or GeoGebra, so you can rebuild it live in class. Use the theme bar above to switch the <b>entire page</b> — every card, control, table and demo — between Day, Night, Matrix, Matrix Blue, Matrix Light Blue, Manimx Day, Manimx Light Blue and Manimx Executive.</p>
     <div class="twosec">
       <div class="insight teal"><span class="tag">Parametric — the 10-second version</span>
         <p>One knob <b>t</b> (think: time) drives <b>x and y together</b>. You don’t describe a shape — you describe a <b>journey</b> that traces it.</p></div>
@@ -795,7 +797,7 @@ function grid2d(ctx,W,H,v,xmin,xmax,ymin,ymax,cs){
 }
 var _csCache={};
 function CS(){
-  var theme=document.documentElement.getAttribute("data-theme")||"artemis";
+  var theme=document.documentElement.getAttribute("data-theme")||"night";
   var bg,grid,axis;
   if(_csCache.theme===theme){ bg=_csCache.bg; grid=_csCache.grid; axis=_csCache.axis; }
   else{
@@ -804,17 +806,18 @@ function CS(){
     bg=v("--canvas-bg","#101318"); grid=v("--canvas-grid","#232833"); axis=v("--canvas-axis","#3a4152");
     _csCache={theme:theme,bg:bg,grid:grid,axis:axis};
   }
-  /* Canvas stage stays dark in every theme (incl. Manimx light modes) so bright curves + white labels stay legible — never white-on-white. Accents follow the theme. */
+  /* Canvas stage stays dark in every theme (incl. the light modes: Day, Matrix Light Blue, Manimx Day, Manimx Light Blue) so bright curves + white labels stay legible — never white-on-white. Accents follow the theme. */
   var pal={
-    "artemis":{teal:"#2dd4bf",amber:"#fb923c",blue:"#60a5fa",rose:"#fb7185"},
-    "matrix-green":{teal:"#00ff41",amber:"#7dff9a",blue:"#00cc33",rose:"#d6ffd6"},
+    "day":{teal:"#4dabf7",amber:"#fb923c",blue:"#7cc0ff",rose:"#fb7185"},
+    "night":{teal:"#8fb8ff",amber:"#f0b35e",blue:"#7aa5f0",rose:"#f07ba0"},
+    "matrix":{teal:"#00ff41",amber:"#7dff9a",blue:"#00cc33",rose:"#d6ffd6"},
     "matrix-blue":{teal:"#00bfff",amber:"#7dd7ff",blue:"#38bdf8",rose:"#e0f2ff"},
-    "manimx-light":{teal:"#5eead4",amber:"#fb923c",blue:"#93c5fd",rose:"#fda4af"},
+    "matrix-light-blue":{teal:"#33c4ff",amber:"#ffd166",blue:"#7dd7ff",rose:"#fda4af"},
+    "manimx-day":{teal:"#5eead4",amber:"#fb923c",blue:"#93c5fd",rose:"#fda4af"},
     "manimx-light-blue":{teal:"#38bdf8",amber:"#fbbf24",blue:"#60a5fa",rose:"#fda4af"},
-    "manimx-dark":{teal:"#a78bfa",amber:"#f0b35e",blue:"#7aa5f0",rose:"#f07ba0"}
+    "manimx-executive":{teal:"#e3b93c",amber:"#f5d98c",blue:"#a9c3e8",rose:"#f0a8bc"}
   };
-  var p=pal[theme]||pal.artemis;
-  if(theme==="artemis" && window.matchMedia("(prefers-color-scheme: dark)").matches){ /* keep original dark-stage accents */ }
+  var p=pal[theme]||pal.night;
   return { bg:bg, grid:grid, axis:axis, teal:p.teal, amber:p.amber, blue:p.blue, rose:p.rose, ink:"#f2f4f8", dim:"#aab3c5", white:"#ffffff", theme:theme };
 }
 function dot(ctx,x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();}
@@ -1410,188 +1413,190 @@ function wireRenderControls(key,st,outId,occOnText,occOffText){
 <script>
 "use strict";
 /* ================= ARTEMIS ACADEMY · FOURIER WORDMARK =================
-   The letters are defined as handwriting-order strokes, resampled into one
-   parametric path z(s), then decomposed with a DFT. The animation sums the
-   ~140 largest Fourier coefficients as a chain of rotating vectors
-   (epicycles), largest first — the chain tip redraws the wordmark.
-   The running phase lives in script state at full floating-point precision
-   and advances by real elapsed time; it is never routed through a slider
-   or any stepped control. Cycle: write → hold → fade → loop.           */
+   Exact port of the HVAC Mechanical Intelligence Bridge wordmark (P30,
+   RC8.6.2 — the implementation live on the Bridge story page): single-line
+   letterforms for "ARTEMIS" over "Academy" are resampled, transformed with
+   a discrete Fourier transform, and redrawn by 140 rotating vectors
+   (largest first) whose tip leaves a glowing gold ink trail.
+   write (16s) → hold → fade → pause → loop, with replay +
+   reduced-motion static fallback. Exposes window.ARTEMIS_WORDMARK.replay().
+   Adaptations from the source, per brief: second word "Construction" →
+   "Academy" (new lowercase glyphs c/a/d/e/m/y drawn in the same
+   handwriting stroke style/order; "ARTEMIS" glyphs identical), Academy
+   caption/branding, the dark bronze/gold palette branch (this stage is
+   always deep navy), the visibility gate keyed to this page's canvas
+   instead of the Bridge narrative page, and totalH extended by 0.10 for
+   the descender of "y" so the wordmark never clips.                  */
 (function(){
-  var canvas=document.getElementById("cWord"); if(!canvas) return;
-  var ctx=canvas.getContext("2d");
-  var GOLD="#e8b54b", BLUE="#63a8ec";
-  var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---------- letterforms: strokes in handwriting order (y up, cap height 1) ---------- */
-  function arc(cx,cy,rx,ry,a0,a1,n){ var p=[],i,a; for(i=0;i<=n;i++){ a=a0+(a1-a0)*i/n; p.push([cx+rx*Math.cos(a), cy+ry*Math.sin(a)]); } return p; }
-  function sCurve(){ var p=[],i,t; for(i=0;i<=44;i++){ t=i/44; p.push([0.30-0.27*Math.sin(2*Math.PI*t), 1-t]); } return p; }
-  function circ(cx,cy,r){ return arc(cx,cy,r,r,Math.PI/2,Math.PI/2+2*Math.PI,40); }
-  var GLYPHS={
-    "A":{adv:0.72,strokes:[[[0,0],[0.3,1],[0.6,0]],[[0.14,0.42],[0.46,0.42]]]},
-    "R":{adv:0.70,strokes:[[[0,0],[0,1]].concat(arc(0,0.75,0.42,0.25,Math.PI/2,-Math.PI/2,22)),[[0.16,0.52],[0.58,0]]]},
-    "T":{adv:0.74,strokes:[[[0,1],[0.62,1]],[[0.31,1],[0.31,0]]]},
-    "E":{adv:0.68,strokes:[[[0.56,1],[0,1],[0,0],[0.56,0]],[[0,0.5],[0.46,0.5]]]},
-    "M":{adv:0.76,strokes:[[[0,0],[0,1],[0.32,0.38],[0.64,1],[0.64,0]]]},
-    "I":{adv:0.56,strokes:[[[0.08,1],[0.44,1]],[[0.26,1],[0.26,0]],[[0.08,0],[0.44,0]]]},
-    "S":{adv:0.68,strokes:[sCurve()]},
-    "c":{adv:0.58,strokes:[arc(0.27,0.28,0.26,0.27,0.87,5.41,30)]},
-    "a":{adv:0.64,strokes:[circ(0.26,0.27,0.26),[[0.52,0.55],[0.52,0]]]},
-    "d":{adv:0.62,strokes:[circ(0.25,0.27,0.25),[[0.50,1],[0.50,0]]]},
-    "e":{adv:0.60,strokes:[[[0.03,0.30],[0.51,0.30]].concat(arc(0.27,0.27,0.255,0.255,0,5.59,34).slice(1))]},
-    "m":{adv:0.72,strokes:[[[0,0],[0,0.55]],arc(0.15,0.40,0.15,0.15,Math.PI,0,14).concat([[0.30,0]]),arc(0.45,0.40,0.15,0.15,Math.PI,0,14).concat([[0.60,0]])]},
-    "y":{adv:0.66,strokes:[[[0,0.55],[0.30,0.16]],[[0.58,0.55],[0.30,0.16],[0.26,0.02],[0.16,-0.10],[0.04,-0.18]]]}
-  };
-
-  /* ---------- build the sampled path (one parametric curve, two colors) ---------- */
-  var STEP=0.05, pts=[], word2Start=0, bb={x0:1e9,y0:1e9,x1:-1e9,y1:-1e9};
-  function pushPt(x,y,w){ var L=pts[pts.length-1];
-    if(L&&Math.abs(L.x-x)<1e-7&&Math.abs(L.y-y)<1e-7) return;
-    pts.push({x:x,y:y,w:w});
-    if(x<bb.x0)bb.x0=x; if(x>bb.x1)bb.x1=x; if(y<bb.y0)bb.y0=y; if(y>bb.y1)bb.y1=y; }
-  function addStroke(st,ox,w){ var i,j,a,b,d,n;
-    for(i=0;i<st.length-1;i++){ a=st[i]; b=st[i+1]; d=Math.hypot(b[0]-a[0],b[1]-a[1]); n=Math.max(1,Math.ceil(d/STEP));
-      for(j=(i===0?0:1);j<=n;j++) pushPt(ox+a[0]+(b[0]-a[0])*j/n, a[1]+(b[1]-a[1])*j/n, w); } }
-  function addWord(word,ox,w,ls){ var x=ox,i,g;
-    for(i=0;i<word.length;i++){ g=GLYPHS[word[i]]; g.strokes.forEach(function(st){ addStroke(st,x,w); }); x+=g.adv+ls; }
-    return x-ls; }
-  var endX=addWord("ARTEMIS",0,0,0.10);
-  word2Start=pts.length;
-  var acadEnd=addWord("Academy",endX+0.55,1,0.08);
-  /* Close the loop with a hand-drawn underline flourish: a gentle arc under the
-     wordmark from the tail of "y" back to the foot of "A". Without it the DFT —
-     which treats the path as periodic — would slam a straight seam jump across
-     the whole word; as an arc it becomes part of the handwriting, drawn last. */
-  (function(){ var tail=pts[pts.length-1], ax0=tail.x, ay0=tail.y, cxp=ax0/2, cyp=-0.95, arcPts=[], ai, at, u;
-    for(ai=1;ai<=28;ai++){ at=ai/28; u=1-at;
-      arcPts.push([u*u*ax0+2*u*at*cxp, u*u*ay0+2*u*at*cyp]); }
-    addStroke([[ax0,ay0]].concat(arcPts.slice(0,14)),0,1);
-    addStroke(arcPts.slice(13),0,0);
-  })();
-
-  /* Gentle Gaussian smoothing of the sampled path (clamped ends, σ = 3.5 samples):
-     rounds the hand-drawn corners just enough that the 140 largest Fourier vectors
-     track the letters cleanly (measured: max deviation 0.04 units, RMS 0.007)
-     instead of ringing around every sharp corner and pen lift. */
-  (function(){ var sig=3.5, r=Math.ceil(sig*3), kern=[], ks=0, i, j, v;
-    for(j=-r;j<=r;j++){ v=Math.exp(-(j*j)/(2*sig*sig)); kern.push(v); ks+=v; }
-    var src=pts.map(function(p){return {x:p.x,y:p.y};});
-    for(i=0;i<pts.length;i++){ var x=0, y=0;
-      for(j=-r;j<=r;j++){ var idx=i+j; if(idx<0)idx=0; if(idx>pts.length-1)idx=pts.length-1;
-        var wgt=kern[j+r]/ks; x+=src[idx].x*wgt; y+=src[idx].y*wgt; }
-      pts[i].x=x; pts[i].y=y; }
-  })();
-
-  /* ---------- DFT: keep the 140 largest vectors, largest first ---------- */
-  var M=pts.length, KEEP=140, terms=[], k,f,n,re,im;
-  var all=[];
-  for(f=-(M>>1); f<M-(M>>1); f++){ re=0; im=0;
-    for(n=0;n<M;n++){ var ph=-2*Math.PI*f*n/M, zr=pts[n].x, zi=pts[n].y;
-      re+=zr*Math.cos(ph)-zi*Math.sin(ph); im+=zr*Math.sin(ph)+zi*Math.cos(ph); }
-    all.push({f:f,re:re/M,im:im/M,amp:Math.hypot(re,im)/M});
+  var WM={canvas:null,path:null,epi:null,K:0,totalW:7.12,totalH:2.02,t:0,raf:0,last:0,done:false,traced:[],W:0,H:0,visible:true,_li:0};
+  function wmLetterforms(){
+    function cubic(p0,p1,p2,p3,n){var pts=[],i,t,u;for(i=0;i<=n;i++){t=i/n;u=1-t;pts.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]]);}return pts;}
+    var sCurve=cubic([0.55,0.04],[0.28,0.00],[0.06,0.12],[0.08,0.28],22).concat(cubic([0.08,0.28],[0.10,0.42],[0.30,0.46],[0.48,0.56],22).slice(1)).concat(cubic([0.48,0.56],[0.60,0.68],[0.44,0.90],[0.08,0.92],22).slice(1));
+    return {
+      A:{w:0.72,s:[[[0,1],[0.36,0],[0.72,1]],[[0.18,0.62],[0.54,0.62]]]},
+      R:{w:0.68,s:[[[0,1],[0,0]],[[0,0],[0.44,0],[0.60,0.09],[0.60,0.21],[0.44,0.30],[0,0.30]],[[0.30,0.30],[0.64,1]]]},
+      T:{w:0.72,s:[[[0,0],[0.72,0]],[[0.36,0],[0.36,1]]]},
+      E:{w:0.60,s:[[[0.60,0],[0,0]],[[0,0],[0,1]],[[0,1],[0.60,1]],[[0,0.50],[0.48,0.50]]]},
+      M:{w:0.76,s:[[[0,1],[0,0],[0.38,0.56],[0.76,0],[0.76,1]]]},
+      I:{w:0.56,s:[[[0.08,0],[0.48,0]],[[0.28,0],[0.28,1]],[[0.08,1],[0.48,1]]]},
+      S:{w:0.60,s:[sCurve]},
+      C:{w:0.66,s:[[[0.62,0.08],[0.44,0.01],[0.24,0.03],[0.10,0.18],[0.06,0.42],[0.06,0.62],[0.12,0.84],[0.28,0.96],[0.46,0.96],[0.62,0.88]]]},
+      O:{w:0.62,s:[[[0.31,0.01],[0.12,0.06],[0.04,0.24],[0.04,0.76],[0.12,0.94],[0.31,0.99],[0.50,0.94],[0.58,0.76],[0.58,0.24],[0.50,0.06],[0.31,0.01]]]},
+      N:{w:0.68,s:[[[0.02,1],[0.02,0],[0.62,1],[0.62,0]]]},
+      U:{w:0.58,s:[[[0.02,0],[0.02,0.66],[0.08,0.86],[0.20,0.96],[0.34,0.96],[0.46,0.84],[0.50,0.64],[0.50,0]]]},
+      /* "Academy" lowercase — same handwriting stroke style/order, set in the
+         x-height band (y ≈ 0.52–1.0); d carries the tall ascender, y a descender. */
+      c:{w:0.60,s:[[[0.56,0.56],[0.40,0.525],[0.22,0.535],[0.09,0.61],[0.05,0.72],[0.05,0.82],[0.10,0.92],[0.25,0.985],[0.42,0.985],[0.56,0.94]]]},
+      a:{w:0.56,s:[[[0.26,0.54],[0.12,0.58],[0.05,0.68],[0.05,0.86],[0.12,0.96],[0.26,0.99],[0.40,0.96],[0.47,0.86],[0.47,0.68],[0.40,0.58],[0.26,0.54]],[[0.47,0.55],[0.47,1]]]},
+      d:{w:0.56,s:[[[0.25,0.54],[0.11,0.58],[0.04,0.68],[0.04,0.86],[0.11,0.96],[0.25,0.99],[0.39,0.96],[0.46,0.86],[0.46,0.68],[0.39,0.58],[0.25,0.54]],[[0.46,0],[0.46,1]]]},
+      e:{w:0.54,s:[[[0.05,0.75],[0.46,0.75],[0.47,0.66],[0.40,0.56],[0.24,0.53],[0.10,0.60],[0.05,0.74],[0.05,0.88],[0.12,0.97],[0.26,1],[0.40,0.97],[0.48,0.90]]]},
+      m:{w:0.62,s:[[[0,1],[0,0.52]],[[0,0.66],[0.08,0.55],[0.20,0.52],[0.27,0.60],[0.27,1]],[[0.27,0.66],[0.35,0.55],[0.47,0.52],[0.54,0.60],[0.54,1]]]},
+      y:{w:0.60,s:[[[0,0.53],[0.26,0.92]],[[0.52,0.53],[0.26,0.92],[0.20,1.06],[0.08,1.15]]]}
+    };
   }
-  all.sort(function(a,b){return b.amp-a.amp;});
-  terms=all.slice(0,Math.min(KEEP,all.length));
-
-  /* chain evaluation at phase theta → cumulative centers + tip (path units) */
-  function evalChain(theta,out){ var cr=0,ci=0,i,t,a;
-    out.length=0; out.push({re:0,im:0});
-    for(i=0;i<terms.length;i++){ t=terms[i]; a=t.f*theta;
-      cr+=t.re*Math.cos(a)-t.im*Math.sin(a); ci+=t.re*Math.sin(a)+t.im*Math.cos(a);
-      out.push({re:cr,im:ci}); }
-    return out[out.length-1]; }
-
-  /* ---------- canvas sizing (full wordmark always fits — scaled, never clipped) ---------- */
-  var W=0,H=0,scale=1,bcx=(bb.x0+bb.x1)/2, bcy=(bb.y0+bb.y1)/2;
-  function fit(){ var w=canvas.clientWidth||canvas.parentElement.clientWidth||600;
-    var h=w<640?190:250, dpr=Math.min(window.devicePixelRatio||1,2);
-    canvas.width=w*dpr; canvas.height=h*dpr; canvas.style.height=h+"px";
-    ctx.setTransform(dpr,0,0,dpr,0,0); W=w; H=h;
-    scale=Math.min((W*0.94)/(bb.x1-bb.x0),(H*0.80)/(bb.y1-bb.y0)); }
-  fit(); window.addEventListener("resize",fit);
-  function SX(x){ return W/2+(x-bcx)*scale; }
-  function SY(y){ return H/2-(y-bcy)*scale; }
-
-  /* ---------- animation state ---------- */
-  var WRITE=7.5, HOLD=2.6, FADE=1.3;
-  var mode=reduced?"static":"write", tState=0, theta=0, lastTheta=0, trail=[], visible=true, centers=[];
-  function restart(){ trail=[]; theta=0; lastTheta=0; tState=0; mode=reduced?"static":"write"; }
-  document.getElementById("wmReplay").addEventListener("click",function(){ restart(); if(reduced) drawStatic(); });
-  if("IntersectionObserver" in window){
-    new IntersectionObserver(function(es){ visible=es[0].isIntersecting; },{threshold:0.02}).observe(canvas);
-  }
-
-  function drawTrail(alpha){
-    if(trail.length<2) return;
-    ctx.lineCap="round"; ctx.lineJoin="round"; ctx.lineWidth=Math.max(2,scale*0.034);
-    var i,a,b;
-    ctx.globalAlpha=alpha;
-    for(i=1;i<trail.length;i++){ a=trail[i-1]; b=trail[i];
-      ctx.strokeStyle=b.w?BLUE:GOLD; ctx.beginPath();
-      ctx.moveTo(SX(a.re),SY(a.im)); ctx.lineTo(SX(b.re),SY(b.im)); ctx.stroke(); }
-    ctx.globalAlpha=1;
-  }
-  function drawStatic(){
-    if(!W) return; ctx.clearRect(0,0,W,H);
-    trail=pts.map(function(p){return{re:p.x,im:p.y,w:p.w};});
-    drawTrail(1);
-  }
-  function draw(alpha){
-    if(!W) return; ctx.clearRect(0,0,W,H);
-    var tip=evalChain(theta,centers), i,c,r;
-    /* epicycle circles — faint, behind the letters, largest first */
-    ctx.lineWidth=1;
-    for(i=1;i<centers.length;i++){ r=terms[i-1].amp*scale; if(r<4&&i>36) continue; if(i>60) break;
-      c=centers[i-1];
-      ctx.strokeStyle="rgba(150,190,240,"+(0.15*alpha).toFixed(3)+")";
-      ctx.beginPath(); ctx.arc(SX(c.re),SY(c.im),r,0,2*Math.PI); ctx.stroke(); }
-    /* vector arms — tip-to-tail chain */
-    ctx.strokeStyle="rgba(195,220,252,"+(0.38*alpha).toFixed(3)+")"; ctx.lineWidth=1.1;
-    ctx.beginPath();
-    for(i=0;i<centers.length;i++){ i?ctx.lineTo(SX(centers[i].re),SY(centers[i].im)):ctx.moveTo(SX(centers[i].re),SY(centers[i].im)); }
-    ctx.stroke();
-    drawTrail(alpha);
-    /* the writing tip */
-    ctx.fillStyle="#ffffff"; ctx.beginPath(); ctx.arc(SX(tip.re),SY(tip.im),3.4,0,2*Math.PI); ctx.fill();
-    ctx.fillStyle=(Math.floor(theta/(2*Math.PI)*M)<word2Start)?GOLD:BLUE;
-    ctx.beginPath(); ctx.arc(SX(tip.re),SY(tip.im),6.2,0,2*Math.PI); ctx.globalAlpha=0.28*alpha; ctx.fill(); ctx.globalAlpha=1;
-  }
-
-  var lastTs=0;
-  function tick(ts){
-    requestAnimationFrame(tick);
-    if(!lastTs) lastTs=ts;
-    var dt=(ts-lastTs)/1000; lastTs=ts;
-    if(document.hidden||!visible) return;          /* paused off-screen / hidden — phase does not advance */
-    if(mode==="static"){ drawStatic(); return; }
-    if(dt>0.06) dt=0.06;                            /* clamp tab-switch jumps; phase stays in state, full precision */
-    tState+=dt;
-    if(mode==="write"){
-      var p=Math.min(1,tState/WRITE); theta=2*Math.PI*p;
-      /* Sub-step the chain at fixed phase increments (≤ 0.01 rad) so the drawn
-         trail is smooth at any frame rate — a slow frame can never turn the
-         letters into long straight chords. */
-      var steps=Math.max(1,Math.ceil((theta-lastTheta)/0.01)), si, th2, tp, idx;
-      for(si=1;si<=steps;si++){ th2=lastTheta+(theta-lastTheta)*si/steps;
-        tp=evalChain(th2,centers);
-        idx=Math.min(M-1,Math.floor(th2/(2*Math.PI)*M));
-        var L=trail[trail.length-1];
-        if(!L||Math.hypot(tp.re-L.re,tp.im-L.im)>0.003)
-          trail.push({re:tp.re,im:tp.im,w:idx<word2Start?0:1});
-      }
-      lastTheta=theta;
-      draw(1);
-      if(p>=1){ mode="hold"; tState=0; }
-    } else if(mode==="hold"){
-      draw(0.9);
-      if(tState>=HOLD){ mode="fade"; tState=0; }
-    } else if(mode==="fade"){
-      draw(Math.max(0,1-tState/FADE));
-      if(tState>=FADE){ trail=[]; theta=0; lastTheta=0; tState=0; mode="write"; }
+  function wmBuild(){
+    var LF=wmLetterforms(),GAP=0.38;
+    function segLen(a,b){var dx=b[0]-a[0],dy=b[1]-a[1];return Math.sqrt(dx*dx+dy*dy);}
+    function polyLen(pts){var L=0,i;for(i=1;i<pts.length;i++)L+=segLen(pts[i-1],pts[i]);return L;}
+    function resample(pts,count){
+      if(count<2)return [pts[0].slice()];
+      var total=polyLen(pts),out=[],i,j,acc=0,target,prev;
+      if(total===0){for(i=0;i<count;i++)out.push(pts[0].slice());return out;}
+      out.push(pts[0].slice());prev=pts[0];j=1;
+      for(i=1;i<count;i++){target=total*i/(count-1);
+        while(j<pts.length&&acc+segLen(prev,pts[j])<target){acc+=segLen(prev,pts[j]);prev=pts[j];j++;}
+        if(j>=pts.length){out.push(pts[pts.length-1].slice());continue;}
+        var d=segLen(prev,pts[j]),r=d===0?0:(target-acc)/d;
+        out.push([prev[0]+(pts[j][0]-prev[0])*r,prev[1]+(pts[j][1]-prev[1])*r]);}
+      return out;
     }
+    var LINES=[{word:'ARTEMIS',scale:1.0},{word:'Academy',scale:0.60}],LINE_GAP=0.42;
+    var lineWidths=[],lineStrokes=[];
+    LINES.forEach(function(LN){
+      var cursor=0,strokes=[];
+      LN.word.split('').forEach(function(ch){var L=LF[ch];if(!L)return;
+        L.s.forEach(function(st){strokes.push(st.map(function(p){return [p[0]*LN.scale+cursor,p[1]*LN.scale];}));});
+        cursor+=(L.w+GAP)*LN.scale;});
+      lineWidths.push(cursor-GAP*LN.scale);lineStrokes.push(strokes);
+    });
+    var totalW=Math.max.apply(null,lineWidths),totalH=1.0+LINE_GAP+0.60+0.10;
+    var N=1400,MOVE=12,path=[],strokeLens=[],strokesFlat=[];
+    LINES.forEach(function(LN,li){
+      var ox=(totalW-lineWidths[li])/2,oy=li===0?0:(1.0+LINE_GAP);
+      lineStrokes[li].forEach(function(st){var off=st.map(function(p){return [p[0]+ox,p[1]+oy];});strokesFlat.push(off);strokeLens.push(polyLen(off));});
+    });
+    var totalMoves=(strokesFlat.length-1)*MOVE,drawBudget=N-totalMoves,totalLen=strokeLens.reduce(function(a,b){return a+b;},0);
+    var counts=strokeLens.map(function(l){return Math.max(4,Math.round(drawBudget*l/totalLen));});
+    var sum=counts.reduce(function(a,b){return a+b;},0)+totalMoves;counts[counts.length-1]+=N-sum;
+    strokesFlat.forEach(function(off,si){
+      resample(off,counts[si]).forEach(function(p){path.push({x:p[0],y:p[1],down:true});});
+      if(si<strokesFlat.length-1){var from=off[off.length-1],to=strokesFlat[si+1][0],k;
+        for(k=1;k<=MOVE;k++){var t=k/(MOVE+1);path.push({x:from[0]+(to[0]-from[0])*t,y:from[1]+(to[1]-from[1])*t,down:false});}}
+    });
+    while(path.length<N)path.push({x:path[path.length-1].x,y:path[path.length-1].y,down:false});
+    path=path.slice(0,N);
+    (function(){var i=path.length-1;while(i>0&&!path[i].down)i--;
+      var endP=path[i],prevP=path[Math.max(0,i-6)],d0x=endP.x-prevP.x,d0y=endP.y-prevP.y,d0l=Math.hypot(d0x,d0y)||1;d0x/=d0l;d0y/=d0l;
+      var stP=path[0],nxP=path[6],d1x=nxP.x-stP.x,d1y=nxP.y-stP.y,d1l=Math.hypot(d1x,d1y)||1;d1x/=d1l;d1y/=d1l;
+      var P0=[endP.x,endP.y],P3=[stP.x,stP.y],P1=[P0[0]+d0x*2.0,P0[1]+d0y*2.0],P2=[P3[0]-d1x*0.9,P3[1]-d1y*0.9],k,t,u;
+      for(k=1;k<=48;k++){t=k/49;u=1-t;path.push({x:u*u*u*P0[0]+3*u*u*t*P1[0]+3*u*t*t*P2[0]+t*t*t*P3[0],y:u*u*u*P0[1]+3*u*u*t*P1[1]+3*u*t*t*P2[1]+t*t*t*P3[1],down:false});}
+    })();
+    N=path.length;
+    var z=path.map(function(p){return {re:p.x,im:p.y};}),out=[],k,m,re,im,a,ca,sa;
+    for(k=0;k<N;k++){re=0;im=0;
+      for(m=0;m<N;m++){a=-2*Math.PI*k*m/N;ca=Math.cos(a);sa=Math.sin(a);re+=z[m].re*ca-z[m].im*sa;im+=z[m].re*sa+z[m].im*ca;}
+      out.push({re:re/N,im:im/N,freq:k<=N/2?k:k-N,mag:Math.hypot(re,im)/N});}
+    out.sort(function(x,y){return y.mag-x.mag;});
+    WM.path=path;WM.epi=out.slice(0,140);WM.K=140;WM.totalW=totalW;WM.totalH=totalH;WM.N=N;
+    return true;
   }
-  requestAnimationFrame(tick);
+  function wmPal(){
+    return {trace:'#e0b65a',glow:'rgba(224,182,90,.85)',arm:'rgba(224,182,90,.30)',circle:'rgba(224,182,90,.13)',tip:'#ffe9a8'};
+  }
+  function wmFit(){
+    var cv=WM.canvas;if(!cv)return;
+    var r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+    var W=Math.max(1,Math.round(r.width)),H=Math.max(1,Math.round(r.width*WM.totalH/WM.totalW));
+    if((W<2||H<2)&&(wmFit._t||0)<12){wmFit._t=(wmFit._t||0)+1;setTimeout(wmFit,300);return;}
+    wmFit._t=0;WM.W=W;WM.H=H;
+    cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';
+    var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+    wmRenderInk(g,true);
+  }
+  function wmMap(){var sc=Math.min(WM.W/WM.totalW,WM.H/WM.totalH)*0.96;return {sc:sc,ox:(WM.W-WM.totalW*sc)/2,oy:(WM.H-WM.totalH*sc)/2};}
+  function wmRenderInk(g,clearOnly,alpha){
+    var pal=wmPal(),m=wmMap(),i,p,X,Y;
+    g.save();g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,WM.canvas.width,WM.canvas.height);g.restore();
+    if(clearOnly||WM.traced.length<2)return;
+    var dpr=Math.min(2,window.devicePixelRatio||1);g.save();g.setTransform(dpr,0,0,dpr,0,0);
+    g.globalAlpha=(alpha==null?1:alpha);
+    g.lineCap='round';g.lineJoin='round';g.shadowColor=pal.glow;g.shadowBlur=12;
+    for(var pass=0;pass<2;pass++){g.beginPath();
+      for(i=0;i<WM.traced.length;i++){p=WM.traced[i];X=m.ox+p.x*m.sc;Y=m.oy+p.y*m.sc;
+        if(p.down&&i>0&&WM.traced[i-1].down)g.lineTo(X,Y);else g.moveTo(X,Y);}
+      g.globalAlpha=pass===0?0.22:1;g.lineWidth=pass===0?4.6:2.1;g.strokeStyle=pal.trace;g.stroke();}
+    g.restore();
+  }
+  function wmDraw(theta,alpha,inkAlpha){
+    var cv=WM.canvas,g=cv.getContext('2d'),pal=wmPal(),m=wmMap();
+    var dpr=Math.min(2,window.devicePixelRatio||1);g.save();g.setTransform(dpr,0,0,dpr,0,0);
+    g.clearRect(0,0,WM.W,WM.H);
+    wmRenderInk(g,false,inkAlpha==null?1:inkAlpha);
+    var x=0,y=0,k,c,ca,sa,px,py;g.lineWidth=1;
+    var CIRCLES=Math.min(30,WM.K);
+    for(k=0;k<WM.K;k++){c=WM.epi[k];ca=Math.cos(c.freq*theta);sa=Math.sin(c.freq*theta);
+      if(k<CIRCLES){var mag=Math.hypot(c.re,c.im)*m.sc;
+        g.beginPath();g.arc(m.ox+x*m.sc,m.oy+y*m.sc,Math.max(0.5,mag),0,Math.PI*2);
+        g.strokeStyle=pal.circle;g.globalAlpha=alpha;g.stroke();}
+      px=x;py=y;x+=(c.re*ca-c.im*sa);y+=(c.re*sa+c.im*ca);
+      g.beginPath();g.moveTo(m.ox+px*m.sc,m.oy+py*m.sc);g.lineTo(m.ox+x*m.sc,m.oy+y*m.sc);
+      g.strokeStyle=pal.arm;g.globalAlpha=alpha;g.stroke();}
+    g.globalAlpha=1;
+    var tip={x:m.ox+x*m.sc,y:m.oy+y*m.sc};
+    if(alpha>0.9&&!WM.done){g.beginPath();g.arc(tip.x,tip.y,3,0,Math.PI*2);
+      g.fillStyle=pal.tip;g.shadowColor=pal.glow;g.shadowBlur=14;g.fill();g.shadowBlur=0;}
+    g.restore();
+  }
+  var T_DRAW=16,T_HOLD=3,T_FADE=2.2,T_PAUSE=1.2;
+  function wmLoop(ts){
+    WM.raf=0;
+    if(!WM.visible){WM.raf=requestAnimationFrame(wmLoop);return;}
+    var dt=WM.last?Math.min(.1,(ts-WM.last)/1000):0;WM.last=ts;
+    WM.t+=dt;var T=T_DRAW+T_HOLD+T_FADE+T_PAUSE,lastIdx=WM._li||0;
+    if(WM.t<T_DRAW){
+      var target=Math.floor(WM.t/T_DRAW*WM.N),i;
+      for(i=lastIdx;i<target&&i<WM.N;i++)WM.traced.push(WM.path[i]);
+      WM._li=Math.max(lastIdx,target);
+      wmDraw(WM.t/T_DRAW*Math.PI*2,1);
+    }else if(WM.t<T_DRAW+T_HOLD){wmDraw(Math.PI*2,0.45,1);}
+    else if(WM.t<T_DRAW+T_HOLD+T_FADE){var q=(WM.t-T_DRAW-T_HOLD)/T_FADE;wmDraw(Math.PI*2,(1-q)*0.45,1-q);}
+    else if(WM.t>=T){WM.t=0;WM.last=0;WM._li=0;WM.traced=[];}
+    WM.raf=requestAnimationFrame(wmLoop);
+  }
+  function wmReplay(){
+    if(!WM.epi||!WM.canvas)return;
+    cancelAnimationFrame(WM.raf);WM.done=false;WM.t=0;WM.last=0;WM._li=0;WM.traced=[];
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){WM.traced=WM.path.filter(function(p){return p.down;});wmDraw(Math.PI*2,0.35);return;}
+    WM.raf=requestAnimationFrame(wmLoop);
+  }
+  window.ARTEMIS_WORDMARK={replay:wmReplay,state:WM};
+  try{
+    WM.canvas=document.getElementById('fourierWordmark');
+    if(!WM.canvas)return;
+    var btn=document.getElementById('btnWordmarkReplay');
+    if(btn)btn.addEventListener('click',wmReplay);
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){WM.visible=es[0].isIntersecting;},{threshold:0.02}).observe(WM.canvas);
+    }
+    window.addEventListener('resize',function(){if(WM.epi)wmFit();});
+    try{
+      if(wmBuild()){wmFit();wmReplay();}
+      else WM.canvas.style.display='none';
+    }catch(err){if(window.console)console.warn('Fourier wordmark build skipped',err);WM.canvas.style.display='none';}
+  }catch(err){if(window.console)console.warn('Fourier wordmark skipped',err);}
 })();
 </script>
+
 </body>
 </html>

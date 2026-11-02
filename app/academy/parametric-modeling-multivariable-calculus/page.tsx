@@ -6,7 +6,7 @@ export const metadata = createMetadata({
   title: "Parametric Modeling & Multivariable Calculus — Artemis Academy",
   path: "/academy/parametric-modeling-multivariable-calculus",
   description:
-    "An interactive Artemis Academy lesson in ten examples, simple to complex: parametric curves, Bézier modeling, surfaces, gradients, partial derivatives, a swept-pipe CAD solid and the double integral — with Desmos and GeoGebra formulas for every step, six view themes, and occlusion and light-mode rendering adopted from the Desmos 3D graphers credited in its Reference Library.",
+    "An interactive Artemis Academy lesson in ten examples, simple to complex: parametric curves, Bézier modeling, surfaces, gradients, partial derivatives, a swept-pipe CAD solid and the double integral — with Desmos and GeoGebra formulas for every step, eight view themes, and occlusion and light-mode rendering adopted from the Desmos 3D graphers credited in its Reference Library.",
 });
 
 const contextItems = [
