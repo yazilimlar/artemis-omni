@@ -185,6 +185,14 @@
         "/labs/sewer-utility-intelligence-bridge/app"
       ],
       "reason": "served top-level via rewrite; isolated by response header only"
+    },
+    {
+      "id": "ai-operations-intelligence",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/ai-operations-intelligence.html"
+      ],
+      "reason": "Static coming-soon document: no scripts execute and it uses no downloads, modals, popups, or storage; allow-scripts is the registry minimum non-empty token set"
     }
   ]
 }

@@ -315,4 +315,23 @@ export const labsEditorial: LabEditorial[] = [
       { label: "Artemis Music", href: "/labs/lego-build-studio-artemis-music" },
     ],
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "AttemptBook \u2014 AI Operations Intelligence",
+    eyebrow: "AI Economics \u00b7 Standard",
+    href: "/labs/ai-operations-intelligence",
+    statusLabel: "Coming soon",
+    statusTone: "test",
+    Icon: Calculator,
+    accentIcon: Landmark,
+    description:
+      "The coming-soon home of AttemptBook, the AI unit-economics ledger standard: every billed AI attempt accounted, provenance-classified, and reconciled to the provider invoice \u2014 plus the R0.1 module programme behind ArtLoop, ArtPlex, and OctopusG.",
+    signals: ["Attempt-level ledger", "Evidence classes", "Conformance tests", "Open spec \u00b7 protected name"],
+    commercialPath:
+      "Best pilot path: AI cost-governance reviews for teams running multi-model, multi-agent workflows.",
+    boundary:
+      "Introductory page for a standard in development. It publishes no operating data, no rates, and no specification text; module statuses are development states, not availability.",
+    category: "controls",
+  },
 ];
