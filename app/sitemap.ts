@@ -37,6 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/academy",
     "/academy/tech-stack-a2",
     "/academy/tech-stack-com-01",
+    "/academy/parametric-modeling-multivariable-calculus",
     "/tools",
     "/case-studies",
     "/demo",
