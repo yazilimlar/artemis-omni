@@ -9,6 +9,7 @@ Standardized, parse-friendly handover. Historical states remain available throug
 - Owner direction 2026-11-03: use the compass logo from the attached concept sheet, finalize with Claude. Owner decisions: no claim symbol; tagline "ESTIMATION PLATFORM"; credit line uses the existing official Artemis mark (owner to supply); new vector hero instead of the generated poster.
 - Files: 8 SVGs in `public/brand/artplex/`, generator `scripts/brand/build_artplex_logo.py`, two sources in `docs/brand/reference/`, and `docs/brand/ArtPlexLogo.md`.
 - Verification: rendered review sheet (lockups light and dark, app icon 512 to 16 px, one-colour marks, detailed mark, hero). Ruler 0–5 reads clear of the legs.
+- **Final** (owner, 2026-11-03 05:06 EST): draft 3 approved; the credit line stays text only until the owner supplies the Artemis mark.
 - Draft 3 (owner, 2026-11-03): ruler 13 units (0–13, in front of the legs), semicircle removed, hero logo-only (temple and city removed).
 - Next: owner feedback and the Artemis mark; then mark final, and swap together with ArtLoop v2 after #290, #291 and #294 merge.
 
