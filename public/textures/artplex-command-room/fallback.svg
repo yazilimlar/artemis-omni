@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" width="512" height="512" role="img" aria-label="ArtPlex command room, seen from above: six synthetic pursuits around the experience ledger. Each shows a countdown arc to bid time, five gates, and who holds the ball. Pursuit D has no due date and shows NOT SET. Pursuit E is held at a hard stop at the commercial gate.">
+  <!-- Static fallback for the artplex-command-room scene (ADR-015): the same room from above. Synthetic illustration, no pursuit data. -->
+  <rect width="520" height="520" fill="#0b1f3b"/>
+  <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#c9d2e0">
+  <text x="20" y="26" letter-spacing="1">ARTPLEX · COMMAND ROOM</text>
+  <text x="500" y="26" text-anchor="end">synthetic · no pursuit data</text>
+  </g>
+  <circle cx="260" cy="232" r="150" fill="none" stroke="#d4a017" stroke-opacity="0.35" stroke-dasharray="2 5"/>
+  <circle cx="260" cy="232" r="44" fill="#d4a017" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="40" fill="#c9a54a" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="36" fill="#c9a54a" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="32" fill="#d4a017" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="28" fill="#c9a54a" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="24" fill="#c9a54a" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="20" fill="#d4a017" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="16" fill="#c9a54a" stroke="#0b1f3b" stroke-width="1.5"/>
+  <circle cx="260" cy="232" r="12" fill="#c9a54a" stroke="#0b1f3b" stroke-width="1.5"/>
+  <g font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <text x="260" y="294" text-anchor="middle" font-size="11" fill="#e8c766">Experience ledger</text>
+  <circle cx="260.0" cy="82.0" r="27" fill="none" stroke="#1d3557" stroke-width="5"/>
+  <path d="M260.0 55.0 A27 27 0 0 1 268.3 107.7" fill="none" stroke="#d4a017" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="260.0" cy="82.0" r="17" fill="#13294a"/>
+  <circle cx="266.0" cy="77.0" r="4" fill="#d4a017"/>
+  <text x="260.0" y="38.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#f5f1e6">Pursuit A</text>
+  <rect x="237.0" y="44.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="247.0" y="44.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="257.0" y="44.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="267.0" y="44.0" width="7" height="7" fill="#f5f1e6"/>
+  <rect x="277.0" y="44.0" width="7" height="7" fill="#2b3f5c"/>
+  <circle cx="389.9" cy="157.0" r="27" fill="none" stroke="#1d3557" stroke-width="5"/>
+  <path d="M389.9 130.0 A27 27 0 1 1 364.2 148.7" fill="none" stroke="#d4a017" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="389.9" cy="157.0" r="17" fill="#13294a"/>
+  <circle cx="395.9" cy="152.0" r="4" fill="#d4a017"/>
+  <text x="389.9" y="113.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#f5f1e6">Pursuit B</text>
+  <rect x="366.9" y="119.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="376.9" y="119.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="386.9" y="119.0" width="7" height="7" fill="#f5f1e6"/>
+  <rect x="396.9" y="119.0" width="7" height="7" fill="#2b3f5c"/>
+  <rect x="406.9" y="119.0" width="7" height="7" fill="#2b3f5c"/>
+  <circle cx="389.9" cy="307.0" r="27" fill="none" stroke="#1d3557" stroke-width="5"/>
+  <path d="M389.9 280.0 A27 27 0 0 1 411.7 291.1" fill="none" stroke="#d4a017" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="389.9" cy="307.0" r="17" fill="#13294a"/>
+  <circle cx="395.9" cy="302.0" r="4" fill="#d4a017"/>
+  <text x="389.9" y="351.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#f5f1e6">Pursuit C</text>
+  <rect x="366.9" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="376.9" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="386.9" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="396.9" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="406.9" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <circle cx="260.0" cy="382.0" r="27" fill="none" stroke="#1d3557" stroke-width="5"/>
+  <circle cx="260.0" cy="382.0" r="27" fill="none" stroke="#5a6675" stroke-width="5" stroke-dasharray="4 6"/>
+  <circle cx="260.0" cy="382.0" r="17" fill="#13294a"/>
+  <circle cx="266.0" cy="377.0" r="4" fill="#d4a017"/>
+  <text x="260.0" y="426.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#f5f1e6">Pursuit D · NOT SET</text>
+  <rect x="237.0" y="432.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="247.0" y="432.0" width="7" height="7" fill="#f5f1e6"/>
+  <rect x="257.0" y="432.0" width="7" height="7" fill="#2b3f5c"/>
+  <rect x="267.0" y="432.0" width="7" height="7" fill="#2b3f5c"/>
+  <rect x="277.0" y="432.0" width="7" height="7" fill="#2b3f5c"/>
+  <circle cx="130.1" cy="307.0" r="27" fill="none" stroke="#1d3557" stroke-width="5"/>
+  <path d="M130.1 280.0 A27 27 0 1 1 114.2 328.8" fill="none" stroke="#d4a017" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="130.1" cy="307.0" r="17" fill="#13294a"/>
+  <circle cx="136.1" cy="302.0" r="4" fill="#d4a017"/>
+  <text x="130.1" y="351.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#f5f1e6">Pursuit E · hard stop</text>
+  <rect x="107.1" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="117.1" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="127.1" y="357.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="137.1" y="357.0" width="7" height="7" fill="#d4191d"/>
+  <rect x="147.1" y="357.0" width="7" height="7" fill="#2b3f5c"/>
+  <circle cx="130.1" cy="157.0" r="27" fill="none" stroke="#1d3557" stroke-width="5"/>
+  <path d="M130.1 130.0 A27 27 0 0 1 155.8 165.3" fill="none" stroke="#d4a017" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="130.1" cy="157.0" r="17" fill="#13294a"/>
+  <circle cx="136.1" cy="152.0" r="4" fill="#d4a017"/>
+  <text x="130.1" y="113.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#f5f1e6">Pursuit F</text>
+  <rect x="107.1" y="119.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="117.1" y="119.0" width="7" height="7" fill="#d4a017"/>
+  <rect x="127.1" y="119.0" width="7" height="7" fill="#f5f1e6"/>
+  <rect x="137.1" y="119.0" width="7" height="7" fill="#2b3f5c"/>
+  <rect x="147.1" y="119.0" width="7" height="7" fill="#2b3f5c"/>
+  </g>
+  <g font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="11" fill="#c9d2e0">
+  <line x1="20" y1="432" x2="500" y2="432" stroke="#2c4568"/>
+  <path d="M26 452 A8 8 0 1 1 34 460" fill="none" stroke="#d4a017" stroke-width="3"/>
+  <text x="46" y="458"><tspan font-weight="700" fill="#f5f1e6">Countdown</tspan>  time to bid; NOT SET when no due date</text>
+  <circle cx="30" cy="478" r="4.5" fill="#d4a017"/>
+  <text x="46" y="482"><tspan font-weight="700" fill="#f5f1e6">Ball-in-court</tspan>  who owns the next move</text>
+  <rect x="24" y="496" width="5" height="7" fill="#d4a017"/><rect x="31" y="496" width="5" height="7" fill="#f5f1e6"/><rect x="38" y="496" width="5" height="7" fill="#d4191d"/>
+  <text x="50" y="504"><tspan font-weight="700" fill="#f5f1e6">Gates</tspan>  passed, current, hard stop</text>
+  </g>
+</svg>
