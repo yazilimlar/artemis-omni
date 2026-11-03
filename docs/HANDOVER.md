@@ -3,6 +3,14 @@
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
 
+## 2026-11-03 update — ArtPlex logo v2 (draft 2, in review with the owner)
+
+- Branch `labs/artplex-logo-v2` from `main` @ `6c95776`; draft PR. Division: infrastructure-construction. Product: ArtPlex (brand assets). Visibility public (files under `public/brand/artplex/`); change type product-specific. No page, route, registry or dependency changes.
+- Owner direction 2026-11-03: use the compass logo from the attached concept sheet, finalize with Claude. Owner decisions: no claim symbol; tagline "ESTIMATION PLATFORM"; credit line uses the existing official Artemis mark (owner to supply); new vector hero instead of the generated poster.
+- Files: 8 SVGs in `public/brand/artplex/`, generator `scripts/brand/build_artplex_logo.py`, two sources in `docs/brand/reference/`, and `docs/brand/ArtPlexLogo.md`.
+- Verification: rendered review sheet (lockups light and dark, app icon 512 to 16 px, one-colour marks, detailed mark, hero). Ruler 0–5 reads clear of the legs.
+- Next: owner feedback and the Artemis mark; then mark final, and swap together with ArtLoop v2 after #290, #291 and #294 merge.
+
 ## 2026-11-02 update — ArtPlex command room (registered 3D scene)
 
 - Branch `labs/artplex-command-room` from `main` @ `0279478`; draft PR. Division: infrastructure-construction (Artemis Construction, estimating). Product: ArtPlex introduction page. **Not** the gated ArtPlex control panel; no data from it.
