@@ -67,7 +67,12 @@ describe("existing /api/pilot-requests accepts the /integrate payload", () => {
 
     const response = await post(toPilotRequestPayload(valid));
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ ok: true, requestId: "c-1", status: "created" });
+    expect(await response.json()).toEqual({
+      ok: true,
+      requestId: "c-1",
+      status: "created",
+      notification: "not_configured",
+    });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const sent = JSON.parse(String((fetchMock.mock.calls[0] as unknown[])[1] && ((fetchMock.mock.calls[0] as unknown[])[1] as RequestInit).body));
     expect(sent.primaryEmail).toEqual({ email: "ada@example.com", acceptsMarketing: false });
