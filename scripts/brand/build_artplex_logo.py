@@ -121,20 +121,6 @@ def mark(style="line", detail=True):
     solid = sw == 0
     hole = "var(--hole, #0B1F3B)" if solid else CREAM  # inner cut-outs on solid marks
 
-    if detail:  # gold arc behind
-        s.append(f'<path d="M106,300 A150,150 0 0 1 406,300" fill="none" stroke="{accent}" stroke-width="{4 if not solid else 7}"/>')
-    if detail:  # ruler 0-5
-        s.append(f'<rect x="124" y="344" width="264" height="34" rx="4" fill="{fill if not solid else "none"}" {stroke if not solid else f"stroke={chr(34)}{ink}{chr(34)} stroke-width={chr(34)}6{chr(34)}"}/>')
-        ticks = []
-        for i in range(0, 51):
-            x = 146 + i * (220 / 50)
-            h = 12 if i % 10 == 0 else (8 if i % 5 == 0 else 5)
-            ticks.append(f"M{x:.1f},344 v{h}")
-        s.append(f'<path d="{" ".join(ticks)}" stroke="{ink}" stroke-width="{1.6 if not solid else 2.2}"/>')
-        for n in range(6):
-            x = 146 + n * 44
-            d, _ = text_path(str(n), "Montserrat[wght].ttf", 600, 13, x, 373)
-            s.append(f'<path fill="{ink}" d="{d}"/>')
     # crossbar with pointed pins
     bar = [(112, 300), (128, 294), (384, 294), (400, 300), (384, 306), (128, 306)]
     s.append(f'<polygon points="{pts(bar)}" fill="{fill}" {stroke}/>')
@@ -145,6 +131,19 @@ def mark(style="line", detail=True):
     for f in FEET:
         x = leg_x_at(f, 300)
         s.append(f'<circle cx="{x:.1f}" cy="300" r="7" fill="{fill if not solid else hole}" {stroke if not solid else ""}/>')
+    if detail:  # ruler, 13 units, drawn in front of the legs so every number reads
+        U = 13; x0, x1 = 124.0, 388.0; step = (x1 - x0) / U
+        rfill = hole if solid else fill
+        s.append(f'<rect x="110" y="342" width="292" height="36" rx="4" fill="{rfill}" stroke="{ink}" stroke-width="{sw if sw else 5}"/>')
+        ticks = []
+        for i in range(U * 2 + 1):
+            x = x0 + i * step / 2
+            h = 11 if i % 2 == 0 else 6
+            ticks.append(f"M{x:.1f},342 v{h}")
+        s.append(f'<path d="{" ".join(ticks)}" stroke="{ink}" stroke-width="{1.6 if not solid else 2.2}"/>')
+        for n in range(U + 1):
+            d, _ = text_path(str(n), "Montserrat[wght].ttf", 600, 11, x0 + n * step, 372)
+            s.append(f'<path fill="{ink}" d="{d}"/>')
     # gear
     gear = gear_path(CX, 300, 33, 28, 22)
     if solid:
@@ -217,40 +216,6 @@ def mono(color, hole, bg=None):
     return svg((60, 0, 392, 512), body, "ArtPlex", bg, f' style="--hole:{hole}"')
 
 
-def temple(x, y, w, color, op):
-    """Simple Doric temple: steps, columns, entablature, pediment. (x, y) = bottom-left."""
-    s = [f'<g fill="{color}" opacity="{op}">']
-    for i in range(3):
-        s.append(f'<rect x="{x + i * 10}" y="{y - (i + 1) * 12}" width="{w - i * 20}" height="12"/>')
-    base = y - 36; ch = w * 0.62; n = 6; cw = w * 0.07
-    gap = (w - 40 - n * cw) / (n - 1)
-    for i in range(n):
-        cx = x + 20 + i * (cw + gap)
-        s.append(f'<rect x="{cx:.1f}" y="{base - ch:.1f}" width="{cw:.1f}" height="{ch:.1f}"/>')
-        s.append(f'<rect x="{cx - 4:.1f}" y="{base - ch - 10:.1f}" width="{cw + 8:.1f}" height="10"/>')
-    top = base - ch - 10
-    s.append(f'<rect x="{x + 6}" y="{top - 34:.1f}" width="{w - 12}" height="34"/>')
-    s.append(f'<polygon points="{x},{top - 34:.1f} {x + w / 2:.1f},{top - 34 - w * 0.18:.1f} {x + w},{top - 34:.1f}"/>')
-    s.append('</g>')
-    return "".join(s)
-
-
-def city(x, y, color):
-    s = [f'<g fill="none" stroke="{color}" stroke-width="1.6" opacity=".55">']
-    blocks = [(0, 260, 90), (100, 360, 110), (220, 300, 80), (310, 200, 70)]
-    for bx, h, w in blocks:
-        s.append(f'<rect x="{x + bx}" y="{y - h}" width="{w}" height="{h}"/>')
-        for k in range(1, int(h / 24)):
-            s.append(f'<path d="M{x + bx},{y - k * 24} h{w}"/>')
-        for k in range(1, int(w / 22)):
-            s.append(f'<path d="M{x + bx + k * 22},{y - h} v{h}"/>')
-    # crane
-    cx = x + 150
-    s.append(f'<path d="M{cx},{y - 360} v-120 M{cx - 60},{y - 470} h230 M{cx},{y - 480} l-60,10 M{cx},{y - 480} l170,10 M{cx + 140},{y - 470} v60"/>')
-    s.append('</g>')
-    return "".join(s)
-
-
 def hero():
     W, H = 1600, 900
     g = [f'<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#10294d"/><stop offset="1" stop-color="{NAVY}"/></linearGradient>'
@@ -259,13 +224,7 @@ def hero():
          f'<rect width="{W}" height="{H}" fill="url(#glow)"/>']
     grid = " ".join([f"M{x},0 V{H}" for x in range(0, W + 1, 40)] + [f"M0,{y} H{W}" for y in range(0, H + 1, 40)])
     g.append(f'<path d="{grid}" stroke="#3B82F6" stroke-opacity=".07" stroke-width="1"/>')
-    g.append(f'<g fill="none" stroke="{SILVER}" stroke-opacity=".22" stroke-width="1.2"><circle cx="800" cy="330" r="300"/><circle cx="800" cy="330" r="240"/>'
-             f'<path d="M500,330 H1100 M800,30 V630 M588,118 L1012,542 M1012,118 L588,542"/></g>')
-    g.append(f'<ellipse cx="800" cy="600" rx="560" ry="56" fill="none" stroke="{GOLD}" stroke-opacity=".35" stroke-width="1.5"/>')
-    g.append(f'<path d="M0,600 H{W}" stroke="{SILVER}" stroke-opacity=".25"/>')
-    g.append(temple(70, 600, 360, CREAM, ".16"))
-    g.append(city(1150, 600, "#3B82F6"))
-    g.append(f'<g transform="translate(608,48) scale(0.75)" style="--hole:{NAVY}">{mark(GOLD, detail=True)}</g>')
+    g.append(f'<g transform="translate(556.8,60) scale(0.95)" style="--hole:{NAVY}">{mark(GOLD, detail=True)}</g>')
     d, _ = text_path("ArtPlex", "CormorantGaramond[wght].ttf", 700, 150, W / 2, 760)
     g.append(f'<path fill="{CREAM}" d="{d}"/>')
     tg, _ = text_path("ESTIMATION PLATFORM", "Montserrat[wght].ttf", 600, 24, W / 2, 812, tracking=0.3)
