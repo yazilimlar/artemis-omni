@@ -5,7 +5,7 @@ export const metadata = createMetadata({
   title: "ArtPlex \u00b7 Estimation Commanding",
   path: "/labs/artplex",
   description:
-    "ArtPlex is the multi-project estimation commanding layer of ARTEMIS: pursuit control, countdowns, gates, ball-in-court, and cumulative bid experience in one view. In private operation; access by invitation. This public page publishes no project data.",
+    "ArtPlex is the ARTEMIS Construction Intelligence estimation platform for bid pursuits, portfolio oversight, evidence-based estimating coordination, review gates, and proposals. In private operation; access by invitation. This public page publishes no project data.",
   noIndex: true,
 });
 
