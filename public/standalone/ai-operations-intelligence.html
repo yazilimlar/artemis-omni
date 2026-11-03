@@ -118,6 +118,31 @@
   .fambar svg{flex:none;display:block}
   .fambar .fambar-cur{color:var(--mode-accent)}
   .fambar .here-cap{font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+
+  /* AttemptBook explainer: integrated diagrams, consistent with the ArtPlex / ArtLoop explainers */
+  .ab-explain{background:#f3f0e7;padding:44px 0 36px}
+  .ab-explain .ab-panel{background:#fff;border:1px solid #ddd4c2;border-radius:12px;padding:22px;margin:20px 0 28px}
+  .ab-explain .ab-panel h3{margin:0 0 8px;color:var(--navy);font-size:1.25rem}
+  .ab-explain .ab-panel p{margin:0 0 16px;color:#3c4756}
+  .ab-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .ab-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ab-node{border:1px solid #d3dce5;background:#f5f7fa;border-radius:8px;padding:15px;min-width:0}
+  .ab-node b{display:block;color:var(--navy)}
+  .ab-node small{display:block;color:#566579;margin-top:7px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.8rem;line-height:1.5}
+  .ab-node .num{color:#9b710d;font-weight:700;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.75rem}
+  .ab-govern{background:var(--navy);color:#f5f1e6;border-radius:8px;padding:15px;text-align:center;margin-top:12px}
+  .ab-govern b{color:var(--gold-soft)}
+  .ab-govern div{font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.85rem;margin-top:4px}
+  .ab-classes .ab-node:nth-child(1){border-top:4px solid #27764c}
+  .ab-classes .ab-node:nth-child(2){border-top:4px solid #4b6f9b}
+  .ab-classes .ab-node:nth-child(3){border-top:4px solid #7d668e}
+  .ab-classes .ab-node:nth-child(4){border-top:4px solid #b98a0e}
+  .ab-classes .ab-node:nth-child(5){border-top:4px solid #8a4a4a}
+  .ab-classes .ab-node:nth-child(6){border-top:4px solid #54657a}
+  .ab-recon .result{grid-column:1/-1;text-align:center;background:#fff8e7;border-color:#e2c77b}
+  .ab-note{font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.8rem;line-height:1.5;color:#5a6675;margin-top:14px}
+  @media(max-width:700px){.ab-explain{padding:28px 0}.ab-explain .ab-panel{padding:15px}.ab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:390px){.ab-grid,.ab-grid.two{grid-template-columns:1fr}.ab-recon .result{grid-column:auto}}
 </style>
 </head>
 <body data-mode="executive-light">
@@ -330,6 +355,47 @@
           <li><code>unknown</code> — an explicit gap in the record, shown as a gap.</li>
         </ul>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="ab-explain" id="understand-attemptbook" aria-labelledby="ab-understand-title">
+  <div class="wrap">
+    <h2 id="ab-understand-title"><span class="kicker">Inside the ledger</span>Understand AttemptBook</h2>
+    <p class="intro">AttemptBook is AI Operations Intelligence: a conceptual R0.1 architecture for accountable AI usage and unit economics, in development and testing. The chain above is its spine — project, workflow, run, attempt, usage, cost, evidence. These diagrams show how each cost is attributed, classified, and reconciled. They describe intended controls, not live operational capabilities.</p>
+    <div class="ab-panel" aria-labelledby="ab-spine-title">
+      <h3 id="ab-spine-title">01 · Operational accounting spine</h3>
+      <p>Trace work from a project through execution, metering, and accountable cost — every attempt keeps its agent, model, and rate basis.</p>
+      <div class="ab-grid">
+        <div class="ab-node"><span class="num">01</span><b>Project → Workflow</b><small>Scope, work order, authorization</small></div>
+        <div class="ab-node"><span class="num">02</span><b>Run → Attempt</b><small>One execution; every billed try, including retries</small></div>
+        <div class="ab-node"><span class="num">03</span><b>Agent → Model → Usage</b><small>Who ran it, which provider and model, units consumed, rate basis</small></div>
+        <div class="ab-node"><span class="num">04</span><b>Cost → Evidence</b><small>Attribution, provenance class, reconciliation status</small></div>
+      </div>
+      <div class="ab-govern"><b>Governance across every stage</b><div>Access control · Provenance · Versioning · Audit history · Allocation invariants</div></div>
+    </div>
+    <div class="ab-panel" aria-labelledby="ab-classes-title">
+      <h3 id="ab-classes-title">02 · Six evidence classes</h3>
+      <p>Amounts retain their provenance and are never silently blended or promoted. These are the same six classes defined in the principles above.</p>
+      <div class="ab-grid ab-classes">
+        <div class="ab-node"><b>Actual</b><small>Verified against an invoice or financial record, at the scope the evidence covers</small></div>
+        <div class="ab-node"><b>Observed</b><small>Reported by a provider or directly metered; not yet invoice-reconciled</small></div>
+        <div class="ab-node"><b>Declared</b><small>Supplied by a named person or provider, on the record; not independently verified</small></div>
+        <div class="ab-node"><b>Estimated</b><small>Computed from stated assumptions, an explicit rate and method, or allocated by estimated drivers</small></div>
+        <div class="ab-node"><b>Simulated</b><small>Forecast or scenario; hypothetical, never mixed into operating totals</small></div>
+        <div class="ab-node"><b>Unknown</b><small>An explicit gap in the record, shown as a gap — never treated as zero</small></div>
+      </div>
+      <p class="ab-note">An aggregate with mixed evidence classes must show its composition; it cannot be labelled wholly actual.</p>
+    </div>
+    <div class="ab-panel" aria-labelledby="ab-recon-title">
+      <h3 id="ab-recon-title">03 · Technical-to-commercial reconciliation</h3>
+      <p>Match usage evidence to financial records within compatible scopes and periods, under the governing commercial agreement.</p>
+      <div class="ab-grid two ab-recon">
+        <div class="ab-node"><b>Technical ledger</b><small>Runs, attempts and retries, tokens or units, telemetry coverage</small></div>
+        <div class="ab-node"><b>Commercial ledger</b><small>Agreements, contracts and rates, invoices, credits, allocation basis</small></div>
+        <div class="ab-node result"><b>Reconciliation &amp; variance</b><small>Explain differences · Flag gaps · Preserve unresolved items · Human review</small></div>
+      </div>
+      <p class="ab-note">Reconciliation verifies the account total at the scope the evidence covers; it does not by itself prove telemetry completeness or per-attempt attribution. Per-attempt attribution stands on its own evidence.</p>
     </div>
   </div>
 </section>
