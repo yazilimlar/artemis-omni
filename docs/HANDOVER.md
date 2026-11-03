@@ -3,6 +3,18 @@
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
 
+## 2026-11-02 update — ArtPlex command room (registered 3D scene)
+
+- Branch `labs/artplex-command-room` from `main` @ `0279478`; draft PR. Division: infrastructure-construction (Artemis Construction, estimating). Product: ArtPlex introduction page. **Not** the gated ArtPlex control panel; no data from it.
+- Lifecycle active_lab; visibility public_safe_demo with `approved_public: true` (approval = owner merge of this PR); data mode synthetic (pursuits A–F in `components/scenes/artplex-command-room/pursuits.ts`); change type product-specific. Governing ADR-015; ADR-017 native visual (a pursuit command board); ADR-014 unchanged for `/labs/artplex`.
+- Owner instruction: George, 2026-11-02, after approving the ArtLoop scene preview (PR #288): "How about the other page (for ArtPlex)?"
+- Files: new `components/scenes/artplex-command-room/{index.tsx,pursuits.ts,passport.md}`, new `public/textures/artplex-command-room/fallback.svg`; one appended entry in `data/scene-registry.json`; one line in `components/scenes/SceneIsland.tsx`; one link paragraph under "The command picture" in `public/standalone/artplex.html` (new tab).
+- Shows the page's three ideas on six synthetic pursuits: countdown arcs (Pursuit D shows NOT SET, no arc), ball-in-court token hopping between the six named owners, five gates with Pursuit E at a red hard stop; bid closes fly packets into a central experience ledger.
+- Merge note: #288 merged first (`d68bfea`); main merged into this branch and the append conflicts in `data/scene-registry.json`, `SceneIsland.tsx` and this file resolved by keeping both entries.
+- Verification (after merging main with #288): `npm run typecheck` clean; eslint clean on touched files; `validate-scenes` 9 scenes valid; scene unit tests 49/49; `npm run build` exit 0 with placeholder public Supabase values (known `/control` environment limit otherwise); 3D island 261.7 KB gz with both scenes (budget 400 KB); homepage hero unchanged. Browser check on `next start` (software WebGL, simulated 8 cores): overview, labels, NOT SET and hard stop render; the Gates view button focuses Pursuit E; hand-off to the SVG fallback with no page errors. Real-GPU fps not measured.
+- Known risks: scene page indexable while `/labs/artplex` is noindex (same open decision as #288).
+- Next recommended task: owner eyeball on the Vercel preview; merge #288 and this PR, resolving the append conflict.
+
 ## 2026-11-02 update — ArtLoop agents office (registered 3D scene)
 
 - Branch `labs/artloop-agents-office` from `main` @ `0279478`; draft PR. Division: infrastructure-construction (Artemis Construction, estimating). Product: ArtLoop introduction page. **Not** the gated `artloop-ws` workspace; no data from it.

@@ -145,5 +145,24 @@
     "passport": "components/scenes/artloop-agents-office/passport.md",
     "created_at": "2026-11-02",
     "updated_at": "2026-11-02"
+  },
+  {
+    "id": "artplex-command-room",
+    "title": "ArtPlex Command Room",
+    "type": "3d",
+    "division": "infrastructure-construction",
+    "route": "/labs/scenes/artplex-command-room",
+    "visibility": "public_safe_demo",
+    "data_mode": "synthetic",
+    "approved_public": true,
+    "entry_component": "components/scenes/artplex-command-room/index.tsx",
+    "fallback_2d": "public/textures/artplex-command-room/fallback.svg",
+    "assets_dir": "public/textures/artplex-command-room",
+    "asset_budget_mb": 1,
+    "owner": "infrastructure-construction",
+    "resource_limits": { "max_session_seconds": 180, "fps_floor": 20 },
+    "passport": "components/scenes/artplex-command-room/passport.md",
+    "created_at": "2026-11-02",
+    "updated_at": "2026-11-02"
   }
 ]
