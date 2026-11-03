@@ -78,8 +78,8 @@
   .alh-track{position:relative;height:4px;background:#E2E3E3;border-radius:2px;margin:0 8px}
   .alh-fillbar{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,#C60E18,#EC232B);border-radius:2px}
   .alh-pulse{position:absolute;top:50%;left:0%;width:13px;height:13px;border-radius:50%;background:#D8131D;border:2.5px solid #fff;box-shadow:0 1px 6px rgba(200,14,24,.5);transform:translate(-50%,-50%)}
-  .alh-steps{display:flex;justify-content:space-between;margin-top:12px;gap:5px}
-  .alh-step{flex:1;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:10.5px;letter-spacing:.05em;font-weight:700;text-transform:uppercase;color:#9BA0A4;background:#fff;border:1.5px solid #DCDDDE;border-radius:999px;padding:6px 2px;transition:all .25s}
+  .alh-steps{display:flex;justify-content:space-between;margin-top:12px;gap:5px;flex-wrap:wrap}
+  .alh-step{flex:1 1 18%;min-width:0;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:10.5px;letter-spacing:.05em;font-weight:700;text-transform:uppercase;color:#9BA0A4;background:#fff;border:1.5px solid #DCDDDE;border-radius:999px;padding:6px 2px;transition:all .25s}
   .alh-step.active{color:#fff;background:#D8131D;border-color:#D8131D;box-shadow:0 4px 14px rgba(200,14,24,.35)}
   .alh-step.done{color:#D8131D;border-color:#D8131D}
   .alh-readout{margin-top:12px;font-size:13px;color:#7A7E82;letter-spacing:.04em;min-height:18px}
@@ -98,6 +98,29 @@
   .fambar svg{flex:none;display:block}
   .fambar .fambar-cur{color:var(--mode-accent)}
   .fambar .here-cap{font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+
+/* ArtLoop evidence-first explainer — accessible, static and mobile responsive */
+.al-explain{background:#f3f1eb;padding:48px 0 40px}
+.al-explain .al-panel{background:#fff;border:1px solid #d9d4c9;border-radius:12px;padding:22px;margin:20px 0 28px}
+.al-explain h3{color:#0b1f3b;margin:0 0 8px}
+.al-explain p{color:#3c4756;margin:0 0 16px}
+.al-explain .al-kicker{font:700 .72rem -apple-system,"Segoe UI",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#b2181b}
+.al-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.al-flow article{background:#0b1f3b;color:#f5f1e6;padding:14px 10px;border-radius:8px;min-width:0}
+.al-flow strong,.al-flow small{display:block}
+.al-flow strong{font-size:.92rem}.al-flow small{font:400 .75rem/1.45 -apple-system,"Segoe UI",sans-serif;color:#d4deeb;margin-top:8px}
+.al-flow .al-num{color:#f0b6b7;font:700 .73rem -apple-system,"Segoe UI",sans-serif}
+.al-trace{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+.al-trace article,.al-agents article{background:#f7f8fa;border:1px solid #dce0e7;border-radius:8px;padding:15px}
+.al-trace strong,.al-agents strong{display:block;color:#0b1f3b}
+.al-trace small,.al-agents small{display:block;color:#526072;font:400 .8rem/1.5 -apple-system,"Segoe UI",sans-serif;margin-top:7px}
+.al-trace .al-output{grid-column:1/-1;background:#fff4f1;border:1px solid #d8a6a6;text-align:center}
+.al-agents{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.al-gate{background:#0b1f3b;color:#f5f1e6;border-radius:8px;text-align:center;padding:14px;margin-top:12px}
+.al-gate strong{color:#f2d1d1}
+.al-caveat{font:.78rem/1.5 -apple-system,"Segoe UI",sans-serif;color:#5a6675;margin-top:14px}
+@media(max-width:700px){.al-explain{padding:28px 0}.al-explain .al-panel{padding:15px}.al-flow,.al-agents{grid-template-columns:1fr 1fr}.al-trace{grid-template-columns:1fr}.al-trace .al-output{grid-column:auto}}
+@media(max-width:390px){.al-flow,.al-agents{grid-template-columns:1fr}}
 </style>
 </head>
 <body data-mode="executive-light">
@@ -301,6 +324,48 @@
   </div>
 </div>
 
+
+<section class="al-explain" id="understand-artloop" aria-labelledby="al-understand-title">
+ <div class="wrap">
+  <span class="al-kicker">Inside the estimating intelligence</span>
+  <h2 id="al-understand-title">Understand ArtLoop</h2>
+  <p class="intro">ArtLoop connects a project's contract evidence to quantities, pricing decisions, reconciliations and a reviewable proposal. The diagrams describe the intended workflow, not a claim that every capability is deployed.</p>
+  <div class="al-panel" aria-labelledby="al-pipeline-title">
+   <h3 id="al-pipeline-title">01 · From documents to defensible estimates</h3>
+   <p>Five connected stages, with review gates and explicit source references.</p>
+   <div class="al-flow">
+    <article><span class="al-num">01</span><strong>Intake</strong><small>Drawings, specifications, addenda and scope boundaries</small></article>
+    <article><span class="al-num">02</span><strong>Takeoff</strong><small>Quantities, units, locations and measurement basis</small></article>
+    <article><span class="al-num">03</span><strong>Priced basis</strong><small>Labor, material, equipment, subcontract and indirects</small></article>
+    <article><span class="al-num">04</span><strong>Figure governance</strong><small>Reconcile, verify, version and approve calculations</small></article>
+    <article><span class="al-num">05</span><strong>Proposal</strong><small>Scope, clarifications, exclusions and controlled issue</small></article>
+   </div>
+  </div>
+  <div class="al-panel" aria-labelledby="al-evidence-title">
+   <h3 id="al-evidence-title">02 · Every number has a basis</h3>
+   <p>Follow an estimate line from source evidence to the final approved figure.</p>
+   <div class="al-trace">
+    <article><strong>Source evidence</strong><small>Document ID · Revision · Sheet/page · Location</small></article>
+    <article><strong>Quantity &amp; assumption</strong><small>Takeoff method · Unit · Scope boundary · Confidence</small></article>
+    <article><strong>Cost build-up</strong><small>Rate source · Labor productivity · Extensions · Markups</small></article>
+    <article class="al-output"><strong>Versioned estimate figure</strong><small>Calculation lineage · Review status · Variance · Approver</small></article>
+   </div>
+   <div class="al-caveat">Arithmetic validation and source verification are separate checks. Unsupported values remain visibly provisional rather than silently treated as verified.</div>
+  </div>
+  <div class="al-panel" aria-labelledby="al-review-title">
+   <h3 id="al-review-title">03 · Multi-AI review with human authority</h3>
+   <p>Independent roles can challenge an estimate without replacing its approved basis.</p>
+   <div class="al-agents">
+    <article><strong>Builder</strong><small>Constructs the estimate and records its inputs</small></article>
+    <article><strong>Verifier</strong><small>Checks calculations, units and evidence links</small></article>
+    <article><strong>Challenger</strong><small>Tests scope gaps, assumptions and risk scenarios</small></article>
+    <article><strong>Reconciler</strong><small>Compares findings and records unresolved differences</small></article>
+   </div>
+   <div class="al-gate"><strong>Human review &amp; approval</strong><div>Approved, versioned estimate basis → controlled proposal</div></div>
+   <div class="al-caveat">Conceptual workflow only. AI outputs are recommendations, not autonomous approvals or proof of source verification.</div>
+  </div>
+ </div>
+</section>
 <section>
   <div class="wrap">
     <h2><span class="kicker">The loop</span>Five stages, one project, no shortcuts</h2>
