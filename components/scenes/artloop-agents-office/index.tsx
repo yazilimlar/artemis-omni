@@ -417,8 +417,15 @@ function LabelProjector({ labels }: { labels: LabelRefs }) {
       const visible = v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
       el.style.visibility = visible ? "visible" : "hidden";
       if (visible) {
-        el.style.left = `${((v.x + 1) / 2) * size.width}px`;
-        el.style.top = `${((1 - v.y) / 2) * size.height}px`;
+        // Labels are clamped inside the frame and below the header pills
+        // (R2-S1: fixes Intake/pill overlap and Pursuit E edge clip).
+        const px = ((v.x + 1) / 2) * size.width;
+        const py = ((1 - v.y) / 2) * size.height;
+        const halfW = el.offsetWidth > 0 ? el.offsetWidth / 2 : 60;
+        const left = Math.min(Math.max(px, halfW + 8), size.width - halfW - 8);
+        const top = Math.min(Math.max(py, 76), size.height - 8);
+        el.style.left = `${left}px`;
+        el.style.top = `${top}px`;
       }
     });
   });
