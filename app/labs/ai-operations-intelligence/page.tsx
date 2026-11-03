@@ -11,6 +11,7 @@ export const metadata = createMetadata({
 
 export default function AiOperationsIntelligencePage() {
   return (
+    <>
     <iframe
       sandbox={labSandbox("ai-operations-intelligence")}
       referrerPolicy="no-referrer"
@@ -21,5 +22,7 @@ export default function AiOperationsIntelligencePage() {
       allow="fullscreen"
       allowFullScreen
     />
+    <a href="/standalone/attemptbook-how-it-works.html" className="fixed bottom-5 right-5 z-[70] rounded-full border border-[#D4A017] bg-[#0B1F3B] px-5 py-3 text-sm font-semibold text-[#F5F1E6] shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4A017]">Explore how it works ↗</a>
+    </>
   );
 }
