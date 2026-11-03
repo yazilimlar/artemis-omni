@@ -18,7 +18,9 @@ almost complete; two attempts are still open.
 - Cover: navy `#0B1F3B` (light variant) / gold `#D4A017` (dark variant)
 - Pages: cream `#FBF7EA`, navy outline; the letter A in navy, Georgia serif,
   with a gold rule beneath
-- Checkboxes: navy outline, white fill; check marks in dark gold `#B98A0E`
+- The letter A and the check marks share one glossy green-cyan sheen
+  (gradient `#3FF2C0` → `#0FC79B` → `#0693B8`, gradient id `abSheen`);
+  checkboxes: navy outline, white fill
 
 ## Placement
 
