@@ -36,3 +36,5 @@ How the files were made: the compass is redrawn geometrically, not traced. The s
 - PR #294: family-bar mini mark.
 
 Swap together with the ArtLoop v2 swap (see `ArtLoopLogo.md`), after #290, #291 and #294 merge.
+
+**Swap status (2026-11-03): COMPLETED** in the follow-up page-alignment PR, together with the ArtLoop v2 swap — hero lockup (dark), family strips and plates now carry the v2 artwork; favicons regenerated from `artplex-app-icon.svg` and the OG card from `artplex-hero.svg`. Note: the intro page's `.lockup` hero slot takes `artplex-lockup-dark.svg` (the 1600×900 `artplex-hero.svg` remains the canonical large-hero asset and the OG card source).
