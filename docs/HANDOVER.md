@@ -3,6 +3,14 @@
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
 
+## 2026-11-03 update — ArtLoop logo v2 (canonical files; v1 retired)
+
+- Branch `labs/artloop-logo-v2` from `main` @ `6c95776`; draft PR. Division: infrastructure-construction. Product: ArtLoop (brand assets). Visibility public (files under `public/brand/artloop/`); data mode n/a; change type product-specific. No page, route, registry or dependency changes.
+- Owner instruction: George, 2026-11-03: the ArtLoop logo in use is to be retired permanently and replaced with the two attached images (full lockup; compact lockup).
+- Files: `public/brand/artloop/{artloop-lockup-full.svg, artloop-lockup.svg, artloop-mark.svg}` (traced vectors), the two source images under `docs/brand/reference/`, and `docs/brand/ArtLoopLogo.md` (rule, canonical files, where v1 still appears, swap plan).
+- Verification: rendered all three SVGs side by side against the sources, and the mark at 260/64/32/16 px. They match the sources; at 16 px the infinity is very small.
+- Next recommended task: after #290, #291 and #294 merge, one PR replaces every v1 instance listed in `docs/brand/ArtLoopLogo.md`, including the #290 animated hero geometry and the favicon, icon and OG card. Done when `git grep 'translate(435,16)'` is empty.
+
 ## 2026-11-03 update — ArtPlex logo v2 (draft 2, in review with the owner)
 
 - Branch `labs/artplex-logo-v2` from `main` @ `6c95776`; draft PR. Division: infrastructure-construction. Product: ArtPlex (brand assets). Visibility public (files under `public/brand/artplex/`); change type product-specific. No page, route, registry or dependency changes.
