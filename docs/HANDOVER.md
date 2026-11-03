@@ -3,6 +3,17 @@
 Standardized, parse-friendly handover. Historical states remain available through Git, pull requests, issues, and dated files under `docs/evolution/` and `docs/history/`. The previous handover (2026-07-11, CivicBid canonical bridge integration) is preserved at commit `7d620ff` (`git show 7d620ff:docs/HANDOVER.md`).
 
 
+## 2026-11-02 update — ArtLoop agents office (registered 3D scene)
+
+- Branch `labs/artloop-agents-office` from `main` @ `0279478`; draft PR. Division: infrastructure-construction (Artemis Construction, estimating). Product: ArtLoop introduction page. **Not** the gated `artloop-ws` workspace; no data from it.
+- Lifecycle active_lab; visibility public_safe_demo with `approved_public: true` (approval = owner merge of this PR); data mode synthetic; change type product-specific. Governing ADR-015; ADR-017 native visual (an estimating office); ADR-014 unchanged for `/labs/artloop`.
+- Owner instruction: George, 2026-11-02, after reviewing a single-file prototype: "Agreed. Please go ahead" (an agents-office 3D animation for ArtLoop, in the style of ploy.ai).
+- Files: new `components/scenes/artloop-agents-office/{index.tsx,stages.ts,passport.md}`, new `public/textures/artloop-agents-office/fallback.svg`; one appended entry in `data/scene-registry.json`; one line in `components/scenes/SceneIsland.tsx` (dynamic import); one link paragraph under "The loop" in `public/standalone/artloop.html` ("Walk the loop in 3D: the agents office →", new tab, as the page's other links).
+- Design boundary: ADR-015 allows 3D only on registered scene routes, so the scene lives at `/labs/scenes/artloop-agents-office` and `/labs/artloop` links to it. Embedding it in `/labs/artloop` (or scroll-driving it there) needs an ADR-015 amendment first.
+- Verification: `npm run typecheck` clean; `npm run lint` clean; `validate-scenes` 8 scenes valid; `tests/unit/scene-registry.test.ts` + `scene-island-decision.test.ts` 49/49 pass; `npm run build` exit 0 with placeholder public Supabase URL/anon key (without them the build stops at `/control` prerender, the known environment limit); 3D island 257.5 KB gz (budget 400 KB); homepage hero unchanged (1.5 KB gz). Browser check on `next start` (software WebGL, simulated 8 cores): all five desk labels render, label click focuses the desk, the scene hands over to the SVG fallback with no page errors; the fallback also shows on the real 2-core container (low-device rule). In software rendering both this scene and botanical-garden drop under the 20 fps floor after ~3 s and fall back as designed; real-GPU fps not measured here.
+- Known risks: the scene page is indexable (approved public_safe_demo) while `/labs/artloop` is noindex; the owner may want it noindex.
+- Next recommended task: owner eyeball on the Vercel preview (desktop and phone); then an ArtPlex command-room scene as its own PR.
+
 ## 2026-10-29 update — /demo/pending-contracts/a1-estimates-01.01 forwards to the gated ArtLoop workspace
 
 - Branch `feature/demo-pending-contracts-a1-estimates`. Division: Artemis Construction (estimating). Product: ArtLoop 2WTC HVAC estimating workspace (owned and built in `yazilimlar/artloop-ws`, release R0.7-rc1).
