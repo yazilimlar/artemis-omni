@@ -1,4 +1,9 @@
 import { NextResponse } from "next/server";
+import {
+  loadPilotEmailConfig,
+  sendPilotEmailNotification,
+  type PilotNotificationStatus,
+} from "@/lib/pilot-intake/notifications";
 
 export const runtime = "nodejs";
 
@@ -77,10 +82,43 @@ export async function POST(request: Request) {
   try {
     const result = await syncSquarespaceContact(parsed.payload, apiKey);
 
+    // The Squarespace contact only carries name + email. The full request
+    // (company, pain point, module, timeline, message, …) is delivered by
+    // email so nothing the requester wrote is lost.
+    let notification: PilotNotificationStatus = "not_configured";
+    const emailConfig = loadPilotEmailConfig();
+    if (emailConfig) {
+      try {
+        await sendPilotEmailNotification(
+          parsed.payload,
+          result.contactId,
+          new Date().toISOString(),
+          emailConfig,
+        );
+        notification = "sent";
+      } catch (error) {
+        notification = "failed";
+        console.error("pilot_intake_email_error", {
+          message: error instanceof Error ? error.message : "Unknown Resend error",
+        });
+      }
+    }
+
+    if (notification !== "sent") {
+      // Fallback capture: keep the full request in the runtime log so it can
+      // be recovered even when the notification email could not be sent.
+      console.error("pilot_intake_notification_not_sent", {
+        notification,
+        requestId: result.contactId,
+        payload: parsed.payload,
+      });
+    }
+
     return NextResponse.json({
       ok: true,
       requestId: result.contactId,
       status: result.status,
+      notification,
     });
   } catch (error) {
     const status = error instanceof SquarespaceError ? error.status : 502;
