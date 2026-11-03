@@ -32,3 +32,5 @@ As of `main` @ `6c95776` and the open PRs on 2026-11-03. The v1 path data is ide
 1. This PR adds the v2 files and this note only. No page changes, so it does not conflict with the open PRs.
 2. After #290, #291 and #294 merge, one follow-up PR replaces every row in the table above with the v2 files. The animated hero is rebuilt on the v2 mark's shapes, and the favicon, icon and OG card are regenerated from `artloop-mark.svg` and the lockups.
 3. That PR's check: `git grep 'translate(435,16)'` returns nothing.
+
+**Swap status (2026-11-03): COMPLETED** in the follow-up page-alignment PR — every row above replaced with the v2 files (animated hero rebuilt on the v2 mark's shapes; favicon, 180 px icon and OG card regenerated). Acceptance check: `git grep 'translate(435,16)'` over the shipped pages returns nothing.
