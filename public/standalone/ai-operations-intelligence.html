@@ -59,11 +59,24 @@
   .card .lockup{margin-bottom:12px}
   .card .lockup svg{height:132px;width:auto;max-width:100%;display:block;border:1px solid var(--line);border-radius:8px}
   .card .lockup-tall svg{height:190px}
-  /* flow */
-  .flow{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;margin-top:18px}
-  .step{flex:1 1 110px;background:var(--navy);color:var(--cream);text-align:center;padding:12px 6px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-  .step small{display:block;font-weight:400;text-transform:none;letter-spacing:0;color:#b9c6da;font-size:.72rem;margin-top:3px}
-  .arrow{align-self:center;padding:0 5px;color:var(--gold);font-weight:900}
+  /* ledger line — one chain, from work to evidence */
+  .chain-sec .wrap{position:relative}
+  .chain{position:relative;margin-top:30px}
+  .chain::before{content:"";position:absolute;left:26px;right:26px;top:16px;height:2px;background:linear-gradient(90deg,rgba(212,160,23,0),var(--gold) 7%,var(--gold) 93%,rgba(212,160,23,0));opacity:.5}
+  .chain-pulse{position:absolute;top:17px;left:26px;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px 2px rgba(212,160,23,.65);transform:translate(-50%,-50%);animation:chainRun 7s linear infinite;z-index:2;pointer-events:none}
+  @keyframes chainRun{0%{left:26px;opacity:0}5%{opacity:1}95%{opacity:1}100%{left:calc(100% - 26px);opacity:0}}
+  .chain-nodes{display:flex;justify-content:space-between}
+  .cnode{flex:1 1 0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 4px}
+  .cdot{width:34px;height:34px;border-radius:50%;background:var(--paper);border:2px solid var(--navy);color:var(--navy);display:flex;align-items:center;justify-content:center;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.03em;position:relative;z-index:1;animation:nodeGlow 7s ease-in-out infinite;animation-delay:calc(var(--i)*.95s)}
+  @keyframes nodeGlow{0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,0)}7%{border-color:var(--gold);box-shadow:0 0 0 6px rgba(212,160,23,.25)}16%{box-shadow:0 0 0 0 rgba(212,160,23,0)}}
+  .cnode b{margin-top:11px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)}
+  .cnode small{display:block;margin-top:3px;font-size:.72rem;color:var(--muted)}
+  .chime-toggle{position:absolute;top:4px;right:0;display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+  .chime-toggle svg{display:block}
+  .chime-toggle .wv{transition:opacity .2s}
+  .chime-toggle.off{opacity:.55}
+  .chime-toggle.off .wv{opacity:0}
+  @media (prefers-reduced-motion:reduce){ .chain-pulse{display:none} .cdot{animation:none} }
   /* lists */
   .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;margin-top:14px}
   .notebox{background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px}
@@ -82,7 +95,16 @@
   .legal p,.legal li{font-size:.86rem;color:#b9c6da}
   .legal ul{padding-left:18px}
   footer.site{background:var(--navy);color:#8fa2bd;padding:14px 0 30px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.75rem;letter-spacing:.08em}
-  @media (max-width:640px){ .flow{flex-direction:column} .arrow{transform:rotate(90deg);padding:2px 0} }
+  @media (max-width:640px){
+    .chain::before{left:16px;right:auto;top:26px;bottom:26px;width:2px;height:auto;background:linear-gradient(180deg,rgba(212,160,23,0),var(--gold) 5%,var(--gold) 95%,rgba(212,160,23,0))}
+    .chain-pulse{left:17px;top:26px;animation:chainDrop 7s linear infinite}
+    @keyframes chainDrop{0%{top:26px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:calc(100% - 26px);opacity:0}}
+    .chain-nodes{flex-direction:column}
+    .cnode{flex-direction:row;align-items:center;text-align:left;padding:9px 0;border-bottom:1px solid var(--line)}
+    .cnode:last-child{border-bottom:0}
+    .cnode b{margin:0 0 0 14px}
+    .cnode small{display:inline;margin:0 0 0 8px}
+  }
 
   /* R2-S1 family bar */
   .fambar{background:var(--mode-surface);border-bottom:1px solid var(--mode-line);font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
@@ -258,17 +280,21 @@
   </div>
 </section>
 
-<section>
+<section class="chain-sec" id="chainSec">
   <div class="wrap">
     <h2><span class="kicker">How it works</span>One chain, from work to evidence</h2>
-    <div class="flow">
-      <div class="step">Project<small>what it's for</small></div><div class="arrow">→</div>
-      <div class="step">Workflow<small>the process</small></div><div class="arrow">→</div>
-      <div class="step">Run<small>one execution</small></div><div class="arrow">→</div>
-      <div class="step">Attempt<small>every billed try</small></div><div class="arrow">→</div>
-      <div class="step">Usage<small>tokens &amp; units</small></div><div class="arrow">→</div>
-      <div class="step">Cost<small>priced, classified</small></div><div class="arrow">→</div>
-      <div class="step">Evidence<small>proof on file</small></div>
+    <button class="chime-toggle" id="chimeToggle" type="button" aria-pressed="true" aria-label="Toggle the chain chime" title="Chain chime"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor" stroke="none"/><path class="wv" d="M15.5 8.5a5 5 0 0 1 0 7"/><path class="wv" d="M18.2 6a9 9 0 0 1 0 12"/></svg>Chime</button>
+    <div class="chain" id="ledgerChain">
+      <span class="chain-pulse" aria-hidden="true"></span>
+      <div class="chain-nodes">
+      <div class="cnode"><span class="cdot" style="--i:0">01</span><b>Project</b><small>what it's for</small></div>
+      <div class="cnode"><span class="cdot" style="--i:1">02</span><b>Workflow</b><small>the process</small></div>
+      <div class="cnode"><span class="cdot" style="--i:2">03</span><b>Run</b><small>one execution</small></div>
+      <div class="cnode"><span class="cdot" style="--i:3">04</span><b>Attempt</b><small>every billed try</small></div>
+      <div class="cnode"><span class="cdot" style="--i:4">05</span><b>Usage</b><small>tokens &amp; units</small></div>
+      <div class="cnode"><span class="cdot" style="--i:5">06</span><b>Cost</b><small>priced, classified</small></div>
+      <div class="cnode"><span class="cdot" style="--i:6">07</span><b>Evidence</b><small>proof on file</small></div>
+      </div>
     </div>
     <div class="cols">
       <div class="notebox">
@@ -353,5 +379,52 @@
   </div>
 </footer>
 
+<script>
+(function(){
+  var btn=document.getElementById('chimeToggle'), chain=document.getElementById('ledgerChain');
+  var state=window.__ledgerLine={armed:false,played:false,on:true,inView:false};
+  if(!btn||!chain) return;
+  var reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var ctx=null;
+  function note(freq,t0,dur){
+    var o=ctx.createOscillator(),o2=ctx.createOscillator(),g=ctx.createGain(),g2=ctx.createGain(),f=ctx.createBiquadFilter();
+    o.type='sine'; o.frequency.value=freq; o2.type='triangle'; o2.frequency.value=freq*2; g2.gain.value=.15;
+    f.type='lowpass'; f.frequency.value=2400;
+    o.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(.14,t0+.015); g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    o.start(t0); o2.start(t0); o.stop(t0+dur+.05); o2.stop(t0+dur+.05);
+  }
+  function chime(){
+    if(!ctx||!state.on||state.played||reduce) return;
+    if(ctx.state==='suspended') ctx.resume();
+    var t0=ctx.currentTime+.03;
+    note(659.25,t0,1.1); note(987.77,t0+.16,1.35);
+    state.played=true;
+  }
+  function arm(){
+    if(!ctx){ try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return; } }
+    if(ctx.state==='suspended') ctx.resume();
+    state.armed=true;
+    if(state.inView) chime();
+  }
+  window.addEventListener('pointerdown',arm,{passive:true});
+  window.addEventListener('keydown',arm);
+  btn.addEventListener('click',function(){
+    state.on=!state.on;
+    btn.setAttribute('aria-pressed',String(state.on));
+    btn.classList.toggle('off',!state.on);
+    arm();
+  });
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      for(var i=0;i<es.length;i++){
+        if(es[i].isIntersecting){ state.inView=true; if(state.armed){ chime(); io.disconnect(); } }
+        else state.inView=false;
+      }
+    },{threshold:.35});
+    io.observe(chain);
+  }
+})();
+</script>
 </body>
 </html>
