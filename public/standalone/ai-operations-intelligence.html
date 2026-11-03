@@ -67,16 +67,17 @@
   @keyframes chainRun{0%{left:26px;opacity:0}5%{opacity:1}95%{opacity:1}100%{left:calc(100% - 26px);opacity:0}}
   .chain-nodes{display:flex;justify-content:space-between}
   .cnode{flex:1 1 0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 4px}
-  .cdot{width:34px;height:34px;border-radius:50%;background:var(--paper);border:2px solid var(--navy);color:var(--navy);display:flex;align-items:center;justify-content:center;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.03em;position:relative;z-index:1;animation:nodeGlow 7s ease-in-out infinite;animation-delay:calc(var(--i)*.95s)}
-  @keyframes nodeGlow{0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,0)}7%{border-color:var(--gold);box-shadow:0 0 0 6px rgba(212,160,23,.25)}16%{box-shadow:0 0 0 0 rgba(212,160,23,0)}}
-  .cnode b{margin-top:11px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)}
+  .cdot{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fffdf6,var(--paper) 55%,#e7dfc8);border:2px solid var(--navy);color:var(--navy);box-shadow:inset 0 1px 2px rgba(255,255,255,.95),inset 0 -3px 6px rgba(11,31,59,.20),inset 0 0 0 2px rgba(212,160,23,.28),0 3px 6px rgba(11,31,59,.28);display:flex;align-items:center;justify-content:center;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.03em;position:relative;z-index:1;animation:nodeGlow 7s ease-in-out infinite;animation-delay:calc(var(--i)*.95s)}
+  @keyframes nodeGlow{0%,100%{background:radial-gradient(circle at 32% 28%,#fffdf6,var(--paper) 55%,#e7dfc8);color:var(--navy);border-color:var(--navy);transform:scale(1);box-shadow:inset 0 1px 2px rgba(255,255,255,.95),inset 0 -3px 6px rgba(11,31,59,.20),inset 0 0 0 2px rgba(212,160,23,.28),0 3px 6px rgba(11,31,59,.28)}7%{background:radial-gradient(circle at 32% 28%,#3a5a8c,var(--navy) 58%,#060f1e);color:var(--gold);border-color:var(--gold);transform:scale(1.16);box-shadow:inset 0 1px 2px rgba(255,255,255,.35),inset 0 -3px 6px rgba(0,0,0,.45),inset 0 0 0 2px rgba(212,160,23,.5),0 7px 14px rgba(11,31,59,.4),0 0 0 7px rgba(212,160,23,.20)}16%{background:radial-gradient(circle at 32% 28%,#fffdf6,var(--paper) 55%,#e7dfc8);color:var(--navy);border-color:var(--navy);transform:scale(1);box-shadow:inset 0 1px 2px rgba(255,255,255,.95),inset 0 -3px 6px rgba(11,31,59,.20),inset 0 0 0 2px rgba(212,160,23,.28),0 3px 6px rgba(11,31,59,.28)}}
+  .cnode b{margin-top:11px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);animation:labelGlow 7s ease-in-out infinite;animation-delay:calc(var(--i)*.95s)}
+  @keyframes labelGlow{0%,100%{color:var(--navy)}7%{color:#8a6508}16%{color:var(--navy)}}
   .cnode small{display:block;margin-top:3px;font-size:.72rem;color:var(--muted)}
   .chime-toggle{position:absolute;top:4px;right:0;display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer}
   .chime-toggle svg{display:block}
   .chime-toggle .wv{transition:opacity .2s}
   .chime-toggle.off{opacity:.55}
   .chime-toggle.off .wv{opacity:0}
-  @media (prefers-reduced-motion:reduce){ .chain-pulse{display:none} .cdot{animation:none} }
+  @media (prefers-reduced-motion:reduce){ .chain-pulse{display:none} .cdot,.cnode,.cnode b{animation:none} }
   /* lists */
   .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;margin-top:14px}
   .notebox{background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px}
@@ -104,6 +105,8 @@
     .cnode:last-child{border-bottom:0}
     .cnode b{margin:0 0 0 14px}
     .cnode small{display:inline;margin:0 0 0 8px}
+    .cnode{animation:rowGlow 7s ease-in-out infinite;animation-delay:calc(var(--i)*.95s)}
+    @keyframes rowGlow{0%,100%{background:rgba(212,160,23,0)}7%{background:rgba(212,160,23,.09)}16%{background:rgba(212,160,23,0)}}
   }
 
   /* R2-S1 family bar */
@@ -287,13 +290,13 @@
     <div class="chain" id="ledgerChain">
       <span class="chain-pulse" aria-hidden="true"></span>
       <div class="chain-nodes">
-      <div class="cnode"><span class="cdot" style="--i:0">01</span><b>Project</b><small>what it's for</small></div>
-      <div class="cnode"><span class="cdot" style="--i:1">02</span><b>Workflow</b><small>the process</small></div>
-      <div class="cnode"><span class="cdot" style="--i:2">03</span><b>Run</b><small>one execution</small></div>
-      <div class="cnode"><span class="cdot" style="--i:3">04</span><b>Attempt</b><small>every billed try</small></div>
-      <div class="cnode"><span class="cdot" style="--i:4">05</span><b>Usage</b><small>tokens &amp; units</small></div>
-      <div class="cnode"><span class="cdot" style="--i:5">06</span><b>Cost</b><small>priced, classified</small></div>
-      <div class="cnode"><span class="cdot" style="--i:6">07</span><b>Evidence</b><small>proof on file</small></div>
+      <div class="cnode" style="--i:0"><span class="cdot">01</span><b>Project</b><small>what it's for</small></div>
+      <div class="cnode" style="--i:1"><span class="cdot">02</span><b>Workflow</b><small>the process</small></div>
+      <div class="cnode" style="--i:2"><span class="cdot">03</span><b>Run</b><small>one execution</small></div>
+      <div class="cnode" style="--i:3"><span class="cdot">04</span><b>Attempt</b><small>every billed try</small></div>
+      <div class="cnode" style="--i:4"><span class="cdot">05</span><b>Usage</b><small>tokens &amp; units</small></div>
+      <div class="cnode" style="--i:5"><span class="cdot">06</span><b>Cost</b><small>priced, classified</small></div>
+      <div class="cnode" style="--i:6"><span class="cdot">07</span><b>Evidence</b><small>proof on file</small></div>
       </div>
     </div>
     <div class="cols">
