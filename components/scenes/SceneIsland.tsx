@@ -87,6 +87,7 @@ const SCENES: Record<string, ComponentType<SceneProps>> = {
   "evolution-architecture-map": dynamic(() => import("./evolution-architecture-map"), { ssr: false }),
   "gaussian-surface": dynamic(() => import("./gaussian-surface"), { ssr: false }),
   "bubble-sort": dynamic(() => import("./bubble-sort"), { ssr: false }),
+  "artloop-agents-office": dynamic(() => import("./artloop-agents-office"), { ssr: false }),
   "artplex-command-room": dynamic(() => import("./artplex-command-room"), { ssr: false }),
   // ADR-016 homepage hero: Canvas 2D, no three.js (keeps the homepage budget).
   "site-hero": dynamic(() => import("./site-hero"), { ssr: false }),
