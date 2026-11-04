@@ -299,14 +299,14 @@ section.bm2-sec{padding:38px 0 4px}
     <div>Total project files: <strong id="calc-total">120 GB across 3 projects</strong></div>
     <div style="margin-top:12px">Recommended tier:</div>
     <div class="rec" id="calc-rec">ArtPlex — $20,000/yr</div>
-    <p id="calc-note">ArtLoop covers one project. ArtPlex buys unlimited projects per year plus the control panel — that scope is the step.</p>
+    <p id="calc-note">ArtPlex includes 10 projects and 500 GB. Past ten, every project costs what a project always costs: $5,000, with 50 GB more included.</p>
   </div>
 </div>
 </div></section>
 <section class="bm2-sec" aria-labelledby="bm2-price-title"><div class="wrap">
 <h2 id="bm2-price-title">Pricing that scales with your bidding</h2>
 <p class="sub">Owner-set pricing · Annual licenses · Unlimited users at every tier</p>
-<div class="bm2-cards rv-group"><div class="bm2-card"><h3>Pilot</h3><div class="amt">Fixed fee · 1 pursuit</div><ul><li>One live bid, end to end</li><li>Decision points starred for the owner</li><li>Credited toward Year 1</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="Pilot — Fixed fee · 1 pursuit">Request a pilot</a></div><div class="bm2-card hot"><h3>ArtLoop License</h3><div class="amt">$5,000 / yr</div><ul><li>Unlimited users</li><li>Up to 50 GB project files per project</li><li>Figure Ledger + proposal issuance</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="ArtLoop License — $5,000 / yr">Request a pilot</a></div><div class="bm2-card"><h3>ArtPlex Platform</h3><div class="amt">$20,000 / yr</div><ul><li>Unlimited users · unlimited projects / yr</li><li>No per-project storage cap</li><li>Control panel + historical results</li><li>Experience capture · portfolio reporting</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="ArtPlex Platform — $20,000 / yr">Request a pilot</a></div><div class="bm2-card"><h3>Enterprise</h3><div class="amt">Custom</div><ul><li>Private deployment in your boundary</li><li>ERP integrations · SSO</li><li>Named support</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="Enterprise — Custom">Request a pilot</a></div></div>
+<div class="bm2-cards rv-group"><div class="bm2-card"><h3>Pilot</h3><div class="amt">Fixed fee · 1 pursuit</div><ul><li>One live bid, end to end</li><li>Decision points starred for the owner</li><li>Credited toward Year 1</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="Pilot — Fixed fee · 1 pursuit">Request a pilot</a></div><div class="bm2-card hot"><h3>ArtLoop License</h3><div class="amt">$5,000 / yr</div><ul><li>Unlimited users</li><li>Up to 50 GB project files per project</li><li>Figure Ledger + proposal issuance</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="ArtLoop License — $5,000 / yr">Request a pilot</a></div><div class="bm2-card"><h3>ArtPlex Platform</h3><div class="amt">$20,000 / yr</div><ul><li>Unlimited users</li><li>10 projects + 500 GB included</li><li>Additional projects $5,000 each · +50 GB per unit</li><li>Control panel + historical results</li><li>Experience capture · portfolio reporting</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="ArtPlex Platform — $20,000 / yr">Request a pilot</a></div><div class="bm2-card"><h3>Enterprise</h3><div class="amt">Custom</div><ul><li>Private deployment in your boundary</li><li>ERP integrations · SSO</li><li>Named support</li></ul><a class="bm2-btn" href="https://artemis.agoraxai.com/contact" data-tier="Enterprise — Custom">Request a pilot</a></div></div>
 <p class="bm2-note">Pilot fee credited in full toward Year 1. Done-with-you estimator review and Enterprise deployment available on request. Every tier includes an AI-review allowance; volume above it is metered and stated in the pilot conversation — no hidden fees.</p>
 </div></section>
 <section class="bm2-sec" style="text-align:center" aria-labelledby="bm2-trust-title"><div class="wrap">
@@ -580,8 +580,14 @@ function calc(){
   $("calc-total").textContent=(p*g).toLocaleString("en-US")+" GB across "+p+(p===1?" project":" projects");
   var rec=$("calc-rec"), note=$("calc-note");
   if(p===1 && g<=50){ rec.textContent="ArtLoop — $5,000/yr"; note.textContent="One project, up to 50 GB of project files, unlimited users. Fits."; }
-  else if(p===1){ rec.textContent="ArtPlex — $20,000/yr"; note.textContent="One project above ArtLoop's 50 GB/project allowance steps up to ArtPlex — which carries no per-project storage cap."; }
-  else { rec.textContent="ArtPlex — $20,000/yr"; note.textContent="ArtLoop covers one project. ArtPlex buys unlimited projects per year plus the control panel — that scope is the step."; }
+  else {
+  var total=p*g;
+  var units=Math.max(Math.max(0,p-10), Math.max(0, Math.ceil((total-500)/50)));
+  var price=20000+5000*units;
+  rec.textContent="ArtPlex — $"+price.toLocaleString("en-US")+"/yr";
+  if(units===0){ note.textContent = p===1 ? "One project above ArtLoop's 50 GB/project allowance runs on ArtPlex — 500 GB included, no per-project cap inside the bundle." : "ArtPlex includes 10 projects and 500 GB — your usage fits the bundle. Past ten, every project costs what a project always costs: $5,000, with 50 GB more included."; }
+  else { note.textContent="Base bundle $20,000 (10 projects + 500 GB) plus "+units+" expansion unit"+(units===1?"":"s")+" at $5,000 — each adds one project and 50 GB."; }
+}
   return rec.textContent;
 }
 if(pj&&gb){ pj.addEventListener("input",calc); gb.addEventListener("input",calc); calc(); }
