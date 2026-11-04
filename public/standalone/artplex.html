@@ -281,7 +281,7 @@ section.bm2-sec{padding:38px 0 4px}
     <h1>Every pursuit. Every gate. One board.</h1>
     <p class="bm2-sub">ArtPlex is the control panel above the pipeline: every bid your firm is chasing — its countdown, its gates, whose court the ball is in — with the full ArtLoop workspace one click beneath each pursuit.</p>
     <div class="bm2-cta">
-      <a class="bm2-btn bm2-btn-solid" href="https://artemis.agoraxai.com/contact" data-tier="Pilot — fixed fee, credited">Request a pilot</a>
+      <a class="bm2-btn bm2-btn-solid" href="https://artemis.agoraxai.com/contact?module=ArtPlex%20Estimation%20Platform" target="_blank" rel="noopener noreferrer" data-tier="Pilot — fixed fee, credited">Request a pilot</a>
       <a class="bm2-btn" href="#deep">See how it works</a>
     </div>
     <div class="bm2-flow" role="group" aria-label="Illustrative portfolio board">
@@ -538,7 +538,7 @@ section.bm2-sec{padding:38px 0 4px}
     <p>Tier selected: <strong id="bm2-modal-tier">Pilot</strong></p>
     <p>A pilot runs ArtLoop on one of your live pursuits for 60–90 days, and its fee is credited in full toward your first license year. The intake takes two minutes.</p>
     <div class="bm2-modal-actions">
-      <a class="bm2-btn bm2-btn-solid" id="bm2-modal-go" href="https://artemis.agoraxai.com/contact">Continue to the pilot request</a>
+      <a class="bm2-btn bm2-btn-solid" id="bm2-modal-go" href="https://artemis.agoraxai.com/contact?module=ArtPlex%20Estimation%20Platform" target="_blank" rel="noopener noreferrer">Continue to the pilot request</a>
       <button type="button" class="bm2-btn" id="bm2-modal-close">Close</button>
     </div>
   </div>
@@ -600,9 +600,15 @@ if(pj&&gb){ pj.addEventListener("input",calc); gb.addEventListener("input",calc)
 
 /* ---------- Pilot modal (CTAs are real links; the modal is an enhancement) ---------- */
 var modal=$("bm2-modal"), mTier=$("bm2-modal-tier"), mGo=$("bm2-modal-go"), closeBtn=$("bm2-modal-close"), lastFocus=null;
+Array.prototype.forEach.call(doc.querySelectorAll("a[data-tier]"),function(link){
+  link.href="https://artemis.agoraxai.com/contact?module=ArtPlex%20Estimation%20Platform&tier="+encodeURIComponent(link.getAttribute("data-tier")||"Pilot");
+  link.target="_blank";
+  link.rel="noopener noreferrer";
+});
 function openModal(tier){
   if(!modal) return;
   if(mTier) mTier.textContent=tier||"Pilot";
+  if(mGo) mGo.href="https://artemis.agoraxai.com/contact?module=ArtPlex%20Estimation%20Platform&tier="+encodeURIComponent(tier||"Pilot");
   lastFocus=doc.activeElement;
   modal.classList.add("open");
   if(mGo) mGo.focus();

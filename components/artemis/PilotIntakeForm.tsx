@@ -21,6 +21,9 @@ const industries = [
 const timelines = ["Exploring", "This quarter", "Next quarter", "Specific deadline"];
 
 const supplementalModules = [
+  "ArtPlex Estimation Platform",
+  "ArtLoop Evidence-Based Estimating",
+  "ARTEMIS General Inquiry",
   "CivicBid Intelligence Bridge",
   "Utility Field Claims Command Workbench",
   "Utility Dual Story Cockpit",
@@ -40,7 +43,8 @@ export function PilotIntakeForm() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const requestedModule = new URLSearchParams(window.location.search).get("module");
+    const parameters = new URLSearchParams(window.location.search);
+    const requestedModule = parameters.get("module") ?? (parameters.has("product") ? "ARTEMIS General Inquiry" : null);
     if (requestedModule && moduleOptions.includes(requestedModule)) {
       setSelectedModule(requestedModule);
     }
@@ -71,7 +75,12 @@ export function PilotIntakeForm() {
           painPoint: get("painPoint"),
           module: get("module"),
           timeline: get("timeline"),
-          message: get("message"),
+          message: [
+            new URLSearchParams(window.location.search).get("tier")
+              ? `Selected tier: ${new URLSearchParams(window.location.search).get("tier")}`
+              : "",
+            get("message"),
+          ].filter(Boolean).join("\n\n"),
           sourcePage: window.location.href,
           website: get("website"),
         }),

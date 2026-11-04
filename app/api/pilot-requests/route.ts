@@ -78,6 +78,10 @@ export async function POST(request: Request) {
   if (!parsed.ok) {
     return jsonError(parsed.error, 400);
   }
+  const emailConfig = loadPilotEmailConfig();
+  if (!emailConfig) {
+    return jsonError("Pilot intake notifications are temporarily unavailable. Please try again later.", 503);
+  }
 
   try {
     const result = await syncSquarespaceContact(parsed.payload, apiKey);
@@ -85,40 +89,23 @@ export async function POST(request: Request) {
     // The Squarespace contact only carries name + email. The full request
     // (company, pain point, module, timeline, message, …) is delivered by
     // email so nothing the requester wrote is lost.
-    let notification: PilotNotificationStatus = "not_configured";
-    const emailConfig = loadPilotEmailConfig();
-    if (emailConfig) {
-      try {
-        await sendPilotEmailNotification(
-          parsed.payload,
-          result.contactId,
-          new Date().toISOString(),
-          emailConfig,
-        );
-        notification = "sent";
-      } catch (error) {
-        notification = "failed";
-        console.error("pilot_intake_email_error", {
-          message: error instanceof Error ? error.message : "Unknown Resend error",
-        });
-      }
-    }
-
-    if (notification !== "sent") {
-      // Fallback capture: keep the full request in the runtime log so it can
-      // be recovered even when the notification email could not be sent.
-      console.error("pilot_intake_notification_not_sent", {
-        notification,
+    try {
+      await sendPilotEmailNotification(parsed.payload, result.contactId, new Date().toISOString(), emailConfig);
+    } catch (error) {
+      // A Squarespace contact alone does not retain the inquiry details.
+      // Do not acknowledge complete intake when delivery has failed.
+      console.error("pilot_intake_email_error", {
         requestId: result.contactId,
-        payload: parsed.payload,
+        message: error instanceof Error ? error.name : "Unknown notification failure",
       });
+      return jsonError("Your contact was saved, but the full inquiry could not be delivered. Please try again later.", 502);
     }
 
     return NextResponse.json({
       ok: true,
       requestId: result.contactId,
       status: result.status,
-      notification,
+      notification: "sent" satisfies PilotNotificationStatus,
     });
   } catch (error) {
     const status = error instanceof SquarespaceError ? error.status : 502;

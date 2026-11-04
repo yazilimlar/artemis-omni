@@ -62,7 +62,10 @@ describe("existing /api/pilot-requests accepts the /integrate payload", () => {
 
   it("passes the route's validation (Squarespace mocked, no network)", async () => {
     vi.stubEnv("SQUARESPACE_API_KEY", "test-key-not-real");
-    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ contact: { id: "c-1" } }), { status: 201 }));
+    vi.stubEnv("RESEND_API_KEY", "test-resend");
+    vi.stubEnv("CONTACT_EMAIL_TO", "owner@example.com");
+    vi.stubEnv("CONTACT_EMAIL_FROM", "Artemis <pilot@example.com>");
+    const fetchMock = vi.fn(async (url: unknown) => new Response(JSON.stringify(String(url).includes("resend") ? { id: "e-1" } : { contact: { id: "c-1" } }), { status: String(url).includes("resend") ? 200 : 201 }));
     vi.stubGlobal("fetch", fetchMock);
 
     const response = await post(toPilotRequestPayload(valid));
@@ -71,9 +74,9 @@ describe("existing /api/pilot-requests accepts the /integrate payload", () => {
       ok: true,
       requestId: "c-1",
       status: "created",
-      notification: "not_configured",
+      notification: "sent",
     });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
     const sent = JSON.parse(String((fetchMock.mock.calls[0] as unknown[])[1] && ((fetchMock.mock.calls[0] as unknown[])[1] as RequestInit).body));
     expect(sent.primaryEmail).toEqual({ email: "ada@example.com", acceptsMarketing: false });
   });
