@@ -87,7 +87,6 @@ const MEANDER_BG =
 
 // Inquiry email for the pilot CTA. Used in the mailto link target only —
 // the address is never rendered as visible page text.
-const PILOT_EMAIL = "gokmen1313@gmail.com";
 
 const CONTENT_WIDTH = "max-w-[1120px]";
 
@@ -153,7 +152,7 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <StickyNav ctaHref={`mailto:${PILOT_EMAIL}`} />
+      <StickyNav ctaHref="/contact" />
 
       {/* 1b — Intro video (click-to-play; nothing loads until watched) */}
       <section className="border-b border-border/60">
@@ -323,7 +322,7 @@ export default function HomePage() {
               proof. Artemis turns that into a pilot-ready implementation path.
             </p>
             <div className="mt-8 flex justify-center">
-              <Button href={`mailto:${PILOT_EMAIL}`} size="lg">
+              <Button href="/contact" size="lg">
                 Start the conversation →
               </Button>
             </div>
