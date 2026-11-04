@@ -168,10 +168,10 @@ describe("/api/pilot-requests notification flow", () => {
     expect(sentBody.text).toContain(payload.message.replace(/</g, "<"));
   });
 
-  it("still confirms the saved contact when the email fails, and reports it", async () => {
+  it("does not falsely confirm complete intake when the email fails", async () => {
     stubBackend(500);
     const response = await post(formBody);
-    expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({ ok: true, requestId: "c-9", notification: "failed" });
+    expect(response.status).toBe(502);
+    expect(await response.json()).toMatchObject({ ok: false });
   });
 });
