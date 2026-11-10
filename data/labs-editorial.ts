@@ -1,4 +1,5 @@
 import {
+  Building2,
   Calculator,
   Crown,
   Gamepad2,
@@ -120,6 +121,25 @@ export const labsEditorial: LabEditorial[] = [
       "Demonstration build with illustrative data. It is not a submittal, a bid, or engineering advice.",
     category: "construction",
     flagship: true,
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "Skyscraper HVAC Simulator \u00b7 3D / 4D",
+    eyebrow: "Construction Intelligence",
+    href: "/labs/skyscraper-hvac-simulator",
+    statusLabel: "Interactive demo",
+    statusTone: "public",
+    Icon: Building2,
+    accentIcon: Landmark,
+    description:
+      "A live engineering model of a generic 48-story tower: weather and occupancy drive psychrometrics, coil and chiller loads, pipe friction, pump heads and cooling-tower performance \u2014 across a 2D cutaway, an interactive 3D model, an illustrative 4D logistics layer, and full drawing-to-model traceability.",
+    signals: ["Live psychrometrics & chiller staging", "Interactive 3D / 4D", "Drawing \u2194 model traceability", "Synthesized sound themes"],
+    commercialPath:
+      "Best pilot path: mechanical precon reviews, HVAC systems training, and executive walkthroughs of how tower plant responds to weather and load.",
+    boundary:
+      "Generic demonstration tower with representative values. The 4D schedule is illustrative example data, not a real project. It is not a design document, a bid, or engineering advice.",
+    category: "construction",
   },
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
