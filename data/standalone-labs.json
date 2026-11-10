@@ -209,6 +209,14 @@
         "/standalone/artplex.html"
       ],
       "reason": "Static introduction page: no scripts execute and it uses no downloads, modals, or storage; family-strip links open in a new tab outside the sandbox (popups tokens)"
+    },
+    {
+      "id": "skyscraper-hvac-simulator",
+      "sandbox": "allow-scripts allow-downloads",
+      "paths": [
+        "/standalone/skyscraper-hvac-simulator.html"
+      ],
+      "reason": "Traceability-matrix CSV download; Web Audio sound themes and the 3D model run under allow-scripts; all localStorage use is guarded with try/catch; no popups, modals, or printing needed"
     }
   ]
 }
