@@ -217,6 +217,14 @@
         "/standalone/skyscraper-hvac-simulator.html"
       ],
       "reason": "Traceability-matrix CSV download; Web Audio sound themes and the 3D model run under allow-scripts; all localStorage use is guarded with try/catch; no popups, modals, or printing needed"
+    },
+    {
+      "id": "bid-radar-wdf-01",
+      "sandbox": "allow-scripts allow-downloads allow-modals allow-popups allow-popups-to-escape-sandbox",
+      "paths": [
+        "/standalone/bid-radar-wdf-01/:path*"
+      ],
+      "reason": "WDF public procurement prototype: scripts, local exports, dialogs and official-source links. No same-origin access; entries remain in memory. Only public City Record data; no private WDF information."
     }
   ]
 }
