@@ -225,6 +225,14 @@
         "/standalone/bid-radar-wdf-01/:path*"
       ],
       "reason": "WDF public procurement prototype: scripts, local exports, dialogs and official-source links. No same-origin access; entries remain in memory. Only public City Record data; no private WDF information."
+    },
+    {
+      "id": "hvac-intel-v01-georgeg",
+      "sandbox": "allow-scripts allow-downloads allow-modals",
+      "paths": [
+        "/standalone/hvac-intel-v01-georgeg/:path*"
+      ],
+      "reason": "Example-only HVAC studio. Opaque-origin isolation retained; JSON exports and original print dialogs. Internal example-frame messages validate source Window and opaque origin; no bridge to Artemis parent. Autosave unavailable; explicit JSON backup required."
     }
   ]
 }

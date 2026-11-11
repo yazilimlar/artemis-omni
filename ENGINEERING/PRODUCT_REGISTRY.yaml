@@ -542,6 +542,22 @@ products:
       reverted the duplicate RC8.10 standalone route; RC8.11 stands alone.
     next_gate: mep-expansion-p1-products
 
+  - id: hvac-intel-v01-georgeg
+    name: HVAC Planning Studio
+    division: infrastructure-construction
+    product_family: construction-intelligence
+    lifecycle: prototype
+    maturity: public_lab
+    visibility: public_safe_demo
+    data_mode: sample
+    canonical_route: /labs/hvac-intel-v01-georgeg
+    canonical_branch: main
+    status_evidence: >-
+      Owner-requested isolated publication of HVAC Planning Studio v1.2.
+      Integrated illustrative tower 2D/3D and bounded AHU-to-zone example.
+      Independent planning prototype; does not replace the Mechanical Intelligence Bridge.
+    next_gate: reviewed_preview_and_owner_production_approval
+
 registry_rules:
   - A branch status must never be used as the sole evidence for product retirement.
   - A public route must declare maturity, visibility, and data mode.
