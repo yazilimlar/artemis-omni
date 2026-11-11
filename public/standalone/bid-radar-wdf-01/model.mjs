@@ -30,4 +30,4 @@ export function deadlineEvidence(value){
 }
 export function dueLabel(s){return deadlineEvidence(s).label;}
 export function clean(s){return String(s??'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();}
-export function normalize(r){return {id:r.request_id,title:r.short_title||'Untitled notice',agency:r.agency_name||'Agency not published',description:clean(r.additional_description_1),due:r.due_date||'',published:r.start_date||'',pin:r.pin||'',method:r.selection_method_description||'',sector:'Public',url:'https://a856-cityrecord.nyc.gov/RequestDetail/'+encodeURIComponent(r.request_id)};}
+export function normalize(r){return {rawSource:JSON.parse(JSON.stringify(r)),id:r.request_id,title:r.short_title||'Untitled notice',agency:r.agency_name||'Agency not published',description:clean(r.additional_description_1),due:r.due_date||'',published:r.start_date||'',pin:r.pin||'',method:r.selection_method_description||'',sector:'Public',url:'https://a856-cityrecord.nyc.gov/RequestDetail/'+encodeURIComponent(r.request_id)};}
