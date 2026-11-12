@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { siteConfig } from "@/lib/site";
 import { ARTEMIS_ACRONYM } from "@/lib/artemis/positioning";
 import { footerNav } from "@/lib/artemis/navigation";
@@ -6,6 +9,13 @@ import { Container } from "@/components/ui/container";
 import { ArtemisLogo } from "@/components/layout/ArtemisLogo";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  // The CivicBid review surface is viewport-locked so the embedded Bid Room
+  // keeps the page's only scrollbar (one-scroll fix). Rendering the site
+  // footer below it would force a second, outer scrollbar, so this one
+  // app-style route renders without the footer — same usePathname pattern
+  // SiteHeader already uses. Every other route is unchanged.
+  if (pathname === "/labs/civicbid-signal-forge") return null;
   const year = new Date().getFullYear();
   return (
     <footer className="mt-24 border-t border-border/70 bg-navy-deep/40">

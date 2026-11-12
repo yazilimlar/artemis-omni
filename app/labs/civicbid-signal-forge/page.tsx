@@ -32,10 +32,17 @@ export default async function CivicBidSignalForgePage({
 }) {
   const { embedded } = await searchParams;
   const isEmbedded = embedded === "switchboard";
+  // One-scroll layout: the wrapper fills exactly the viewport left below the
+  // Artemis global header (h-16 = 4rem; the embedded variant has no global
+  // header, so it takes the full height of its host frame). Header, context
+  // strip and footer are pinned (shrink-0) and the iframe flexes into the
+  // remaining space, so the only scrollbar on the page is the Bid Room's own.
   return (
-    <main className="min-h-screen bg-[#dfe2dc] text-[#15202e]">
+    <main
+      className={`flex ${isEmbedded ? "h-dvh" : "h-[calc(100dvh-4rem)]"} flex-col overflow-hidden bg-[#dfe2dc] text-[#15202e]`}
+    >
       {isEmbedded ? (
-        <div className="border-b border-[#15202e] bg-[#f8f8f4]">
+        <div className="shrink-0 border-b border-[#15202e] bg-[#f8f8f4]">
           <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-2 px-4 py-2 sm:px-6">
             <p className="flex items-center gap-2 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-[#596472]">
               <FlaskConical className="h-3.5 w-3.5" aria-hidden />
@@ -52,7 +59,7 @@ export default async function CivicBidSignalForgePage({
           </div>
         </div>
       ) : (
-      <header className="border-b-2 border-[#15202e] bg-[#f8f8f4]">
+      <header className="shrink-0 border-b-2 border-[#15202e] bg-[#f8f8f4]">
         <div className="mx-auto max-w-[1500px] px-4 py-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-3">
             <Link
@@ -98,7 +105,7 @@ export default async function CivicBidSignalForgePage({
       </header>
       )}
 
-      <section className="border-b border-[#9ca59e] bg-white" aria-label="Review context">
+      <section className="shrink-0 border-b border-[#9ca59e] bg-white" aria-label="Review context">
         <div className="mx-auto grid max-w-[1500px] divide-y divide-[#c9cec9] px-4 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:px-6">
           {contextItems.map(({ label, value }) => (
             <div key={label} className="flex items-baseline gap-3 py-3 sm:px-4 first:pl-0">
@@ -109,9 +116,9 @@ export default async function CivicBidSignalForgePage({
         </div>
       </section>
 
-      <section className="px-3 py-3 sm:px-5 sm:py-5" aria-labelledby="bid-room-review-title">
-        <div className="mx-auto max-w-[1500px] overflow-hidden border-2 border-[#15202e] bg-[#e9eae5] shadow-[0_18px_45px_rgba(21,32,46,0.18)]">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#15202e] bg-[#15202e] px-4 py-2 text-white">
+      <section className="flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-5 sm:py-5" aria-labelledby="bid-room-review-title">
+        <div className="mx-auto flex min-h-0 w-full max-w-[1500px] flex-1 flex-col overflow-hidden border-2 border-[#15202e] bg-[#e9eae5] shadow-[0_18px_45px_rgba(21,32,46,0.18)]">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-[#15202e] bg-[#15202e] px-4 py-2 text-white">
             <div className="flex items-center gap-3">
               <span className="h-2 w-2 rounded-full bg-[#ddb04e]" aria-hidden />
               <h2 id="bid-room-review-title" className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em]">
@@ -125,14 +132,14 @@ export default async function CivicBidSignalForgePage({
           <iframe
             src="/civicbid/the-bid-room-v2-1.html"
             title="The Bid Room v2.1 interactive contractor workflow"
-            className="block h-[calc(100dvh-11rem)] min-h-[720px] w-full border-0 bg-[#e9eae5]"
+            className="block min-h-0 w-full flex-1 border-0 bg-[#e9eae5]"
             loading="eager"
             allow="clipboard-write"
           />
         </div>
       </section>
 
-      <aside className="border-t-2 border-[#15202e] bg-[#f8f8f4]">
+      <aside className="shrink-0 border-t-2 border-[#15202e] bg-[#f8f8f4]">
         <div className="mx-auto grid max-w-[1500px] gap-4 px-4 py-5 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="flex items-start gap-3 text-xs leading-relaxed text-[#4f5d55]">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#1f7a4d]" aria-hidden />
