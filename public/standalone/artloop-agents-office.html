@@ -703,7 +703,7 @@ function resize(){
   renderer.setSize(w,h,false); camera.aspect=w/h;
   /* portrait/narrow stages: widen the vertical FOV so the horizontal view (and each
      seat's zone set — Diana and the moon at HQ) stays in frame at any window shape */
-  camera.fov = Math.max(42, Math.min(68, 2*Math.atan(Math.tan(35*Math.PI/180)/Math.max(camera.aspect,.5))*180/Math.PI));
+  camera.fov = Math.max(42, Math.min(78, 2*Math.atan(Math.tan(35*Math.PI/180)/Math.max(camera.aspect,.5))*180/Math.PI));
   camera.updateProjectionMatrix();
   goStage(active,false);
 }
