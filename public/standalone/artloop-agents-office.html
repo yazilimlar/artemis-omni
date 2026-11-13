@@ -673,8 +673,13 @@ let compact = false;
 function overview(){ return compact ? [new T.Vector3(0,19.5,19.5), new T.Vector3(0,0,0)] : [new T.Vector3(0,15,18.5), new T.Vector3(0,0,0)]; }
 function stageView(i){
   if(i===8) return [new T.Vector3(0,5.4,8.8), new T.Vector3(0,1.1,0)]; // the core
-  const d = desks[i]; const a = d.ang + .38; const dist = compact ? 12.5 : 11;
-  return [new T.Vector3(Math.cos(a)*dist, compact?6.5:5.6, Math.sin(a)*dist), d.g.position.clone().multiplyScalar(.82).setY(.2)];
+  const d = desks[i]; const a = d.ang + .38;
+  /* narrow stages crop the seat's zone set (Diana + HQ wall stand off-axis at HQ):
+     dolly the seat camera back as the aspect narrows so the set stays in frame */
+  const asp = camera.aspect || 1.6;
+  const dolly = asp < 1.45 ? Math.min(1.45, Math.pow(1.45 / Math.max(asp, .6), .75)) : 1;
+  const dist = (compact ? 12.5 : 11) * dolly;
+  return [new T.Vector3(Math.cos(a)*dist, (compact?6.5:5.6) * (dolly > 1 ? 1.12 : 1), Math.sin(a)*dist), d.g.position.clone().multiplyScalar(.82).setY(.2)];
 }
 function goStage(i, scroll){
   active = i;
