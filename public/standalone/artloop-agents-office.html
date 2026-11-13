@@ -158,7 +158,7 @@ footer .sig{font-family:var(--f-mono);color:var(--fg)}
 .sig-brand b{color:#d4a017;font-weight:600}
 .diana-mark{width:26px;height:26px;object-fit:cover;border-radius:50%;border:1px solid #d4a017;vertical-align:-7px;margin-right:9px}
 .step h2 .rw{color:var(--rw)}
-.fam-logo{height:32px;width:auto;max-width:200px;display:block;margin-bottom:14px;border-radius:6px}
+.fam-logo{height:56px;width:auto;max-width:220px;display:block;margin-bottom:14px;border-radius:6px}
 .fam-mark{height:40px}
 .tag .tagmark{height:13px;width:auto;vertical-align:-2px;margin-right:5px}
 @media (max-width:620px){
@@ -575,12 +575,13 @@ const ped = new T.Mesh(new T.CylinderGeometry(.85,1.02,.55,28), mat(0x42474d,{ro
 const ptrim = new T.Mesh(new T.TorusGeometry(.86,.035,10,44), mat(0xd4a017,{metalness:.8, roughness:.3})); ptrim.rotation.x = Math.PI/2; ptrim.position.set(hqx*7.95,.55,hqz*7.95); scene.add(ptrim);
 const moon = new T.Mesh(new T.CircleGeometry(1.25,40), new T.MeshBasicMaterial({color:0xe8e2cc, transparent:true, opacity:.9, side:T.DoubleSide})); moon.position.set(hqx*9.85,3.35,hqz*9.85); moon.lookAt(0,3.35,0); scene.add(moon);
 let dianaG = null, dianaAsked = false;
+const DIANA_YAW = 0.84; // measured from the GLB: the sculpt's bow reach bears ~-48 deg off +Z; this yaw puts the bow on the aim axis
 function wantDiana(){
   if(dianaAsked) return; dianaAsked = true;
   if(!window.THREE || !T.GLTFLoader) return;
   try{
     new T.GLTFLoader().load('/labs/diana.glb', (gltf)=>{
-      const m = gltf.scene;
+      const m = gltf.scene; m.rotation.y = DIANA_YAW;
       const wire = new T.MeshBasicMaterial({color:0x5eb6ff, wireframe:true, transparent:true, opacity:1});
       m.traverse(o=>{ if(o.isMesh){ o.material = wire; o.castShadow = false; } });
       const bb = new T.Box3().setFromObject(m); const size = new T.Vector3(); bb.getSize(size);
