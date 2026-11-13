@@ -575,12 +575,13 @@ const ped = new T.Mesh(new T.CylinderGeometry(.85,1.02,.55,28), mat(0x42474d,{ro
 const ptrim = new T.Mesh(new T.TorusGeometry(.86,.035,10,44), mat(0xd4a017,{metalness:.8, roughness:.3})); ptrim.rotation.x = Math.PI/2; ptrim.position.set(hqx*7.95,.55,hqz*7.95); scene.add(ptrim);
 const moon = new T.Mesh(new T.CircleGeometry(1.25,40), new T.MeshBasicMaterial({color:0xe8e2cc, transparent:true, opacity:.9, side:T.DoubleSide})); moon.position.set(hqx*9.85,3.35,hqz*9.85); moon.lookAt(0,3.35,0); scene.add(moon);
 let dianaG = null, dianaAsked = false;
+const DIANA_YAW = -0.84; // PREVIEW candidate: counter-rotation for the owner's eyeball pick
 function wantDiana(){
   if(dianaAsked) return; dianaAsked = true;
   if(!window.THREE || !T.GLTFLoader) return;
   try{
     new T.GLTFLoader().load('/labs/diana.glb', (gltf)=>{
-      const m = gltf.scene;
+      const m = gltf.scene; m.rotation.y = DIANA_YAW;
       const wire = new T.MeshBasicMaterial({color:0x5eb6ff, wireframe:true, transparent:true, opacity:1});
       m.traverse(o=>{ if(o.isMesh){ o.material = wire; o.castShadow = false; } });
       const bb = new T.Box3().setFromObject(m); const size = new T.Vector3(); bb.getSize(size);
