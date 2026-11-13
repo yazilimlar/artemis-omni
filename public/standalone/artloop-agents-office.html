@@ -78,6 +78,9 @@ h2{font-family:var(--f-display);font-weight:700;font-size:clamp(30px,3.4vw,46px)
 .tag.flash{border-color:var(--red);color:var(--fg)}
 .hud{position:absolute;left:14px;top:14px;right:14px;display:flex;justify-content:space-between;gap:10px;pointer-events:none;flex-wrap:wrap}
 .chip{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;padding:5px 10px;border-radius:999px;background:rgba(11,19,21,.8);border:1px solid var(--line);color:var(--muted)}
+.sndbtn{pointer-events:auto;cursor:pointer;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;padding:5px 10px;border-radius:999px;background:rgba(11,19,21,.8);border:1px solid var(--line);color:var(--fg)}
+.sndbtn .sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--teal);margin-right:6px;vertical-align:1px}
+.sndbtn.off{color:var(--muted)} .sndbtn.off .sdot{background:var(--muted)}
 .chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--teal);margin-right:7px;box-shadow:0 0 0 0 rgba(79,165,156,.7);animation:ping 2s infinite}
 @keyframes ping{70%{box-shadow:0 0 0 7px rgba(79,165,156,0)}100%{box-shadow:0 0 0 0 rgba(79,165,156,0)}}
 .feed{position:absolute;left:14px;bottom:14px;width:min(360px,calc(100% - 28px));display:flex;flex-direction:column;gap:6px;pointer-events:none}
@@ -263,6 +266,7 @@ footer .sig{font-family:var(--f-mono);color:var(--fg)}
       <div class="hud">
         <span class="chip"><span class="dot"></span><span id="hudNow">The whole floor — eight seats, one core</span></span>
         <span class="chip">Illustrative loop. No project data.</span>
+        <button class="sndbtn" id="sndBtn" type="button" aria-pressed="true" title="Ambient sound — browsers start it with your first click, tap or key press"><span class="sdot"></span>Sound on</button>
       </div>
       <div class="feed" id="feed" aria-live="polite"></div>
       <div class="stagepick" id="pick" role="group" aria-label="Jump to a stage"></div>
@@ -375,6 +379,98 @@ const stageEl = document.getElementById('stage');
 const labelsEl = document.getElementById('labels');
 let active = -1;
 
+/* ---------- Ambience: a generative zen-tech soundscape, super subtle ----------
+   Slow warm pad chords that breathe, sparse soft chimes, a gentle swell as the
+   tour moves seat to seat, and a low bloom when Diana's arrow lands. Browsers
+   will not start audio before a visitor's first click, tap or key press, so the
+   engine arms on the first gesture; the Sound chip in the HUD toggles it, and
+   it sleeps while the tab is hidden. */
+(function(){
+  const btn = document.getElementById('sndBtn');
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!btn || !AC){ if(btn) btn.style.display = 'none'; return; }
+  let ctx = null, master = null, padBus = null, on = true, started = false, chordIx = 0;
+  const CHORDS = [[130.81,196.00,246.94,293.66,329.63],[110.00,164.81,220.00,261.63,329.63],[87.31,174.61,220.00,261.63,329.63],[98.00,196.00,246.94,293.66,392.00]];
+  const PENTA = [523.25,587.33,659.25,783.99,880.00];
+  function now(){ return ctx.currentTime; }
+  function tone(freq, t0, a, peak, d){
+    const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = freq;
+    o2.type = 'triangle'; o2.frequency.value = freq; o2.detune.value = 5;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(peak, t0 + a);
+    g.gain.exponentialRampToValueAtTime(.0001, t0 + a + d);
+    o.connect(g); o2.connect(g); g.connect(padBus);
+    o.start(t0); o2.start(t0); o.stop(t0 + a + d + .1); o2.stop(t0 + a + d + .1);
+  }
+  function chord(){
+    if(!started) return;
+    const t = now() + .05, notes = CHORDS[chordIx++ % CHORDS.length];
+    notes.forEach(f => tone(f, t, 4.5, .016, 13));
+    setTimeout(chord, 11000);
+  }
+  function chime(){
+    if(!started) return;
+    if(!document.hidden && on){
+      const f = PENTA[Math.floor(Math.random() * PENTA.length)] * (Math.random() < .3 ? 2 : 1);
+      const t = now() + .02, o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.028, t + .015);
+      g.gain.exponentialRampToValueAtTime(.0001, t + 3.2);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + 3.4);
+    }
+    setTimeout(chime, 9000 + Math.random() * 8000);
+  }
+  function start(){
+    if(started) return; started = true;
+    ctx = new AC();
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -30; comp.ratio.value = 9; comp.knee.value = 18;
+    master = ctx.createGain(); master.gain.value = 0;
+    padBus = ctx.createGain(); padBus.gain.value = .9;
+    const dly = ctx.createDelay(1); dly.delayTime.value = .34;
+    const fb = ctx.createGain(); fb.gain.value = .3;
+    const wet = ctx.createGain(); wet.gain.value = .16;
+    padBus.connect(master); padBus.connect(dly); dly.connect(fb); fb.connect(dly); dly.connect(wet); wet.connect(master);
+    master.connect(comp); comp.connect(ctx.destination);
+    master.gain.linearRampToValueAtTime(on ? .5 : 0, now() + 2.5);
+    chord(); chime();
+  }
+  function arm(){ if(ctx && ctx.state === 'suspended') ctx.resume(); start(); }
+  ['pointerdown','keydown','touchstart'].forEach(ev => addEventListener(ev, arm, {passive:true}));
+  btn.addEventListener('click', () => {
+    if(!started){ arm(); return; }
+    on = !on;
+    if(master) master.gain.linearRampToValueAtTime(on ? .5 : 0, now() + .6);
+    btn.classList.toggle('off', !on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.lastChild.textContent = on ? 'Sound on' : 'Sound off';
+  });
+  document.addEventListener('visibilitychange', () => { if(!ctx) return; if(document.hidden) ctx.suspend(); else if(on) ctx.resume(); });
+  window.__aoAudio = {
+    stage(i){
+      if(!started || !on) return;
+      const f = PENTA[Math.abs(i + 1) % PENTA.length] / 2, t = now() + .02;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.035, t + .4);
+      g.gain.exponentialRampToValueAtTime(.0001, t + 2.6);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + 2.8);
+    },
+    bloom(){
+      if(!started || !on) return;
+      const t = now() + .02;
+      [[65.41,.10],[130.81,.05]].forEach(([f,p]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = f;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(p, t + .25);
+        g.gain.exponentialRampToValueAtTime(.0001, t + 2.2);
+        o.connect(g); g.connect(master); o.start(t); o.stop(t + 2.4);
+      });
+    }
+  };
+})();
+
 function fallbackMode(){
   stageEl.insertAdjacentHTML('beforeend','<p style="position:absolute;inset:auto 16px 16px;max-width:350px;color:var(--muted);font-size:12.5px;line-height:1.55">The 3D view could not load, so the floor is resting. The tour still works \u2014 scroll and each seat\u2019s step lights in turn; the feed and the governed ledger below are live.</p>');
   const feedEl = document.getElementById('feed');
@@ -391,7 +487,7 @@ function fallbackMode(){
   post(...EV[fi++ % EV.length]);
   if(!reduce) setInterval(()=>{ if(!document.hidden) post(...EV[fi++ % EV.length]); }, 3400);
   const stepsEls = [...document.querySelectorAll('.step')];
-  const io2 = new IntersectionObserver(es=>{ es.forEach(en=>{ if(en.isIntersecting) stepsEls.forEach(x=>x.classList.toggle('on', x===en.target)); }); }, {rootMargin:'-45% 0px -45% 0px'});
+  const io2 = new IntersectionObserver(es=>{ es.forEach(en=>{ if(en.isIntersecting){ stepsEls.forEach(x=>x.classList.toggle('on', x===en.target)); if(window.__aoAudio) __aoAudio.stage(parseInt(en.target.dataset.stage,10)||0); } }); }, {rootMargin:'-45% 0px -45% 0px'});
   stepsEls.forEach(x=>io2.observe(x));
   const hud = document.getElementById('hudNow'); if(hud) hud.textContent = 'Still floor \u2014 the 3D view is unavailable';
   const pickEl = document.getElementById('pick');
@@ -699,7 +795,7 @@ function dianaShotUpdate(t, dt){
     aGlow.material.opacity = .55 + .4*Math.sin(t*40);
     if(e >= 1){
       shotState = 0; arrow.visible = false;
-      flashT = 1; coreFlash = 1;
+      flashT = 1; coreFlash = 1; if(window.__aoAudio) __aoAudio.bloom();
       nextShot = t + 13 + Math.random()*7;
       pushEvent(8, 'loosed an arrow through the loop \u2014 the office lights in answer');
     }
@@ -734,6 +830,7 @@ function stageView(i){
 }
 function goStage(i, scroll){
   active = i;
+  if(window.__aoAudio) __aoAudio.stage(i);
   const [p,l] = i<0 ? overview() : stageView(i);
   wantPos.copy(p); wantLook.copy(l);
   desks.forEach(d=>d.tag.classList.toggle('on', d.i===i));
