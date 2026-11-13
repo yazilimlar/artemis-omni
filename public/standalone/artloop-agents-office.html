@@ -581,7 +581,7 @@ function wantDiana(){
   try{
     new T.GLTFLoader().load('/labs/diana.glb', (gltf)=>{
       const m = gltf.scene;
-      const wire = new T.MeshBasicMaterial({color:0x7cc4ff, wireframe:true, transparent:true, opacity:1});
+      const wire = new T.MeshBasicMaterial({color:0x5eb6ff, wireframe:true, transparent:true, opacity:1});
       m.traverse(o=>{ if(o.isMesh){ o.material = wire; o.castShadow = false; } });
       const bb = new T.Box3().setFromObject(m); const size = new T.Vector3(); bb.getSize(size);
       const sc = 2.85 / (size.y || 1); m.scale.setScalar(sc); m.position.y = -bb.min.y * sc;
