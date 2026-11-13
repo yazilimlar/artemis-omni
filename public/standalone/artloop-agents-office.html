@@ -413,7 +413,7 @@ const scene = new T.Scene();
 scene.fog = new T.Fog(0x0b1315, 22, 46);
 const camera = new T.PerspectiveCamera(42, 1, .1, 120);
 
-scene.add(new T.HemisphereLight(0xbfe6e0, 0x0b1315, .55));
+const hemi = new T.HemisphereLight(0xbfe6e0, 0x0b1315, .55); scene.add(hemi);
 const sun = new T.DirectionalLight(0xffffff, .85);
 sun.position.set(8,16,6); sun.castShadow = true;
 sun.shadow.mapSize.set(1024,1024);
@@ -581,15 +581,73 @@ function wantDiana(){
   try{
     new T.GLTFLoader().load('/labs/diana.glb', (gltf)=>{
       const m = gltf.scene;
-      const bronze = new T.MeshStandardMaterial({color:0x9a743f, metalness:.9, roughness:.38});
-      m.traverse(o=>{ if(o.isMesh){ o.material = bronze; o.castShadow = true; } });
+      const wire = new T.MeshBasicMaterial({color:0x63b3ff, wireframe:true, transparent:true, opacity:.92});
+      m.traverse(o=>{ if(o.isMesh){ o.material = wire; o.castShadow = false; } });
       const bb = new T.Box3().setFromObject(m); const size = new T.Vector3(); bb.getSize(size);
       const sc = 2.6 / (size.y || 1); m.scale.setScalar(sc); m.position.y = -bb.min.y * sc;
       dianaG = new T.Group(); dianaG.add(m);
       dianaG.position.set(hqx*8.55, .55, hqz*8.55); dianaG.lookAt(0,.55,0);
+      aimYaw = dianaG.rotation.y;
       scene.add(dianaG);
     }, undefined, ()=>{});
   }catch(e){}
+}
+
+/* ---------- Diana's arrows: through the loop, and the office lights ---------- */
+let flashT = 0, shotState = 0, shotT = 0, nextShot = 8 + Math.random()*6, aimYaw = 0, salute = false, stageVisible = true, lastFT = 0;
+new IntersectionObserver(es=>{ es.forEach(en=>{ stageVisible = en.isIntersecting; }); }, {threshold:.15}).observe(stageEl);
+const arrow = new T.Group();
+const aShaft = new T.Mesh(new T.CylinderGeometry(.022,.022,.95,8), new T.MeshBasicMaterial({color:0xd9a441}));
+aShaft.rotation.x = Math.PI/2; arrow.add(aShaft);
+const aHead = new T.Mesh(new T.ConeGeometry(.065,.2,10), new T.MeshBasicMaterial({color:0xf2c14e}));
+aHead.rotation.x = Math.PI/2; aHead.position.z = .55; arrow.add(aHead);
+const aGlow = new T.Mesh(new T.SphereGeometry(.09,10,10), new T.MeshBasicMaterial({color:0xffe9a8, transparent:true, opacity:.85}));
+aGlow.position.z = .55; arrow.add(aGlow);
+arrow.visible = false; scene.add(arrow);
+const charge = new T.Mesh(new T.SphereGeometry(.12,12,12), new T.MeshBasicMaterial({color:0xffe9a8, transparent:true, opacity:0}));
+charge.visible = false; scene.add(charge);
+const bowPos = new T.Vector3(), shotFrom = new T.Vector3(), shotMid = new T.Vector3(), shotTo = new T.Vector3(0,1.8,0);
+function dianaShotUpdate(t, dt){
+  if(dianaG) dianaG.rotation.y = aimYaw + Math.sin(t*.45)*.018;
+  if(flashT > 0) flashT = Math.max(0, flashT - dt*1.5);
+  sun.intensity = .85 + flashT*2.3;
+  hemi.intensity = .55 + flashT*1.5;
+  inf.material.emissiveIntensity = .8 + coreFlash*.9 + flashT*2.4;
+  if(reduce || !dianaG) return;
+  if(shotState === 0){
+    if(salute){ nextShot = Math.min(nextShot, t + .9); salute = false; }
+    if(stageVisible && !document.hidden && t > nextShot){
+      shotState = 1; shotT = 0;
+      const dir = new T.Vector3(-dianaG.position.x, 0, -dianaG.position.z).normalize();
+      bowPos.copy(dianaG.position).add(dir.multiplyScalar(.55)); bowPos.y = 2.42;
+      charge.position.copy(bowPos); charge.visible = true;
+    }
+  } else if(shotState === 1){
+    shotT += dt;
+    const k = Math.min(1, shotT/.65);
+    charge.material.opacity = .25 + .65*k; charge.scale.setScalar(.6 + k*1.15);
+    if(k >= 1){
+      shotState = 2; shotT = 0; charge.visible = false;
+      shotFrom.copy(bowPos);
+      shotMid.copy(shotFrom).add(shotTo).multiplyScalar(.5); shotMid.y += .5;
+      arrow.visible = true;
+    }
+  } else if(shotState === 2){
+    shotT += dt;
+    const e = Math.min(1, shotT/.55);
+    const a = shotFrom.clone().lerp(shotMid, e), b = shotMid.clone().lerp(shotTo, e);
+    arrow.position.copy(a.lerp(b, e));
+    const ah = Math.min(1, e + .06);
+    const a2 = shotFrom.clone().lerp(shotMid, ah), b2 = shotMid.clone().lerp(shotTo, ah);
+    arrow.lookAt(a2.lerp(b2, ah));
+    aGlow.material.opacity = .55 + .4*Math.sin(t*40);
+    if(e >= 1){
+      shotState = 0; arrow.visible = false;
+      flashT = 1; coreFlash = 1;
+      nextShot = t + 13 + Math.random()*7;
+      pushEvent(8, 'loosed an arrow through the loop \u2014 the office lights in answer');
+    }
+  }
 }
 
 /* ---------- loop path + runners carrying documents ---------- */
@@ -629,6 +687,7 @@ function goStage(i, scroll){
   const hud=document.getElementById('hudNow'); if(hud) hud.innerHTML = i<0 ? 'The whole floor \u2014 eight seats, one core' : (i===8 ? 'The core \u2014 ArtLoop' : 'Seat '+(i+1)+' \u00b7 '+twoTone(STAGES[i], i));
   renderTagLabels();
   if(i>=5) wantDiana();
+  if(i===8) salute = true;
   pickBtns.forEach((b,k)=>b.classList.toggle('on', k===i));
   if(scroll){ const el=document.querySelector('.step[data-stage="'+i+'"]'); if(el) el.scrollIntoView({behavior: reduce?'auto':'smooth', block:'center'}); }
   if(reduce){ camPos.copy(wantPos); camLook.copy(wantLook); }
@@ -725,7 +784,7 @@ function frame(){
   camPos.lerp(wantPos, ease); camLook.lerp(wantLook, ease);
   camera.position.set(camPos.x + par.x*1.6, camPos.y - par.y*1.0, camPos.z);
   camera.lookAt(camLook);
-  if(dianaG && !reduce) dianaG.rotation.y -= .0011;
+  dianaShotUpdate(t, lastFT ? Math.min(.05, t - lastFT) : 0); lastFT = t;
   renderer.render(scene,camera);
   // project labels
   const w=stageEl.clientWidth, h=stageEl.clientHeight;
