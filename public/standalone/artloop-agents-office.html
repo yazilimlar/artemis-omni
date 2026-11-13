@@ -713,7 +713,7 @@ renderTagLabels();
 if(!compact) setTimeout(wantDiana, 3500);
 
 /* pointer: parallax + click desks */
-const mouse = new T.Vector2(); let par = {x:0,y:0};
+const mouse = new T.Vector2(); let par = {x:0,y:0}; const parS = {x:0,y:0};
 const ray = new T.Raycaster();
 canvas.addEventListener('pointermove', e=>{ const r=canvas.getBoundingClientRect(); par.x=((e.clientX-r.left)/r.width-.5); par.y=((e.clientY-r.top)/r.height-.5); });
 canvas.addEventListener('pointerleave', ()=>{ par.x=par.y=0; });
@@ -786,7 +786,9 @@ function frame(){
   // camera ease + parallax
   const ease = reduce ? 1 : .07;
   camPos.lerp(wantPos, ease); camLook.lerp(wantLook, ease);
-  camera.position.set(camPos.x + par.x*1.6, camPos.y - par.y*1.0, camPos.z);
+  parS.x += (par.x-parS.x)*.06; parS.y += (par.y-parS.y)*.06;
+  const parK = camera.aspect < 1 ? .4 : 1; // gentler parallax on portrait stages, so a parked pointer cannot push a seat's set out of frame
+  camera.position.set(camPos.x + parS.x*1.6*parK, camPos.y - parS.y*1.0*parK, camPos.z);
   camera.lookAt(camLook);
   dianaShotUpdate(t, lastFT ? Math.min(.05, t - lastFT) : 0); lastFT = t;
   renderer.render(scene,camera);
