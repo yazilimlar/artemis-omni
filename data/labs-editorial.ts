@@ -376,6 +376,25 @@ export const labsEditorial: LabEditorial[] = [
   {
     // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
     registryId: null,
+    title: "ArtLoop Agents Office",
+    eyebrow: "Construction Intelligence",
+    href: "/labs/artloop-agents-office",
+    statusLabel: "Public",
+    statusTone: "public",
+    Icon: Building2,
+    accentIcon: Landmark,
+    description:
+      "The working floor of the Estimation Pipeline, opened to view: eight senior seats \u2014 MEP engineering, BIM, project engineering, superintendency, procurement, project management, project executive, and the President & CEO \u2014 around the ArtLoop core, from the field trailer through the main office to headquarters, with Diana of Artemis standing guard.",
+    signals: ["Eight senior seats", "One governed loop", "Field trailer \u2192 HQ", "Governed ledger demo"],
+    commercialPath:
+      "Best pilot path: one live pursuit run end-to-end under full figure governance.",
+    boundary:
+      "A public window into a system in private operation. The tour is illustrative: it publishes no project data, no figures, and no workspace access.",
+    category: "construction",
+  },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
     title: "ArtPlex \u2014 Estimation Commanding",
     eyebrow: "Project Controls",
     href: "/labs/artplex",

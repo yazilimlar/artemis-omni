@@ -5,8 +5,7 @@ export const metadata = createMetadata({
   title: "ArtLoop Agents Office · The Estimation Pipeline",
   path: "/labs/artloop-agents-office",
   description:
-    "Inside ArtLoop: eight senior seats work one project from intake to proposal around the ArtLoop core, orchestrated by ARTEMIS Construction Intelligence with ArtLeveler, ArtPlex and OctopusG. In private operation; access by invitation. This public page publishes no project data.",
-  noIndex: true,
+    "Inside ArtLoop: eight senior seats work one project from intake to proposal around the ArtLoop core, orchestrated by ARTEMIS Construction Intelligence with ArtLeveler, ArtPlex and OctopusG. A public tour of a system in private operation; this page publishes no project data.",
 });
 
 export default function ArtLoopAgentsOfficePage() {
