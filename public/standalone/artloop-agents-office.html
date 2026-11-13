@@ -556,24 +556,24 @@ function makeTrailer(){
   const steps = box(.9,.18,.6, mat(0x707880)); steps.position.set(-1.7,.09,1.55); t.add(steps);
   return t;
 }
-[0, 3].forEach(i=>{ const a = -Math.PI/2 + i*(Math.PI*2/8); const tr = makeTrailer(); tr.position.set(Math.cos(a)*11.4, 0, Math.sin(a)*11.4); tr.lookAt(0,0,0); scene.add(tr); });
+[0, 3].forEach(i=>{ const a = -Math.PI/2 + i*(Math.PI*2/8); const tr = makeTrailer(); tr.position.set(Math.cos(a)*10.9, 0, Math.sin(a)*10.9); tr.lookAt(0,0,0); scene.add(tr); });
 [[5.9,4.6],[6.5,5.9],[4.7,6.3]].forEach(([x,z])=>{ const cone = new T.Mesh(new T.ConeGeometry(.16,.5,14), mat(0xe07b39,{roughness:.8})); cone.position.set(x,.25,z); cone.castShadow = true; scene.add(cone); });
 /* headquarters: glass arc + gold band + lettered lockup */
 const thS = -160*Math.PI/180, thL = 90*Math.PI/180;
-const wall = new T.Mesh(new T.CylinderGeometry(11.6,11.6,4.8,48,1,true,thS,thL), new T.MeshStandardMaterial({color:0x14324f, transparent:true, opacity:.38, roughness:.15, metalness:.25, side:T.DoubleSide}));
+const wall = new T.Mesh(new T.CylinderGeometry(10.5,10.5,4.8,48,1,true,thS,thL), new T.MeshStandardMaterial({color:0x14324f, transparent:true, opacity:.52, roughness:.15, metalness:.25, emissive:0x0a1e33, side:T.DoubleSide}));
 wall.position.y = 2.4; scene.add(wall);
-const band = new T.Mesh(new T.CylinderGeometry(11.62,11.62,.09,48,1,true,thS,thL), mat(0xd4a017,{metalness:.7, roughness:.35, emissive:0x3a2a05}));
+const band = new T.Mesh(new T.CylinderGeometry(10.52,10.52,.09,48,1,true,thS,thL), mat(0xd4a017,{metalness:.7, roughness:.35, emissive:0x3a2a05}));
 band.position.y = 4.78; scene.add(band);
 const A205 = 205*Math.PI/180, hqx = Math.cos(A205), hqz = Math.sin(A205);
 const lc = document.createElement('canvas'); lc.width = 1024; lc.height = 256; const lg = lc.getContext('2d');
 lg.textAlign = 'center'; lg.fillStyle = '#d4a017'; lg.font = '700 100px "Bricolage Grotesque", Arial'; lg.fillText('A R T E M I S', 512, 106);
 lg.fillStyle = '#f5f1e6'; lg.font = '500 38px "IBM Plex Mono", monospace'; lg.fillText('C O N S T R U C T I O N   I N T E L L I G E N C E', 512, 182);
-const lock = new T.Mesh(new T.PlaneGeometry(5.6,1.4), new T.MeshBasicMaterial({map:new T.CanvasTexture(lc), transparent:true}));
-lock.position.set(hqx*11.25, 3.35, hqz*11.25); lock.lookAt(0,3.35,0); scene.add(lock);
+const lock = new T.Mesh(new T.PlaneGeometry(6.4,1.6), new T.MeshBasicMaterial({map:new T.CanvasTexture(lc), transparent:true}));
+lock.position.set(hqx*10.15, 3.2, hqz*10.15); lock.lookAt(0,3.2,0); scene.add(lock);
 /* Diana — the house statue at headquarters: stone pedestal, gold trim, moon disc */
-const ped = new T.Mesh(new T.CylinderGeometry(.85,1.02,.55,28), mat(0x42474d,{roughness:.9})); ped.position.set(hqx*9.4,.275,hqz*9.4); ped.castShadow = ped.receiveShadow = true; scene.add(ped);
-const ptrim = new T.Mesh(new T.TorusGeometry(.86,.035,10,44), mat(0xd4a017,{metalness:.8, roughness:.3})); ptrim.rotation.x = Math.PI/2; ptrim.position.set(hqx*9.4,.55,hqz*9.4); scene.add(ptrim);
-const moon = new T.Mesh(new T.CircleGeometry(1.05,40), new T.MeshBasicMaterial({color:0xe8e2cc, transparent:true, opacity:.85})); moon.position.set(hqx*10.7,3.05,hqz*10.7); moon.lookAt(0,3.05,0); scene.add(moon);
+const ped = new T.Mesh(new T.CylinderGeometry(.85,1.02,.55,28), mat(0x42474d,{roughness:.9})); ped.position.set(hqx*8.55,.275,hqz*8.55); ped.castShadow = ped.receiveShadow = true; scene.add(ped);
+const ptrim = new T.Mesh(new T.TorusGeometry(.86,.035,10,44), mat(0xd4a017,{metalness:.8, roughness:.3})); ptrim.rotation.x = Math.PI/2; ptrim.position.set(hqx*8.55,.55,hqz*8.55); scene.add(ptrim);
+const moon = new T.Mesh(new T.CircleGeometry(1.25,40), new T.MeshBasicMaterial({color:0xe8e2cc, transparent:true, opacity:.9})); moon.position.set(hqx*9.85,3.35,hqz*9.85); moon.lookAt(0,3.35,0); scene.add(moon);
 let dianaG = null, dianaAsked = false;
 function wantDiana(){
   if(dianaAsked) return; dianaAsked = true;
@@ -584,9 +584,9 @@ function wantDiana(){
       const bronze = new T.MeshStandardMaterial({color:0x9a743f, metalness:.9, roughness:.38});
       m.traverse(o=>{ if(o.isMesh){ o.material = bronze; o.castShadow = true; } });
       const bb = new T.Box3().setFromObject(m); const size = new T.Vector3(); bb.getSize(size);
-      const sc = 2.3 / (size.y || 1); m.scale.setScalar(sc); m.position.y = -bb.min.y * sc;
+      const sc = 2.6 / (size.y || 1); m.scale.setScalar(sc); m.position.y = -bb.min.y * sc;
       dianaG = new T.Group(); dianaG.add(m);
-      dianaG.position.set(hqx*9.4, .55, hqz*9.4); dianaG.lookAt(0,.55,0);
+      dianaG.position.set(hqx*8.55, .55, hqz*8.55); dianaG.lookAt(0,.55,0);
       scene.add(dianaG);
     }, undefined, ()=>{});
   }catch(e){}
@@ -612,7 +612,7 @@ for(let k=0;k<3;k++){
 /* ---------- camera rig ---------- */
 const camPos = new T.Vector3(), camLook = new T.Vector3(), wantPos = new T.Vector3(), wantLook = new T.Vector3();
 let compact = false;
-function overview(){ return compact ? [new T.Vector3(0,18,18), new T.Vector3(0,0,0)] : [new T.Vector3(0,13.5,16.5), new T.Vector3(0,0,0)]; }
+function overview(){ return compact ? [new T.Vector3(0,19.5,19.5), new T.Vector3(0,0,0)] : [new T.Vector3(0,15,18.5), new T.Vector3(0,0,0)]; }
 function stageView(i){
   if(i===8) return [new T.Vector3(0,5.4,8.8), new T.Vector3(0,1.1,0)]; // the core
   const d = desks[i]; const a = d.ang + .38; const dist = compact ? 12.5 : 11;
