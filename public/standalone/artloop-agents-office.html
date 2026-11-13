@@ -573,7 +573,7 @@ lock.position.set(hqx*10.15, 3.2, hqz*10.15); lock.lookAt(0,3.2,0); scene.add(lo
 /* Diana — the house statue at headquarters: stone pedestal, gold trim, moon disc */
 const ped = new T.Mesh(new T.CylinderGeometry(.85,1.02,.55,28), mat(0x42474d,{roughness:.9})); ped.position.set(hqx*7.95,.275,hqz*7.95); ped.castShadow = ped.receiveShadow = true; scene.add(ped);
 const ptrim = new T.Mesh(new T.TorusGeometry(.86,.035,10,44), mat(0xd4a017,{metalness:.8, roughness:.3})); ptrim.rotation.x = Math.PI/2; ptrim.position.set(hqx*7.95,.55,hqz*7.95); scene.add(ptrim);
-const moon = new T.Mesh(new T.CircleGeometry(1.25,40), new T.MeshBasicMaterial({color:0xe8e2cc, transparent:true, opacity:.9})); moon.position.set(hqx*9.85,3.35,hqz*9.85); moon.lookAt(0,3.35,0); scene.add(moon);
+const moon = new T.Mesh(new T.CircleGeometry(1.25,40), new T.MeshBasicMaterial({color:0xe8e2cc, transparent:true, opacity:.9, side:T.DoubleSide})); moon.position.set(hqx*9.85,3.35,hqz*9.85); moon.lookAt(0,3.35,0); scene.add(moon);
 let dianaG = null, dianaAsked = false;
 function wantDiana(){
   if(dianaAsked) return; dianaAsked = true;
@@ -673,13 +673,8 @@ let compact = false;
 function overview(){ return compact ? [new T.Vector3(0,19.5,19.5), new T.Vector3(0,0,0)] : [new T.Vector3(0,15,18.5), new T.Vector3(0,0,0)]; }
 function stageView(i){
   if(i===8) return [new T.Vector3(0,5.4,8.8), new T.Vector3(0,1.1,0)]; // the core
-  const d = desks[i]; const a = d.ang + .38;
-  /* narrow stages crop the seat's zone set (Diana + HQ wall stand off-axis at HQ):
-     dolly the seat camera back as the aspect narrows so the set stays in frame */
-  const asp = camera.aspect || 1.6;
-  const dolly = asp < 1.45 ? Math.min(1.45, Math.pow(1.45 / Math.max(asp, .6), .75)) : 1;
-  const dist = (compact ? 12.5 : 11) * dolly;
-  return [new T.Vector3(Math.cos(a)*dist, (compact?6.5:5.6) * (dolly > 1 ? 1.12 : 1), Math.sin(a)*dist), d.g.position.clone().multiplyScalar(.82).setY(.2)];
+  const d = desks[i]; const a = d.ang + .38; const dist = compact ? 12.5 : 11;
+  return [new T.Vector3(Math.cos(a)*dist, compact?6.5:5.6, Math.sin(a)*dist), d.g.position.clone().multiplyScalar(.82).setY(.2)];
 }
 function goStage(i, scroll){
   active = i;
@@ -705,7 +700,11 @@ const ov = document.createElement('button'); ov.type='button'; ov.textContent='�
 function resize(){
   const w = stageEl.clientWidth, h = stageEl.clientHeight;
   compact = w < 620;
-  renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h,false); camera.aspect=w/h;
+  /* portrait/narrow stages: widen the vertical FOV so the horizontal view (and each
+     seat's zone set — Diana and the moon at HQ) stays in frame at any window shape */
+  camera.fov = Math.max(42, Math.min(68, 2*Math.atan(Math.tan(35*Math.PI/180)/Math.max(camera.aspect,.5))*180/Math.PI));
+  camera.updateProjectionMatrix();
   goStage(active,false);
 }
 new ResizeObserver(resize).observe(stageEl);
