@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-11-13T15:58:05.000Z",
+    "generated_at": "2026-11-17T22:29:26.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-11-13T15:58:05.000Z",
+  "generated_at": "2026-11-17T22:29:26.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
