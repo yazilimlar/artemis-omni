@@ -32,6 +32,35 @@ jobs:
           node-version: "22"
       - name: Extract
         run: node scripts/extract-evolution.mjs
+      - name: Skip timestamp-only churn
+        run: |
+          # Defense in depth (2026-11-17): if the regenerated file differs
+          # from HEAD only in the generated_at fields, restore it so the
+          # next step sees no diff and opens no PR. Structured JSON compare
+          # on the parsed documents, not a text diff, so key order or
+          # formatting cannot fool it. The extractor already keeps
+          # generated_at content-based; this guard covers any future
+          # timestamp-only drift from any source.
+          if git diff --quiet -- data/evolution.json; then
+            echo "data/evolution.json unchanged."
+            exit 0
+          fi
+          git show HEAD:data/evolution.json > "$RUNNER_TEMP/evolution-head.json"
+          if node -e '
+            const fs = require("fs");
+            const strip = (p) => {
+              const o = JSON.parse(fs.readFileSync(p, "utf8"));
+              delete o.generated_at;
+              if (o._meta) delete o._meta.generated_at;
+              return JSON.stringify(o);
+            };
+            process.exit(strip(process.argv[1]) === strip("data/evolution.json") ? 0 : 1);
+          ' "$RUNNER_TEMP/evolution-head.json"; then
+            echo "Only generated_at changed — timestamp-only churn, restoring file and skipping PR."
+            git checkout -- data/evolution.json
+          else
+            echo "Substantive evolution change detected."
+          fi
       - name: Open a PR if the data changed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

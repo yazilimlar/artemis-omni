@@ -6,11 +6,16 @@
  * data/evolution.json. The output is derived, never hand-edited, and a pure
  * function of the repository: running it twice on the same state produces
  * byte-identical output. No Date.now(); `generated_at` is the date of the latest
- * non-bot commit.
+ * non-bot commit that actually contributes files.
  *
  * Commits whose subject starts with BOT_SUBJECT are excluded from every
  * source, so merging the bot's own regeneration PR cannot change the output
- * and cannot start a regeneration loop.
+ * and cannot start a regeneration loop. Merge commits and empty commits
+ * carry no name-status files, so they never advance `generated_at` either:
+ * merging a regeneration PR by ANY method (merge, squash or rebase) leaves
+ * the output byte-identical. (Before this rule, a merge commit became the
+ * "latest commit", advanced `generated_at` with zero event changes, and the
+ * update workflow opened a fresh churn PR — #379, closed 2026-11-17.)
  *
  * Usage: node scripts/extract-evolution.mjs [--root <repo>] [--out <file>]
  * Node 20+, standard library only.
@@ -462,14 +467,24 @@ export function buildEvolution(root) {
   ]);
   const count = (type) => events.filter((e) => e.type === type).length;
 
+  // `generated_at` tracks content, not commit topology: it is the date of
+  // the latest non-bot commit that contributes at least one file. Merge
+  // commits and empty commits have an empty name-status file list, so they
+  // are excluded here even though they remain in `commits` for event
+  // extraction (where their empty file list already makes them no-ops).
+  const contributing = commits.filter((c) => c.files.length > 0);
+  const generatedAt = contributing.length
+    ? contributing[contributing.length - 1].date
+    : "1970-01-01T00:00:00.000Z";
+
   return {
     _meta: {
       generated_by: "scripts/extract-evolution.mjs",
-      generated_at: commits.length ? commits[commits.length - 1].date : "1970-01-01T00:00:00.000Z",
+      generated_at: generatedAt,
       do_not_edit: true,
     },
     version: 1,
-    generated_at: commits.length ? commits[commits.length - 1].date : "1970-01-01T00:00:00.000Z",
+    generated_at: generatedAt,
     events,
     stats: {
       adrs_total: adrs.length,
