@@ -411,4 +411,23 @@ export const labsEditorial: LabEditorial[] = [
       "Introduction page for a gated system in private operation. It publishes no project data, no figures, and no workspace access.",
     category: "controls",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "Frequency Sound Animation App",
+    eyebrow: "Sound / Demo",
+    href: "/labs/sound-frequency",
+    statusLabel: "Live",
+    statusTone: "test",
+    Icon: Waves,
+    accentIcon: Sparkles,
+    description:
+      "A frequency sound animation playground: 8 modes — Zen, Futuristic, Scientific, Experimental, Instrumental, Gothic, Professional and Friendly — each pairing its own animated visualisation with a generative Web Audio sound character, across an 8-colour palette of red, orange, yellow, green, blue, dark blue, purple and white.",
+    signals: ["8 modes", "Generative Web Audio", "Canvas animation", "8-colour palette"],
+    commercialPath:
+      "Best pilot path: public engagement demos, sound-and-motion showcases, and interactive art presentations.",
+    boundary:
+      "Artistic demonstration with generative audio and animation. It is not an audio measurement or engineering tool.",
+    category: "explorations",
+  },
 ];
