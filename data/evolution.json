@@ -1,11 +1,11 @@
 {
   "_meta": {
     "generated_by": "scripts/extract-evolution.mjs",
-    "generated_at": "2026-11-13T15:58:05.000Z",
+    "generated_at": "2026-11-19T03:20:14.000Z",
     "do_not_edit": true
   },
   "version": 1,
-  "generated_at": "2026-11-13T15:58:05.000Z",
+  "generated_at": "2026-11-19T03:20:14.000Z",
   "events": [
     {
       "id": "EVT-adr-001",
@@ -5644,6 +5644,34 @@
       "division": null,
       "product": null,
       "outcome": "merged"
+    },
+    {
+      "id": "EVT-route-added-3302698-labs-sound-frequency",
+      "type": "route_added",
+      "date": "2026-11-19T03:20:14.000Z",
+      "title": "Route added: /labs/sound-frequency",
+      "summary": "app/labs/sound-frequency/page.tsx added in 3302698.",
+      "references": [
+        "3302698",
+        "app/labs/sound-frequency/page.tsx"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "added"
+    },
+    {
+      "id": "EVT-pr-381",
+      "type": "pr_merged",
+      "date": "2026-11-19T03:23:39.000Z",
+      "title": "feat(labs): publish Frequency Sound Animation App at /labs/sound-frequency",
+      "summary": "feat(labs): publish Frequency Sound Animation App at /labs/sound-frequency (0 files changed).",
+      "references": [
+        "PR#381",
+        "10aac05"
+      ],
+      "division": null,
+      "product": null,
+      "outcome": "merged"
     }
   ],
   "stats": {
@@ -5658,7 +5686,7 @@
     },
     "scenes_total": 9,
     "milestones_shipped": 7,
-    "prs_merged": 181,
+    "prs_merged": 182,
     "verified_capabilities": 8
   }
 }
