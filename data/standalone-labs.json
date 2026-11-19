@@ -233,6 +233,14 @@
         "/standalone/artloop-agents-office.html"
       ],
       "reason": "Interactive agents-office tour: scripts execute (Three.js scene and an in-browser SHA-256 ledger demo); it uses no downloads, modals, or storage; family links open in a new tab outside the sandbox (popups tokens)"
+    },
+    {
+      "id": "sound-frequency",
+      "sandbox": "allow-scripts",
+      "paths": [
+        "/standalone/sound-frequency.html"
+      ],
+      "reason": "Frequency Sound Animation App: canvas animation and generative Web Audio run under allow-scripts; no downloads, modals, popups, printing, or storage"
     }
   ]
 }

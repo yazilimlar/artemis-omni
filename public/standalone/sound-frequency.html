@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Frequency Sound Animation App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Cinzel:wght@500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --accent: #35d461;
+        --accent-ink: #0b120c;
+        --bg: #f2f3f0;
+        --surface: #ffffff;
+        --surface-2: #e9ebe6;
+        --ink: #16181a;
+        --ink-2: #565d63;
+        --line: #d8dbd4;
+        --stage-line: rgba(255, 255, 255, 0.14);
+        --chip-bg: #eceee9;
+        --shadow: 0 10px 30px rgba(20, 24, 20, 0.08);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e100f;
+          --surface: #161918;
+          --surface-2: #1e2220;
+          --ink: #eef0ec;
+          --ink-2: #9aa39c;
+          --line: #2b302c;
+          --chip-bg: #222724;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .mono { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 18px 34px; }
+
+      /* ---------- Division tabs ---------- */
+      .div-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 4px 0 12px; }
+      .div-head h1 { font-size: 21px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+      .div-head p { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+      .modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .mode-btn {
+        appearance: none; border: 1px solid var(--line); background: var(--surface);
+        border-radius: 12px; padding: 11px 12px 10px; text-align: left; cursor: pointer;
+        color: var(--ink); font: inherit; transition: border-color .15s, background .15s, transform .15s;
+      }
+      .mode-btn:hover { border-color: var(--ink-2); }
+      .mode-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .mode-btn .m-name { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
+      .mode-btn .m-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+      .mode-btn .m-tag { display: block; margin-top: 3px; font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+      .mode-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--accent); }
+      body.mode-gothic .mode-btn[aria-pressed="true"] .m-name,
+      body.mode-gothic .stage-mode { font-family: "Cinzel", serif; letter-spacing: .04em; }
+
+      /* ---------- Stage ---------- */
+      .stage {
+        position: relative; margin-top: 14px; border-radius: 18px; overflow: hidden;
+        background: #0a0f0d; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,.25);
+        height: clamp(300px, 48vh, 460px);
+      }
+      .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+      .stage-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 16px 18px; }
+      .stage-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+      .stage-mode { color: #fff; font-size: 15px; font-weight: 600; letter-spacing: .02em; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+      .stage-tag { color: rgba(255,255,255,.72); font-size: 12.5px; margin-top: 2px; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+      .live-pill {
+        flex: none; display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 600;
+        letter-spacing: .08em; text-transform: uppercase; color: #fff; background: rgba(0,0,0,.38);
+        border: 1px solid rgba(255,255,255,.22); border-radius: 999px; padding: 5px 11px;
+      }
+      .live-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.45); }
+      .live-pill.on .dot { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+      .stage-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+      .freq-big { color: #fff; line-height: .95; text-shadow: 0 2px 14px rgba(0,0,0,.55); }
+      .freq-big .num { font-size: clamp(44px, 8vw, 72px); font-weight: 600; letter-spacing: -0.01em; }
+      .freq-big .unit { font-size: clamp(16px, 3vw, 24px); font-weight: 500; color: var(--accent); margin-left: 6px; }
+      .freq-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+      .freq-meta .fm { color: rgba(255,255,255,.66); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; }
+      .freq-meta .fm b { display: block; color: #fff; font-size: 14.5px; font-weight: 500; letter-spacing: 0; text-transform: none; margin-top: 2px; }
+
+      /* ---------- Controls ---------- */
+      .panel { margin-top: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+      .transport { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+      .play-btn {
+        appearance: none; border: none; cursor: pointer; flex: none;
+        width: 58px; height: 58px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+        display: grid; place-items: center; transition: transform .12s, filter .12s;
+      }
+      .play-btn:hover { filter: brightness(1.07); }
+      .play-btn:active { transform: scale(.95); }
+      .play-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+      .play-btn svg { width: 24px; height: 24px; fill: currentColor; }
+      .freq-ctl { flex: 1 1 300px; min-width: 240px; }
+      .ctl-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 7px; }
+      .freq-input-row { display: flex; align-items: center; gap: 8px; }
+      .freq-num {
+        width: 108px; font: inherit; font-family: "IBM Plex Mono", monospace; font-size: 15px;
+        padding: 7px 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink);
+      }
+      .step-btn {
+        appearance: none; border: 1px solid var(--line); background: var(--chip-bg); color: var(--ink);
+        border-radius: 9px; padding: 7px 10px; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
+      }
+      .step-btn:hover { border-color: var(--ink-2); }
+      input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 26px; background: transparent; cursor: pointer; }
+      input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--accent) var(--fill, 50%), var(--surface-2) var(--fill, 50%)); }
+      input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); border: 2.5px solid var(--accent); margin-top: -7px; box-shadow: 0 1px 5px rgba(0,0,0,.25); }
+      input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--surface-2); }
+      input[type="range"]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--accent); }
+      input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; border-radius: 50%; background: var(--surface); border: 2.5px solid var(--accent); }
+      .scale-marks { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--ink-2); margin-top: 1px; }
+
+      .ctl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; margin-top: 16px; }
+      .seg { display: flex; background: var(--chip-bg); border-radius: 10px; padding: 3px; gap: 2px; }
+      .seg button {
+        flex: 1; appearance: none; border: none; background: transparent; color: var(--ink-2);
+        font: inherit; font-size: 13px; font-weight: 500; padding: 7px 4px; border-radius: 8px; cursor: pointer;
+      }
+      .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.14); }
+      .vol-row { display: flex; align-items: center; gap: 10px; }
+      .vol-row input[type="range"] { flex: 1; }
+      .vol-val { font-size: 13px; min-width: 38px; text-align: right; }
+
+      .swatches { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+      .swatch {
+        appearance: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; flex: none;
+        border: 2px solid transparent; box-shadow: inset 0 0 0 1px rgba(0,0,0,.16), 0 1px 3px rgba(0,0,0,.18);
+        transition: transform .12s;
+      }
+      .swatch:hover { transform: scale(1.12); }
+      .swatch[aria-pressed="true"] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+      .swatch-name { font-size: 13px; color: var(--ink-2); margin-left: 2px; }
+
+      /* ---------- Presets ---------- */
+      .presets-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 20px 0 9px; }
+      .presets-head h2 { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin: 0; }
+      .presets-head span { font-size: 12.5px; color: var(--ink-2); }
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+      .chip {
+        appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+        border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 13.5px; cursor: pointer;
+        display: inline-flex; gap: 8px; align-items: baseline; transition: border-color .13s, background .13s;
+      }
+      .chip .chip-f { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--accent); font-weight: 600; }
+      .chip:hover { border-color: var(--accent); }
+      .chip[aria-pressed="true"] { background: var(--surface-2); border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+      .foot { margin-top: 22px; color: var(--ink-2); font-size: 12.5px; line-height: 1.55; display: flex; gap: 8px; align-items: flex-start; }
+      .foot svg { flex: none; width: 15px; height: 15px; margin-top: 2px; fill: currentColor; }
+
+      @media (max-width: 720px) {
+        .modes { grid-template-columns: repeat(2, 1fr); }
+        .ctl-grid { grid-template-columns: 1fr; }
+        .div-head { flex-direction: column; gap: 2px; }
+        .stage { height: 340px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="div-head">
+        <h1>Eight divisions of sound</h1>
+        <p>Pick a division, dial in a frequency, and watch it move.</p>
+      </div>
+
+      <nav class="modes" id="modes" aria-label="Sound divisions"></nav>
+
+      <section class="stage" aria-label="Frequency visualization">
+        <canvas id="viz"></canvas>
+        <div class="stage-overlay">
+          <div class="stage-top">
+            <div>
+              <div class="stage-mode" id="stageMode">Zen</div>
+              <div class="stage-tag" id="stageTag"></div>
+            </div>
+            <span class="live-pill" id="livePill"><span class="dot"></span><span id="liveText">Preview</span></span>
+          </div>
+          <div class="stage-bottom">
+            <div class="freq-big"><span class="num mono" id="freqBig">528</span><span class="unit">Hz</span></div>
+            <div class="freq-meta">
+              <div class="fm">Nearest note<b class="mono" id="metaNote">C5</b></div>
+              <div class="fm">Wavelength<b class="mono" id="metaWave">0.65 m</b></div>
+              <div class="fm">Period<b class="mono" id="metaPeriod">1.89 ms</b></div>
+              <div class="fm">Waveform<b id="metaShape">Sine</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-label="Tone controls">
+        <div class="transport">
+          <button class="play-btn" id="playBtn" aria-label="Play tone" aria-pressed="false">
+            <svg id="playIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+          </button>
+          <div class="freq-ctl">
+            <div class="ctl-label"><span>Frequency</span><span class="mono" id="freqReadout" style="letter-spacing:0;text-transform:none;font-size:13px;">528 Hz</span></div>
+            <input type="range" id="freqSlider" min="0" max="1000" value="500" step="1" aria-label="Frequency slider" />
+            <div class="scale-marks mono"><span>30 Hz</span><span>100</span><span>440</span><span>1k</span><span>4k</span><span>16k</span></div>
+          </div>
+          <div class="freq-input-row">
+            <input class="freq-num" id="freqNum" type="number" min="30" max="16000" step="1" value="528" aria-label="Frequency in hertz" />
+            <button class="step-btn" id="octDown" aria-label="Octave down">÷2</button>
+            <button class="step-btn" id="octUp" aria-label="Octave up">×2</button>
+          </div>
+        </div>
+
+        <div class="ctl-grid">
+          <div>
+            <div class="ctl-label"><span>Waveform</span></div>
+            <div class="seg" id="waveSeg" role="group" aria-label="Waveform">
+              <button data-wave="sine" aria-pressed="true">Sine</button>
+              <button data-wave="triangle" aria-pressed="false">Triangle</button>
+              <button data-wave="square" aria-pressed="false">Square</button>
+              <button data-wave="sawtooth" aria-pressed="false">Sawtooth</button>
+            </div>
+          </div>
+          <div>
+            <div class="ctl-label"><span>Volume</span></div>
+            <div class="vol-row">
+              <input type="range" id="volSlider" min="0" max="100" value="45" aria-label="Volume" />
+              <span class="vol-val mono" id="volVal">45%</span>
+            </div>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <div class="ctl-label"><span>Color</span><span id="colorName" style="letter-spacing:0;text-transform:none;font-size:13px;">Green</span></div>
+            <div class="swatches" id="swatches" role="group" aria-label="Visualization color"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="presets-head">
+        <h2 id="presetTitle">Zen tones</h2>
+        <span id="presetHint">Tap a tone to load it</span>
+      </div>
+      <div class="chips" id="chips"></div>
+
+      <p class="foot">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7v3a3 3 0 0 0-3 3v1a3 3 0 0 0 3 3h1a2 2 0 0 0 2-2V9a4 4 0 0 1 8 0v8a2 2 0 0 1-2 2h-1v2h1a4 4 0 0 0 4-4V9a7 7 0 0 0-7-7z" transform="scale(.92) translate(1,1)"/></svg>
+        <span>Sound is generated live in your browser — no audio files. Pure tones get loud fast, especially above 2 kHz: start low, keep the volume moderate, and give your ears breaks. Press <b>Space</b> to play or pause.</span>
+      </p>
+    </div>
+
+    <script>
+      "use strict";
+
+      /* ================= Data ================= */
+      var COLORS = [
+        { id: "red",      name: "Red",       hex: "#ff4040" },
+        { id: "orange",   name: "Orange",    hex: "#ff8b2a" },
+        { id: "yellow",   name: "Yellow",    hex: "#ffd21f" },
+        { id: "green",    name: "Green",     hex: "#35d461" },
+        { id: "blue",     name: "Blue",      hex: "#38a6ff" },
+        { id: "darkblue", name: "Dark Blue", hex: "#4d6bff" },
+        { id: "purple",   name: "Purple",    hex: "#b45cff" },
+        { id: "white",    name: "White",     hex: "#f4f6f8" }
+      ];
+      function colorById(id) { for (var i = 0; i < COLORS.length; i++) if (COLORS[i].id === id) return COLORS[i]; return COLORS[3]; }
+
+      var MODES = [
+        { id: "zen", name: "Zen", tag: "Solfeggio tones, slow water ripples", wave: "sine", color: "green", anim: "zen",
+          bg: ["#081711", "#0e2a1e"],
+          presets: [
+            { f: 174, label: "Grounding" }, { f: 285, label: "Restore" }, { f: 396, label: "Release" },
+            { f: 417, label: "Change" }, { f: 528, label: "Harmony" }, { f: 639, label: "Connection" },
+            { f: 741, label: "Expression" }, { f: 852, label: "Intuition" }, { f: 963, label: "Oneness" }
+          ] },
+        { id: "futuristic", name: "Futuristic", tag: "Neon grids and synth signals", wave: "sawtooth", color: "blue", anim: "future",
+          bg: ["#04060f", "#0a1230"],
+          presets: [
+            { f: 55, label: "Sub Bass" }, { f: 98, label: "Cyber Pulse" }, { f: 146.83, label: "Neon Drone" },
+            { f: 220, label: "Circuit Hum" }, { f: 440, label: "Signal Lock" }, { f: 880, label: "Beam" },
+            { f: 1760, label: "Ultrawave" }, { f: 3520, label: "Photon Ping" }
+          ] },
+        { id: "scientific", name: "Scientific", tag: "Oscilloscope traces and test tones", wave: "sine", color: "white", anim: "science",
+          bg: ["#07090c", "#10151b"],
+          presets: [
+            { f: 60, label: "Mains Hum" }, { f: 100, label: "Low Test" }, { f: 440, label: "Tuning Ref" },
+            { f: 1000, label: "1 kHz Reference" }, { f: 2000, label: "Mid Test" }, { f: 4000, label: "Presence" },
+            { f: 8000, label: "HF Test" }, { f: 10000, label: "Air Band" }
+          ] },
+        { id: "experimental", name: "Experimental", tag: "Lissajous chaos and glitch slices", wave: "square", color: "purple", anim: "experiment",
+          bg: ["#0d0616", "#1c0b31"],
+          presets: [
+            { f: 68, label: "Sub Rumble" }, { f: 137, label: "Odd Harmonic" }, { f: 271, label: "Prime Tone" },
+            { f: 314.16, label: "Pi Tone" }, { f: 618.03, label: "Golden Ratio" }, { f: 777, label: "Chaos" },
+            { f: 999, label: "Cluster" }, { f: 1729, label: "Ramanujan" }
+          ] },
+        { id: "instrumental", name: "Instrumental", tag: "Concert pitch and warm harmonics", wave: "triangle", color: "orange", anim: "instrument",
+          bg: ["#140d05", "#2a1a08"],
+          presets: [
+            { f: 130.81, label: "C3 · Cello" }, { f: 196, label: "G3 · Violin" }, { f: 220, label: "A3 · Viola" },
+            { f: 261.63, label: "C4 · Middle C" }, { f: 329.63, label: "E4 · Guitar" }, { f: 392, label: "G4 · Violin" },
+            { f: 440, label: "A4 · Oboe" }, { f: 523.25, label: "C5 · Flute" }, { f: 659.25, label: "E5 · Chime" }
+          ] },
+        { id: "gothic", name: "Gothic", tag: "Cathedral drones in candlelight", wave: "triangle", color: "red", anim: "gothic",
+          bg: ["#060607", "#141013"],
+          presets: [
+            { f: 36.71, label: "Crypt · D1" }, { f: 55, label: "Organ · A1" }, { f: 65.41, label: "Choir · C2" },
+            { f: 73.42, label: "Requiem · D2" }, { f: 98, label: "Vault · G2" }, { f: 110, label: "Nave · A2" },
+            { f: 146.83, label: "Bell Toll · D3" }, { f: 196, label: "Vespers · G3" }
+          ] },
+        { id: "professional", name: "Professional", tag: "Clean calibration and line-up tones", wave: "sine", color: "darkblue", anim: "pro",
+          bg: ["#0a0e13", "#131a22"],
+          presets: [
+            { f: 100, label: "LF Check" }, { f: 440, label: "Reference Pitch" }, { f: 1000, label: "Line-Up Tone" },
+            { f: 3150, label: "Flutter Test" }, { f: 5000, label: "Sibilance Band" }, { f: 10000, label: "HF Check" },
+            { f: 12500, label: "Tape Bias Ref" }, { f: 15000, label: "Top Band" }
+          ] },
+        { id: "friendly", name: "Friendly", tag: "Bouncy pentatonic bubbles", wave: "sine", color: "yellow", anim: "friendly",
+          bg: ["#0a141f", "#12283d"],
+          presets: [
+            { f: 261.63, label: "Hello · C4" }, { f: 293.66, label: "Sunny · D4" }, { f: 329.63, label: "Skip · E4" },
+            { f: 392, label: "Bounce · G4" }, { f: 440, label: "Smile · A4" }, { f: 523.25, label: "Bubble · C5" },
+            { f: 587.33, label: "Giggle · D5" }, { f: 783.99, label: "Twinkle · G5" }
+          ] }
+      ];
+      function modeById(id) { for (var i = 0; i < MODES.length; i++) if (MODES[i].id === id) return MODES[i]; return MODES[0]; }
+
+      /* ================= State ================= */
+      var FMIN = 30, FMAX = 16000;
+      var state = {
+        mode: "zen",
+        color: "green",
+        freq: 528,
+        wave: "sine",
+        volume: 0.45,
+        playing: false
+      };
+
+      /* ================= Audio ================= */
+      var actx = null, osc = null, gainNode = null, analyser = null;
+      function ensureAudio() {
+        if (actx) return;
+        var AC = window.AudioContext || window.webkitAudioContext;
+        actx = new AC();
+        osc = actx.createOscillator();
+        gainNode = actx.createGain();
+        analyser = actx.createAnalyser();
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.82;
+        osc.type = state.wave;
+        osc.frequency.value = state.freq;
+        gainNode.gain.value = 0;
+        osc.connect(gainNode); gainNode.connect(analyser); analyser.connect(actx.destination);
+        osc.start();
+      }
+      function startTone() {
+        ensureAudio();
+        if (actx.state === "suspended") actx.resume();
+        var t = actx.currentTime;
+        gainNode.gain.cancelScheduledValues(t);
+        gainNode.gain.setTargetAtTime(state.volume * 0.5, t, 0.08);
+        state.playing = true;
+        syncPlayUI();
+      }
+      function stopTone() {
+        if (!actx) { state.playing = false; syncPlayUI(); return; }
+        var t = actx.currentTime;
+        gainNode.gain.cancelScheduledValues(t);
+        gainNode.gain.setTargetAtTime(0, t, 0.06);
+        state.playing = false;
+        syncPlayUI();
+      }
+      function applyFreq() {
+        if (actx && osc) osc.frequency.setTargetAtTime(state.freq, actx.currentTime, 0.03);
+      }
+      function applyWave() {
+        if (actx && osc) osc.type = state.wave;
+      }
+      function applyVolume() {
+        if (actx && gainNode && state.playing) {
+          gainNode.gain.setTargetAtTime(state.volume * 0.5, actx.currentTime, 0.05);
+        }
+      }
+
+      /* ================= DOM refs ================= */
+      function $(id) { return document.getElementById(id); }
+      var modesEl = $("modes"), chipsEl = $("chips"), swatchesEl = $("swatches");
+      var slider = $("freqSlider"), freqNum = $("freqNum");
+      var canvas = $("viz"), ctx = canvas.getContext("2d");
+
+      /* ================= Build mode tabs ================= */
+      MODES.forEach(function (m) {
+        var b = document.createElement("button");
+        b.className = "mode-btn"; b.type = "button";
+        b.setAttribute("aria-pressed", m.id === state.mode ? "true" : "false");
+        b.dataset.mode = m.id;
+        var dot = colorById(m.color).hex;
+        b.innerHTML = '<span class="m-name"><span class="m-dot" style="background:' + dot + '"></span>' + m.name + '</span><span class="m-tag">' + m.tag + "</span>";
+        b.addEventListener("click", function () { setMode(m.id); });
+        modesEl.appendChild(b);
+      });
+
+      /* ================= Build swatches ================= */
+      COLORS.forEach(function (c) {
+        var b = document.createElement("button");
+        b.className = "swatch"; b.type = "button";
+        b.style.background = c.hex;
+        b.title = c.name;
+        b.setAttribute("aria-label", c.name);
+        b.setAttribute("aria-pressed", c.id === state.color ? "true" : "false");
+        b.dataset.color = c.id;
+        b.addEventListener("click", function () { setColor(c.id); });
+        swatchesEl.appendChild(b);
+      });
+
+      /* ================= UI sync ================= */
+      function hexToRgb(hex) {
+        var n = parseInt(hex.slice(1), 16);
+        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+      }
+      function rgba(hex, a) { var c = hexToRgb(hex); return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")"; }
+      function accentInk(hex) { var c = hexToRgb(hex); var lum = (0.299 * c.r + 0.587 * c.g + 0.114 * c.b) / 255; return lum > 0.62 ? "#10130f" : "#ffffff"; }
+
+      function setColor(id) {
+        state.color = id;
+        var c = colorById(id);
+        document.documentElement.style.setProperty("--accent", c.hex);
+        document.documentElement.style.setProperty("--accent-ink", accentInk(c.hex));
+        $("colorName").textContent = c.name;
+        var sw = swatchesEl.children;
+        for (var i = 0; i < sw.length; i++) sw[i].setAttribute("aria-pressed", sw[i].dataset.color === id ? "true" : "false");
+        markActiveChip();
+      }
+
+      function fmtFreq(f) {
+        if (f >= 1000) return (Math.round(f * 10) / 10).toLocaleString("en-US");
+        return String(Math.round(f * 10) / 10);
+      }
+      var NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      function noteName(f) {
+        var n = 69 + 12 * Math.log2(f / 440);
+        var r = Math.round(n);
+        var cents = Math.round((n - r) * 100);
+        var name = NOTE_NAMES[((r % 12) + 12) % 12] + (Math.floor(r / 12) - 1);
+        if (cents !== 0) name += " " + (cents > 0 ? "+" : "") + cents + "¢";
+        return name;
+      }
+      function syncReadouts() {
+        var f = state.freq;
+        $("freqBig").textContent = fmtFreq(f);
+        $("freqReadout").textContent = fmtFreq(f) + " Hz";
+        if (document.activeElement !== freqNum) freqNum.value = Math.round(f * 100) / 100;
+        $("metaNote").textContent = noteName(f);
+        var wl = 343 / f;
+        $("metaWave").textContent = wl >= 1 ? wl.toFixed(2) + " m" : (wl * 100).toFixed(1) + " cm";
+        var per = 1000 / f;
+        $("metaPeriod").textContent = per >= 1 ? per.toFixed(2) + " ms" : (per * 1000).toFixed(0) + " µs";
+        $("metaShape").textContent = state.wave.charAt(0).toUpperCase() + state.wave.slice(1);
+        var v = (Math.log(f / FMIN) / Math.log(FMAX / FMIN)) * 1000;
+        slider.value = Math.round(v);
+        slider.style.setProperty("--fill", (v / 10) + "%");
+        markActiveChip();
+      }
+      function markActiveChip() {
+        var chips = chipsEl.children;
+        for (var i = 0; i < chips.length; i++) {
+          var pf = parseFloat(chips[i].dataset.freq);
+          chips[i].setAttribute("aria-pressed", Math.abs(pf - state.freq) < 0.6 ? "true" : "false");
+        }
+      }
+      function syncPlayUI() {
+        $("playBtn").setAttribute("aria-pressed", state.playing ? "true" : "false");
+        $("playBtn").setAttribute("aria-label", state.playing ? "Pause tone" : "Play tone");
+        $("playIcon").innerHTML = state.playing
+          ? '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>'
+          : '<path d="M8 5.5v13l11-6.5z"/>';
+        $("livePill").className = "live-pill" + (state.playing ? " on" : "");
+        $("liveText").textContent = state.playing ? "Sounding" : "Preview";
+      }
+
+      function setFreq(f, fromSlider) {
+        f = Math.min(FMAX, Math.max(FMIN, f));
+        state.freq = f;
+        applyFreq();
+        syncReadouts();
+      }
+
+      function setWave(w) {
+        state.wave = w;
+        applyWave();
+        var btns = $("waveSeg").children;
+        for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", btns[i].dataset.wave === w ? "true" : "false");
+        syncReadouts();
+      }
+
+      function buildChips(m) {
+        chipsEl.innerHTML = "";
+        m.presets.forEach(function (p) {
+          var b = document.createElement("button");
+          b.className = "chip"; b.type = "button";
+          b.dataset.freq = p.f;
+          b.setAttribute("aria-pressed", "false");
+          b.innerHTML = '<span class="chip-f">' + fmtFreq(p.f) + " Hz</span>" + p.label;
+          b.addEventListener("click", function () {
+            setFreq(p.f);
+            if (!state.playing) startTone();
+          });
+          chipsEl.appendChild(b);
+        });
+        $("presetTitle").textContent = m.name + " tones";
+        markActiveChip();
+      }
+
+      function setMode(id) {
+        state.mode = id;
+        var m = modeById(id);
+        document.body.className = "mode-" + id;
+        var btns = modesEl.children;
+        for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", btns[i].dataset.mode === id ? "true" : "false");
+        $("stageMode").textContent = m.name;
+        $("stageTag").textContent = m.tag;
+        setColor(m.color);
+        setWave(m.wave);
+        buildChips(m);
+        peaks.length = 0;
+      }
+
+      /* ================= Controls wiring ================= */
+      $("playBtn").addEventListener("click", function () { state.playing ? stopTone() : startTone(); });
+      slider.addEventListener("input", function () {
+        var v = parseFloat(slider.value) / 1000;
+        setFreq(FMIN * Math.pow(FMAX / FMIN, v), true);
+      });
+      freqNum.addEventListener("change", function () {
+        var v = parseFloat(freqNum.value);
+        if (!isNaN(v)) setFreq(v); else syncReadouts();
+      });
+      $("octUp").addEventListener("click", function () { setFreq(state.freq * 2); });
+      $("octDown").addEventListener("click", function () { setFreq(state.freq / 2); });
+      var waveBtns = $("waveSeg").children;
+      for (var wi = 0; wi < waveBtns.length; wi++) {
+        (function (btn) { btn.addEventListener("click", function () { setWave(btn.dataset.wave); }); })(waveBtns[wi]);
+      }
+      $("volSlider").addEventListener("input", function () {
+        state.volume = parseFloat($("volSlider").value) / 100;
+        $("volVal").textContent = $("volSlider").value + "%";
+        $("volSlider").style.setProperty("--fill", $("volSlider").value + "%");
+        applyVolume();
+      });
+      $("volSlider").style.setProperty("--fill", "45%");
+      document.addEventListener("keydown", function (e) {
+        if (e.code === "Space" && !/INPUT|BUTTON/.test(document.activeElement.tagName)) {
+          e.preventDefault();
+          state.playing ? stopTone() : startTone();
+        }
+      });
+
+      /* ================= Visualizer ================= */
+      var W = 0, H = 0, DPR = 1;
+      function resize() {
+        var r = canvas.parentElement.getBoundingClientRect();
+        DPR = Math.min(2, window.devicePixelRatio || 1);
+        W = r.width; H = r.height;
+        canvas.width = Math.round(W * DPR);
+        canvas.height = Math.round(H * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+      window.addEventListener("resize", resize);
+
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var timeData = new Uint8Array(2048);
+      var freqData = new Uint8Array(1024);
+      var idlePhase = 0;
+      var peaks = [];
+
+      function getTimeData(t) {
+        if (state.playing && analyser) { analyser.getByteTimeDomainData(timeData); return timeData; }
+        // Idle preview: a soft synthetic waveform so the stage stays alive.
+        var n = timeData.length;
+        var cycles = 2 + (state.freq % 90) / 22;
+        for (var i = 0; i < n; i++) {
+          var x = i / n;
+          var v = Math.sin(x * Math.PI * 2 * cycles + t * 1.4) * 0.55
+                + Math.sin(x * Math.PI * 2 * cycles * 2.01 + t * 0.9) * 0.22;
+          timeData[i] = 128 + v * 62;
+        }
+        return timeData;
+      }
+      function getFreqData(t) {
+        if (state.playing && analyser) { analyser.getByteFrequencyData(freqData); return freqData; }
+        var n = freqData.length;
+        var peakBin = Math.min(n - 2, Math.max(2, Math.round((state.freq / 16000) * n * 1.7)));
+        for (var i = 0; i < n; i++) {
+          var d = Math.abs(i - peakBin);
+          var base = Math.exp(-d * d / 260) * (150 + 55 * Math.sin(t * 2 + i * 0.02));
+          var harm = i % (peakBin || 7) === 0 ? 34 : 0;
+          freqData[i] = Math.max(4, Math.min(230, base + harm + Math.sin(t * 1.3 + i * 0.35) * 7));
+        }
+        return freqData;
+      }
+      function rms(data) {
+        var s = 0, step = 8;
+        for (var i = 0; i < data.length; i += step) { var v = (data[i] - 128) / 128; s += v * v; }
+        return Math.sqrt(s / (data.length / step));
+      }
+      function wavePath(data, cx, cy, width, amp, step) {
+        ctx.beginPath();
+        var n = data.length;
+        var stride = step || 4;
+        for (var i = 0; i < n; i += stride) {
+          var x = cx - width / 2 + (i / n) * width;
+          var y = cy + ((data[i] - 128) / 128) * amp;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      }
+      function stageBg(m) {
+        var g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, m.bg[0]); g.addColorStop(1, m.bg[1]);
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      }
+
+      /* --- Zen: expanding ripples over still water --- */
+      function drawZen(m, col, data, t, amp) {
+        var bgc = hexToRgb(m.bg[0]);
+        ctx.fillStyle = "rgba(" + bgc.r + "," + bgc.g + "," + bgc.b + ",0.32)"; ctx.fillRect(0, 0, W, H);
+        var cx = W / 2, cy = H / 2, maxR = Math.max(W, H) * 0.62;
+        var rings = 7;
+        for (var i = 0; i < rings; i++) {
+          var p = ((t * 0.07 + i / rings) % 1);
+          var r = p * maxR;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.strokeStyle = rgba(col, (1 - p) * (0.16 + amp * 0.65));
+          ctx.lineWidth = 1.4 + amp * 3 * (1 - p);
+          ctx.stroke();
+        }
+        var pulse = 1 + Math.sin(t * 1.6) * 0.05 + amp * 0.5;
+        var grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, 66 * pulse);
+        grd.addColorStop(0, rgba(col, 0.5 + amp * 0.4));
+        grd.addColorStop(1, rgba(col, 0));
+        ctx.fillStyle = grd;
+        ctx.beginPath(); ctx.arc(cx, cy, 66 * pulse, 0, Math.PI * 2); ctx.fill();
+        ctx.lineWidth = 1.6; ctx.strokeStyle = rgba(col, 0.9);
+        wavePath(data, cx, cy, W * 0.72, H * 0.16 + amp * H * 0.3); ctx.stroke();
+      }
+
+      /* --- Futuristic: neon horizon grid + particles --- */
+      var parts = [];
+      function drawFuture(m, col, data, t, amp) {
+        stageBg(m);
+        var horizon = H * 0.58;
+        ctx.strokeStyle = rgba(col, 0.20); ctx.lineWidth = 1;
+        for (var i = 0; i <= 12; i++) {
+          var x = (i / 12) * W;
+          ctx.beginPath(); ctx.moveTo(W / 2 + (x - W / 2) * 0.18, horizon); ctx.lineTo(x, H); ctx.stroke();
+        }
+        for (var j = 0; j < 7; j++) {
+          var p = ((t * 0.22 + j / 7) % 1);
+          var y = horizon + p * p * (H - horizon);
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y);
+          ctx.strokeStyle = rgba(col, 0.05 + p * 0.22); ctx.stroke();
+        }
+        ctx.beginPath(); ctx.moveTo(0, horizon); ctx.lineTo(W, horizon);
+        ctx.strokeStyle = rgba(col, 0.55); ctx.stroke();
+        // particles
+        if (parts.length < 46 && Math.random() < 0.5) parts.push({ x: Math.random() * W, y: H + 6, s: 0.4 + Math.random() * 1.3, r: 1 + Math.random() * 2 });
+        ctx.fillStyle = rgba(col, 0.75);
+        for (var k = parts.length - 1; k >= 0; k--) {
+          var pt = parts[k]; pt.y -= pt.s * (1 + amp * 5); pt.x += Math.sin(t * 2 + k) * 0.3;
+          if (pt.y < -8) { parts.splice(k, 1); continue; }
+          ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.save();
+        ctx.shadowColor = col; ctx.shadowBlur = 16;
+        ctx.lineWidth = 2.4; ctx.strokeStyle = col;
+        wavePath(data, W / 2, H * 0.32, W * 0.9, H * 0.13 + amp * H * 0.2); ctx.stroke();
+        ctx.restore();
+        ctx.lineWidth = 1; ctx.strokeStyle = rgba(col, 0.4);
+        wavePath(data, W / 2, H * 0.32, W * 0.9, (H * 0.13 + amp * H * 0.2) * 0.55, 9); ctx.stroke();
+      }
+
+      /* --- Scientific: graticule oscilloscope + spectrum --- */
+      function drawScience(m, col, data, fdata, t, amp) {
+        stageBg(m);
+        ctx.strokeStyle = "rgba(255,255,255,0.07)"; ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (var gx = 0; gx <= 10; gx++) { ctx.moveTo((gx / 10) * W, 0); ctx.lineTo((gx / 10) * W, H); }
+        for (var gy = 0; gy <= 6; gy++) { ctx.moveTo(0, (gy / 6) * H); ctx.lineTo(W, (gy / 6) * H); }
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(255,255,255,0.16)";
+        ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.moveTo(0, H * 0.36); ctx.lineTo(W, H * 0.36); ctx.stroke();
+        // spectrum along the bottom
+        var bars = 72, bw = W / bars;
+        ctx.fillStyle = rgba(col, 0.5);
+        for (var i = 0; i < bars; i++) {
+          var v = fdata[Math.floor(Math.pow(i / bars, 1.6) * fdata.length * 0.72)] / 255;
+          var bh = v * H * 0.3;
+          ctx.fillRect(i * bw + 1, H - bh, bw - 2, bh);
+        }
+        ctx.save();
+        ctx.shadowColor = col; ctx.shadowBlur = 8;
+        ctx.lineWidth = 2; ctx.strokeStyle = col;
+        wavePath(data, W / 2, H * 0.36, W * 0.96, H * 0.2 + amp * H * 0.14, 2); ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = "rgba(255,255,255,0.55)";
+        ctx.font = "11px 'IBM Plex Mono', monospace";
+        ctx.fillText("CH1  " + fmtFreq(state.freq) + " Hz", 12, 20);
+        ctx.fillText("FFT  " + state.wave.toUpperCase(), 12, 38);
+        ctx.fillText((state.playing ? "TRIG'D" : "IDLE"), W - 58, 20);
+      }
+
+      /* --- Experimental: Lissajous + glitch slices --- */
+      function drawExperiment(m, col, data, t, amp) {
+        ctx.fillStyle = rgba("#000000", 0); stageBg(m);
+        ctx.fillStyle = "rgba(10,4,20,0.28)"; ctx.fillRect(0, 0, W, H);
+        var cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.34;
+        ctx.lineWidth = 1.7;
+        for (var pass = 0; pass < 3; pass++) {
+          ctx.beginPath();
+          var a = 3 + pass, b = 2 + pass * 0.5, ph = t * (0.6 + pass * 0.23);
+          for (var i = 0; i <= 220; i++) {
+            var u = (i / 220) * Math.PI * 2;
+            var wob = 1 + ((data[Math.floor((i / 220) * 1000)] - 128) / 128) * (0.12 + amp * 0.85);
+            var x = cx + Math.sin(a * u + ph) * R * wob;
+            var y = cy + Math.sin(b * u + ph * 1.31) * R * 0.82 * wob;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          ctx.strokeStyle = rgba(col, 0.24 + pass * 0.24);
+          ctx.stroke();
+        }
+        // glitch slices
+        var seed = Math.floor(t * 9);
+        for (var gI = 0; gI < 3; gI++) {
+          var rnd = Math.abs(Math.sin(seed * 127.1 + gI * 311.7)) % 1;
+          if (rnd > 0.45) {
+            var gy = rnd * H, gh = 3 + rnd * 12, off = (rnd - 0.5) * 46 * (0.4 + amp);
+            ctx.fillStyle = rgba(col, 0.13);
+            ctx.fillRect(0, gy, W, gh);
+            ctx.strokeStyle = rgba(col, 0.5); ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(off, gy + gh / 2); ctx.lineTo(W + off, gy + gh / 2); ctx.stroke();
+          }
+        }
+      }
+
+      /* --- Instrumental: warm EQ columns with falling peaks --- */
+      function drawInstrument(m, col, fdata, t, amp) {
+        stageBg(m);
+        var bars = 42, gap = 3, bw = (W - 32) / bars;
+        if (peaks.length !== bars) { peaks = []; for (var q = 0; q < bars; q++) peaks.push(0); }
+        for (var i = 0; i < bars; i++) {
+          var idx = Math.floor(Math.pow(i / bars, 1.45) * fdata.length * 0.7);
+          var v = fdata[idx] / 255;
+          var bh = Math.max(3, v * H * 0.72);
+          var x = 16 + i * bw, y = H - 26 - bh;
+          var grd = ctx.createLinearGradient(0, y, 0, H - 26);
+          grd.addColorStop(0, rgba(col, 0.95)); grd.addColorStop(1, rgba(col, 0.25));
+          ctx.fillStyle = grd;
+          var r = Math.min(5, bw / 2 - 1);
+          ctx.beginPath();
+          ctx.moveTo(x + 1, H - 26);
+          ctx.lineTo(x + 1, y + r); ctx.arc(x + 1 + r, y + r, r, Math.PI, Math.PI * 1.5);
+          ctx.lineTo(x + bw - gap - r, y); ctx.arc(x + bw - gap - r, y + r, r, Math.PI * 1.5, 0);
+          ctx.lineTo(x + bw - gap, H - 26); ctx.closePath(); ctx.fill();
+          peaks[i] = Math.max(bh, peaks[i] - 1.6);
+          ctx.fillStyle = rgba("#ffffff", 0.85);
+          ctx.fillRect(x + 1, H - 26 - peaks[i] - 4, bw - gap - 1, 2.5);
+        }
+        ctx.fillStyle = "rgba(255,255,255,0.35)";
+        ctx.fillRect(16, H - 24, W - 32, 1);
+      }
+
+      /* --- Gothic: mirrored cathedral wave, arches, candle flicker --- */
+      function drawGothic(m, col, data, t, amp) {
+        stageBg(m);
+        var flick = 0.9 + 0.1 * Math.sin(t * 11) * Math.sin(t * 5.3);
+        // arches
+        ctx.strokeStyle = rgba(col, 0.16 * flick); ctx.lineWidth = 1.4;
+        var arches = 5, aw = W / arches;
+        for (var i = 0; i < arches; i++) {
+          var x0 = i * aw + 8, x1 = (i + 1) * aw - 8, top = H * 0.16, base = H * 0.92;
+          ctx.beginPath();
+          ctx.moveTo(x0, base); ctx.lineTo(x0, top + aw * 0.32);
+          ctx.arc((x0 + x1) / 2, top + aw * 0.32, (x1 - x0) / 2, Math.PI, 0);
+          ctx.lineTo(x1, base); ctx.stroke();
+        }
+        // candle glow at base
+        var grd = ctx.createRadialGradient(W / 2, H, 0, W / 2, H, W * 0.55);
+        grd.addColorStop(0, rgba(col, 0.14 * flick + amp * 0.2)); grd.addColorStop(1, rgba(col, 0));
+        ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+        // mirrored wave
+        ctx.save();
+        ctx.shadowColor = col; ctx.shadowBlur = 12;
+        ctx.lineWidth = 2; ctx.strokeStyle = rgba(col, 0.95);
+        wavePath(data, W / 2, H * 0.42, W * 0.86, H * 0.14 + amp * H * 0.22); ctx.stroke();
+        ctx.restore();
+        ctx.lineWidth = 1.2; ctx.strokeStyle = rgba(col, 0.45);
+        ctx.beginPath();
+        var n = data.length;
+        for (var j = 0; j < n; j += 4) {
+          var x2 = W / 2 - (W * 0.86) / 2 + (j / n) * W * 0.86;
+          var y2 = H * 0.68 - ((data[j] - 128) / 128) * (H * 0.14 + amp * H * 0.22);
+          if (j === 0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+        }
+        ctx.stroke();
+      }
+
+      /* --- Professional: flat, precise spectrum --- */
+      function drawPro(m, col, fdata, t, amp) {
+        stageBg(m);
+        var bars = 64, bw = W / bars, base = H * 0.86;
+        ctx.strokeStyle = "rgba(255,255,255,0.10)"; ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (var gy = 1; gy <= 4; gy++) { ctx.moveTo(0, base - (gy / 4) * H * 0.62); ctx.lineTo(W, base - (gy / 4) * H * 0.62); }
+        ctx.stroke();
+        for (var i = 0; i < bars; i++) {
+          var idx = Math.floor((i / bars) * fdata.length * 0.75);
+          var v = fdata[idx] / 255;
+          var bh = Math.max(2, v * H * 0.62);
+          ctx.fillStyle = rgba(col, 0.88);
+          ctx.fillRect(i * bw + 1.5, base - bh, bw - 3, bh);
+        }
+        ctx.fillStyle = "rgba(255,255,255,0.8)";
+        ctx.fillRect(0, base, W, 1.5);
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.font = "11px 'IBM Plex Mono', monospace";
+        ctx.fillText("0 dB", 10, base - H * 0.62 - 8);
+        ctx.fillText("-24 dB", 10, base - 8);
+        var fpos = (Math.log(state.freq / FMIN) / Math.log(FMAX / FMIN)) * W;
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.moveTo(fpos, base + 2); ctx.lineTo(fpos - 5, base + 11); ctx.lineTo(fpos + 5, base + 11); ctx.closePath(); ctx.fill();
+      }
+
+      /* --- Friendly: bouncing bubbles on a baseline --- */
+      function drawFriendly(m, col, fdata, t, amp) {
+        stageBg(m);
+        var base = H * 0.84;
+        ctx.strokeStyle = rgba(col, 0.35); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, base); ctx.lineTo(W, base); ctx.stroke();
+        var blobs = 9;
+        for (var i = 0; i < blobs; i++) {
+          var idx = Math.floor((i / blobs) * fdata.length * 0.4) + 2;
+          var v = fdata[idx] / 255;
+          var x = ((i + 0.5) / blobs) * W;
+          var bounce = Math.abs(Math.sin(t * 2.4 + i * 0.9)) * (10 + v * H * 0.3) + amp * 26;
+          var r = 13 + v * 15 + Math.sin(t * 3 + i) * 1.6;
+          var y = base - bounce - r;
+          var grd = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.15, x, y, r);
+          grd.addColorStop(0, rgba("#ffffff", 0.85));
+          grd.addColorStop(0.35, rgba(col, 0.95));
+          grd.addColorStop(1, rgba(col, 0.55));
+          ctx.fillStyle = grd;
+          ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+          // little satellite bubble
+          ctx.fillStyle = rgba(col, 0.5);
+          ctx.beginPath(); ctx.arc(x + r * 0.85, y - r * 1.15 - Math.sin(t * 2 + i * 2) * 3, r * 0.32, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.lineWidth = 1.6; ctx.strokeStyle = rgba(col, 0.6);
+        // reuse time data for a gentle ribbon
+        wavePath(lastTime, W / 2, H * 0.2, W * 0.8, H * 0.05 + amp * H * 0.08); ctx.stroke();
+      }
+
+      var lastTime = timeData;
+      function frame(ts) {
+        var t = ts / 1000;
+        if (!reduced) idlePhase = t; else idlePhase = 2;
+        var tt = reduced ? 2 : t;
+        var m = modeById(state.mode);
+        var col = colorById(state.color).hex;
+        var data = getTimeData(tt);
+        lastTime = data;
+        var fdata = getFreqData(tt);
+        var amp = state.playing ? Math.min(1, rms(data) * 2.6) : 0.14 + 0.05 * Math.sin(tt * 1.6);
+        switch (m.anim) {
+          case "zen": drawZen(m, col, data, tt, amp); break;
+          case "future": drawFuture(m, col, data, tt, amp); break;
+          case "science": drawScience(m, col, data, fdata, tt, amp); break;
+          case "experiment": drawExperiment(m, col, data, tt, amp); break;
+          case "instrument": drawInstrument(m, col, fdata, tt, amp); break;
+          case "gothic": drawGothic(m, col, data, tt, amp); break;
+          case "pro": drawPro(m, col, fdata, tt, amp); break;
+          case "friendly": drawFriendly(m, col, fdata, tt, amp); break;
+        }
+        requestAnimationFrame(frame);
+      }
+
+      /* ================= Init ================= */
+      resize();
+      setMode("zen");
+      setFreq(528);
+      syncPlayUI();
+      requestAnimationFrame(frame);
+      // Re-measure after fonts/layout settle
+      setTimeout(resize, 120);
+    </script>
+  </body>
+</html>
