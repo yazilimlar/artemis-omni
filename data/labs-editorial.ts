@@ -430,4 +430,23 @@ export const labsEditorial: LabEditorial[] = [
       "Artistic demonstration with generative audio and animation. It is not an audio measurement or engineering tool.",
     category: "explorations",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "Girih — Turkish Geometry Explorer",
+    eyebrow: "Geometry / Sound",
+    href: "/labs/turkish-geometry-explorer",
+    statusLabel: "Live",
+    statusTone: "test",
+    Icon: Sparkles,
+    accentIcon: Waves,
+    description:
+      "An interactive explorer of Seljuk and Ottoman girih star patterns, drawn line by line with Hankin's polygons-in-contact method: 10 tilings including Penrose rhombs and a radial rosette, a compass-and-straightedge construction mode, synthesized Web Audio deep-house and zen bells where every drawn line rings a note, and PNG and video export.",
+    signals: ["10 tilings", "Hankin construction", "Generative Web Audio", "PNG / video export"],
+    commercialPath:
+      "Best pilot path: public engagement demos, geometry-and-sound showcases, and interactive art presentations.",
+    boundary:
+      "Artistic and educational demonstration with generative audio and animation. It is not a measurement, engineering, or historical-survey tool.",
+    category: "explorations",
+  },
 ];

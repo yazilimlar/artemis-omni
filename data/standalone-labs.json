@@ -241,6 +241,14 @@
         "/standalone/sound-frequency.html"
       ],
       "reason": "Frequency Sound Animation App: canvas animation and generative Web Audio run under allow-scripts; no downloads, modals, popups, printing, or storage"
+    },
+    {
+      "id": "turkish-geometry-explorer",
+      "sandbox": "allow-scripts allow-downloads",
+      "paths": [
+        "/standalone/turkish-geometry-explorer.html"
+      ],
+      "reason": "Girih — Turkish Geometry Explorer: canvas geometry and synthesized Web Audio run under allow-scripts; PNG export and video recording downloads need allow-downloads; no storage, popups, or modals needed"
     }
   ]
 }
