@@ -79,6 +79,7 @@ const ATLAS_THUMBS: Record<string, string> = {
   "/labs/utility-intelligence-bridge/qa-capture-studio": "/labs/thumbs/depqa.jpg",
   "/labs/lego-build-studio": "/labs/thumbs/lego.jpg",
   "/labs/civicbid-intelligence-bridge": "/labs/thumbs/civicbid.jpg",
+  "/labs/turkish-geometry-explorer": "/labs/thumbs/girih.jpg",
 };
 
 /** Gallery ring layouts — the visitor reconfigures how the screens ring the Radcliffe drum. */
