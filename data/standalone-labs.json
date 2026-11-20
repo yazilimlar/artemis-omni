@@ -249,6 +249,14 @@
         "/standalone/turkish-geometry-explorer.html"
       ],
       "reason": "Girih — Turkish Geometry Explorer: canvas geometry and synthesized Web Audio run under allow-scripts; PNG export and video recording downloads need allow-downloads; no storage, popups, or modals needed"
+    },
+    {
+      "id": "turkish-geometry-explorer-3d",
+      "sandbox": "allow-scripts allow-downloads",
+      "paths": [
+        "/standalone/turkish-geometry-explorer-3d.html"
+      ],
+      "reason": "Girih 3D — Turkish Geometry Explorer: canvas 3D geometry and synthesized Web Audio run under allow-scripts; PNG export and video recording downloads need allow-downloads; no storage, popups, or modals needed"
     }
   ]
 }

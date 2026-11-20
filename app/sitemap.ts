@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/labs/lego-build-studio-artemis-music",
     "/labs/sound-frequency",
     "/labs/turkish-geometry-explorer",
+    "/labs/turkish-geometry-explorer-3d",
     "/labs/diana-moonshot",
     "/labs/tax-architecture-2026",
     "/labs/turkiye-atlas",

@@ -449,4 +449,23 @@ export const labsEditorial: LabEditorial[] = [
       "Artistic and educational demonstration with generative audio and animation. It is not a measurement, engineering, or historical-survey tool.",
     category: "explorations",
   },
+  {
+    // Not in PRODUCT_REGISTRY.yaml yet; editorial-only until a registry entry exists.
+    registryId: null,
+    title: "Girih 3D — Turkish Geometry Explorer",
+    eyebrow: "Geometry / Sound",
+    href: "/labs/turkish-geometry-explorer-3d",
+    statusLabel: "Live",
+    statusTone: "test",
+    Icon: Sparkles,
+    accentIcon: Waves,
+    description:
+      "The 3D upgrade of the Turkish Geometry Explorer: the same Seljuk and Ottoman girih star patterns from Hankin's polygons-in-contact method, extruded into raised carved tiles with glowing star inlay, orbiting under a perspective camera you can drag, tilt, and zoom. Same 10 tilings, synthesized Web Audio deep-house and zen bells, and PNG and video export.",
+    signals: ["Extruded 3D tiles", "Orbiting camera", "Hankin construction", "PNG / video export"],
+    commercialPath:
+      "Best pilot path: public engagement demos, geometry-and-sound showcases, and interactive art presentations.",
+    boundary:
+      "Artistic and educational demonstration with generative audio and animation. It is not a measurement, engineering, or historical-survey tool.",
+    category: "explorations",
+  },
 ];
